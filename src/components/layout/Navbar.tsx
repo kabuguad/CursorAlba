@@ -1,35 +1,61 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Menu, LogIn, LogOut } from 'lucide-react'
+import { Menu, LogIn, LogOut, ChevronDown } from 'lucide-react'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { Button } from '../ui/Button'
 import { MobileDrawer } from './MobileDrawer'
 import { useAuth } from '../../contexts/AuthContext'
 import { cn } from '../../lib/utils'
 
-const NAV = [
+const CO_CURRICULAR_LINKS = [
+  { to: '/co-curricular', label: '📋 Overview', sub: 'All 4 pillars at a glance' },
+  { to: '/sports', label: '🏆 Sports & Athletics', sub: 'Fixtures, results, trophy cabinet' },
+  { to: '/music', label: '🎵 Music Academy', sub: 'Instruments, faculty, trial lessons' },
+  { to: '/drama-dance', label: '🎭 Drama & Dance', sub: 'Styles, plays, choreographers' },
+  { to: '/co-curricular#community', label: '🤝 Social & Community', sub: 'CSL, festivals, student council' },
+  { to: '/co-curricular#cts', label: '⚙️ Career & Technical', sub: 'Vocational options, Grades 10–12' },
+]
+
+const NAV_LEFT = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
   { to: '/programs', label: 'Programs' },
   { to: '/academics', label: 'Academics' },
   { to: '/facilities', label: 'Facilities' },
-  { to: '/music', label: 'Music' },
-  { to: '/drama-dance', label: 'Drama & Dance' },
-  { to: '/sports', label: 'Sports' },
+]
+
+const NAV_RIGHT = [
   { to: '/staff', label: 'Staff' },
   { to: '/admissions', label: 'Admissions' },
   { to: '/blog', label: 'Blog' },
   { to: '/contact', label: 'Contact' },
 ]
 
+const ALL_NAV = [
+  ...NAV_LEFT,
+  { to: '/co-curricular', label: 'Co-Curricular' },
+  ...NAV_RIGHT,
+]
+
 export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
     logout()
     navigate('/')
+  }
+
+  const openDropdown = () => {
+    if (dropdownTimer.current) clearTimeout(dropdownTimer.current)
+    setDropdownOpen(true)
+  }
+
+  const closeDropdown = () => {
+    dropdownTimer.current = setTimeout(() => setDropdownOpen(false), 150)
   }
 
   return (
@@ -47,7 +73,67 @@ export function Navbar() {
           </Link>
 
           <div className="hidden items-center gap-1 xl:flex">
-            {NAV.slice(0, 8).map((item) => (
+            {NAV_LEFT.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  cn(
+                    'rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
+                    isActive
+                      ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold'
+                      : 'text-muted hover:text-primary dark:hover:text-gold',
+                  )
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+
+            <div
+              className="relative"
+              onMouseEnter={openDropdown}
+              onMouseLeave={closeDropdown}
+            >
+              <button
+                className={cn(
+                  'flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
+                  dropdownOpen
+                    ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold'
+                    : 'text-muted hover:text-primary dark:hover:text-gold',
+                )}
+              >
+                Co-Curricular
+                <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', dropdownOpen && 'rotate-180')} />
+              </button>
+
+              {dropdownOpen && (
+                <div
+                  className="absolute left-1/2 top-full z-50 mt-2 w-72 -translate-x-1/2 overflow-hidden rounded-2xl glass glass-border shadow-2xl"
+                  onMouseEnter={openDropdown}
+                  onMouseLeave={closeDropdown}
+                >
+                  {CO_CURRICULAR_LINKS.map((link) => (
+                    <NavLink
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => setDropdownOpen(false)}
+                      className={({ isActive }) =>
+                        cn(
+                          'flex flex-col px-4 py-3 transition hover:bg-primary/10 dark:hover:bg-gold/10',
+                          isActive && 'bg-primary/5 dark:bg-gold/5',
+                        )
+                      }
+                    >
+                      <span className="text-sm font-semibold text-foreground">{link.label}</span>
+                      <span className="text-xs text-muted">{link.sub}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {NAV_RIGHT.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -101,7 +187,13 @@ export function Navbar() {
           </div>
         </nav>
       </header>
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} links={NAV} />
+
+      <MobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        links={ALL_NAV}
+        coLinks={CO_CURRICULAR_LINKS}
+      />
     </>
   )
 }

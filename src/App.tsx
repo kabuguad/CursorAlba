@@ -9,6 +9,7 @@ import { About } from './pages/About'
 import { Programs } from './pages/Programs'
 import { Academics } from './pages/Academics'
 import { Facilities } from './pages/Facilities'
+import { CoCurricular } from './pages/CoCurricular'
 import { Music } from './pages/Music'
 import { DramaDance } from './pages/DramaDance'
 import { Sports } from './pages/Sports'
@@ -35,6 +36,7 @@ function App() {
                 <Route path="programs" element={<Programs />} />
                 <Route path="academics" element={<Academics />} />
                 <Route path="facilities" element={<Facilities />} />
+                <Route path="co-curricular" element={<CoCurricular />} />
                 <Route path="music" element={<Music />} />
                 <Route path="drama-dance" element={<DramaDance />} />
                 <Route path="sports" element={<Sports />} />

@@ -8,17 +8,17 @@ import { AnimatedCounter } from '../components/ui/AnimatedCounter'
 import { events } from '../data/events'
 
 const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1523050854898-fb9d7d4f9c0e?w=1200&h=800&fit=crop',
-  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&h=800&fit=crop',
-  'https://images.unsplash.com/photo-1541339907198-e08756dedfbf?w=1200&h=800&fit=crop',
-  'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=1200&h=800&fit=crop',
+  'https://picsum.photos/seed/alber-campus/1200/800',
+  'https://picsum.photos/seed/alber-class/1200/800',
+  'https://picsum.photos/seed/alber-sports/1200/800',
+  'https://picsum.photos/seed/alber-arts/1200/800',
 ]
 
 const PROGRAMS = [
-  { title: 'CBC Excellence', desc: "Kenya's competency-based curriculum from Daycare to Grade 9", img: 'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=600&h=400&fit=crop', to: '/programs' },
-  { title: 'IGCSE Pathway', desc: 'Cambridge international standards for Grades 10–12', img: 'https://images.unsplash.com/photo-1497633762263-9fc9e4a76534?w=600&h=400&fit=crop', to: '/programs' },
-  { title: 'Arts Academy', desc: 'Music, drama & dance — four world-class studios', img: 'https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=600&h=400&fit=crop', to: '/music' },
-  { title: 'Elite Athletics', desc: 'Football, basketball, swimming, volleyball & athletics', img: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=400&fit=crop', to: '/sports' },
+  { title: 'CBC Excellence', desc: "Kenya's competency-based curriculum from Daycare to Grade 9", img: 'https://picsum.photos/seed/alber-cbc/600/400', to: '/programs' },
+  { title: 'IGCSE Pathway', desc: 'Cambridge international standards for Grades 10–12', img: 'https://picsum.photos/seed/alber-igcse/600/400', to: '/programs' },
+  { title: 'Arts Academy', desc: 'Music, drama & dance — four world-class studios', img: 'https://picsum.photos/seed/alber-music-prog/600/400', to: '/music' },
+  { title: 'Elite Athletics', desc: 'Football, basketball, swimming, volleyball & athletics', img: 'https://picsum.photos/seed/alber-athletics/600/400', to: '/sports' },
 ]
 
 const TESTIMONIALS = [
@@ -29,15 +29,15 @@ const TESTIMONIALS = [
 ]
 
 const GALLERY = [
-  'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1541339907198-e08756dedfbf?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1588072432836-e10032774350?w=400&h=400&fit=crop',
-  'https://images.unsplash.com/photo-1497633762263-9fc9e4a76534?w=400&h=400&fit=crop',
+  'https://picsum.photos/seed/alber-g1/400/400',
+  'https://picsum.photos/seed/alber-g2/400/400',
+  'https://picsum.photos/seed/alber-g3/400/400',
+  'https://picsum.photos/seed/alber-g4/400/400',
+  'https://picsum.photos/seed/alber-g5/400/400',
+  'https://picsum.photos/seed/alber-g6/400/400',
+  'https://picsum.photos/seed/alber-g7/400/400',
+  'https://picsum.photos/seed/alber-g8/400/400',
+  'https://picsum.photos/seed/alber-g9/400/400',
 ]
 
 export function Home() {

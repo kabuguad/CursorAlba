@@ -17,19 +17,19 @@ const TEACHERS = [
   {
     name: 'Ms. Ruth Kamau',
     subject: 'Piano & Theory',
-    img: 'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=400&h=400&fit=crop',
+    img: 'https://i.pravatar.cc/400?img=44',
     credentials: 'B.Mus (University of Nairobi) · ABRSM Grade 8',
   },
   {
     name: 'Mr. Victor Omondi',
     subject: 'Strings & Ensemble',
-    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    img: 'https://i.pravatar.cc/400?img=57',
     credentials: 'Conservatoire-trained · 12 years teaching',
   },
   {
     name: 'Ms. Nancy Wanjiru',
     subject: 'Vocals & Choir',
-    img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+    img: 'https://i.pravatar.cc/400?img=32',
     credentials: 'Dip. Music Ed. · Former KBC choir director',
   },
 ]

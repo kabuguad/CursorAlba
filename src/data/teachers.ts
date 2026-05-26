@@ -56,16 +56,8 @@ export const teachers: Teacher[] = Array.from({ length: 125 }, (_, i) => {
   }
 })
 
-// Fix image URLs with real unsplash portrait IDs
-const PORTRAITS = [
-  '1560250097-0b93528c311a', '1573496359142-b8d87734a5a2', '1472099645785-5658abf4ff4e',
-  '1507003211169-0a1dd7228f2d', '1494790108377-be9c29b29330', '1500648767791-00dcc994a43e',
-  '1438761681033-6461ffad8d80', '1519085360359-1d1e0a4b0e8a', '1534528741775-53994a69daeb',
-  '1517841905240-472988babdf9', '1522075469751-3a6698fb0839', '1544005313-94ddf0286df2',
-]
-
 teachers.forEach((t, i) => {
-  t.image = `https://images.unsplash.com/photo-${PORTRAITS[i % PORTRAITS.length]}?w=400&h=500&fit=crop&facepad=2`
+  t.image = `https://i.pravatar.cc/400?img=${(i % 70) + 1}`
 })
 
 export const departments: Department[] = DEPTS

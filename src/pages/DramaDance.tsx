@@ -16,19 +16,19 @@ const PAST_PLAYS = [
     year: '2024',
     title: "The Lion's Roar",
     desc: 'An original production exploring Kenyan folklore through dance, spoken word, and music. Cast of 60 students.',
-    img: 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=600&h=400&fit=crop',
+    img: 'https://picsum.photos/seed/drama-2024/600/400',
   },
   {
     year: '2023',
     title: 'Echoes of Kirinyaga',
     desc: 'A celebration of Kirinyaga County heritage with traditional dance, acrobatics, and drama. Standing ovation.',
-    img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=600&h=400&fit=crop',
+    img: 'https://picsum.photos/seed/drama-2023/600/400',
   },
   {
     year: '2022',
     title: "Tomorrow's Leaders",
     desc: 'A satirical play on modern education and youth ambition. Directed by Form 4 students.',
-    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
+    img: 'https://picsum.photos/seed/drama-2022/600/400',
   },
 ]
 
@@ -36,13 +36,13 @@ const CHOREOGRAPHERS = [
   {
     name: 'Ms. Grace Achieng',
     role: 'Lead Choreographer · Ballet & Contemporary',
-    img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    img: 'https://i.pravatar.cc/400?img=36',
     bio: 'Trained in Nairobi and London. 15 years choreographing award-winning productions.',
   },
   {
     name: 'Mr. Oscar Njoroge',
     role: 'Drama Director · Playwright',
-    img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+    img: 'https://i.pravatar.cc/400?img=52',
     bio: 'Graduate of Kenya National Theatre. Specialist in African contemporary drama.',
   },
 ]

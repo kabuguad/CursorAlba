@@ -10,7 +10,7 @@ const FACILITIES = [
     name: 'Smart Classrooms',
     icon: '🖥️',
     desc: '86 air-conditioned smart classrooms with interactive whiteboards, high-speed Wi-Fi, and ergonomic furniture designed for CBC and IGCSE learning.',
-    img: 'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-classroom/800/600',
     highlights: ['Interactive whiteboards', 'High-speed fibre internet', 'Air-conditioned', 'CCTV monitored'],
   },
   {
@@ -18,7 +18,7 @@ const FACILITIES = [
     name: 'Music Studio',
     icon: '🎵',
     desc: 'Professional music studios with Steinway-ready piano rooms, acoustic-treated recording booths, ensemble rehearsal halls, and an ABRSM examination centre.',
-    img: 'https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-music/800/600',
     highlights: ['Piano rooms', 'Recording booth', 'Ensemble hall', 'ABRSM centre'],
   },
   {
@@ -26,7 +26,7 @@ const FACILITIES = [
     name: 'Dance Studio',
     icon: '🩰',
     desc: 'Full-wall mirrors, sprung wooden floors, professional lighting rigs, and 4K capture systems for portfolio development and performance recording.',
-    img: 'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-dance/800/600',
     highlights: ['Sprung floors', 'Full-wall mirrors', 'Professional lighting', '4K recording'],
   },
   {
@@ -34,7 +34,7 @@ const FACILITIES = [
     name: 'Sports Complex',
     icon: '🏟️',
     desc: 'Premium sports complex with two football pitches, basketball and volleyball courts, 25m swimming pool, 400m athletics track, and a fully equipped gym.',
-    img: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-sports/800/600',
     highlights: ['25m swimming pool', 'Football pitches', 'Athletics track', 'Fully equipped gym'],
   },
   {
@@ -42,7 +42,7 @@ const FACILITIES = [
     name: 'Digital Library',
     icon: '📚',
     desc: 'A 10,000-volume library with digital cataloguing, quiet study rooms, a maker space, and access to global online databases and journals.',
-    img: 'https://images.unsplash.com/photo-1497633762263-9fc9e4a76534?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-library/800/600',
     highlights: ['10,000+ volumes', 'Digital catalogue', 'Study rooms', 'Online database access'],
   },
   {
@@ -50,7 +50,7 @@ const FACILITIES = [
     name: 'Dining Hall',
     icon: '🍽️',
     desc: 'Spacious dining hall serving 600 students per sitting. Balanced, nutritionist-approved menus with halal, vegetarian, and allergy-aware options.',
-    img: 'https://images.unsplash.com/photo-1544148103-0773bf10d330?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-dining/800/600',
     highlights: ['600-seat capacity', 'Nutritionist menus', 'Halal & vegetarian', 'Allergy-aware'],
   },
   {
@@ -58,7 +58,7 @@ const FACILITIES = [
     name: 'School Buses',
     icon: '🚌',
     desc: 'Eight modern, GPS-tracked school buses covering Kutus, Kerugoya, Sagana, Kagio, Kagumo, Kianyaga, Mutira, and Ngariama routes.',
-    img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-buses/800/600',
     highlights: ['8 buses', 'GPS tracked', '8 routes', 'Licensed drivers'],
   },
   {
@@ -66,7 +66,7 @@ const FACILITIES = [
     name: 'Science Laboratories',
     icon: '🔬',
     desc: 'Four dedicated labs — Biology, Chemistry, Physics, and Computer Science — equipped for KNEC and Cambridge IGCSE practical examinations.',
-    img: 'https://images.unsplash.com/photo-1532094349884-543559a8e87b?w=800&h=600&fit=crop',
+    img: 'https://picsum.photos/seed/facility-science/800/600',
     highlights: ['Biology lab', 'Chemistry lab', 'Physics lab', 'Computer science lab'],
   },
 ]

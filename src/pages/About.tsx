@@ -24,25 +24,25 @@ const LEADERSHIP = [
   {
     name: 'Dr. Wanjiku Mwangi',
     title: 'Head Teacher',
-    img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&face',
+    img: 'https://i.pravatar.cc/400?img=47',
     bio: 'PhD in Educational Leadership, University of Nairobi. 25 years in education. Champion of CBC implementation in Kirinyaga.',
   },
   {
     name: 'Mr. Peter Kamau',
     title: 'Deputy Head Teacher',
-    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&face',
+    img: 'https://i.pravatar.cc/400?img=11',
     bio: 'M.Ed Kenyatta University. Specialises in curriculum development and teacher professional growth.',
   },
   {
     name: 'Ms. Eunice Achieng',
     title: 'Director of Academics',
-    img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&face',
+    img: 'https://i.pravatar.cc/400?img=48',
     bio: 'Cambridge-certified IGCSE coordinator. Oversees all academic pathways from PP1 through Grade 12.',
   },
   {
     name: 'Mr. Francis Omondi',
     title: 'Director of Co-Curricular',
-    img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&face',
+    img: 'https://i.pravatar.cc/400?img=15',
     bio: 'Former national athlete. Leads sports, music, drama, and all co-curricular programmes across the school.',
   },
 ]

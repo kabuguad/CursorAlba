@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ChevronRight } from 'lucide-react'
+import { ArrowRight, ChevronRight, Quote } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
@@ -11,20 +11,46 @@ const HERO_IMAGES = [
   'https://images.unsplash.com/photo-1523050854898-fb9d7d4f9c0e?w=1200&h=800&fit=crop',
   'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&h=800&fit=crop',
   'https://images.unsplash.com/photo-1541339907198-e08756dedfbf?w=1200&h=800&fit=crop',
+  'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=1200&h=800&fit=crop',
 ]
 
 const PROGRAMS = [
-  { title: 'CBC Excellence', desc: 'Kenya\'s competency-based curriculum', img: 'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=600&h=400&fit=crop' },
-  { title: 'IGCSE Pathway', desc: 'Cambridge international standards', img: 'https://images.unsplash.com/photo-1497633762263-9fc9e4a76534?w=600&h=400&fit=crop' },
-  { title: 'Arts Academy', desc: 'Music, drama & dance studios', img: 'https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=600&h=400&fit=crop' },
-  { title: 'Elite Athletics', desc: 'Premium sports complex', img: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=400&fit=crop' },
+  { title: 'CBC Excellence', desc: "Kenya's competency-based curriculum from Daycare to Grade 9", img: 'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=600&h=400&fit=crop', to: '/programs' },
+  { title: 'IGCSE Pathway', desc: 'Cambridge international standards for Grades 10–12', img: 'https://images.unsplash.com/photo-1497633762263-9fc9e4a76534?w=600&h=400&fit=crop', to: '/programs' },
+  { title: 'Arts Academy', desc: 'Music, drama & dance — four world-class studios', img: 'https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=600&h=400&fit=crop', to: '/music' },
+  { title: 'Elite Athletics', desc: 'Football, basketball, swimming, volleyball & athletics', img: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=400&fit=crop', to: '/sports' },
+]
+
+const TESTIMONIALS = [
+  { name: 'Grace Njeri', role: 'Parent · Grade 5', quote: 'Alber School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
+  { name: 'Brian Mutua', role: 'Student · Form 3', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Alber.' },
+  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', quote: 'Both my children attend Alber. The dual CBC and IGCSE pathways gave us flexibility no other school in the region offers.' },
+  { name: 'Amina Ochieng', role: 'Student · Music Academy', quote: 'I performed my first piano recital here in Form 1. The music teachers are genuinely world-class professionals.' },
+]
+
+const GALLERY = [
+  'https://images.unsplash.com/photo-1580582938317-6572b825d3f9?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1541339907198-e08756dedfbf?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1588072432836-e10032774350?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1497633762263-9fc9e4a76534?w=400&h=400&fit=crop',
 ]
 
 export function Home() {
   const [slide, setSlide] = useState(0)
+  const [testimonial, setTestimonial] = useState(0)
 
   useEffect(() => {
     const t = setInterval(() => setSlide((s) => (s + 1) % HERO_IMAGES.length), 5000)
+    return () => clearInterval(t)
+  }, [])
+
+  useEffect(() => {
+    const t = setInterval(() => setTestimonial((s) => (s + 1) % TESTIMONIALS.length), 6000)
     return () => clearInterval(t)
   }, [])
 
@@ -33,15 +59,14 @@ export function Home() {
       <section className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col items-center gap-12 px-4 lg:flex-row lg:items-center">
         <ScrollReveal className="flex-1 lg:pr-8">
           <span className="mb-4 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
-            Kutus · Kirinyaga County
+            Kutus · Kirinyaga County · Adjacent to Governor's Offices
           </span>
           <h1 className="mb-6 text-5xl font-extrabold leading-[1.1] text-foreground md:text-6xl lg:text-7xl">
             Where Excellence
             <span className="block text-gold">Meets Tomorrow</span>
           </h1>
           <p className="mb-8 max-w-xl text-lg text-muted">
-            Alber School — luxury private education adjacent to the Governor&apos;s Offices.
-            Futuristic learning. World-class faculty. Unmatched opportunity.
+            Alber School — premium private education in the heart of Kirinyaga. 2,000+ learners. 120+ expert educators. Academics, sports, music, and performing arts under one roof.
           </p>
           <div className="flex flex-wrap gap-4">
             <Link to="/admissions">
@@ -59,7 +84,7 @@ export function Home() {
               <img
                 key={img}
                 src={img}
-                alt="Campus"
+                alt="Alber School Campus"
                 className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
               />
             ))}
@@ -77,11 +102,12 @@ export function Home() {
       </section>
 
       <section className="bg-tint/50 py-16 dark:bg-dark-card/40">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { end: 2000, suffix: '+', label: 'Students' },
+            { end: 2000, suffix: '+', label: 'Students Enrolled' },
             { end: 120, suffix: '+', label: 'Expert Staff' },
-            { end: 4, suffix: '+', label: 'Modern Buses' },
+            { end: 8, suffix: '', label: 'Modern School Buses' },
+            { end: 6, suffix: '', label: 'Sports Disciplines' },
           ].map((stat) => (
             <ScrollReveal key={stat.label}>
               <GlassCard className="p-8 text-center">
@@ -95,33 +121,37 @@ export function Home() {
         </div>
       </section>
 
-      <section className="snap-container py-20">
+      <section className="py-20">
         <div className="mx-auto max-w-7xl px-4">
           <ScrollReveal>
-            <h2 className="mb-12 text-4xl font-bold md:text-5xl">Featured Programs</h2>
+            <h2 className="mb-2 text-4xl font-bold md:text-5xl">Featured Programs</h2>
+            <p className="mb-12 text-muted">From Daycare to Cambridge IGCSE — world-class pathways for every learner.</p>
           </ScrollReveal>
           <div className="grid gap-8 md:grid-cols-2">
             {PROGRAMS.map((p, i) => (
               <ScrollReveal key={p.title} delay={i * 0.1}>
-                <GlassCard className="snap-section group overflow-hidden p-0">
-                  <div className="relative h-48 overflow-hidden">
-                    <img src={p.img} alt={p.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
-                  </div>
-                  <div className="flex items-center justify-between p-6">
-                    <div>
-                      <h3 className="text-xl font-bold">{p.title}</h3>
-                      <p className="text-sm text-muted">{p.desc}</p>
+                <Link to={p.to}>
+                  <GlassCard className="group overflow-hidden p-0">
+                    <div className="relative h-48 overflow-hidden">
+                      <img src={p.img} alt={p.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     </div>
-                    <ChevronRight className="h-6 w-6 text-gold transition group-hover:translate-x-1" />
-                  </div>
-                </GlassCard>
+                    <div className="flex items-center justify-between p-6">
+                      <div>
+                        <h3 className="text-xl font-bold">{p.title}</h3>
+                        <p className="text-sm text-muted">{p.desc}</p>
+                      </div>
+                      <ChevronRight className="h-6 w-6 text-gold transition group-hover:translate-x-1" />
+                    </div>
+                  </GlassCard>
+                </Link>
               </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="bg-tint/30 py-20 dark:bg-dark-card/30">
         <div className="mx-auto max-w-7xl px-4">
           <ScrollReveal>
             <h2 className="mb-12 text-4xl font-bold">Upcoming Events</h2>
@@ -140,6 +170,73 @@ export function Home() {
               </ScrollReveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="py-20">
+        <div className="mx-auto max-w-4xl px-4 text-center">
+          <ScrollReveal>
+            <h2 className="mb-12 text-4xl font-bold">What Our Community Says</h2>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1}>
+            <GlassCard className="relative px-8 py-12">
+              <Quote className="mx-auto mb-6 h-10 w-10 text-gold opacity-60" />
+              <p className="text-xl font-medium leading-relaxed text-foreground min-h-[80px] transition-all">
+                "{TESTIMONIALS[testimonial].quote}"
+              </p>
+              <div className="mt-8">
+                <p className="font-bold text-primary dark:text-gold">{TESTIMONIALS[testimonial].name}</p>
+                <p className="text-sm text-muted">{TESTIMONIALS[testimonial].role}</p>
+              </div>
+              <div className="mt-6 flex justify-center gap-2">
+                {TESTIMONIALS.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setTestimonial(i)}
+                    className={`h-2 rounded-full transition-all ${i === testimonial ? 'w-8 bg-gold' : 'w-2 bg-neutral-300 dark:bg-neutral-600'}`}
+                  />
+                ))}
+              </div>
+            </GlassCard>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      <section className="pb-20">
+        <div className="mx-auto max-w-7xl px-4">
+          <ScrollReveal>
+            <h2 className="mb-8 text-4xl font-bold">Life at Alber</h2>
+          </ScrollReveal>
+          <div className="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-3">
+            {GALLERY.map((url, i) => (
+              <ScrollReveal key={url} delay={i * 0.04}>
+                <div className="aspect-square overflow-hidden rounded-2xl">
+                  <img
+                    src={url}
+                    alt={`Campus life ${i + 1}`}
+                    className="h-full w-full object-cover transition duration-500 hover:scale-110"
+                  />
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-primary py-16 dark:bg-gold/20">
+        <div className="mx-auto max-w-3xl px-4 text-center">
+          <ScrollReveal>
+            <h2 className="mb-4 text-4xl font-bold text-white dark:text-gold">Ready to Join Alber School?</h2>
+            <p className="mb-8 text-white/80 dark:text-foreground">Applications are open for the 2026 intake. Limited spaces available.</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link to="/admissions">
+                <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="outline" className="border-white text-white hover:bg-white/10 dark:border-gold dark:text-gold">Contact Us</Button>
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     </>

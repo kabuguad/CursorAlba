@@ -1,0 +1,23 @@
+ALBER SCHOOL APP – COMPLETE CONTENT OVERVIEW
+WHAT THE APP IS
+A complete website for Alber School, a premium private school in Kutus, Kirinyaga County (adjacent to the Governor's Offices). The school has 2,000+ students, 120+ teachers, and specializes in Academics, Sports, Music, and Drama/Dance.
+
+ALL PAGES IN THE APP
+PUBLIC PAGES (Anyone can see)
+Page	What's On It
+Home	Hero section with rotating school images, stats counter (students, staff, buses, sports), featured programs as horizontal cards, upcoming events timeline, parent/student testimonials carousel, Instagram-style photo grid, call-to-action buttons
+About	School history, mission statement, vision statement, core values, leadership team profiles (Head Teacher, Deputy, Directors), school timeline (founding to present)
+Programs	Overview of all education levels, then individual subpages for: Daycare, PP1-PP2, Grades 1-6, Junior School (Grades 7-9), Senior School (Grades 10-12). Each has curriculum summary, age range, daily schedule, fees
+Academics	Curriculum options (CBC, IGCSE), grading system explanation, academic calendar (term dates, holidays, exam weeks), list of subjects offered by level
+Music	Western instruments showcase (piano, violin, guitar, brass, woodwind, drums), music teacher profiles, concert videos, audio samples, rehearsal schedule, "Book Trial Lesson" form
+Drama & Dance	Performance videos, annual play archives (past 3 years), choreographer profiles, rehearsal schedule, dance styles offered (ballet, contemporary, African, hip-hop), costume gallery
+Sports	Sports offered (football, basketball, volleyball, athletics, swimming), fixtures table (upcoming matches), results table (past matches), player of the month, trophy cabinet/achievements, sports photo gallery
+Facilities	Interactive grid of: classrooms, music studio, dance studio, sports fields, library, dining hall, school buses. Each has description and photo gallery. Includes Virtual Tour button
+Staff Directory	Search bar, department filters (Music, Drama, Sports, Sciences, Languages, etc.), grid of 120+ teacher cards. Each card shows: photo, name, subject, department, years experience. Click for full bio, qualifications, contact
+Gallery	Masonry-style photo grid with category filters (Music, Drama, Sports, Academics, Events). Click any photo to open fullscreen lightbox with navigation
+Events	Toggle between calendar view (month grid) and list view. Shows upcoming and past events. Click event for details: date, time, location, description
+Admissions	Multi-step application form (Child Info, Parent Info, Documents, Payment preview). Fee structure table with termly fees for each level. Download prospectus button. Virtual tour preview
+Contact	Contact form (name, email, phone, message), Google map showing location (adjacent to Governor's Offices, Kutus), floating contact cards with phone, email, WhatsApp, physical address. WhatsApp floating button (green, bottom right)
+Blog	Blog post listing with featured post hero, 3-column grid of recent posts, tag filtering, search by title
+Blog Post (individual)	Single article page with large hero image, reading progress bar (yellow), author bio, related posts at bottom
+Login	Login form (email + password). Displays demo credentials as badges: admin@, teacher@, parent@, student@. Animated background

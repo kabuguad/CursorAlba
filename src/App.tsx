@@ -7,6 +7,8 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
 import { Programs } from './pages/Programs'
+import { Academics } from './pages/Academics'
+import { Facilities } from './pages/Facilities'
 import { Music } from './pages/Music'
 import { DramaDance } from './pages/DramaDance'
 import { Sports } from './pages/Sports'
@@ -31,6 +33,8 @@ function App() {
                 <Route index element={<Home />} />
                 <Route path="about" element={<About />} />
                 <Route path="programs" element={<Programs />} />
+                <Route path="academics" element={<Academics />} />
+                <Route path="facilities" element={<Facilities />} />
                 <Route path="music" element={<Music />} />
                 <Route path="drama-dance" element={<DramaDance />} />
                 <Route path="sports" element={<Sports />} />

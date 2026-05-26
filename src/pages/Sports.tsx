@@ -9,18 +9,52 @@ const statusStyles = {
   completed: 'bg-tint text-primary dark:bg-dark-card dark:text-gold',
 }
 
+const SPORTS_OFFERED = [
+  { name: 'Football', icon: '⚽', desc: 'Two pitches, inter-house and inter-school leagues, dedicated coaching staff.' },
+  { name: 'Basketball', icon: '🏀', desc: 'Full-size courts. Boys and girls teams competing regionally.' },
+  { name: 'Volleyball', icon: '🏐', desc: 'Indoor and outdoor courts for both competitive and recreational play.' },
+  { name: 'Athletics', icon: '🏃', desc: '400m track, field events, relay squads — training five days a week.' },
+  { name: 'Swimming', icon: '🏊', desc: '25m heated pool with certified coaches and county-level competition.' },
+  { name: 'Tennis', icon: '🎾', desc: 'Two courts for individual and doubles coaching from juniors upward.' },
+]
+
+const TROPHIES = [
+  { year: '2025', title: 'Kirinyaga County Football Champions', category: 'Football' },
+  { year: '2025', title: 'Regional Athletics — Gold (4×100m Relay)', category: 'Athletics' },
+  { year: '2024', title: 'Inter-School Basketball — Boys Division', category: 'Basketball' },
+  { year: '2024', title: 'Swimming Championships — 3 Gold Medals', category: 'Swimming' },
+  { year: '2023', title: 'National Volleyball — Semi-finalists', category: 'Volleyball' },
+  { year: '2023', title: 'County Cross Country Champions', category: 'Athletics' },
+]
+
 export function Sports() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal>
         <h1 className="text-5xl font-bold md:text-7xl">Sports & Athletics</h1>
+        <p className="mt-4 max-w-2xl text-muted">Premium facilities · Professional coaching · County, regional and national competition.</p>
       </ScrollReveal>
 
-      <ScrollReveal className="mt-12">
+      <ScrollReveal className="mt-16">
+        <h2 className="mb-8 text-3xl font-bold">Sports Offered</h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {SPORTS_OFFERED.map((s, i) => (
+            <ScrollReveal key={s.name} delay={i * 0.07}>
+              <GlassCard className="p-6">
+                <span className="mb-3 block text-4xl">{s.icon}</span>
+                <h3 className="text-lg font-bold text-primary dark:text-gold">{s.name}</h3>
+                <p className="mt-1 text-sm text-muted">{s.desc}</p>
+              </GlassCard>
+            </ScrollReveal>
+          ))}
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="mt-16">
         <GlassCard className="overflow-hidden p-0 md:flex">
           <img src={playerOfMonth.image} alt={playerOfMonth.name} className="h-64 w-full object-cover md:h-auto md:w-80" />
           <div className="p-8">
-            <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold text-dark">Player of the Month</span>
+            <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold text-dark">⭐ Player of the Month</span>
             <h2 className="mt-4 text-3xl font-bold">{playerOfMonth.name}</h2>
             <p className="text-primary dark:text-gold">{playerOfMonth.sport} · {playerOfMonth.class}</p>
             <p className="mt-2 text-muted">{playerOfMonth.stats}</p>
@@ -28,7 +62,7 @@ export function Sports() {
         </GlassCard>
       </ScrollReveal>
 
-      <ScrollReveal className="mt-12">
+      <ScrollReveal className="mt-16">
         <h2 className="mb-6 text-2xl font-bold">Fixtures & Results</h2>
         <div className="overflow-x-auto rounded-3xl glass glass-border text-foreground">
           <table className="w-full min-w-[600px] text-left text-sm">
@@ -59,6 +93,23 @@ export function Sports() {
               ))}
             </tbody>
           </table>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="mt-16">
+        <h2 className="mb-8 text-3xl font-bold">Trophy Cabinet</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TROPHIES.map((t, i) => (
+            <ScrollReveal key={t.title} delay={i * 0.07}>
+              <GlassCard className="flex items-start gap-4 p-5">
+                <span className="text-3xl">🏆</span>
+                <div>
+                  <p className="font-bold text-primary dark:text-gold">{t.title}</p>
+                  <p className="text-xs text-muted">{t.category} · {t.year}</p>
+                </div>
+              </GlassCard>
+            </ScrollReveal>
+          ))}
         </div>
       </ScrollReveal>
     </div>

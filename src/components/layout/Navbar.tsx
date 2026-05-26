@@ -11,6 +11,8 @@ const NAV = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
   { to: '/programs', label: 'Programs' },
+  { to: '/academics', label: 'Academics' },
+  { to: '/facilities', label: 'Facilities' },
   { to: '/music', label: 'Music' },
   { to: '/drama-dance', label: 'Drama & Dance' },
   { to: '/sports', label: 'Sports' },

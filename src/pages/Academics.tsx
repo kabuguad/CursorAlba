@@ -1,38 +1,70 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
+import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
 
-const CURRICULA = [
+const SCHOOL_LEVELS = [
   {
-    id: 'cbc',
-    name: 'CBC',
-    fullName: 'Competency-Based Curriculum',
-    desc: "Kenya's national curriculum framework — learner-centred, project-based, and career-oriented from Grade 1 to Grade 9.",
-    levels: ['PP1 – PP2 (Early Years)', 'Grade 1 – Grade 6 (Primary)', 'Grade 7 – Grade 9 (Junior Secondary)'],
-    features: [
-      'Continuous Assessment Tests (CATs) each term',
-      'Kenya National Examinations Council (KNEC) aligned',
-      'Portfolio-based learning evidence',
-      'Integrated career pathways from Grade 7',
-      'National values and citizenship integrated',
-      'Project-based interdisciplinary units',
-    ],
+    id: 'playgroup',
+    name: 'Playgroup',
+    ages: 'Ages 2 – 3',
+    icon: '🧸',
+    color: 'from-pink-500/20 to-rose-500/10',
+    border: 'border-pink-400/30',
+    desc: 'A warm, nurturing environment that sparks curiosity through play. Children develop social, emotional, and early language skills in our purpose-built Playgroup centre.',
+    highlights: ['Play-based learning', 'Structured routines', 'Creative exploration', 'Social development', 'Music & movement', 'Early number sense'],
   },
   {
-    id: 'igcse',
-    name: 'IGCSE',
-    fullName: 'Cambridge International General Certificate',
-    desc: 'Internationally recognised Cambridge qualification — rigorous external assessment preparing students for global university entry.',
-    levels: ['Grade 10 – Grade 11 (IGCSE)', 'Grade 12 (A-Level / Pre-University)'],
-    features: [
-      'Cambridge Assessment International Education (CAIE)',
-      'Globally recognised by 10,000+ universities',
-      'Rigorous external examinations twice yearly',
-      'Broad subject range across five curriculum areas',
-      'University counselling and UCAS guidance',
-      'Extended Project Qualification (EPQ) option',
-    ],
+    id: 'ecde',
+    name: 'ECDE',
+    ages: 'PP1 & PP2 · Ages 4 – 5',
+    icon: '🌱',
+    color: 'from-green-500/20 to-emerald-500/10',
+    border: 'border-green-400/30',
+    desc: 'Early Childhood Development Education aligned to the CBC framework. PP1 and PP2 build foundational literacy, numeracy, and environmental awareness through structured activities.',
+    highlights: ['Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Psychomotor & Creative Arts', 'Religious Education', 'Music'],
+  },
+  {
+    id: 'lower-primary',
+    name: 'Lower Primary',
+    ages: 'Grades 1 – 3 · Ages 6 – 8',
+    icon: '📚',
+    color: 'from-blue-500/20 to-cyan-500/10',
+    border: 'border-blue-400/30',
+    desc: 'Building core competencies in literacy and numeracy. Learners engage through integrated, activity-based units that connect learning to real-life contexts in Kirinyaga and beyond.',
+    highlights: ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Religious Education', 'Creative Arts', 'Physical Education'],
+  },
+  {
+    id: 'upper-primary',
+    name: 'Upper Primary',
+    ages: 'Grades 4 – 6 · Ages 9 – 11',
+    icon: '🔬',
+    color: 'from-violet-500/20 to-purple-500/10',
+    border: 'border-violet-400/30',
+    desc: 'Deepening competencies across all learning areas. Learners begin exploring Agriculture and are assessed through Continuous Assessment Tests (CATs) each term.',
+    highlights: ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Agriculture', 'Creative Arts', 'Physical Education', 'Religious Education'],
+  },
+  {
+    id: 'junior',
+    name: 'Junior School',
+    ages: 'Grades 7 – 9 · Ages 12 – 14',
+    icon: '🎯',
+    color: 'from-amber-500/20 to-orange-500/10',
+    border: 'border-amber-400/30',
+    desc: "Junior Secondary School introduces career-based learning pathways. Learners in Grade 9 sit the Kenya Junior School Education Assessment (KJSEA) — Kenya's national transition exam.",
+    highlights: ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Business Studies', 'Agriculture', 'Pre-Technical Studies', 'Creative Arts', 'Life Skills'],
+  },
+  {
+    id: 'senior',
+    name: 'Senior School',
+    ages: 'Grades 10 – 12 · Ages 15 – 17',
+    icon: '🎓',
+    color: 'from-teal-500/20 to-cyan-500/10',
+    border: 'border-teal-400/30',
+    desc: "Senior School offers specialised pathways in Sciences, Humanities, STEM, and Arts & Sports. Learners sit the Kenya Certificate of Secondary Education (KCSE) at the end of Grade 12.",
+    highlights: ['English', 'Kiswahili', 'Mathematics', 'Sciences (Biology/Chemistry/Physics)', 'Social Studies', 'Business Studies', 'Computer Science', 'Agriculture', 'Creative Arts & Design', 'Physical Education'],
   },
 ]
 
@@ -53,105 +85,108 @@ const CALENDAR = [
   { term: 'Term 3', start: '3 August 2026', end: '6 November 2026', exams: '19 Oct – 6 November 2026', holiday: 'December – January' },
 ]
 
-const SUBJECTS_BY_LEVEL: Record<string, string[]> = {
-  'PP1 – PP2': ['Language Activities', 'Mathematical Activities', 'Environmental Activities', 'Psychomotor & Creative Arts', 'Religious Education', 'Music'],
-  'Grade 1–6': ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Religious Education', 'Creative Arts', 'Physical Education'],
-  'Grade 7–9': ['English', 'Kiswahili', 'Mathematics', 'Integrated Science', 'Social Studies', 'Business Studies', 'Agriculture', 'Creative Arts', 'Physical Education', 'Life Skills'],
-  'Grade 10–12 (IGCSE)': ['English Language', 'Mathematics', 'Additional Mathematics', 'Sciences (Biology/Chemistry/Physics)', 'Business Studies', 'Geography', 'History', 'Computer Science', 'Art & Design', 'French'],
-}
+const KEY_ASSESSMENTS = [
+  { level: 'PP1 & PP2', exam: 'Continuous Portfolio Assessment', body: 'Internal', note: 'Play-based formative assessment each term' },
+  { level: 'Grades 1 – 6', exam: 'Continuous Assessment Tests (CATs)', body: 'Internal / KNEC', note: '3 CATs per term + end-of-year school exams' },
+  { level: 'Grade 9', exam: 'Kenya Junior School Education Assessment (KJSEA)', body: 'KNEC', note: 'National exam — gateway to Senior School' },
+  { level: 'Grade 12', exam: 'Kenya Certificate of Secondary Education (KCSE)', body: 'KNEC', note: 'National final examination — university entry' },
+]
 
 export function Academics() {
-  const [curriculum, setCurriculum] = useState<'cbc' | 'igcse'>('cbc')
-  const [level, setLevel] = useState(Object.keys(SUBJECTS_BY_LEVEL)[0])
+  const [active, setActive] = useState('playgroup')
+  const current = SCHOOL_LEVELS.find((l) => l.id === active)!
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal>
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Academics</h1>
-        <p className="mb-16 max-w-2xl text-muted">Dual curriculum excellence — CBC and Cambridge IGCSE — designed to open every door.</p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Programs & Academics</h1>
+        <p className="mb-16 max-w-2xl text-muted">
+          From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.
+        </p>
       </ScrollReveal>
 
-      <ScrollReveal>
-        <h2 className="mb-6 text-3xl font-bold">Curriculum Pathways</h2>
-        <div className="mb-4 flex gap-3">
-          {(['cbc', 'igcse'] as const).map((c) => (
-            <button
-              key={c}
-              onClick={() => setCurriculum(c)}
-              className={cn(
-                'rounded-2xl px-6 py-3 font-semibold transition-all hover:scale-105',
-                curriculum === c ? 'bg-primary text-white dark:bg-gold dark:text-dark' : 'glass glass-border',
-              )}
-            >
-              {c.toUpperCase()}
-            </button>
-          ))}
-        </div>
-      </ScrollReveal>
-
-      {CURRICULA.filter((c) => c.id === curriculum).map((cur) => (
-        <ScrollReveal key={cur.id} delay={0.05}>
-          <GlassCard className="mb-16 p-8">
-            <h3 className="mb-1 text-2xl font-bold text-primary dark:text-gold">{cur.fullName}</h3>
-            <p className="mb-6 text-muted">{cur.desc}</p>
-            <div className="grid gap-8 md:grid-cols-2">
-              <div>
-                <p className="mb-3 font-semibold">Levels Covered</p>
-                <ul className="space-y-2">
-                  {cur.levels.map((l) => (
-                    <li key={l} className="flex items-center gap-3 text-sm">
-                      <span className="h-2 w-2 rounded-full bg-gold flex-shrink-0" />
-                      {l}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="mb-3 font-semibold">Key Features</p>
-                <ul className="space-y-2">
-                  {cur.features.map((f) => (
-                    <li key={f} className="flex items-center gap-3 text-sm">
-                      <span className="h-2 w-2 rounded-full bg-primary dark:bg-gold flex-shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </GlassCard>
-        </ScrollReveal>
-      ))}
-
-      <ScrollReveal>
-        <h2 className="mb-6 text-3xl font-bold">Subjects by Level</h2>
-        <div className="mb-4 flex flex-wrap gap-2">
-          {Object.keys(SUBJECTS_BY_LEVEL).map((lv) => (
-            <button
-              key={lv}
-              onClick={() => setLevel(lv)}
-              className={cn(
-                'rounded-xl px-4 py-2 text-sm font-medium transition-all hover:scale-105',
-                level === lv ? 'bg-primary text-white dark:bg-gold dark:text-dark' : 'glass glass-border',
-              )}
-            >
-              {lv}
-            </button>
-          ))}
-        </div>
-        <GlassCard className="mb-16 p-8">
-          <div className="flex flex-wrap gap-3">
-            {SUBJECTS_BY_LEVEL[level].map((sub) => (
-              <span key={sub} className="rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-sm font-medium">
-                {sub}
-              </span>
+      <ScrollReveal className="mb-16">
+        <div className="rounded-3xl glass glass-border p-6">
+          <p className="mb-4 text-xs font-bold uppercase tracking-widest text-muted">School Structure</p>
+          <div className="flex flex-wrap gap-2">
+            {SCHOOL_LEVELS.map((lv) => (
+              <button
+                key={lv.id}
+                onClick={() => setActive(lv.id)}
+                className={cn(
+                  'flex flex-col rounded-2xl px-4 py-3 text-left transition-all hover:scale-105',
+                  active === lv.id
+                    ? 'bg-primary text-white dark:bg-gold dark:text-dark'
+                    : 'glass glass-border',
+                )}
+              >
+                <span className="text-lg">{lv.icon}</span>
+                <span className="mt-1 text-sm font-bold leading-tight">{lv.name}</span>
+                <span className={cn('text-[10px]', active === lv.id ? 'text-white/70 dark:text-dark/70' : 'text-muted')}>{lv.ages}</span>
+              </button>
             ))}
           </div>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal key={active} delay={0.05} className="mb-16">
+        <div className={cn('rounded-3xl border bg-gradient-to-br p-8', current.color, current.border)}>
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
+            <div className="flex-1">
+              <div className="mb-2 flex items-center gap-3">
+                <span className="text-5xl">{current.icon}</span>
+                <div>
+                  <h2 className="text-3xl font-bold">{current.name}</h2>
+                  <p className="text-sm text-muted">{current.ages}</p>
+                </div>
+              </div>
+              <p className="mt-4 max-w-xl text-muted leading-relaxed">{current.desc}</p>
+            </div>
+            <div className="md:w-80">
+              <p className="mb-3 text-sm font-bold uppercase tracking-wider">Learning Areas</p>
+              <div className="flex flex-wrap gap-2">
+                {current.highlights.map((h) => (
+                  <span key={h} className="rounded-xl border border-gold/30 bg-gold/10 px-3 py-1.5 text-xs font-medium">
+                    {h}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="mb-16">
+        <h2 className="mb-6 text-3xl font-bold">Key National Assessments</h2>
+        <GlassCard className="overflow-x-auto p-0">
+          <table className="w-full min-w-[600px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-theme">
+                <th className="p-4">Level</th>
+                <th className="p-4">Assessment</th>
+                <th className="p-4">Body</th>
+                <th className="p-4">Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {KEY_ASSESSMENTS.map((a) => (
+                <tr key={a.level} className="border-b border-theme/50 transition hover:bg-tint/40 dark:hover:bg-dark-card">
+                  <td className="p-4 font-semibold text-primary dark:text-gold">{a.level}</td>
+                  <td className="p-4 font-medium">{a.exam}</td>
+                  <td className="p-4">
+                    <span className="rounded-full bg-gold/20 px-2 py-1 text-xs font-bold text-primary dark:text-gold">{a.body}</span>
+                  </td>
+                  <td className="p-4 text-muted">{a.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </GlassCard>
       </ScrollReveal>
 
-      <ScrollReveal>
+      <ScrollReveal className="mb-16">
         <h2 className="mb-6 text-3xl font-bold">Grading System</h2>
-        <GlassCard className="mb-16 overflow-x-auto p-0">
+        <GlassCard className="overflow-x-auto p-0">
           <table className="w-full min-w-[500px] text-left text-sm">
             <thead>
               <tr className="border-b border-theme">
@@ -173,7 +208,7 @@ export function Academics() {
         </GlassCard>
       </ScrollReveal>
 
-      <ScrollReveal>
+      <ScrollReveal className="mb-16">
         <h2 className="mb-6 text-3xl font-bold">Academic Calendar 2026</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {CALENDAR.map((t, i) => (
@@ -202,6 +237,19 @@ export function Academics() {
             </ScrollReveal>
           ))}
         </div>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <GlassCard className="p-8 text-center">
+          <h2 className="mb-4 text-3xl font-bold">Ready to Enrol?</h2>
+          <p className="mb-8 max-w-xl mx-auto text-muted">
+            Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/admissions"><Button variant="primary">Apply Now</Button></Link>
+            <Link to="/contact"><Button variant="outline">Speak to an Advisor</Button></Link>
+          </div>
+        </GlassCard>
       </ScrollReveal>
     </div>
   )

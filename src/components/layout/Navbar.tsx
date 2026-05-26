@@ -19,15 +19,13 @@ const CO_CURRICULAR_LINKS = [
 const NAV_LEFT = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
-  { to: '/programs', label: 'Programs' },
-  { to: '/academics', label: 'Academics' },
+  { to: '/academics', label: 'Programs & Academics' },
   { to: '/facilities', label: 'Facilities' },
 ]
 
 const NAV_RIGHT = [
   { to: '/staff', label: 'Staff' },
   { to: '/admissions', label: 'Admissions' },
-  { to: '/blog', label: 'Blog' },
   { to: '/contact', label: 'Contact' },
 ]
 

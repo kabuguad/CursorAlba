@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ChevronRight, Quote } from 'lucide-react'
+import { ArrowRight, Quote } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
@@ -14,18 +14,11 @@ const HERO_IMAGES = [
   'https://picsum.photos/seed/alber-arts/1200/800',
 ]
 
-const PROGRAMS = [
-  { title: 'CBC Excellence', desc: "Kenya's competency-based curriculum from Daycare to Grade 9", img: 'https://picsum.photos/seed/alber-cbc/600/400', to: '/programs' },
-  { title: 'IGCSE Pathway', desc: 'Cambridge international standards for Grades 10–12', img: 'https://picsum.photos/seed/alber-igcse/600/400', to: '/programs' },
-  { title: 'Arts Academy', desc: 'Music, drama & dance — four world-class studios', img: 'https://picsum.photos/seed/alber-music-prog/600/400', to: '/music' },
-  { title: 'Elite Athletics', desc: 'Football, basketball, swimming, volleyball & athletics', img: 'https://picsum.photos/seed/alber-athletics/600/400', to: '/sports' },
-]
-
 const TESTIMONIALS = [
   { name: 'Grace Njeri', role: 'Parent · Grade 5', quote: 'Alber School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
-  { name: 'Brian Mutua', role: 'Student · Form 3', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Alber.' },
-  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', quote: 'Both my children attend Alber. The dual CBC and IGCSE pathways gave us flexibility no other school in the region offers.' },
-  { name: 'Amina Ochieng', role: 'Student · Music Academy', quote: 'I performed my first piano recital here in Form 1. The music teachers are genuinely world-class professionals.' },
+  { name: 'Brian Mutua', role: 'Student · Grade 9', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Alber.' },
+  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', quote: 'Both my children attend Alber. From Playgroup all the way to Senior School — the continuity and quality are simply unmatched in Kirinyaga.' },
+  { name: 'Amina Ochieng', role: 'Student · Music Academy', quote: 'I performed my first piano recital here in Grade 5. The music teachers are genuinely world-class professionals.' },
 ]
 
 const GALLERY = [
@@ -72,7 +65,7 @@ export function Home() {
             <Link to="/admissions">
               <Button variant="primary">Apply Now <ArrowRight className="h-4 w-4" /></Button>
             </Link>
-            <Link to="/programs">
+            <Link to="/academics">
               <Button variant="outline">Explore Programs</Button>
             </Link>
           </div>
@@ -118,36 +111,6 @@ export function Home() {
               </GlassCard>
             </ScrollReveal>
           ))}
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal>
-            <h2 className="mb-2 text-4xl font-bold md:text-5xl">Featured Programs</h2>
-            <p className="mb-12 text-muted">From Daycare to Cambridge IGCSE — world-class pathways for every learner.</p>
-          </ScrollReveal>
-          <div className="grid gap-8 md:grid-cols-2">
-            {PROGRAMS.map((p, i) => (
-              <ScrollReveal key={p.title} delay={i * 0.1}>
-                <Link to={p.to}>
-                  <GlassCard className="group overflow-hidden p-0">
-                    <div className="relative h-48 overflow-hidden">
-                      <img src={p.img} alt={p.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                    </div>
-                    <div className="flex items-center justify-between p-6">
-                      <div>
-                        <h3 className="text-xl font-bold">{p.title}</h3>
-                        <p className="text-sm text-muted">{p.desc}</p>
-                      </div>
-                      <ChevronRight className="h-6 w-6 text-gold transition group-hover:translate-x-1" />
-                    </div>
-                  </GlassCard>
-                </Link>
-              </ScrollReveal>
-            ))}
-          </div>
         </div>
       </section>
 

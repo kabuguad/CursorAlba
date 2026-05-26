@@ -68,6 +68,85 @@ const SCHOOL_LEVELS = [
   },
 ]
 
+const COMPETENCIES = [
+  {
+    icon: '🗣️',
+    title: 'Communication & Collaboration',
+    desc: 'Learners express ideas clearly, listen actively, and work effectively in teams — skills essential in every career and community.',
+  },
+  {
+    icon: '🧠',
+    title: 'Critical Thinking & Problem Solving',
+    desc: 'Structured inquiry, analysis, and creative problem-solving are woven into every subject so learners tackle real challenges with confidence.',
+  },
+  {
+    icon: '💡',
+    title: 'Creativity & Imagination',
+    desc: 'From arts to STEM, learners are challenged to generate original ideas, experiment boldly, and appreciate diverse forms of expression.',
+  },
+  {
+    icon: '🌍',
+    title: 'Citizenship',
+    desc: 'Understanding rights, duties, and active community participation builds responsible, patriotic, and globally aware young Kenyans.',
+  },
+  {
+    icon: '💻',
+    title: 'Digital Literacy',
+    desc: 'ICT is a cross-cutting element at Alber — from responsible internet use and data privacy to coding and digital content creation.',
+  },
+  {
+    icon: '📖',
+    title: 'Learning to Learn',
+    desc: 'Learners develop metacognitive skills — reflection, self-regulation, and adaptability — so they grow continuously throughout life.',
+  },
+  {
+    icon: '💪',
+    title: 'Self-Efficacy',
+    desc: 'Building self-confidence, resilience, and a growth mindset ensures every learner believes in their ability to overcome obstacles.',
+  },
+]
+
+const PILLARS = [
+  {
+    icon: '🌱',
+    title: 'Holistic Development',
+    desc: 'CBC goes beyond rote learning. Lessons and projects integrate knowledge with life skills, fostering creativity, teamwork, and self-confidence alongside academic excellence.',
+    color: 'from-green-500/15 to-emerald-500/5',
+    border: 'border-green-400/30',
+  },
+  {
+    icon: '🎯',
+    title: 'Learner-Centred Teaching',
+    desc: 'Teachers at Alber act as facilitators and mentors — guiding learners through project-based and inquiry-based experiences rather than passive content delivery.',
+    color: 'from-blue-500/15 to-cyan-500/5',
+    border: 'border-blue-400/30',
+  },
+  {
+    icon: '📊',
+    title: 'Continuous Assessment',
+    desc: 'Formative and summative assessments throughout each term replace high-stakes cramming, rewarding skill mastery and reducing exam pressure for every learner.',
+    color: 'from-amber-500/15 to-orange-500/5',
+    border: 'border-amber-400/30',
+  },
+  {
+    icon: '🤝',
+    title: 'Parent & Community Engagement',
+    desc: "CBC actively involves parents and the wider Kirinyaga community. Learning extends beyond the classroom — reinforced at home and through community service projects.",
+    color: 'from-purple-500/15 to-violet-500/5',
+    border: 'border-purple-400/30',
+  },
+]
+
+const VALUES = [
+  { value: 'Responsibility', icon: '⚖️' },
+  { value: 'Respect', icon: '🙏' },
+  { value: 'Unity', icon: '🤝' },
+  { value: 'Integrity', icon: '🌟' },
+  { value: 'Patriotism', icon: '🇰🇪' },
+  { value: 'Care', icon: '❤️' },
+  { value: 'Compassion', icon: '🌸' },
+]
+
 const GRADING = [
   { grade: 'A+', range: '90–100%', desc: 'Exceptional — exceeds all expectations' },
   { grade: 'A', range: '80–89%', desc: 'Excellent — meets all learning outcomes' },
@@ -153,6 +232,72 @@ export function Academics() {
               </div>
             </div>
           </div>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="mb-16">
+        <div className="mb-10 text-center">
+          <p className="mb-2 text-sm font-bold uppercase tracking-widest text-gold">Our Approach</p>
+          <h2 className="text-4xl font-bold">The CBC Difference</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-muted">
+            Kenya's Competency-Based Curriculum moves beyond exams to develop seven core competencies that equip every learner for life, work, and active citizenship.
+          </p>
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {COMPETENCIES.slice(0, 6).map((c, i) => (
+            <ScrollReveal key={c.title} delay={i * 0.07}>
+              <GlassCard className="flex h-full flex-col gap-3 p-6">
+                <span className="text-4xl">{c.icon}</span>
+                <h3 className="font-bold leading-snug">{c.title}</h3>
+                <p className="text-sm leading-relaxed text-muted">{c.desc}</p>
+              </GlassCard>
+            </ScrollReveal>
+          ))}
+          <ScrollReveal delay={0.42} className="sm:col-span-2 lg:col-span-1 xl:col-span-2">
+            <GlassCard className="flex h-full flex-col gap-3 bg-gradient-to-br from-primary/10 to-gold/10 p-6">
+              <span className="text-4xl">{COMPETENCIES[6].icon}</span>
+              <h3 className="font-bold leading-snug">{COMPETENCIES[6].title}</h3>
+              <p className="text-sm leading-relaxed text-muted">{COMPETENCIES[6].desc}</p>
+            </GlassCard>
+          </ScrollReveal>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="mb-16">
+        <div className="mb-8 text-center">
+          <p className="mb-2 text-sm font-bold uppercase tracking-widest text-gold">How We Teach</p>
+          <h2 className="text-4xl font-bold">Our Four Pillars</h2>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          {PILLARS.map((p, i) => (
+            <ScrollReveal key={p.title} delay={i * 0.1}>
+              <div className={cn('h-full rounded-3xl border bg-gradient-to-br p-7', p.color, p.border)}>
+                <span className="mb-4 block text-4xl">{p.icon}</span>
+                <h3 className="mb-2 text-xl font-bold">{p.title}</h3>
+                <p className="leading-relaxed text-muted">{p.desc}</p>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal className="mb-16">
+        <div className="mb-8 text-center">
+          <p className="mb-2 text-sm font-bold uppercase tracking-widest text-gold">Character Formation</p>
+          <h2 className="text-4xl font-bold">Values We Instil</h2>
+          <p className="mx-auto mt-3 max-w-xl text-muted">
+            CBC integrates core societal values into every lesson and interaction — shaping citizens of character alongside scholars of merit.
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-4">
+          {VALUES.map((v, i) => (
+            <ScrollReveal key={v.value} delay={i * 0.06}>
+              <GlassCard className="flex items-center gap-3 px-6 py-4">
+                <span className="text-2xl">{v.icon}</span>
+                <span className="text-base font-semibold">{v.value}</span>
+              </GlassCard>
+            </ScrollReveal>
+          ))}
         </div>
       </ScrollReveal>
 

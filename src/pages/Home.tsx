@@ -140,7 +140,7 @@ export function Home() {
             </div>
 
             {/* ── Director card — centered on small, right-aligned + larger on md ── */}
-            <div className="absolute inset-0 z-10 flex items-center justify-center md:items-center md:justify-end md:pr-10">
+            <div className="absolute inset-0 z-10 flex items-center justify-end pr-6 md:pr-10">
               <div className="flex flex-col items-center gap-3 px-4 text-center">
 
                 {/* Circular photo */}

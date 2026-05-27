@@ -17,8 +17,11 @@ import { Admissions } from './pages/Admissions'
 import { Contact } from './pages/Contact'
 import { Staff } from './pages/Staff'
 import { Login } from './pages/Login'
+import { Blog } from './pages/Blog'
+import { BlogPost } from './pages/BlogPost'
 import { ParentDashboard } from './pages/dashboards/ParentDashboard'
 import { TeacherDashboard } from './pages/dashboards/TeacherDashboard'
+import { StudentDashboard } from './pages/dashboards/StudentDashboard'
 
 import { AdminLayout }          from './pages/dashboards/admin/AdminLayout'
 import { Overview }             from './pages/dashboards/admin/Overview'
@@ -32,6 +35,10 @@ import { FeesManager }          from './pages/dashboards/admin/FeesManager'
 import { AcademicsManager }     from './pages/dashboards/admin/AcademicsManager'
 import { AnnouncementsManager } from './pages/dashboards/admin/AnnouncementsManager'
 import { SettingsManager }      from './pages/dashboards/admin/SettingsManager'
+import { AdmissionsManager }    from './pages/dashboards/admin/AdmissionsManager'
+import { ReportsManager }       from './pages/dashboards/admin/ReportsManager'
+import { TimetableManager }     from './pages/dashboards/admin/TimetableManager'
+import { PaymentsManager }      from './pages/dashboards/admin/PaymentsManager'
 
 function App() {
   return (
@@ -44,24 +51,29 @@ function App() {
               {/* ── Public site — shared Navbar + Footer ── */}
               <Route element={<Layout />}>
                 <Route index element={<Home />} />
-                <Route path="about"        element={<About />} />
-                <Route path="academics"    element={<Academics />} />
-                <Route path="programs"     element={<Navigate to="/academics" replace />} />
-                <Route path="facilities"   element={<Facilities />} />
-                <Route path="co-curricular"element={<CoCurricular />} />
-                <Route path="music"        element={<Music />} />
-                <Route path="drama-dance"  element={<DramaDance />} />
-                <Route path="sports"       element={<Sports />} />
-                <Route path="admissions"   element={<Admissions />} />
-                <Route path="contact"      element={<Contact />} />
-                <Route path="staff"        element={<Staff />} />
-                <Route path="login"        element={<Login />} />
+                <Route path="about"         element={<About />} />
+                <Route path="academics"     element={<Academics />} />
+                <Route path="programs"      element={<Navigate to="/academics" replace />} />
+                <Route path="facilities"    element={<Facilities />} />
+                <Route path="co-curricular" element={<CoCurricular />} />
+                <Route path="music"         element={<Music />} />
+                <Route path="drama-dance"   element={<DramaDance />} />
+                <Route path="sports"        element={<Sports />} />
+                <Route path="admissions"    element={<Admissions />} />
+                <Route path="contact"       element={<Contact />} />
+                <Route path="staff"         element={<Staff />} />
+                <Route path="blog"          element={<Blog />} />
+                <Route path="blog/:id"      element={<BlogPost />} />
+                <Route path="login"         element={<Login />} />
 
                 <Route path="dashboard/parent" element={
                   <ProtectedRoute role="parent"><ParentDashboard /></ProtectedRoute>
                 } />
                 <Route path="dashboard/teacher" element={
                   <ProtectedRoute role="teacher"><TeacherDashboard /></ProtectedRoute>
+                } />
+                <Route path="dashboard/student" element={
+                  <ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>
                 } />
               </Route>
 
@@ -74,17 +86,21 @@ function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route index             element={<Overview />} />
-                <Route path="content"       element={<ContentManager />} />
-                <Route path="blog"          element={<BlogManager />} />
-                <Route path="events"        element={<EventsManager />} />
-                <Route path="gallery"       element={<GalleryManager />} />
-                <Route path="students"      element={<StudentsManager />} />
-                <Route path="staff"         element={<StaffManager />} />
-                <Route path="academics"     element={<AcademicsManager />} />
-                <Route path="fees"          element={<FeesManager />} />
-                <Route path="announcements" element={<AnnouncementsManager />} />
-                <Route path="settings"      element={<SettingsManager />} />
+                <Route index               element={<Overview />} />
+                <Route path="content"      element={<ContentManager />} />
+                <Route path="blog"         element={<BlogManager />} />
+                <Route path="events"       element={<EventsManager />} />
+                <Route path="gallery"      element={<GalleryManager />} />
+                <Route path="admissions"   element={<AdmissionsManager />} />
+                <Route path="students"     element={<StudentsManager />} />
+                <Route path="staff"        element={<StaffManager />} />
+                <Route path="academics"    element={<AcademicsManager />} />
+                <Route path="timetable"    element={<TimetableManager />} />
+                <Route path="payments"     element={<PaymentsManager />} />
+                <Route path="fees"         element={<FeesManager />} />
+                <Route path="announcements"element={<AnnouncementsManager />} />
+                <Route path="reports"      element={<ReportsManager />} />
+                <Route path="settings"     element={<SettingsManager />} />
               </Route>
 
               <Route path="dashboard" element={<Navigate to="/login" replace />} />

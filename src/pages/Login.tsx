@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Shield, GraduationCap, Users, BookOpen } from 'lucide-react'
+import { Shield, GraduationCap, Users, BookOpen, UserCircle } from 'lucide-react'
 import { useAuth, type UserRole } from '../contexts/AuthContext'
 import { GlassCard } from '../components/ui/GlassCard'
 import { Button } from '../components/ui/Button'
 
 const DEMOS: { role: UserRole; label: string; icon: typeof Shield; email: string; desc: string }[] = [
-  { role: 'admin', label: 'Admin', icon: Shield, email: 'admin@alberschool.ke', desc: 'Full system access' },
-  { role: 'teacher', label: 'Teacher', icon: GraduationCap, email: 'teacher@alberschool.ke', desc: 'Grades & attendance' },
-  { role: 'parent', label: 'Parent', icon: Users, email: 'parent@alberschool.ke', desc: 'Student progress & fees' },
+  { role: 'admin',   label: 'Admin',   icon: Shield,        email: 'admin@alberschool.ke',   desc: 'Full system access'       },
+  { role: 'teacher', label: 'Teacher', icon: GraduationCap, email: 'teacher@alberschool.ke', desc: 'Grades & attendance'       },
+  { role: 'parent',  label: 'Parent',  icon: Users,         email: 'parent@alberschool.ke',  desc: 'Progress & fees'          },
+  { role: 'student', label: 'Student', icon: UserCircle,    email: 'student@alberschool.ke', desc: 'My classes & homework'    },
 ]
 
 export function Login() {
@@ -35,7 +36,7 @@ export function Login() {
 
         <GlassCard className="p-8">
           <p className="mb-4 text-sm font-semibold text-muted uppercase tracking-widest">Select Demo Role</p>
-          <div className="mb-6 grid grid-cols-3 gap-2">
+          <div className="mb-6 grid grid-cols-4 gap-2">
             {DEMOS.map((d) => (
               <button
                 key={d.role}

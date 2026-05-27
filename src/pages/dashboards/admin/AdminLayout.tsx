@@ -4,7 +4,7 @@ import {
   LayoutDashboard, FileText, BookOpen, CalendarDays, ImageIcon,
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
-  Menu, Bell, School, X,
+  Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
@@ -14,42 +14,46 @@ const NAV = [
   {
     group: 'Overview',
     items: [
-      { label: 'Dashboard',    icon: LayoutDashboard, path: '/dashboard/admin'              },
+      { label: 'Dashboard',     icon: LayoutDashboard, path: '/dashboard/admin'                  },
+      { label: 'Reports',       icon: BarChart2,        path: '/dashboard/admin/reports'          },
     ],
   },
   {
     group: 'Content',
     items: [
-      { label: 'Home & About', icon: FileText,         path: '/dashboard/admin/content'      },
-      { label: 'Blog Posts',   icon: BookOpen,         path: '/dashboard/admin/blog'         },
-      { label: 'Events',       icon: CalendarDays,     path: '/dashboard/admin/events'       },
-      { label: 'Gallery',      icon: ImageIcon,        path: '/dashboard/admin/gallery'      },
+      { label: 'Home & About',  icon: FileText,         path: '/dashboard/admin/content'          },
+      { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
+      { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },
+      { label: 'Gallery',       icon: ImageIcon,        path: '/dashboard/admin/gallery'          },
     ],
   },
   {
     group: 'School',
     items: [
-      { label: 'Students',     icon: Users,            path: '/dashboard/admin/students'     },
-      { label: 'Staff',        icon: UserCheck,        path: '/dashboard/admin/staff'        },
-      { label: 'Academics',    icon: GraduationCap,    path: '/dashboard/admin/academics'    },
+      { label: 'Admissions',    icon: ClipboardList,    path: '/dashboard/admin/admissions'       },
+      { label: 'Students',      icon: Users,            path: '/dashboard/admin/students'         },
+      { label: 'Staff',         icon: UserCheck,        path: '/dashboard/admin/staff'            },
+      { label: 'Academics',     icon: GraduationCap,    path: '/dashboard/admin/academics'        },
+      { label: 'Timetable',     icon: Clock,            path: '/dashboard/admin/timetable'        },
     ],
   },
   {
     group: 'Finances',
     items: [
-      { label: 'Fee Structure',icon: Banknote,         path: '/dashboard/admin/fees'         },
+      { label: 'Payments',      icon: CreditCard,       path: '/dashboard/admin/payments'         },
+      { label: 'Fee Structure', icon: Banknote,         path: '/dashboard/admin/fees'             },
     ],
   },
   {
     group: 'Comms',
     items: [
-      { label: 'Announcements',icon: Megaphone,        path: '/dashboard/admin/announcements'},
+      { label: 'Announcements', icon: Megaphone,        path: '/dashboard/admin/announcements'    },
     ],
   },
   {
     group: 'System',
     items: [
-      { label: 'Site Settings',icon: Settings,         path: '/dashboard/admin/settings'     },
+      { label: 'Site Settings', icon: Settings,         path: '/dashboard/admin/settings'         },
     ],
   },
 ]

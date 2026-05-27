@@ -18,7 +18,7 @@ export const programLevels = [
     name: 'Junior Secondary',
     ages: '13–15 years',
     description: 'Pre-IGCSE pathways with STEM labs and leadership development.',
-    image: 'https://images.unsplash.com/photo-1523050854898-fb9d7d4f9c0e?w=800&h=600&fit=crop',
+    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop',
   },
   {
     id: 'senior',

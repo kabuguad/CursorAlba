@@ -150,16 +150,16 @@ export function Navbar() {
               </NavLink>
             ))}
 
-            <button
-              onClick={() => setTourOpen(true)}
-              className="ml-1 flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 px-3.5 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-primary/40 hover:shadow-lg dark:from-gold dark:to-gold/80 dark:text-black"
-            >
-              <Orbit className="h-4 w-4 animate-spin" style={{ animationDuration: '8s' }} />
-              360° Virtual Tour
-            </button>
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTourOpen(true)}
+              className="hidden xl:flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 px-3.5 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg dark:from-gold dark:to-gold/80 dark:text-black"
+            >
+              <Orbit className="h-4 w-4 animate-spin" style={{ animationDuration: '8s' }} />
+              360° Tour
+            </button>
             <ThemeToggle />
             {user ? (
               <>

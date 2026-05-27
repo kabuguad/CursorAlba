@@ -90,70 +90,121 @@ export function Home() {
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col items-center gap-12 px-4 lg:flex-row lg:items-center">
-        <ScrollReveal className="flex-1 lg:pr-8">
-          <span className="mb-4 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
-            Kutus · Kirinyaga County · Adjacent to Governor's Offices
-          </span>
-          <h1 className="mb-6 text-5xl font-extrabold leading-[1.1] text-foreground md:text-6xl lg:text-7xl">
-            Where Excellence
-            <span className="block text-gold">Meets Tomorrow</span>
-          </h1>
-          <p className="mb-8 max-w-xl text-lg text-muted">
-            Alber School — premium private education in the heart of Kirinyaga. 2,000+ learners. 120+ expert educators. Academics, sports, music, and performing arts under one roof.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link to="/admissions">
-              <Button variant="primary">Apply Now <ArrowRight className="h-4 w-4" /></Button>
-            </Link>
-            <Link to="/academics">
-              <Button variant="outline">Explore Programs</Button>
-            </Link>
-          </div>
-        </ScrollReveal>
+      {/* ── Hero — full-bleed magazine cover ── */}
+      <section className="relative flex min-h-screen flex-col overflow-hidden">
 
-        <ScrollReveal delay={0.2} className="relative flex-1 w-full">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl glass glass-border">
-            {HERO_IMAGES.map((img, i) => (
-              <img
-                key={img}
-                src={img}
-                alt="Alber School Campus"
-                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
-              />
-            ))}
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-              {HERO_IMAGES.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSlide(i)}
-                  className={`h-2 rounded-full transition-all ${i === slide ? 'w-8 bg-gold' : 'w-2 bg-white/50'}`}
+        {/* Background slideshow */}
+        {HERO_IMAGES.map((img, i) => (
+          <img
+            key={img}
+            src={img}
+            alt="Alber School Campus"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
+          />
+        ))}
+
+        {/* Rich gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+
+        {/* Gold accent bar — left edge */}
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+
+        {/* Slide dots — bottom right */}
+        <div className="absolute bottom-28 right-8 z-10 flex flex-col gap-2">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setSlide(i)}
+              className={`rounded-full transition-all ${i === slide ? 'h-8 w-2 bg-gold' : 'h-2 w-2 bg-white/40'}`}
+            />
+          ))}
+        </div>
+
+        {/* Main content */}
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-8 py-24 lg:px-16">
+          <div className="max-w-3xl">
+
+            {/* Top badge */}
+            <div className="mb-8 flex items-center gap-3">
+              <div className="h-px w-10 bg-gold" />
+              <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">
+                Kutus · Kirinyaga County · Est. 2005
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.8rem, 7vw, 6rem)' }}>
+              Where Excellence
+              <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
+                Meets Tomorrow
+              </span>
+            </h1>
+
+            {/* Divider */}
+            <div className="mb-8 flex items-center gap-4">
+              <div className="h-px flex-1 max-w-[80px] bg-gold/60" />
+              <span className="text-xs uppercase tracking-widest text-white/50">Alber School</span>
+              <div className="h-px flex-1 max-w-[80px] bg-gold/60" />
+            </div>
+
+            {/* Tagline */}
+            <p className="mb-10 max-w-xl text-lg leading-relaxed text-white/80">
+              Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.
+            </p>
+
+            {/* CTAs */}
+            <div className="mb-14 flex flex-wrap gap-4">
+              <Link to="/admissions">
+                <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
+              </Link>
+              <Link to="/academics">
+                <button className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+                  Explore Programs <ArrowRight className="h-4 w-4" />
+                </button>
+              </Link>
+            </div>
+
+            {/* Director's quote card */}
+            <div className="flex items-start gap-5 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md max-w-xl">
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-gold/60">
+                <img
+                  src="https://picsum.photos/seed/director-alber/200/200"
+                  alt="Mr. Albert Njeru"
+                  className="h-full w-full object-cover"
                 />
-              ))}
+              </div>
+              <div>
+                <p className="text-sm italic leading-relaxed text-white/80">
+                  "Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every day."
+                </p>
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="h-px w-6 bg-gold" />
+                  <span className="text-xs font-bold text-gold">Mr. Albert Njeru</span>
+                  <span className="text-xs text-white/50">· Founder & Director</span>
+                </div>
+              </div>
             </div>
           </div>
-        </ScrollReveal>
-      </section>
+        </div>
 
-      {/* ── Stats ── */}
-      <section className="bg-tint/50 py-16 dark:bg-dark-card/40">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { end: 2000, suffix: '+', label: 'Students Enrolled' },
-            { end: 120, suffix: '+', label: 'Expert Staff' },
-            { end: 8, suffix: '', label: 'Modern School Buses' },
-            { end: 6, suffix: '', label: 'Sports Disciplines' },
-          ].map((stat) => (
-            <ScrollReveal key={stat.label}>
-              <GlassCard className="p-8 text-center">
-                <p className="text-5xl font-bold text-primary dark:text-gold">
+        {/* Stats bar anchored at the very bottom */}
+        <div className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-white/10 lg:grid-cols-4">
+            {[
+              { end: 2000, suffix: '+', label: 'Students Enrolled' },
+              { end: 120, suffix: '+', label: 'Expert Educators' },
+              { end: 8, suffix: '', label: 'School Buses' },
+              { end: 6, suffix: '', label: 'Sports Disciplines' },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
+                <span className="text-3xl font-extrabold text-gold">
                   <AnimatedCounter end={stat.end} suffix={stat.suffix} />
-                </p>
-                <p className="mt-2 text-muted">{stat.label}</p>
-              </GlassCard>
-            </ScrollReveal>
-          ))}
+                </span>
+                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">{stat.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, NavLink } from 'react-router-dom'
-import { X, ChevronDown } from 'lucide-react'
+import { X, ChevronDown, Orbit } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
 interface NavLink {
@@ -20,11 +20,12 @@ interface MobileDrawerProps {
   onClose: () => void
   links: NavLink[]
   coLinks: CoLink[]
+  onTour: () => void
 }
 
 const CO_CURRICULAR_PATHS = ['/co-curricular', '/sports', '/music', '/drama-dance']
 
-export function MobileDrawer({ open, onClose, links, coLinks }: MobileDrawerProps) {
+export function MobileDrawer({ open, onClose, links, coLinks, onTour }: MobileDrawerProps) {
   const [coOpen, setCoOpen] = useState(false)
 
   const mainLinks = links.filter(
@@ -114,10 +115,18 @@ export function MobileDrawer({ open, onClose, links, coLinks }: MobileDrawerProp
                 </AnimatePresence>
               </div>
 
+              <button
+                onClick={onTour}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 px-4 py-3 text-center font-bold text-white dark:from-gold dark:to-gold/80 dark:text-black"
+              >
+                <Orbit className="h-4 w-4 animate-spin" style={{ animationDuration: '8s' }} />
+                360° Virtual Tour
+              </button>
+
               <Link
                 to="/login"
                 onClick={onClose}
-                className="mt-4 rounded-xl bg-gold px-4 py-3 text-center font-bold text-dark"
+                className="mt-2 rounded-xl bg-gold px-4 py-3 text-center font-bold text-dark"
               >
                 Portal Login
               </Link>

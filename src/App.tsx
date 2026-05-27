@@ -36,12 +36,21 @@ import { TeacherTimetable }     from './pages/dashboards/teacher/TeacherTimetabl
 import { TeacherMessages }      from './pages/dashboards/teacher/TeacherMessages'
 
 import { ParentPortalLayout }   from './pages/dashboards/parent/ParentPortalLayout'
+import { ParentOverview }       from './pages/dashboards/parent/ParentOverview'
 import { ParentGrades }         from './pages/dashboards/parent/ParentGrades'
 import { ParentAttendance }     from './pages/dashboards/parent/ParentAttendance'
 import { ParentFees }           from './pages/dashboards/parent/ParentFees'
 import { ParentHomework }       from './pages/dashboards/parent/ParentHomework'
 import { ParentTimetable }      from './pages/dashboards/parent/ParentTimetable'
 import { ParentNotices }        from './pages/dashboards/parent/ParentNotices'
+import { ParentMessages }       from './pages/dashboards/parent/ParentMessages'
+import { ParentReportCards }    from './pages/dashboards/parent/ParentReportCards'
+import { ParentCalendar }       from './pages/dashboards/parent/ParentCalendar'
+import { ParentCoCurricular }   from './pages/dashboards/parent/ParentCoCurricular'
+import { ParentLeaveRequest }   from './pages/dashboards/parent/ParentLeaveRequest'
+import { ParentMeetings }       from './pages/dashboards/parent/ParentMeetings'
+import { ParentTransport }      from './pages/dashboards/parent/ParentTransport'
+import { ParentSettings }       from './pages/dashboards/parent/ParentSettings'
 
 import { AdminLayout }          from './pages/dashboards/admin/AdminLayout'
 import { Overview }             from './pages/dashboards/admin/Overview'
@@ -92,11 +101,11 @@ function App() {
                 path="dashboard/student"
                 element={<ProtectedRoute role="student"><StudentPortalLayout /></ProtectedRoute>}
               >
-                <Route index                  element={<StudentOverview />} />
-                <Route path="grades"          element={<StudentGrades />} />
-                <Route path="homework"        element={<StudentHomework />} />
-                <Route path="timetable"       element={<StudentTimetable />} />
-                <Route path="notices"         element={<StudentNotices />} />
+                <Route index             element={<StudentOverview />} />
+                <Route path="grades"     element={<StudentGrades />} />
+                <Route path="homework"   element={<StudentHomework />} />
+                <Route path="timetable"  element={<StudentTimetable />} />
+                <Route path="notices"    element={<StudentNotices />} />
               </Route>
 
               {/* ── Teacher Portal ── */}
@@ -104,12 +113,12 @@ function App() {
                 path="dashboard/teacher"
                 element={<ProtectedRoute role="teacher"><TeacherPortalLayout /></ProtectedRoute>}
               >
-                <Route index                  element={<TeacherGrades />} />
-                <Route path="attendance"      element={<TeacherAttendance />} />
-                <Route path="assignments"     element={<TeacherAssignments />} />
-                <Route path="myclass"         element={<TeacherClass />} />
-                <Route path="timetable"       element={<TeacherTimetable />} />
-                <Route path="messages"        element={<TeacherMessages />} />
+                <Route index              element={<TeacherGrades />} />
+                <Route path="attendance"  element={<TeacherAttendance />} />
+                <Route path="assignments" element={<TeacherAssignments />} />
+                <Route path="myclass"     element={<TeacherClass />} />
+                <Route path="timetable"   element={<TeacherTimetable />} />
+                <Route path="messages"    element={<TeacherMessages />} />
               </Route>
 
               {/* ── Parent Portal ── */}
@@ -117,12 +126,21 @@ function App() {
                 path="dashboard/parent"
                 element={<ProtectedRoute role="parent"><ParentPortalLayout /></ProtectedRoute>}
               >
-                <Route index                  element={<ParentGrades />} />
-                <Route path="attendance"      element={<ParentAttendance />} />
-                <Route path="fees"            element={<ParentFees />} />
-                <Route path="homework"        element={<ParentHomework />} />
-                <Route path="timetable"       element={<ParentTimetable />} />
-                <Route path="notices"         element={<ParentNotices />} />
+                <Route index                   element={<ParentOverview />} />
+                <Route path="grades"           element={<ParentGrades />} />
+                <Route path="attendance"       element={<ParentAttendance />} />
+                <Route path="fees"             element={<ParentFees />} />
+                <Route path="homework"         element={<ParentHomework />} />
+                <Route path="timetable"        element={<ParentTimetable />} />
+                <Route path="notices"          element={<ParentNotices />} />
+                <Route path="messages"         element={<ParentMessages />} />
+                <Route path="report-cards"     element={<ParentReportCards />} />
+                <Route path="calendar"         element={<ParentCalendar />} />
+                <Route path="co-curricular"    element={<ParentCoCurricular />} />
+                <Route path="leave"            element={<ParentLeaveRequest />} />
+                <Route path="meetings"         element={<ParentMeetings />} />
+                <Route path="transport"        element={<ParentTransport />} />
+                <Route path="settings"         element={<ParentSettings />} />
               </Route>
 
               {/* ── Admin Portal ── */}
@@ -130,21 +148,21 @@ function App() {
                 path="dashboard/admin"
                 element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}
               >
-                <Route index                  element={<Overview />} />
-                <Route path="content"         element={<ContentManager />} />
-                <Route path="blog"            element={<BlogManager />} />
-                <Route path="events"          element={<EventsManager />} />
-                <Route path="gallery"         element={<GalleryManager />} />
-                <Route path="admissions"      element={<AdmissionsManager />} />
-                <Route path="students"        element={<StudentsManager />} />
-                <Route path="staff"           element={<StaffManager />} />
-                <Route path="academics"       element={<AcademicsManager />} />
-                <Route path="timetable"       element={<TimetableManager />} />
-                <Route path="payments"        element={<PaymentsManager />} />
-                <Route path="fees"            element={<FeesManager />} />
-                <Route path="announcements"   element={<AnnouncementsManager />} />
-                <Route path="reports"         element={<ReportsManager />} />
-                <Route path="settings"        element={<SettingsManager />} />
+                <Route index                element={<Overview />} />
+                <Route path="content"       element={<ContentManager />} />
+                <Route path="blog"          element={<BlogManager />} />
+                <Route path="events"        element={<EventsManager />} />
+                <Route path="gallery"       element={<GalleryManager />} />
+                <Route path="admissions"    element={<AdmissionsManager />} />
+                <Route path="students"      element={<StudentsManager />} />
+                <Route path="staff"         element={<StaffManager />} />
+                <Route path="academics"     element={<AcademicsManager />} />
+                <Route path="timetable"     element={<TimetableManager />} />
+                <Route path="payments"      element={<PaymentsManager />} />
+                <Route path="fees"          element={<FeesManager />} />
+                <Route path="announcements" element={<AnnouncementsManager />} />
+                <Route path="reports"       element={<ReportsManager />} />
+                <Route path="settings"      element={<SettingsManager />} />
               </Route>
 
               <Route path="dashboard" element={<Navigate to="/login" replace />} />

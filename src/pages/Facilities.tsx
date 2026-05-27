@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X } from 'lucide-react'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Link } from 'react-router-dom'
@@ -106,32 +108,52 @@ export function Facilities() {
       </div>
 
       {active && (
-        <ScrollReveal className="mt-12">
-          <GlassCard className="overflow-hidden p-0 lg:flex">
-            <img
-              src={active.img}
-              alt={active.name}
-              className="h-64 w-full object-cover lg:h-auto lg:w-1/2"
-            />
-            <div className="p-8 lg:w-1/2">
-              <span className="text-4xl">{active.icon}</span>
-              <h2 className="mt-4 text-3xl font-bold text-primary dark:text-gold">{active.name}</h2>
-              <p className="mt-4 text-muted leading-relaxed">{active.desc}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {active.highlights.map((h) => (
-                  <span key={h} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium">
-                    {h}
-                  </span>
-                ))}
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+            onClick={() => setSelected(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass glass-border relative flex h-full max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-surface-elevated text-foreground lg:flex-row"
+            >
+              <button
+                onClick={() => setSelected(null)}
+                className="absolute top-4 right-4 z-10 rounded-xl p-2 hover:bg-primary/10"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              <img
+                src={active.img}
+                alt={active.name}
+                className="h-64 w-full object-cover lg:h-auto lg:w-1/2"
+              />
+              <div className="flex-1 overflow-y-auto p-8 lg:w-1/2">
+                <span className="text-4xl">{active.icon}</span>
+                <h2 className="mt-4 text-3xl font-bold text-primary dark:text-gold">{active.name}</h2>
+                <p className="mt-4 text-muted leading-relaxed">{active.desc}</p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {active.highlights.map((h) => (
+                    <span key={h} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium">
+                      {h}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-8">
+                  <Link to="/admissions" onClick={() => setSelected(null)}>
+                    <Button variant="primary">Apply for Admission</Button>
+                  </Link>
+                </div>
               </div>
-              <div className="mt-8">
-                <Link to="/admissions">
-                  <Button variant="primary">Apply for Admission</Button>
-                </Link>
-              </div>
-            </div>
-          </GlassCard>
-        </ScrollReveal>
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
       )}
 
       <ScrollReveal className="mt-16 text-center">

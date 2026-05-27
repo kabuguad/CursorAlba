@@ -3,7 +3,7 @@ import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { teachers, departments } from '../../data/teachers'
 import type { Department, Teacher } from '../../data/types'
 import { GlassCard } from '../ui/GlassCard'
-import { TeacherSheet } from './TeacherSheet'
+import { TeacherModal } from './TeacherSheet'
 import { ScrollReveal } from '../ui/ScrollReveal'
 import { cn } from '../../lib/utils'
 
@@ -86,11 +86,11 @@ export function StaffDirectory() {
         Showing {visible.length} of {filtered.length} staff
       </p>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {visible.map((t, i) => (
-          <ScrollReveal key={t.id} delay={(i % 4) * 0.05}>
+          <ScrollReveal key={t.id} delay={(i % 5) * 0.05}>
             <GlassCard onClick={() => setSelected(t)} className="overflow-hidden p-0">
-              <div className="aspect-[4/5] overflow-hidden">
+              <div className="aspect-[3/4] overflow-hidden">
                 <img
                   src={t.image}
                   alt={t.name}
@@ -98,10 +98,10 @@ export function StaffDirectory() {
                   loading="lazy"
                 />
               </div>
-              <div className="p-4">
-                <h3 className="font-bold">{t.name}</h3>
-                <p className="text-sm text-primary dark:text-gold">{t.title}</p>
-                <span className="mt-2 inline-block rounded-full bg-tint px-2 py-0.5 text-xs text-primary dark:bg-dark-card dark:text-gold">
+              <div className="p-2">
+                <h3 className="font-bold text-xs">{t.name}</h3>
+                <p className="text-[10px] text-primary dark:text-gold">{t.title}</p>
+                <span className="mt-1 inline-block rounded-full bg-tint px-1.5 py-0.5 text-[8px] text-primary dark:bg-dark-card dark:text-gold">
                   {t.department}
                 </span>
               </div>
@@ -147,7 +147,7 @@ export function StaffDirectory() {
         </div>
       )}
 
-      <TeacherSheet teacher={selected} onClose={() => setSelected(null)} />
+      <TeacherModal open={!!selected} teacher={selected} onClose={() => setSelected(null)} />
     </section>
   )
 }

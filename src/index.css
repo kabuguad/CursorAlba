@@ -197,52 +197,85 @@ body.dark {
   display: none !important;
 }
 
-/* Hotspot base */
-.pano-hotspot {
-  width: 36px !important;
-  height: 36px !important;
-  background: rgba(232, 184, 75, 0.2) !important;
-  border: 2px solid #E8B84B !important;
-  border-radius: 50% !important;
+/* ── Navigation hotspot container ── */
+.pnlm-hotspot.pano-nav-hs {
+  width: auto !important;
+  height: auto !important;
+  background: transparent !important;
+  border: none !important;
+  overflow: visible !important;
   cursor: pointer;
-  position: relative;
-  transition: transform 0.2s, background 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  /* Pannellum centers by translating -50%,-50%, so we stack content downward */
 }
 
-.pano-hotspot::before {
-  content: '';
+/* Pulsing outer ring */
+.pano-hs-ring {
   position: absolute;
-  inset: -6px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: rgba(232, 184, 75, 0.15);
-  animation: pano-pulse 2s ease-out infinite;
+  border: 2px solid rgba(232, 184, 75, 0.5);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  animation: pano-ring-pulse 2.2s ease-out infinite;
+  pointer-events: none;
 }
 
-@keyframes pano-pulse {
-  0%   { transform: scale(0.8); opacity: 0.8; }
-  100% { transform: scale(1.6); opacity: 0; }
+@keyframes pano-ring-pulse {
+  0%   { transform: translate(-50%, -50%) scale(0.7); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0;   }
 }
 
-.pano-hotspot:hover {
-  background: rgba(232, 184, 75, 0.5) !important;
-  transform: scale(1.15);
+/* Gold circle button with arrow */
+.pano-hs-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(232, 184, 75, 0.25);
+  border: 2px solid #E8B84B;
+  color: #E8B84B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 12px rgba(232, 184, 75, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
-/* Tooltip */
-.pnlm-tooltip span {
-  background: rgba(0,0,0,0.85) !important;
-  color: #E8B84B !important;
-  border: 1px solid rgba(232,184,75,0.4) !important;
-  border-radius: 8px !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  padding: 5px 10px !important;
-  backdrop-filter: blur(8px);
+.pano-nav-hs:hover .pano-hs-circle {
+  background: rgba(232, 184, 75, 0.55);
+  transform: scale(1.18);
+  box-shadow: 0 0 24px rgba(232, 184, 75, 0.6);
+}
+
+/* Always-visible destination label */
+.pano-hs-label {
+  background: rgba(0, 0, 0, 0.78);
+  color: #E8B84B;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(232, 184, 75, 0.35);
   white-space: nowrap;
+  backdrop-filter: blur(8px);
+  margin-top: 4px;
+  transition: background 0.2s;
+  position: relative;
+  z-index: 1;
 }
 
-.pnlm-tooltip span:after {
-  border-top-color: rgba(0,0,0,0.85) !important;
+.pano-nav-hs:hover .pano-hs-label {
+  background: rgba(232, 184, 75, 0.2);
 }
 
 /* Controls */
@@ -253,8 +286,8 @@ body.dark {
 
 .pnlm-zoom-controls,
 .pnlm-fullscreen-toggle-button {
-  background: rgba(0,0,0,0.7) !important;
-  border: 1px solid rgba(255,255,255,0.15) !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   border-radius: 8px !important;
   backdrop-filter: blur(8px);
 }

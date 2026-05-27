@@ -128,8 +128,8 @@ export function Home() {
               />
             ))}
 
-            {/* Subtle bottom gradient to bleed into the content section */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/20" />
 
             {/* School name badge — top left */}
             <div className="absolute top-4 left-5 z-10 flex items-center gap-2">
@@ -137,6 +137,47 @@ export function Home() {
               <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold drop-shadow">
                 Kutus · Kirinyaga County
               </span>
+            </div>
+
+            {/* ── Director card — centered over the image ── */}
+            <div className="absolute inset-0 z-10 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3 px-4 text-center">
+
+                {/* Circular photo */}
+                <div className="relative">
+                  <div className="absolute -inset-2 animate-pulse rounded-full border border-gold/30" />
+                  <div className="absolute -inset-0.5 animate-ping rounded-full border border-gold/20" style={{ animationDuration: '2.8s' }} />
+                  <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-gold shadow-[0_0_20px_4px_rgba(232,184,75,0.4)] sm:h-24 sm:w-24">
+                    <img
+                      src="https://picsum.photos/seed/director-alber/400/400"
+                      alt="Mr. Albert Njeru"
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="absolute bottom-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-[9px] font-bold text-black">✓</div>
+                </div>
+
+                {/* Glass card: name + quote */}
+                <div className="relative max-w-[220px] overflow-hidden rounded-2xl border border-white/20 bg-black/50 px-4 py-3 backdrop-blur-md sm:max-w-[280px] sm:px-5 sm:py-4">
+                  {/* Corner accents */}
+                  <div className="absolute -top-1 -left-1 h-4 w-4 border-t border-l border-gold" />
+                  <div className="absolute -top-1 -right-1 h-4 w-4 border-t border-r border-gold" />
+                  <div className="absolute -bottom-1 -left-1 h-4 w-4 border-b border-l border-gold" />
+                  <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b border-r border-gold" />
+
+                  <p className="text-sm font-extrabold uppercase tracking-wide text-white sm:text-base">Mr. Albert Njeru</p>
+                  <div className="my-1.5 flex items-center justify-center gap-2">
+                    <div className="h-px w-4 bg-gold" />
+                    <p className="text-[9px] font-semibold uppercase tracking-widest text-gold sm:text-[10px]">Founder & Director</p>
+                    <div className="h-px w-4 bg-gold" />
+                  </div>
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+                  <p className="mt-2 text-[10px] italic leading-relaxed text-white/70 sm:text-[11px]">
+                    "Every child in Kirinyaga deserves an education that changes the trajectory of a family."
+                  </p>
+                </div>
+
+              </div>
             </div>
 
             {/* Horizontal slide dots — bottom centre */}
@@ -200,21 +241,6 @@ export function Home() {
                 </button>
               </Link>
             </div>
-          </div>
-
-          {/* Compact director strip — medium screens */}
-          <div className="hidden sm:flex lg:hidden items-center gap-4 bg-black/80 border-t border-white/10 px-10 py-4">
-            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-gold shadow-[0_0_12px_2px_rgba(232,184,75,0.35)]">
-              <img src="https://picsum.photos/seed/director-alber/400/400" alt="Mr. Albert Njeru" className="h-full w-full object-cover object-top" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-bold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
-              <p className="text-[10px] text-gold/80 uppercase tracking-widest">Founder & Director</p>
-            </div>
-            <div className="h-px flex-1 bg-white/10" />
-            <p className="max-w-xs text-[11px] italic leading-relaxed text-white/60 hidden md:block">
-              "Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations."
-            </p>
           </div>
 
           {/* Stats bar — mobile */}

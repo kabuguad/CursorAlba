@@ -185,9 +185,9 @@ export function Academics() {
       </ScrollReveal>
 
       <ScrollReveal className="mb-16">
-        <div className="rounded-3xl glass glass-border p-6">
+        <div className="rounded-3xl glass glass-border p-6 text-center">
           <p className="mb-4 text-xs font-bold uppercase tracking-widest text-muted">School Structure</p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {SCHOOL_LEVELS.map((lv) => (
               <button
                 key={lv.id}

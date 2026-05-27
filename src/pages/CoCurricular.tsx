@@ -103,7 +103,7 @@ export function CoCurricular() {
       </ScrollReveal>
 
       <ScrollReveal>
-        <div className="mb-10 flex flex-wrap gap-3">
+        <div className="mb-10 flex flex-wrap justify-center gap-3">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
@@ -124,11 +124,11 @@ export function CoCurricular() {
 
       <ScrollReveal key={active} delay={0.05}>
         <div className={cn('mb-10 rounded-3xl border bg-gradient-to-br p-8', current.color, current.border)}>
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col items-center gap-3 text-center">
             <span className="text-5xl">{current.icon}</span>
             <div>
               <h2 className="text-3xl font-bold">{current.heading}</h2>
-              <p className="mt-2 max-w-3xl text-muted">{current.intro}</p>
+              <p className="mx-auto mt-2 max-w-3xl text-muted">{current.intro}</p>
             </div>
           </div>
         </div>

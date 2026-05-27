@@ -116,7 +116,7 @@ export function Home() {
 
       <section className="bg-tint/30 py-20 dark:bg-dark-card/30">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal>
+          <ScrollReveal className="text-center">
             <h2 className="mb-12 text-4xl font-bold">Upcoming Events</h2>
           </ScrollReveal>
           <div className="relative border-l-2 border-gold pl-8">
@@ -167,7 +167,7 @@ export function Home() {
 
       <section className="pb-20">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal>
+          <ScrollReveal className="text-center">
             <h2 className="mb-8 text-4xl font-bold">Life at Alber</h2>
           </ScrollReveal>
           <div className="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-3">

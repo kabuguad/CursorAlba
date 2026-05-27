@@ -103,13 +103,13 @@ export function CoCurricular() {
       </ScrollReveal>
 
       <ScrollReveal>
-        <div className="mb-10 flex flex-wrap justify-center gap-3">
+        <div className="mb-10 flex overflow-x-auto pb-2 scrollbar-hide justify-start md:justify-center gap-3">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActive(cat.id)}
               className={cn(
-                'flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition-all hover:scale-105',
+                'flex items-center flex-shrink-0 gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition-all hover:scale-105 whitespace-nowrap',
                 active === cat.id
                   ? 'bg-primary text-white dark:bg-gold dark:text-dark'
                   : 'glass glass-border',

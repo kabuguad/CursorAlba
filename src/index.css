@@ -120,6 +120,14 @@ body.dark {
   border-radius: 4px;
 }
 
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 .page-enter {
   animation: pageIn 0.5s ease forwards;
 }

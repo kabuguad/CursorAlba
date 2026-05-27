@@ -187,13 +187,13 @@ export function Academics() {
       <ScrollReveal className="mb-16">
         <div className="rounded-3xl glass glass-border p-6 text-center">
           <p className="mb-4 text-xs font-bold uppercase tracking-widest text-muted">School Structure</p>
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex overflow-x-auto pb-2 scrollbar-hide justify-start md:justify-center gap-2">
             {SCHOOL_LEVELS.map((lv) => (
               <button
                 key={lv.id}
                 onClick={() => setActive(lv.id)}
                 className={cn(
-                  'flex flex-col rounded-2xl px-4 py-3 text-left transition-all hover:scale-105',
+                  'flex flex-col flex-shrink-0 rounded-2xl px-4 py-3 text-center transition-all hover:scale-105 min-w-[100px]',
                   active === lv.id
                     ? 'bg-primary text-white dark:bg-gold dark:text-dark'
                     : 'glass glass-border',

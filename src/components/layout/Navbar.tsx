@@ -52,8 +52,8 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-3">
-        <nav className="glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated/80 px-4 py-4 text-foreground backdrop-blur-xl lg:px-8 shadow-lg shadow-black/10">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-surface-elevated/70 backdrop-blur-xl shadow-sm shadow-black/10 px-4 py-2">
+        <nav className="glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated/60 px-4 py-3 text-foreground lg:px-8">
           <Link to="/" className="flex items-center gap-2 transition hover:scale-105">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-gold font-bold text-lg">
               A

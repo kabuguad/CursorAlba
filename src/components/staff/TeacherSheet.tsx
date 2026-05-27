@@ -13,8 +13,25 @@ export function TeacherModal({ open, teacher, onClose }: TeacherModalProps) {
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (open && contentRef.current) {
-      contentRef.current.scrollTop = 0
+    if (open) {
+      const scrollY = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0
+      }
+    } else {
+      const scrollY = document.body.style.top
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, parseInt(scrollY || '0') * -1)
+    }
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
     }
   }, [open])
 
@@ -33,7 +50,7 @@ export function TeacherModal({ open, teacher, onClose }: TeacherModalProps) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             onClick={(e) => e.stopPropagation()}
-            className="glass glass-border fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-surface-elevated text-foreground lg:flex-row"
+            className="glass glass-border relative mx-auto flex w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-surface-elevated text-foreground lg:flex-row max-h-[90vh]"
           >
             <button
               onClick={onClose}
@@ -41,8 +58,8 @@ export function TeacherModal({ open, teacher, onClose }: TeacherModalProps) {
             >
               <X className="h-6 w-6" />
             </button>
-            <div className="flex items-center justify-center p-8 lg:w-2/5 lg:bg-primary/5">
-              <div className="relative h-48 w-48 rounded-full border-4 border-gold/40 overflow-hidden">
+            <div className="flex items-center justify-center p-6 lg:w-2/5 lg:bg-primary/5">
+              <div className="relative h-40 w-40 rounded-full border-4 border-gold/40 overflow-hidden">
                 <img
                   src={teacher.image}
                   alt={teacher.name}
@@ -50,7 +67,7 @@ export function TeacherModal({ open, teacher, onClose }: TeacherModalProps) {
                 />
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-8 lg:w-3/5" ref={contentRef}>
+            <div className="flex-1 overflow-y-auto p-6 lg:w-3/5" ref={contentRef}>
               <h2 className="text-3xl font-bold text-primary dark:text-gold">{teacher.name}</h2>
               <p className="mt-2 text-gold">{teacher.title}</p>
               <span className="mt-2 inline-block rounded-full bg-primary/80 px-3 py-1 text-xs text-white">

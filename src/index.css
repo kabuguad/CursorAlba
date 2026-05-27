@@ -187,3 +187,81 @@ body.dark {
 .prose-themed p {
   color: var(--color-muted);
 }
+
+/* ── Pannellum virtual tour overrides ── */
+.pnlm-container {
+  background: #0a0a0a !important;
+}
+
+.pnlm-load-box {
+  display: none !important;
+}
+
+/* Hotspot base */
+.pano-hotspot {
+  width: 36px !important;
+  height: 36px !important;
+  background: rgba(232, 184, 75, 0.2) !important;
+  border: 2px solid #E8B84B !important;
+  border-radius: 50% !important;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.pano-hotspot::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: rgba(232, 184, 75, 0.15);
+  animation: pano-pulse 2s ease-out infinite;
+}
+
+@keyframes pano-pulse {
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.pano-hotspot:hover {
+  background: rgba(232, 184, 75, 0.5) !important;
+  transform: scale(1.15);
+}
+
+/* Tooltip */
+.pnlm-tooltip span {
+  background: rgba(0,0,0,0.85) !important;
+  color: #E8B84B !important;
+  border: 1px solid rgba(232,184,75,0.4) !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 5px 10px !important;
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+}
+
+.pnlm-tooltip span:after {
+  border-top-color: rgba(0,0,0,0.85) !important;
+}
+
+/* Controls */
+.pnlm-controls-container {
+  bottom: 48px !important;
+  top: auto !important;
+}
+
+.pnlm-zoom-controls,
+.pnlm-fullscreen-toggle-button {
+  background: rgba(0,0,0,0.7) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(8px);
+}
+
+.pnlm-compass {
+  bottom: 56px !important;
+  top: auto !important;
+  right: 8px !important;
+  opacity: 0.7;
+}

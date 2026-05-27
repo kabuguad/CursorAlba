@@ -80,7 +80,7 @@ export function AdminLayout() {
     <>
       {/* Logo */}
       <div className={cn(
-        'flex h-16 shrink-0 items-center gap-3 border-b border-white/10 px-4',
+        'flex h-16 shrink-0 items-center gap-3 border-b border-gray-200 dark:border-white/10 px-4',
         collapsed && 'justify-center px-2',
       )}>
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#E8B84B]">
@@ -88,13 +88,13 @@ export function AdminLayout() {
         </div>
         {!collapsed && (
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-white">Alber School</p>
+            <p className="truncate text-sm font-bold text-gray-900 dark:text-white">Alber School</p>
             <p className="text-[10px] tracking-widest text-[#E8B84B]">ADMIN PORTAL</p>
           </div>
         )}
         {/* Mobile close */}
         <button
-          className="ml-auto rounded-lg p-1 text-white/40 hover:text-white lg:hidden"
+          className="ml-auto rounded-lg p-1 text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white lg:hidden"
           onClick={() => setDrawerOpen(false)}
         >
           <X className="h-4 w-4" />
@@ -106,7 +106,7 @@ export function AdminLayout() {
         {NAV.map(group => (
           <div key={group.group} className="mb-3">
             {!collapsed && (
-              <p className="mb-1 px-3 text-[9px] font-bold uppercase tracking-widest text-white/25">
+              <p className="mb-1 px-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 dark:text-white/25">
                 {group.group}
               </p>
             )}
@@ -120,10 +120,10 @@ export function AdminLayout() {
                   title={collapsed ? item.label : undefined}
                   className={({ isActive }) => cn(
                     'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
-                    'hover:bg-white/8',
+                    'hover:bg-gray-100 dark:hover:bg-white/8',
                     isActive
                       ? 'bg-[#E8B84B]/12 text-[#E8B84B] ring-1 ring-inset ring-[#E8B84B]/25'
-                      : 'text-white/55 hover:text-white/90',
+                      : 'text-gray-500 dark:text-white/55 hover:text-gray-900 dark:hover:text-white/90',
                     collapsed && 'justify-center px-0 py-3',
                   )}
                 >
@@ -137,15 +137,15 @@ export function AdminLayout() {
       </nav>
 
       {/* Bottom */}
-      <div className="shrink-0 border-t border-white/10 p-3 space-y-2">
+      <div className="shrink-0 border-t border-gray-200 dark:border-white/10 p-3 space-y-2">
         {!collapsed && (
           <div className="flex items-center gap-2.5 rounded-xl px-2 py-2">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E8B84B] text-[11px] font-bold text-[#0d1b0d]">
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-xs font-semibold text-white">{user?.name}</p>
-              <p className="truncate text-[10px] text-white/35">{user?.email}</p>
+              <p className="truncate text-xs font-semibold text-gray-800 dark:text-white">{user?.name}</p>
+              <p className="truncate text-[10px] text-gray-400 dark:text-white/35">{user?.email}</p>
             </div>
           </div>
         )}
@@ -153,21 +153,21 @@ export function AdminLayout() {
           <Link
             to="/"
             title="View public site"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-white/10 hover:text-white transition"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 dark:text-white/40 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-700 dark:hover:text-white transition"
           >
             <ExternalLink className="h-4 w-4" />
           </Link>
           <button
             onClick={handleLogout}
             title="Logout"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-red-500/15 hover:text-red-400 transition"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 dark:text-white/40 hover:bg-red-50 dark:hover:bg-red-500/15 hover:text-red-500 dark:hover:text-red-400 transition"
           >
             <LogOut className="h-4 w-4" />
           </button>
           <button
             onClick={() => setCollapsed(c => !c)}
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-white/10 hover:text-white transition ml-auto"
+            className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 dark:text-white/40 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-700 dark:hover:text-white transition ml-auto"
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
@@ -188,7 +188,7 @@ export function AdminLayout() {
 
       {/* Desktop sidebar */}
       <aside className={cn(
-        'hidden lg:flex flex-col bg-[#0d1b0d] transition-all duration-300 shrink-0',
+        'hidden lg:flex flex-col bg-white dark:bg-[#0d1b0d] border-r border-gray-200 dark:border-transparent transition-all duration-300 shrink-0',
         collapsed ? 'w-[68px]' : 'w-60',
       )}>
         <SidebarContent />
@@ -196,7 +196,7 @@ export function AdminLayout() {
 
       {/* Mobile drawer */}
       <aside className={cn(
-        'fixed inset-y-0 left-0 z-40 flex w-60 flex-col bg-[#0d1b0d] transition-transform duration-300 lg:hidden',
+        'fixed inset-y-0 left-0 z-40 flex w-60 flex-col bg-white dark:bg-[#0d1b0d] border-r border-gray-200 dark:border-transparent transition-transform duration-300 lg:hidden',
         drawerOpen ? 'translate-x-0' : '-translate-x-full',
       )}>
         <SidebarContent />

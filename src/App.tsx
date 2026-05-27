@@ -19,9 +19,29 @@ import { Staff } from './pages/Staff'
 import { Login } from './pages/Login'
 import { Blog } from './pages/Blog'
 import { BlogPost } from './pages/BlogPost'
-import { ParentDashboard } from './pages/dashboards/ParentDashboard'
-import { TeacherDashboard } from './pages/dashboards/TeacherDashboard'
-import { StudentDashboard } from './pages/dashboards/StudentDashboard'
+
+import { StudentPortalLayout }  from './pages/dashboards/student/StudentPortalLayout'
+import { StudentOverview }      from './pages/dashboards/student/StudentOverview'
+import { StudentGrades }        from './pages/dashboards/student/StudentGrades'
+import { StudentHomework }      from './pages/dashboards/student/StudentHomework'
+import { StudentTimetable }     from './pages/dashboards/student/StudentTimetable'
+import { StudentNotices }       from './pages/dashboards/student/StudentNotices'
+
+import { TeacherPortalLayout }  from './pages/dashboards/teacher/TeacherPortalLayout'
+import { TeacherGrades }        from './pages/dashboards/teacher/TeacherGrades'
+import { TeacherAttendance }    from './pages/dashboards/teacher/TeacherAttendance'
+import { TeacherAssignments }   from './pages/dashboards/teacher/TeacherAssignments'
+import { TeacherClass }         from './pages/dashboards/teacher/TeacherClass'
+import { TeacherTimetable }     from './pages/dashboards/teacher/TeacherTimetable'
+import { TeacherMessages }      from './pages/dashboards/teacher/TeacherMessages'
+
+import { ParentPortalLayout }   from './pages/dashboards/parent/ParentPortalLayout'
+import { ParentGrades }         from './pages/dashboards/parent/ParentGrades'
+import { ParentAttendance }     from './pages/dashboards/parent/ParentAttendance'
+import { ParentFees }           from './pages/dashboards/parent/ParentFees'
+import { ParentHomework }       from './pages/dashboards/parent/ParentHomework'
+import { ParentTimetable }      from './pages/dashboards/parent/ParentTimetable'
+import { ParentNotices }        from './pages/dashboards/parent/ParentNotices'
 
 import { AdminLayout }          from './pages/dashboards/admin/AdminLayout'
 import { Overview }             from './pages/dashboards/admin/Overview'
@@ -48,7 +68,7 @@ function App() {
           <BrowserRouter>
             <Routes>
 
-              {/* ── Public site — shared Navbar + Footer ── */}
+              {/* ── Public site ── */}
               <Route element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="about"         element={<About />} />
@@ -65,42 +85,66 @@ function App() {
                 <Route path="blog"          element={<Blog />} />
                 <Route path="blog/:id"      element={<BlogPost />} />
                 <Route path="login"         element={<Login />} />
-
-                <Route path="dashboard/parent" element={
-                  <ProtectedRoute role="parent"><ParentDashboard /></ProtectedRoute>
-                } />
-                <Route path="dashboard/teacher" element={
-                  <ProtectedRoute role="teacher"><TeacherDashboard /></ProtectedRoute>
-                } />
-                <Route path="dashboard/student" element={
-                  <ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>
-                } />
               </Route>
 
-              {/* ── Admin portal — dedicated sidebar layout, no public nav ── */}
+              {/* ── Student Portal ── */}
+              <Route
+                path="dashboard/student"
+                element={<ProtectedRoute role="student"><StudentPortalLayout /></ProtectedRoute>}
+              >
+                <Route index                  element={<StudentOverview />} />
+                <Route path="grades"          element={<StudentGrades />} />
+                <Route path="homework"        element={<StudentHomework />} />
+                <Route path="timetable"       element={<StudentTimetable />} />
+                <Route path="notices"         element={<StudentNotices />} />
+              </Route>
+
+              {/* ── Teacher Portal ── */}
+              <Route
+                path="dashboard/teacher"
+                element={<ProtectedRoute role="teacher"><TeacherPortalLayout /></ProtectedRoute>}
+              >
+                <Route index                  element={<TeacherGrades />} />
+                <Route path="attendance"      element={<TeacherAttendance />} />
+                <Route path="assignments"     element={<TeacherAssignments />} />
+                <Route path="myclass"         element={<TeacherClass />} />
+                <Route path="timetable"       element={<TeacherTimetable />} />
+                <Route path="messages"        element={<TeacherMessages />} />
+              </Route>
+
+              {/* ── Parent Portal ── */}
+              <Route
+                path="dashboard/parent"
+                element={<ProtectedRoute role="parent"><ParentPortalLayout /></ProtectedRoute>}
+              >
+                <Route index                  element={<ParentGrades />} />
+                <Route path="attendance"      element={<ParentAttendance />} />
+                <Route path="fees"            element={<ParentFees />} />
+                <Route path="homework"        element={<ParentHomework />} />
+                <Route path="timetable"       element={<ParentTimetable />} />
+                <Route path="notices"         element={<ParentNotices />} />
+              </Route>
+
+              {/* ── Admin Portal ── */}
               <Route
                 path="dashboard/admin"
-                element={
-                  <ProtectedRoute role="admin">
-                    <AdminLayout />
-                  </ProtectedRoute>
-                }
+                element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}
               >
-                <Route index               element={<Overview />} />
-                <Route path="content"      element={<ContentManager />} />
-                <Route path="blog"         element={<BlogManager />} />
-                <Route path="events"       element={<EventsManager />} />
-                <Route path="gallery"      element={<GalleryManager />} />
-                <Route path="admissions"   element={<AdmissionsManager />} />
-                <Route path="students"     element={<StudentsManager />} />
-                <Route path="staff"        element={<StaffManager />} />
-                <Route path="academics"    element={<AcademicsManager />} />
-                <Route path="timetable"    element={<TimetableManager />} />
-                <Route path="payments"     element={<PaymentsManager />} />
-                <Route path="fees"         element={<FeesManager />} />
-                <Route path="announcements"element={<AnnouncementsManager />} />
-                <Route path="reports"      element={<ReportsManager />} />
-                <Route path="settings"     element={<SettingsManager />} />
+                <Route index                  element={<Overview />} />
+                <Route path="content"         element={<ContentManager />} />
+                <Route path="blog"            element={<BlogManager />} />
+                <Route path="events"          element={<EventsManager />} />
+                <Route path="gallery"         element={<GalleryManager />} />
+                <Route path="admissions"      element={<AdmissionsManager />} />
+                <Route path="students"        element={<StudentsManager />} />
+                <Route path="staff"           element={<StaffManager />} />
+                <Route path="academics"       element={<AcademicsManager />} />
+                <Route path="timetable"       element={<TimetableManager />} />
+                <Route path="payments"        element={<PaymentsManager />} />
+                <Route path="fees"            element={<FeesManager />} />
+                <Route path="announcements"   element={<AnnouncementsManager />} />
+                <Route path="reports"         element={<ReportsManager />} />
+                <Route path="settings"        element={<SettingsManager />} />
               </Route>
 
               <Route path="dashboard" element={<Navigate to="/login" replace />} />

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Award, GraduationCap } from 'lucide-react'
 import type { Teacher } from '../../data/types'
@@ -35,7 +36,7 @@ export function TeacherModal({ open, teacher, onClose }: TeacherModalProps) {
     }
   }, [open])
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && teacher && (
         <motion.div
@@ -98,6 +99,7 @@ export function TeacherModal({ open, teacher, onClose }: TeacherModalProps) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }

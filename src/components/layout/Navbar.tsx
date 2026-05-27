@@ -59,7 +59,7 @@ export function Navbar() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
-        <nav className="glass glass-border mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated px-4 py-3 text-foreground lg:px-6">
+        <nav className="glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated px-4 py-3 text-foreground lg:px-6">
           <Link to="/" className="flex items-center gap-2 transition hover:scale-105">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-gold font-bold text-lg">
               A
@@ -107,7 +107,7 @@ export function Navbar() {
 
               {dropdownOpen && (
                 <div
-                  className="absolute left-1/2 top-full z-50 mt-2 w-72 -translate-x-1/2 overflow-hidden rounded-2xl glass glass-border shadow-2xl"
+                  className="absolute left-1/2 top-full z-[100] mt-2 w-72 -translate-x-1/2 overflow-hidden rounded-2xl bg-surface-elevated border shadow-2xl"
                   onMouseEnter={openDropdown}
                   onMouseLeave={closeDropdown}
                 >

@@ -59,13 +59,13 @@ export function Music() {
         style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=1600)' }}
       />
       <div className="relative mx-auto max-w-7xl px-4 py-12">
-        <ScrollReveal>
-          <h1 className="text-5xl font-bold md:text-7xl">Music Academy</h1>
-          <p className="mt-4 max-w-2xl text-muted">Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.</p>
+        <ScrollReveal className="mb-16 text-center">
+          <h1 className="mb-4 text-5xl font-bold md:text-7xl">Music Academy</h1>
+          <p className="mx-auto max-w-2xl text-muted">Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.</p>
         </ScrollReveal>
 
         <ScrollReveal className="mt-16">
-          <h2 className="mb-8 text-3xl font-bold">Instruments Offered</h2>
+          <h2 className="mb-8 text-center text-3xl font-bold">Instruments Offered</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {INSTRUMENTS.map((inst, i) => (
               <ScrollReveal key={inst.name} delay={i * 0.07}>
@@ -80,7 +80,7 @@ export function Music() {
         </ScrollReveal>
 
         <ScrollReveal className="mt-20">
-          <h2 className="mb-8 text-3xl font-bold">Our Music Faculty</h2>
+          <h2 className="mb-8 text-center text-3xl font-bold">Our Music Faculty</h2>
           <div className="grid gap-8 sm:grid-cols-3">
             {TEACHERS.map((t, i) => (
               <ScrollReveal key={t.name} delay={i * 0.1}>
@@ -98,7 +98,7 @@ export function Music() {
         </ScrollReveal>
 
         <ScrollReveal className="mt-20">
-          <h2 className="mb-8 text-3xl font-bold">Weekly Rehearsal Schedule</h2>
+          <h2 className="mb-8 text-center text-3xl font-bold">Weekly Rehearsal Schedule</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {SCHEDULE.map((s, i) => (
               <ScrollReveal key={s.day} delay={i * 0.06}>

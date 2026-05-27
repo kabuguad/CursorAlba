@@ -77,9 +77,9 @@ export function Facilities() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal>
+      <ScrollReveal className="mb-16 text-center">
         <h1 className="mb-4 text-5xl font-bold md:text-7xl">Facilities</h1>
-        <p className="mb-16 max-w-2xl text-muted">World-class infrastructure designed for modern learning — click any facility to explore.</p>
+        <p className="mx-auto max-w-2xl text-muted">World-class infrastructure designed for modern learning — click any facility to explore.</p>
       </ScrollReveal>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

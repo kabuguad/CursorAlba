@@ -50,9 +50,9 @@ const LEADERSHIP = [
 export function About() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal>
+      <ScrollReveal className="mb-16 text-center">
         <h1 className="mb-4 text-5xl font-bold text-primary dark:text-gold md:text-7xl">About Us</h1>
-        <p className="mb-16 max-w-2xl text-lg text-muted">
+        <p className="mx-auto max-w-2xl text-lg text-muted">
           Adjacent to the Governor's Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005.
         </p>
       </ScrollReveal>
@@ -76,7 +76,7 @@ export function About() {
         </ScrollReveal>
       </div>
 
-      <ScrollReveal>
+      <ScrollReveal className="text-center">
         <h2 className="mb-8 text-4xl font-bold">Core Values</h2>
       </ScrollReveal>
       <div className="mb-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -91,7 +91,7 @@ export function About() {
         ))}
       </div>
 
-      <ScrollReveal>
+      <ScrollReveal className="text-center">
         <h2 className="mb-8 text-4xl font-bold">Leadership Team</h2>
       </ScrollReveal>
       <div className="mb-24 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">

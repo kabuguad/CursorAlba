@@ -30,13 +30,13 @@ const TROPHIES = [
 export function Sports() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal>
-        <h1 className="text-5xl font-bold md:text-7xl">Sports & Athletics</h1>
-        <p className="mt-4 max-w-2xl text-muted">Premium facilities · Professional coaching · County, regional and national competition.</p>
+      <ScrollReveal className="mb-16 text-center">
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Sports & Athletics</h1>
+        <p className="mx-auto max-w-2xl text-muted">Premium facilities · Professional coaching · County, regional and national competition.</p>
       </ScrollReveal>
 
       <ScrollReveal className="mt-16">
-        <h2 className="mb-8 text-3xl font-bold">Sports Offered</h2>
+        <h2 className="mb-8 text-center text-3xl font-bold">Sports Offered</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {SPORTS_OFFERED.map((s, i) => (
             <ScrollReveal key={s.name} delay={i * 0.07}>
@@ -63,7 +63,7 @@ export function Sports() {
       </ScrollReveal>
 
       <ScrollReveal className="mt-16">
-        <h2 className="mb-6 text-2xl font-bold">Fixtures & Results</h2>
+        <h2 className="mb-6 text-center text-2xl font-bold">Fixtures & Results</h2>
         <div className="overflow-x-auto rounded-3xl glass glass-border text-foreground">
           <table className="w-full min-w-[600px] text-left text-sm">
             <thead>

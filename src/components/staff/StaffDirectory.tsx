@@ -52,12 +52,12 @@ export function StaffDirectory() {
   }, [loadMore])
 
   return (
-    <section className="px-4 py-12">
-      <ScrollReveal>
+    <section className="mx-auto max-w-7xl px-4 py-12">
+      <ScrollReveal className="mb-8 text-center">
         <h1 className="mb-2 text-5xl font-bold text-primary dark:text-gold md:text-6xl">
           Our Faculty
         </h1>
-        <p className="mb-8 max-w-2xl text-muted">
+        <p className="mx-auto max-w-2xl text-muted">
           {teachers.length}+ world-class educators across every department.
         </p>
       </ScrollReveal>

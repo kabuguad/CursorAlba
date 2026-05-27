@@ -177,9 +177,9 @@ export function Academics() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal>
+      <ScrollReveal className="mb-16 text-center">
         <h1 className="mb-4 text-5xl font-bold md:text-7xl">Programs & Academics</h1>
-        <p className="mb-16 max-w-2xl text-muted">
+        <p className="mx-auto max-w-2xl text-muted">
           From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.
         </p>
       </ScrollReveal>
@@ -302,7 +302,7 @@ export function Academics() {
       </ScrollReveal>
 
       <ScrollReveal className="mb-16">
-        <h2 className="mb-6 text-3xl font-bold">Key National Assessments</h2>
+        <h2 className="mb-6 text-center text-3xl font-bold">Key National Assessments</h2>
         <GlassCard className="overflow-x-auto p-0">
           <table className="w-full min-w-[600px] text-left text-sm">
             <thead>
@@ -330,7 +330,7 @@ export function Academics() {
       </ScrollReveal>
 
       <ScrollReveal className="mb-16">
-        <h2 className="mb-6 text-3xl font-bold">Grading System</h2>
+        <h2 className="mb-6 text-center text-3xl font-bold">Grading System</h2>
         <GlassCard className="overflow-x-auto p-0">
           <table className="w-full min-w-[500px] text-left text-sm">
             <thead>
@@ -354,7 +354,7 @@ export function Academics() {
       </ScrollReveal>
 
       <ScrollReveal className="mb-16">
-        <h2 className="mb-6 text-3xl font-bold">Academic Calendar 2026</h2>
+        <h2 className="mb-6 text-center text-3xl font-bold">Academic Calendar 2026</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {CALENDAR.map((t, i) => (
             <ScrollReveal key={t.term} delay={i * 0.1}>

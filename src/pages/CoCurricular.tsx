@@ -95,9 +95,9 @@ export function CoCurricular() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal>
+      <ScrollReveal className="mb-16 text-center">
         <h1 className="mb-4 text-5xl font-bold md:text-7xl">Co-Curricular</h1>
-        <p className="mb-16 max-w-2xl text-muted">
+        <p className="mx-auto max-w-2xl text-muted">
           Beyond the classroom — four pillars of holistic development aligned to Kenya's CBC framework and Alber School's vision of whole-learner excellence.
         </p>
       </ScrollReveal>

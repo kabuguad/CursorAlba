@@ -65,9 +65,9 @@ export function Contact() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal>
-        <h1 className="text-5xl font-bold md:text-7xl">Contact Us</h1>
-        <p className="mt-4 max-w-2xl text-muted">Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.</p>
+      <ScrollReveal className="mb-16 text-center">
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Contact Us</h1>
+        <p className="mx-auto max-w-2xl text-muted">Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.</p>
       </ScrollReveal>
 
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

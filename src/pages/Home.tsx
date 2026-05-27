@@ -102,52 +102,73 @@ export function Home() {
 
   return (
     <>
-      {/* ── Hero — full-bleed magazine cover ── */}
-      <section className="relative flex min-h-screen flex-col overflow-hidden">
+      {/* ── Hero ── */}
+      <section className="flex flex-col">
 
-        {/* Background slideshow */}
-        {HERO_IMAGES.map((img, i) => (
-          <img
-            key={img}
-            src={img}
-            alt="Alber School Campus"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
-          />
-        ))}
+        {/* ════════════════════════════════════════
+            MOBILE / TABLET  (< lg)
+            Image in a proper aspect-ratio box so
+            the full landscape photo is visible,
+            then content stacked below.
+        ════════════════════════════════════════ */}
+        <div className="lg:hidden flex flex-col">
 
-        {/* Rich gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+          {/* Image carousel — 3:2 ratio matches the 1200×800 source images */}
+          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '3/2' }}>
 
-        {/* Gold accent bar — left edge */}
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+            {/* Left gold accent */}
+            <div className="absolute left-0 top-0 bottom-0 z-10 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
 
-        {/* Slide dots — bottom right */}
-        <div className="absolute bottom-28 right-8 z-10 flex flex-col gap-2">
-          {HERO_IMAGES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setSlide(i)}
-              className={`rounded-full transition-all ${i === slide ? 'h-8 w-2 bg-gold' : 'h-2 w-2 bg-white/40'}`}
-            />
-          ))}
-        </div>
+            {HERO_IMAGES.map((img, i) => (
+              <img
+                key={img}
+                src={img}
+                alt="Alber School Campus"
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
+              />
+            ))}
 
-        {/* Main content — two-column */}
-        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-center gap-8 px-8 py-24 lg:px-16">
+            {/* Subtle bottom gradient to bleed into the content section */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
 
-          {/* ── Left: headline + CTAs ── */}
-          <div className="flex-1">
-            {/* Top badge */}
-            <div className="mb-8 flex items-center gap-3">
-              <div className="h-px w-10 bg-gold" />
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">
-                Kutus · Kirinyaga County · Est. 2005
+            {/* School name badge — top left */}
+            <div className="absolute top-4 left-5 z-10 flex items-center gap-2">
+              <div className="h-px w-6 bg-gold" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold drop-shadow">
+                Kutus · Kirinyaga County
               </span>
             </div>
 
+            {/* Horizontal slide dots — bottom centre */}
+            <div className="absolute bottom-4 left-0 right-0 z-10 flex items-center justify-center gap-2">
+              {HERO_IMAGES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSlide(i)}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === slide ? 'w-6 h-2 bg-gold' : 'w-2 h-2 bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Slide counter — bottom right */}
+            <div className="absolute bottom-3.5 right-4 z-10 text-[10px] font-bold tabular-nums text-white/50">
+              {slide + 1} / {HERO_IMAGES.length}
+            </div>
+          </div>
+
+          {/* Content block */}
+          <div className="bg-[#0a0a0a] px-6 pt-8 pb-6 sm:px-10 sm:pt-10">
+
+            {/* Est. badge */}
+            <div className="mb-5 flex items-center gap-3">
+              <div className="h-px w-8 bg-gold" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Est. 2005</span>
+            </div>
+
             {/* Headline */}
-            <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}>
+            <h1 className="mb-4 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.2rem, 8vw, 3.4rem)' }}>
               Where Excellence
               <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
                 Meets Tomorrow
@@ -155,124 +176,220 @@ export function Home() {
             </h1>
 
             {/* Divider */}
-            <div className="mb-8 flex items-center gap-4">
-              <div className="h-px w-20 bg-gold/60" />
-              <span className="text-xs uppercase tracking-widest text-white/50">Alber School</span>
-              <div className="h-px w-20 bg-gold/60" />
+            <div className="mb-5 flex items-center gap-3">
+              <div className="h-px w-14 bg-gold/60" />
+              <span className="text-[10px] uppercase tracking-widest text-white/40">Alber School</span>
+              <div className="h-px w-14 bg-gold/60" />
             </div>
 
             {/* Tagline */}
-            <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
+            <p className="mb-7 text-base leading-relaxed text-white/70">
               Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap gap-4">
-              <Link to="/admissions">
-                <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link to="/admissions" className="flex-1 sm:flex-none">
+                <Button variant="gold" className="w-full sm:w-auto">
+                  Apply Now <ArrowRight className="h-4 w-4" />
+                </Button>
               </Link>
-              <Link to="/academics">
-                <button className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+              <Link to="/academics" className="flex-1 sm:flex-none">
+                <button className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
                   Explore Programs <ArrowRight className="h-4 w-4" />
                 </button>
               </Link>
             </div>
           </div>
 
-          {/* ── Right: Director's fancy card ── */}
-          <div className="hidden lg:flex lg:w-80 xl:w-96 shrink-0 flex-col">
-
-            {/* Outer wrapper — top padding reserves space for the overflowing photo */}
-            {/* Photo is h-36 (144px). 75% above card = 108px → pt-[108px] */}
-            <div className="relative pt-[108px]">
-
-              {/* Floating circular photo — 75% above card, 25% (36px) inside */}
-              <div className="absolute top-0 left-1/2 z-20 -translate-x-1/2">
-                {/* Outer slow pulse ring */}
-                <div className="absolute -inset-3 animate-pulse rounded-full border border-gold/20" />
-                {/* Fast ping ring */}
-                <div className="absolute -inset-1 animate-ping rounded-full border border-gold/30" style={{ animationDuration: '2.5s' }} />
-                {/* Gold glow shadow + border */}
-                <div className="relative h-36 w-36 overflow-hidden rounded-full border-[3px] border-gold shadow-[0_0_32px_6px_rgba(232,184,75,0.35)]">
-                  <img
-                    src="https://picsum.photos/seed/director-alber/400/400"
-                    alt="Mr. Albert Njeru"
-                    className="h-full w-full object-cover object-top"
-                  />
-                </div>
-                {/* Gold verified badge */}
-                <div className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-black text-[10px] font-bold">✓</div>
-              </div>
-
-              {/* Card frame with corner accents */}
-              <div className="relative">
-                <div className="absolute -top-2 -left-2 h-6 w-6 border-t-2 border-l-2 border-gold" />
-                <div className="absolute -top-2 -right-2 h-6 w-6 border-t-2 border-r-2 border-gold" />
-                <div className="absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-gold" />
-                <div className="absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-gold" />
-
-                {/* Card body */}
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 backdrop-blur-xl">
-
-                  {/* Top section — space for the 25% of photo inside the card + name */}
-                  <div className="flex flex-col items-center pt-12 pb-5 px-6 bg-gradient-to-b from-white/5 to-transparent">
-                    <p className="text-base font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
-                    <div className="mt-1.5 flex items-center gap-2">
-                      <div className="h-px w-6 bg-gold" />
-                      <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
-                      <div className="h-px w-6 bg-gold" />
-                    </div>
-                  </div>
-
-                  {/* Thin gold divider */}
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-
-                  {/* Quote */}
-                  <div className="relative px-6 pt-5 pb-6">
-                    <span className="absolute top-1 left-4 font-serif text-7xl leading-none text-gold/20 select-none">"</span>
-                    <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
-                      Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.
-                    </p>
-                    <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-                      <span className="font-serif text-lg italic text-gold/80">Albert Njeru</span>
-                      <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
-                    </div>
-                  </div>
-
-                  {/* Gold shimmer bar */}
-                  <div className="h-1 w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
-                </div>
-              </div>
+          {/* Compact director strip — medium screens */}
+          <div className="hidden sm:flex lg:hidden items-center gap-4 bg-black/80 border-t border-white/10 px-10 py-4">
+            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-gold shadow-[0_0_12px_2px_rgba(232,184,75,0.35)]">
+              <img src="https://picsum.photos/seed/director-alber/400/400" alt="Mr. Albert Njeru" className="h-full w-full object-cover object-top" />
             </div>
-
-            {/* Label */}
-            <div className="mt-5 flex items-center justify-center gap-2">
-              <div className="h-px flex-1 bg-white/10" />
-              <span className="text-[10px] uppercase tracking-[0.25em] text-white/30">A message from our Director</span>
-              <div className="h-px flex-1 bg-white/10" />
+            <div className="min-w-0">
+              <p className="text-xs font-bold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
+              <p className="text-[10px] text-gold/80 uppercase tracking-widest">Founder & Director</p>
             </div>
+            <div className="h-px flex-1 bg-white/10" />
+            <p className="max-w-xs text-[11px] italic leading-relaxed text-white/60 hidden md:block">
+              "Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations."
+            </p>
           </div>
 
+          {/* Stats bar — mobile */}
+          <div className="border-t border-white/10 bg-black/90">
+            <div className="grid grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
+              {[
+                { end: 2000, suffix: '+', label: 'Students Enrolled' },
+                { end: 120, suffix: '+', label: 'Expert Educators' },
+                { end: 8, suffix: '', label: 'School Buses' },
+                { end: 6, suffix: '', label: 'Sports Disciplines' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center py-4 px-2 text-center">
+                  <span className="text-2xl font-extrabold text-gold">
+                    <AnimatedCounter end={stat.end} suffix={stat.suffix} />
+                  </span>
+                  <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Stats bar anchored at the very bottom */}
-        <div className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-white/10 lg:grid-cols-4">
-            {[
-              { end: 2000, suffix: '+', label: 'Students Enrolled' },
-              { end: 120, suffix: '+', label: 'Expert Educators' },
-              { end: 8, suffix: '', label: 'School Buses' },
-              { end: 6, suffix: '', label: 'Sports Disciplines' },
-            ].map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
-                <span className="text-3xl font-extrabold text-gold">
-                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
-                </span>
-                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">{stat.label}</span>
-              </div>
+        {/* ════════════════════════════════════════
+            DESKTOP  (lg+)
+            Original full-bleed magazine layout
+        ════════════════════════════════════════ */}
+        <div className="hidden lg:flex lg:min-h-screen lg:flex-col lg:overflow-hidden lg:relative">
+
+          {/* Background slideshow */}
+          {HERO_IMAGES.map((img, i) => (
+            <img
+              key={img}
+              src={img}
+              alt="Alber School Campus"
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ))}
+
+          {/* Rich gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+
+          {/* Gold accent bar — left edge */}
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+
+          {/* Slide dots — bottom right, vertical */}
+          <div className="absolute bottom-28 right-8 z-10 flex flex-col gap-2">
+            {HERO_IMAGES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSlide(i)}
+                className={`rounded-full transition-all ${i === slide ? 'h-8 w-2 bg-gold' : 'h-2 w-2 bg-white/40'}`}
+              />
             ))}
           </div>
+
+          {/* Main content — two-column */}
+          <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-center gap-8 px-8 py-24 lg:px-16">
+
+            {/* Left: headline + CTAs */}
+            <div className="flex-1">
+              <div className="mb-8 flex items-center gap-3">
+                <div className="h-px w-10 bg-gold" />
+                <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">
+                  Kutus · Kirinyaga County · Est. 2005
+                </span>
+              </div>
+
+              <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}>
+                Where Excellence
+                <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
+                  Meets Tomorrow
+                </span>
+              </h1>
+
+              <div className="mb-8 flex items-center gap-4">
+                <div className="h-px w-20 bg-gold/60" />
+                <span className="text-xs uppercase tracking-widest text-white/50">Alber School</span>
+                <div className="h-px w-20 bg-gold/60" />
+              </div>
+
+              <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
+                Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                <Link to="/admissions">
+                  <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
+                </Link>
+                <Link to="/academics">
+                  <button className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+                    Explore Programs <ArrowRight className="h-4 w-4" />
+                  </button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Director's fancy card */}
+            <div className="hidden lg:flex lg:w-80 xl:w-96 shrink-0 flex-col">
+              <div className="relative pt-[108px]">
+                <div className="absolute top-0 left-1/2 z-20 -translate-x-1/2">
+                  <div className="absolute -inset-3 animate-pulse rounded-full border border-gold/20" />
+                  <div className="absolute -inset-1 animate-ping rounded-full border border-gold/30" style={{ animationDuration: '2.5s' }} />
+                  <div className="relative h-36 w-36 overflow-hidden rounded-full border-[3px] border-gold shadow-[0_0_32px_6px_rgba(232,184,75,0.35)]">
+                    <img
+                      src="https://picsum.photos/seed/director-alber/400/400"
+                      alt="Mr. Albert Njeru"
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-black text-[10px] font-bold">✓</div>
+                </div>
+
+                <div className="relative">
+                  <div className="absolute -top-2 -left-2 h-6 w-6 border-t-2 border-l-2 border-gold" />
+                  <div className="absolute -top-2 -right-2 h-6 w-6 border-t-2 border-r-2 border-gold" />
+                  <div className="absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-gold" />
+                  <div className="absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-gold" />
+
+                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 backdrop-blur-xl">
+                    <div className="flex flex-col items-center pt-12 pb-5 px-6 bg-gradient-to-b from-white/5 to-transparent">
+                      <p className="text-base font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
+                      <div className="mt-1.5 flex items-center gap-2">
+                        <div className="h-px w-6 bg-gold" />
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
+                        <div className="h-px w-6 bg-gold" />
+                      </div>
+                    </div>
+
+                    <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+
+                    <div className="relative px-6 pt-5 pb-6">
+                      <span className="absolute top-1 left-4 font-serif text-7xl leading-none text-gold/20 select-none">"</span>
+                      <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
+                        Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.
+                      </p>
+                      <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                        <span className="font-serif text-lg italic text-gold/80">Albert Njeru</span>
+                        <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
+                      </div>
+                    </div>
+
+                    <div className="h-1 w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 flex items-center justify-center gap-2">
+                <div className="h-px flex-1 bg-white/10" />
+                <span className="text-[10px] uppercase tracking-[0.25em] text-white/30">A message from our Director</span>
+                <div className="h-px flex-1 bg-white/10" />
+              </div>
+            </div>
+          </div>
+
+          {/* Stats bar — desktop */}
+          <div className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
+            <div className="mx-auto grid max-w-7xl grid-cols-4 divide-x divide-white/10">
+              {[
+                { end: 2000, suffix: '+', label: 'Students Enrolled' },
+                { end: 120, suffix: '+', label: 'Expert Educators' },
+                { end: 8, suffix: '', label: 'School Buses' },
+                { end: 6, suffix: '', label: 'Sports Disciplines' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
+                  <span className="text-3xl font-extrabold text-gold">
+                    <AnimatedCounter end={stat.end} suffix={stat.suffix} />
+                  </span>
+                  <span className="mt-1 text-xs uppercase tracking-widest text-white/60">{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
+
       </section>
 
       {/* ── Why Alber ── */}

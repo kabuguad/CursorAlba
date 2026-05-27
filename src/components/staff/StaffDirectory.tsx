@@ -43,7 +43,7 @@ export function StaffDirectory() {
         </p>
       </ScrollReveal>
 
-      <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center">
+      <div className="mb-8 flex flex-col gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/50" />
           <input
@@ -57,7 +57,34 @@ export function StaffDirectory() {
             )}
           />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="relative lg:hidden">
+          <ChevronLeft className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted/30 pointer-events-none" />
+          <div className="flex gap-2 overflow-x-auto px-6 scrollbar-hide">
+            <button
+              onClick={() => setDept('All')}
+              className={cn(
+                'rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105',
+                dept === 'All' ? 'bg-primary text-white' : 'glass glass-border',
+              )}
+            >
+              All
+            </button>
+            {departments.map((d) => (
+              <button
+                key={d}
+                onClick={() => setDept(d)}
+                className={cn(
+                  'rounded-full px-4 py-2 text-sm font-medium transition-all hover:scale-105',
+                  dept === d ? 'bg-gold text-dark' : 'glass glass-border',
+                )}
+              >
+                {d}
+              </button>
+            ))}
+          </div>
+          <ChevronRight className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted/30 pointer-events-none" />
+        </div>
+        <div className="hidden lg:flex flex-wrap gap-2">
           <button
             onClick={() => setDept('All')}
             className={cn(

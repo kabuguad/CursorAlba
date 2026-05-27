@@ -5,9 +5,11 @@ import {
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
+  Moon, Sun,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
+import { useTheme } from '../../../contexts/ThemeContext'
 import { cn } from '../../../lib/utils'
 
 const NAV = [
@@ -61,6 +63,7 @@ const NAV = [
 export function AdminLayout() {
   const { user, logout } = useAuth()
   const { showToast } = useToast()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [collapsed,  setCollapsed]  = useState(false)
@@ -220,8 +223,20 @@ export function AdminLayout() {
             View Site
           </Link>
 
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            className="rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          >
+            {theme === 'light'
+              ? <Moon className="h-4 w-4" />
+              : <Sun className="h-4 w-4" />
+            }
+          </button>
+
           <button className="relative rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">
-            <Bell className="h-4.5 w-4.5" />
+            <Bell className="h-4 w-4" />
             <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-[#E8B84B]" />
           </button>
 

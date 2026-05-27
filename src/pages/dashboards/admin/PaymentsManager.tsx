@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { Search, CheckCircle, Clock, XCircle, Download, Banknote } from 'lucide-react'
 import { useToast } from '../../../contexts/ToastContext'
+import { useTheme } from '../../../contexts/ThemeContext'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
 
@@ -58,6 +59,9 @@ function formatKES(n: number) {
 
 export function PaymentsManager() {
   const { showToast } = useToast()
+  const { theme } = useTheme()
+  const grid = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'
+  const axis = theme === 'dark' ? '#9ca3af' : '#6b7280'
   const [payments] = useState<Payment[]>(SEED)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<PayStatus | 'all'>('all')
@@ -118,9 +122,9 @@ export function PaymentsManager() {
         <div className="p-6">
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={DAILY_TREND}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-              <XAxis dataKey="day" tick={{ fontSize: 11 }} />
-              <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}K`} tick={{ fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="day" tick={{ fontSize: 11, fill: axis }} />
+              <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}K`} tick={{ fontSize: 11, fill: axis }} />
               <Tooltip formatter={(v: number) => [`KES ${v.toLocaleString()}`, 'Collected']} />
               <Line type="monotone" dataKey="amount" stroke="#15803d" strokeWidth={2.5} dot={{ r: 4, fill: '#15803d' }} />
             </LineChart>

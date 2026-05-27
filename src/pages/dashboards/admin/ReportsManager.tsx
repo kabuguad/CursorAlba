@@ -4,6 +4,7 @@ import {
 } from 'recharts'
 import { TrendingUp, Users, Banknote, GraduationCap, Download } from 'lucide-react'
 import { useToast } from '../../../contexts/ToastContext'
+import { useTheme } from '../../../contexts/ThemeContext'
 
 const ENROLLMENT_TREND = [
   { year: '2021', students: 1540 },
@@ -64,6 +65,9 @@ const SUMMARY_CARDS = [
 
 export function ReportsManager() {
   const { showToast } = useToast()
+  const { theme } = useTheme()
+  const grid   = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'
+  const axis   = theme === 'dark' ? '#9ca3af' : '#6b7280'
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl mx-auto">
@@ -109,9 +113,9 @@ export function ReportsManager() {
           <div className="p-6">
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={ENROLLMENT_TREND}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                <XAxis dataKey="year" tick={{ fontSize: 12 }} />
-                <YAxis domain={[1400, 2200]} tick={{ fontSize: 12 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="year" tick={{ fontSize: 12, fill: axis }} />
+                <YAxis domain={[1400, 2200]} tick={{ fontSize: 12, fill: axis }} />
                 <Tooltip formatter={(v: number) => [v.toLocaleString(), 'Students']} />
                 <Line type="monotone" dataKey="students" stroke="#15803d" strokeWidth={2.5} dot={{ r: 4, fill: '#15803d' }} />
               </LineChart>
@@ -126,9 +130,9 @@ export function ReportsManager() {
           <div className="p-6">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={ENROLLMENT_BY_LEVEL} layout="vertical" margin={{ left: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                <XAxis type="number" tick={{ fontSize: 11 }} />
-                <YAxis dataKey="level" type="category" tick={{ fontSize: 11 }} width={80} />
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis type="number" tick={{ fontSize: 11, fill: axis }} />
+                <YAxis dataKey="level" type="category" tick={{ fontSize: 11, fill: axis }} width={80} />
                 <Tooltip formatter={(v: number) => [v, 'Students']} />
                 <Bar dataKey="count" fill="#E8B84B" radius={[0, 6, 6, 0]} />
               </BarChart>
@@ -146,9 +150,9 @@ export function ReportsManager() {
           <div className="p-6">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={FEE_COLLECTION}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `${(v / 1000000).toFixed(1)}M`} />
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="month" tick={{ fontSize: 12, fill: axis }} />
+                <YAxis tick={{ fontSize: 10, fill: axis }} tickFormatter={v => `${(v / 1000000).toFixed(1)}M`} />
                 <Tooltip formatter={(v: number) => [`KES ${v.toLocaleString()}`, '']} />
                 <Legend />
                 <Bar dataKey="target" name="Target" fill="#d1d5db" radius={[4, 4, 0, 0]} />
@@ -193,9 +197,9 @@ export function ReportsManager() {
           <div className="p-6">
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={DEPT_PERFORMANCE}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                <XAxis dataKey="dept" tick={{ fontSize: 11 }} />
-                <YAxis domain={[60, 100]} tick={{ fontSize: 12 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="dept" tick={{ fontSize: 11, fill: axis }} />
+                <YAxis domain={[60, 100]} tick={{ fontSize: 12, fill: axis }} />
                 <Tooltip formatter={(v: number) => [`${v}%`, 'Avg Score']} />
                 <Bar dataKey="avg" fill="#2563eb" radius={[6, 6, 0, 0]} />
               </BarChart>
@@ -210,9 +214,9 @@ export function ReportsManager() {
           <div className="p-6">
             <ResponsiveContainer width="100%" height={220}>
               <LineChart data={ATTENDANCE_MONTHLY}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                <YAxis domain={[85, 100]} tick={{ fontSize: 12 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="month" tick={{ fontSize: 12, fill: axis }} />
+                <YAxis domain={[85, 100]} tick={{ fontSize: 12, fill: axis }} />
                 <Tooltip formatter={(v: number) => [`${v}%`, 'Attendance Rate']} />
                 <Line type="monotone" dataKey="rate" stroke="#E8B84B" strokeWidth={2.5} dot={{ r: 4, fill: '#E8B84B' }} />
               </LineChart>

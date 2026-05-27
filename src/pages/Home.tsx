@@ -181,22 +181,29 @@ export function Home() {
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl">
 
                 {/* Photo area */}
-                <div className="relative h-56 w-full overflow-hidden">
-                  <img
-                    src="https://picsum.photos/seed/director-alber/600/400"
-                    alt="Mr. Albert Njeru"
-                    className="h-full w-full object-cover object-top"
-                  />
-                  {/* Photo gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                  {/* Name overlay on photo */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <p className="text-lg font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
-                    <div className="mt-1 flex items-center gap-2">
-                      <div className="h-px w-8 bg-gold" />
-                      <p className="text-xs font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
+                <div className="flex flex-col items-center bg-gradient-to-b from-white/5 to-transparent pt-8 pb-4">
+                  {/* Circular portrait with gold ring */}
+                  <div className="relative">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold via-gold/40 to-transparent p-[3px]">
+                      <div className="h-full w-full rounded-full bg-black/60" />
                     </div>
+                    <div className="relative h-32 w-32 overflow-hidden rounded-full border-[3px] border-gold p-[3px]">
+                      <img
+                        src="https://picsum.photos/seed/director-alber/300/300"
+                        alt="Mr. Albert Njeru"
+                        className="h-full w-full rounded-full object-cover object-top"
+                      />
+                    </div>
+                    {/* Gold dot badge */}
+                    <div className="absolute bottom-1 right-1 h-5 w-5 rounded-full border-2 border-black bg-gold" />
+                  </div>
+
+                  {/* Name below photo */}
+                  <p className="mt-4 text-base font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <div className="h-px w-6 bg-gold" />
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
+                    <div className="h-px w-6 bg-gold" />
                   </div>
                 </div>
 

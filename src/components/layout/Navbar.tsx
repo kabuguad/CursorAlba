@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Menu, LogIn, LogOut, ChevronDown } from 'lucide-react'
+import { Menu, LogIn, LogOut, ChevronDown, Orbit } from 'lucide-react'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { Button } from '../ui/Button'
 import { MobileDrawer } from './MobileDrawer'
+import { VirtualTourModal } from '../virtual-tour/VirtualTourModal'
 import { useAuth } from '../../contexts/AuthContext'
 import { cn } from '../../lib/utils'
 
@@ -38,6 +39,7 @@ const ALL_NAV = [
 export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [tourOpen, setTourOpen] = useState(false)
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -58,8 +60,8 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-4">
-        <nav className="glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated px-4 py-3 text-foreground lg:px-6">
+      <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-3">
+        <nav className="glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated px-4 py-4 text-foreground lg:px-8">
           <Link to="/" className="flex items-center gap-2 transition hover:scale-105">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-gold font-bold text-lg">
               A
@@ -147,6 +149,14 @@ export function Navbar() {
                 {item.label}
               </NavLink>
             ))}
+
+            <button
+              onClick={() => setTourOpen(true)}
+              className="ml-1 flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 px-3.5 py-2 text-sm font-semibold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-primary/40 hover:shadow-lg dark:from-gold dark:to-gold/80 dark:text-black"
+            >
+              <Orbit className="h-4 w-4 animate-spin" style={{ animationDuration: '8s' }} />
+              360° Virtual Tour
+            </button>
           </div>
 
           <div className="flex items-center gap-2">
@@ -192,6 +202,8 @@ export function Navbar() {
         links={ALL_NAV}
         coLinks={CO_CURRICULAR_LINKS}
       />
+
+      <VirtualTourModal open={tourOpen} onClose={() => setTourOpen(false)} />
     </>
   )
 }

@@ -1,11 +1,10 @@
 import { useState, useRef } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Menu, LogIn, LogOut, ChevronDown, Orbit } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom'
+import { Menu, LogIn, ChevronDown, Orbit } from 'lucide-react'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { Button } from '../ui/Button'
 import { MobileDrawer } from './MobileDrawer'
 import { VirtualTourModal } from '../virtual-tour/VirtualTourModal'
-import { useAuth } from '../../contexts/AuthContext'
 import { cn } from '../../lib/utils'
 
 const CO_CURRICULAR_LINKS = [
@@ -41,13 +40,6 @@ export function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-
-  const handleLogout = () => {
-    logout()
-    navigate('/')
-  }
 
   const openDropdown = () => {
     if (dropdownTimer.current) clearTimeout(dropdownTimer.current)
@@ -161,30 +153,11 @@ export function Navbar() {
               360° Tour
             </button>
             <ThemeToggle />
-            {user ? (
-              <>
-                <Button
-                  variant="ghost"
-                  className="hidden sm:inline-flex text-xs"
-                  onClick={() => navigate(`/dashboard/${user.role}`)}
-                >
-                  Dashboard
-                </Button>
-                <button
-                  onClick={handleLogout}
-                  className="rounded-xl p-2 transition hover:bg-primary/10 hover:scale-110"
-                  aria-label="Logout"
-                >
-                  <LogOut className="h-5 w-5" />
-                </button>
-              </>
-            ) : (
-              <Link to="/login" className="hidden sm:block">
-                <Button variant="primary" className="text-xs px-4 py-2">
-                  <LogIn className="h-4 w-4" /> Portal
-                </Button>
-              </Link>
-            )}
+            <Link to="/login" className="hidden sm:block">
+              <Button variant="primary" className="text-xs px-4 py-2">
+                <LogIn className="h-4 w-4" /> Portal
+              </Button>
+            </Link>
             <button
               onClick={() => setDrawerOpen(true)}
               className="rounded-xl p-2 xl:hidden transition hover:bg-primary/10"

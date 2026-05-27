@@ -121,10 +121,11 @@ export function Home() {
           ))}
         </div>
 
-        {/* Main content */}
-        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-8 py-24 lg:px-16">
-          <div className="max-w-3xl">
+        {/* Main content — two-column */}
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-center gap-8 px-8 py-24 lg:px-16">
 
+          {/* ── Left: headline + CTAs ── */}
+          <div className="flex-1">
             {/* Top badge */}
             <div className="mb-8 flex items-center gap-3">
               <div className="h-px w-10 bg-gold" />
@@ -134,7 +135,7 @@ export function Home() {
             </div>
 
             {/* Headline */}
-            <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.8rem, 7vw, 6rem)' }}>
+            <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}>
               Where Excellence
               <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
                 Meets Tomorrow
@@ -143,18 +144,18 @@ export function Home() {
 
             {/* Divider */}
             <div className="mb-8 flex items-center gap-4">
-              <div className="h-px flex-1 max-w-[80px] bg-gold/60" />
+              <div className="h-px w-20 bg-gold/60" />
               <span className="text-xs uppercase tracking-widest text-white/50">Alber School</span>
-              <div className="h-px flex-1 max-w-[80px] bg-gold/60" />
+              <div className="h-px w-20 bg-gold/60" />
             </div>
 
             {/* Tagline */}
-            <p className="mb-10 max-w-xl text-lg leading-relaxed text-white/80">
+            <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
               Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.
             </p>
 
             {/* CTAs */}
-            <div className="mb-14 flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4">
               <Link to="/admissions">
                 <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
               </Link>
@@ -164,28 +165,70 @@ export function Home() {
                 </button>
               </Link>
             </div>
+          </div>
 
-            {/* Director's quote card */}
-            <div className="flex items-start gap-5 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md max-w-xl">
-              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-gold/60">
-                <img
-                  src="https://picsum.photos/seed/director-alber/200/200"
-                  alt="Mr. Albert Njeru"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div>
-                <p className="text-sm italic leading-relaxed text-white/80">
-                  "Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every day."
-                </p>
-                <div className="mt-3 flex items-center gap-2">
-                  <div className="h-px w-6 bg-gold" />
-                  <span className="text-xs font-bold text-gold">Mr. Albert Njeru</span>
-                  <span className="text-xs text-white/50">· Founder & Director</span>
+          {/* ── Right: Director's fancy card ── */}
+          <div className="hidden lg:flex lg:w-80 xl:w-96 shrink-0 flex-col">
+            {/* Outer frame with corner accents */}
+            <div className="relative">
+              {/* Corner accents */}
+              <div className="absolute -top-2 -left-2 h-6 w-6 border-t-2 border-l-2 border-gold" />
+              <div className="absolute -top-2 -right-2 h-6 w-6 border-t-2 border-r-2 border-gold" />
+              <div className="absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-gold" />
+              <div className="absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-gold" />
+
+              {/* Card body */}
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl">
+
+                {/* Photo area */}
+                <div className="relative h-56 w-full overflow-hidden">
+                  <img
+                    src="https://picsum.photos/seed/director-alber/600/400"
+                    alt="Mr. Albert Njeru"
+                    className="h-full w-full object-cover object-top"
+                  />
+                  {/* Photo gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+
+                  {/* Name overlay on photo */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-lg font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <div className="h-px w-8 bg-gold" />
+                      <p className="text-xs font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Quote body */}
+                <div className="relative p-6">
+                  {/* Large decorative quote mark */}
+                  <span className="absolute -top-4 left-5 font-serif text-8xl leading-none text-gold/25 select-none">"</span>
+
+                  <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
+                    Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.
+                  </p>
+
+                  {/* Signature line */}
+                  <div className="mt-5 border-t border-white/10 pt-4 flex items-center justify-between">
+                    <span className="font-serif text-xl italic text-gold/80">Albert Njeru</span>
+                    <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
+                  </div>
+                </div>
+
+                {/* Gold bottom bar */}
+                <div className="h-1 w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
               </div>
             </div>
+
+            {/* "A message from our Director" label */}
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <div className="h-px flex-1 bg-white/10" />
+              <span className="text-[10px] uppercase tracking-[0.25em] text-white/30">A message from our Director</span>
+              <div className="h-px flex-1 bg-white/10" />
+            </div>
           </div>
+
         </div>
 
         {/* Stats bar anchored at the very bottom */}

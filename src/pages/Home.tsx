@@ -139,40 +139,40 @@ export function Home() {
               </span>
             </div>
 
-            {/* ── Director card — centered over the image ── */}
-            <div className="absolute inset-0 z-10 flex items-center justify-center">
+            {/* ── Director card — centered on small, right-aligned + larger on md ── */}
+            <div className="absolute inset-0 z-10 flex items-center justify-center md:items-center md:justify-end md:pr-10">
               <div className="flex flex-col items-center gap-3 px-4 text-center">
 
                 {/* Circular photo */}
                 <div className="relative">
                   <div className="absolute -inset-2 animate-pulse rounded-full border border-gold/30" />
                   <div className="absolute -inset-0.5 animate-ping rounded-full border border-gold/20" style={{ animationDuration: '2.8s' }} />
-                  <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-gold shadow-[0_0_20px_4px_rgba(232,184,75,0.4)] sm:h-24 sm:w-24">
+                  <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-gold shadow-[0_0_20px_4px_rgba(232,184,75,0.4)] md:h-32 md:w-32 md:border-[3px] md:shadow-[0_0_32px_6px_rgba(232,184,75,0.4)]">
                     <img
                       src="https://picsum.photos/seed/director-alber/400/400"
                       alt="Mr. Albert Njeru"
                       className="h-full w-full object-cover object-top"
                     />
                   </div>
-                  <div className="absolute bottom-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-[9px] font-bold text-black">✓</div>
+                  <div className="absolute bottom-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-[9px] font-bold text-black md:h-7 md:w-7 md:text-[11px]">✓</div>
                 </div>
 
                 {/* Glass card: name + quote */}
-                <div className="relative max-w-[220px] overflow-hidden rounded-2xl border border-white/20 bg-black/50 px-4 py-3 backdrop-blur-md sm:max-w-[280px] sm:px-5 sm:py-4">
+                <div className="relative max-w-[220px] overflow-hidden rounded-2xl border border-white/20 bg-black/50 px-4 py-3 backdrop-blur-md md:max-w-[320px] md:px-6 md:py-5">
                   {/* Corner accents */}
-                  <div className="absolute -top-1 -left-1 h-4 w-4 border-t border-l border-gold" />
-                  <div className="absolute -top-1 -right-1 h-4 w-4 border-t border-r border-gold" />
-                  <div className="absolute -bottom-1 -left-1 h-4 w-4 border-b border-l border-gold" />
-                  <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b border-r border-gold" />
+                  <div className="absolute -top-1 -left-1 h-4 w-4 border-t border-l border-gold md:h-5 md:w-5" />
+                  <div className="absolute -top-1 -right-1 h-4 w-4 border-t border-r border-gold md:h-5 md:w-5" />
+                  <div className="absolute -bottom-1 -left-1 h-4 w-4 border-b border-l border-gold md:h-5 md:w-5" />
+                  <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b border-r border-gold md:h-5 md:w-5" />
 
-                  <p className="text-sm font-extrabold uppercase tracking-wide text-white sm:text-base">Mr. Albert Njeru</p>
+                  <p className="text-sm font-extrabold uppercase tracking-wide text-white md:text-lg">Mr. Albert Njeru</p>
                   <div className="my-1.5 flex items-center justify-center gap-2">
-                    <div className="h-px w-4 bg-gold" />
-                    <p className="text-[9px] font-semibold uppercase tracking-widest text-gold sm:text-[10px]">Founder & Director</p>
-                    <div className="h-px w-4 bg-gold" />
+                    <div className="h-px w-4 bg-gold md:w-6" />
+                    <p className="text-[9px] font-semibold uppercase tracking-widest text-gold md:text-[11px]">Founder & Director</p>
+                    <div className="h-px w-4 bg-gold md:w-6" />
                   </div>
                   <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-                  <p className="mt-2 text-[10px] italic leading-relaxed text-white/70 sm:text-[11px]">
+                  <p className="mt-2 text-[10px] italic leading-relaxed text-white/70 md:mt-3 md:text-sm">
                     "Every child in Kirinyaga deserves an education that changes the trajectory of a family."
                   </p>
                 </div>

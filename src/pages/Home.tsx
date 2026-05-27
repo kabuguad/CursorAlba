@@ -169,67 +169,72 @@ export function Home() {
 
           {/* ── Right: Director's fancy card ── */}
           <div className="hidden lg:flex lg:w-80 xl:w-96 shrink-0 flex-col">
-            {/* Outer frame with corner accents */}
-            <div className="relative">
-              {/* Corner accents */}
-              <div className="absolute -top-2 -left-2 h-6 w-6 border-t-2 border-l-2 border-gold" />
-              <div className="absolute -top-2 -right-2 h-6 w-6 border-t-2 border-r-2 border-gold" />
-              <div className="absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-gold" />
-              <div className="absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-gold" />
 
-              {/* Card body */}
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/50 backdrop-blur-xl">
+            {/* Outer wrapper — top padding reserves space for the overflowing photo */}
+            {/* Photo is h-36 (144px). 75% above card = 108px → pt-[108px] */}
+            <div className="relative pt-[108px]">
 
-                {/* Photo area */}
-                <div className="flex flex-col items-center bg-gradient-to-b from-white/5 to-transparent pt-8 pb-4">
-                  {/* Circular portrait with gold ring */}
-                  <div className="relative">
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold via-gold/40 to-transparent p-[3px]">
-                      <div className="h-full w-full rounded-full bg-black/60" />
-                    </div>
-                    <div className="relative h-32 w-32 overflow-hidden rounded-full border-[3px] border-gold p-[3px]">
-                      <img
-                        src="https://picsum.photos/seed/director-alber/300/300"
-                        alt="Mr. Albert Njeru"
-                        className="h-full w-full rounded-full object-cover object-top"
-                      />
-                    </div>
-                    {/* Gold dot badge */}
-                    <div className="absolute bottom-1 right-1 h-5 w-5 rounded-full border-2 border-black bg-gold" />
-                  </div>
-
-                  {/* Name below photo */}
-                  <p className="mt-4 text-base font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
-                  <div className="mt-1 flex items-center gap-2">
-                    <div className="h-px w-6 bg-gold" />
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
-                    <div className="h-px w-6 bg-gold" />
-                  </div>
+              {/* Floating circular photo — 75% above card, 25% (36px) inside */}
+              <div className="absolute top-0 left-1/2 z-20 -translate-x-1/2">
+                {/* Outer slow pulse ring */}
+                <div className="absolute -inset-3 animate-pulse rounded-full border border-gold/20" />
+                {/* Fast ping ring */}
+                <div className="absolute -inset-1 animate-ping rounded-full border border-gold/30" style={{ animationDuration: '2.5s' }} />
+                {/* Gold glow shadow + border */}
+                <div className="relative h-36 w-36 overflow-hidden rounded-full border-[3px] border-gold shadow-[0_0_32px_6px_rgba(232,184,75,0.35)]">
+                  <img
+                    src="https://picsum.photos/seed/director-alber/400/400"
+                    alt="Mr. Albert Njeru"
+                    className="h-full w-full object-cover object-top"
+                  />
                 </div>
+                {/* Gold verified badge */}
+                <div className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-black text-[10px] font-bold">✓</div>
+              </div>
 
-                {/* Quote body */}
-                <div className="relative p-6">
-                  {/* Large decorative quote mark */}
-                  <span className="absolute -top-4 left-5 font-serif text-8xl leading-none text-gold/25 select-none">"</span>
+              {/* Card frame with corner accents */}
+              <div className="relative">
+                <div className="absolute -top-2 -left-2 h-6 w-6 border-t-2 border-l-2 border-gold" />
+                <div className="absolute -top-2 -right-2 h-6 w-6 border-t-2 border-r-2 border-gold" />
+                <div className="absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-gold" />
+                <div className="absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-gold" />
 
-                  <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
-                    Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.
-                  </p>
+                {/* Card body */}
+                <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 backdrop-blur-xl">
 
-                  {/* Signature line */}
-                  <div className="mt-5 border-t border-white/10 pt-4 flex items-center justify-between">
-                    <span className="font-serif text-xl italic text-gold/80">Albert Njeru</span>
-                    <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
+                  {/* Top section — space for the 25% of photo inside the card + name */}
+                  <div className="flex flex-col items-center pt-12 pb-5 px-6 bg-gradient-to-b from-white/5 to-transparent">
+                    <p className="text-base font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <div className="h-px w-6 bg-gold" />
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
+                      <div className="h-px w-6 bg-gold" />
+                    </div>
                   </div>
-                </div>
 
-                {/* Gold bottom bar */}
-                <div className="h-1 w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
+                  {/* Thin gold divider */}
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+
+                  {/* Quote */}
+                  <div className="relative px-6 pt-5 pb-6">
+                    <span className="absolute top-1 left-4 font-serif text-7xl leading-none text-gold/20 select-none">"</span>
+                    <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
+                      Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.
+                    </p>
+                    <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
+                      <span className="font-serif text-lg italic text-gold/80">Albert Njeru</span>
+                      <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
+                    </div>
+                  </div>
+
+                  {/* Gold shimmer bar */}
+                  <div className="h-1 w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
+                </div>
               </div>
             </div>
 
-            {/* "A message from our Director" label */}
-            <div className="mt-4 flex items-center justify-center gap-2">
+            {/* Label */}
+            <div className="mt-5 flex items-center justify-center gap-2">
               <div className="h-px flex-1 bg-white/10" />
               <span className="text-[10px] uppercase tracking-[0.25em] text-white/30">A message from our Director</span>
               <div className="h-px flex-1 bg-white/10" />

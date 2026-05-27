@@ -1,5 +1,5 @@
-import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
-import { Search } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { teachers, departments } from '../../data/teachers'
 import type { Department, Teacher } from '../../data/types'
 import { GlassCard } from '../ui/GlassCard'
@@ -7,14 +7,13 @@ import { TeacherSheet } from './TeacherSheet'
 import { ScrollReveal } from '../ui/ScrollReveal'
 import { cn } from '../../lib/utils'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 10
 
 export function StaffDirectory() {
   const [search, setSearch] = useState('')
   const [dept, setDept] = useState<Department | 'All'>('All')
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<Teacher | null>(null)
-  const loaderRef = useRef<HTMLDivElement>(null)
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()
@@ -29,27 +28,9 @@ export function StaffDirectory() {
     })
   }, [search, dept])
 
-  const visible = filtered.slice(0, page * PAGE_SIZE)
-  const hasMore = visible.length < filtered.length
-
-  const loadMore = useCallback(() => {
-    if (hasMore) setPage((p) => p + 1)
-  }, [hasMore])
-
-  useEffect(() => {
-    setPage(1)
-  }, [search, dept])
-
-  useEffect(() => {
-    const el = loaderRef.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      (entries) => entries[0]?.isIntersecting && loadMore(),
-      { threshold: 0.1 },
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [loadMore])
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE) || 1
+  const start = (page - 1) * PAGE_SIZE
+  const visible = filtered.slice(start, start + PAGE_SIZE)
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-12">
@@ -129,9 +110,40 @@ export function StaffDirectory() {
         ))}
       </div>
 
-      {hasMore && (
-        <div ref={loaderRef} className="py-12 text-center text-sm text-muted">
-          Loading more staff...
+      {totalPages > 1 && (
+        <div className="mt-12 flex items-center justify-center gap-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page <= 1}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-gold/30 bg-surface-elevated text-gold transition hover:bg-primary hover:text-white disabled:opacity-40 disabled:hover:bg-surface-elevated disabled:hover:text-gold"
+            aria-label="Previous page"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              className={cn(
+                'flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold transition',
+                page === p
+                  ? 'bg-primary text-white'
+                  : 'border border-gold/30 bg-surface-elevated text-gold hover:bg-primary hover:text-white',
+              )}
+            >
+              {p}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-gold/30 bg-surface-elevated text-gold transition hover:bg-primary hover:text-white disabled:opacity-40 disabled:hover:bg-surface-elevated disabled:hover:text-gold"
+            aria-label="Next page"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
       )}
 

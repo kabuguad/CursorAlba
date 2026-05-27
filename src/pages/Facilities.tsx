@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { GlassCard } from '../components/ui/GlassCard'
@@ -73,9 +74,96 @@ const FACILITIES = [
   },
 ]
 
+type Facility = typeof FACILITIES[number]
+
+interface FacilityModalProps {
+  open: boolean
+  facility: Facility | null
+  onClose: () => void
+}
+
+function FacilityModal({ open, facility, onClose }: FacilityModalProps) {
+  const scrollYRef = useRef(0)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (open) {
+      scrollYRef.current = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollYRef.current}px`
+      document.body.style.width = '100%'
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0
+      }
+    } else {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, scrollYRef.current)
+    }
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+    }
+  }, [open])
+
+  return createPortal(
+    <AnimatePresence>
+      {open && facility && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="glass glass-border relative mx-auto flex w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-surface-elevated text-foreground lg:flex-row max-h-[90vh]"
+          >
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 z-10 rounded-xl p-2 hover:bg-primary/10"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <img
+              src={facility.img}
+              alt={facility.name}
+              className="h-64 w-full object-cover lg:h-auto lg:w-1/2 lg:max-h-[90vh]"
+            />
+            <div className="flex-1 overflow-y-auto p-8 lg:w-1/2" ref={contentRef}>
+              <span className="text-4xl">{facility.icon}</span>
+              <h2 className="mt-4 text-3xl font-bold text-primary dark:text-gold">{facility.name}</h2>
+              <p className="mt-4 text-muted leading-relaxed">{facility.desc}</p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {facility.highlights.map((h) => (
+                  <span key={h} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium">
+                    {h}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-8">
+                <Link to="/admissions" onClick={onClose}>
+                  <Button variant="primary">Apply for Admission</Button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body
+  )
+}
+
 export function Facilities() {
   const [selected, setSelected] = useState<string | null>(null)
-  const active = FACILITIES.find((f) => f.id === selected)
+  const active = FACILITIES.find((f) => f.id === selected) ?? null
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
@@ -88,8 +176,8 @@ export function Facilities() {
         {FACILITIES.map((f, i) => (
           <ScrollReveal key={f.id} delay={i * 0.06}>
             <button
-              onClick={() => setSelected(selected === f.id ? null : f.id)}
-              className={`w-full text-left transition-all hover:scale-105 ${selected === f.id ? 'ring-2 ring-gold rounded-3xl' : ''}`}
+              onClick={() => setSelected(f.id)}
+              className="w-full text-left transition-all hover:scale-105"
             >
               <GlassCard className="overflow-hidden p-0">
                 <div className="relative h-40 overflow-hidden">
@@ -107,54 +195,11 @@ export function Facilities() {
         ))}
       </div>
 
-      {active && (
-        <AnimatePresence>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
-            onClick={() => setSelected(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="glass glass-border relative flex h-full max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-surface-elevated text-foreground lg:flex-row"
-            >
-              <button
-                onClick={() => setSelected(null)}
-                className="absolute top-4 right-4 z-10 rounded-xl p-2 hover:bg-primary/10"
-              >
-                <X className="h-6 w-6" />
-              </button>
-              <img
-                src={active.img}
-                alt={active.name}
-                className="h-64 w-full object-cover lg:h-auto lg:w-1/2"
-              />
-              <div className="flex-1 overflow-y-auto p-8 lg:w-1/2">
-                <span className="text-4xl">{active.icon}</span>
-                <h2 className="mt-4 text-3xl font-bold text-primary dark:text-gold">{active.name}</h2>
-                <p className="mt-4 text-muted leading-relaxed">{active.desc}</p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {active.highlights.map((h) => (
-                    <span key={h} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium">
-                      {h}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-8">
-                  <Link to="/admissions" onClick={() => setSelected(null)}>
-                    <Button variant="primary">Apply for Admission</Button>
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </AnimatePresence>
-      )}
+      <FacilityModal
+        open={!!selected}
+        facility={active}
+        onClose={() => setSelected(null)}
+      />
 
       <ScrollReveal className="mt-16 text-center">
         <GlassCard className="p-10">

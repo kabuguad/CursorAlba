@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Quote } from 'lucide-react'
+import { ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen, Globe, Users } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { AnimatedCounter } from '../components/ui/AnimatedCounter'
 import { events } from '../data/events'
+import { programLevels } from '../data/programs'
 
 const HERO_IMAGES = [
   'https://picsum.photos/seed/alber-campus/1200/800',
@@ -33,6 +34,46 @@ const GALLERY = [
   'https://picsum.photos/seed/alber-g9/400/400',
 ]
 
+const WHY_ALBER = [
+  {
+    icon: BookOpen,
+    title: 'Dual Curriculum',
+    desc: 'The only school in Kirinyaga offering both the CBC national framework and Cambridge IGCSE & A-Level pathways under one roof.',
+  },
+  {
+    icon: Music,
+    title: 'Professional Music Academy',
+    desc: 'Steinway-ready studios, ABRSM examination centre, and ensemble halls — nurturing musicians from Grade 1 to A-Level.',
+  },
+  {
+    icon: Trophy,
+    title: 'Elite Sports Complex',
+    desc: '25m pool, 400m athletics track, football pitches, and a fully equipped gym — developing county and national champions.',
+  },
+  {
+    icon: Globe,
+    title: 'Global University Ready',
+    desc: 'Dedicated university counselling from Grade 10, with graduates placed in universities across Kenya, UK, USA, and Canada.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Safe & Nurturing Campus',
+    desc: "CCTV-monitored, fully fenced campus adjacent to the Governor's Offices — giving parents total peace of mind.",
+  },
+  {
+    icon: Users,
+    title: 'Small Class Sizes',
+    desc: 'A maximum of 30 learners per class ensures every child receives individualised attention from our expert educators.',
+  },
+]
+
+const PROGRAM_ICONS: Record<string, string> = {
+  daycare: '🌱',
+  primary: '📚',
+  junior: '🔬',
+  senior: '🎓',
+}
+
 export function Home() {
   const [slide, setSlide] = useState(0)
   const [testimonial, setTestimonial] = useState(0)
@@ -49,6 +90,7 @@ export function Home() {
 
   return (
     <>
+      {/* ── Hero ── */}
       <section className="relative mx-auto flex min-h-[85vh] max-w-7xl flex-col items-center gap-12 px-4 lg:flex-row lg:items-center">
         <ScrollReveal className="flex-1 lg:pr-8">
           <span className="mb-4 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
@@ -94,6 +136,7 @@ export function Home() {
         </ScrollReveal>
       </section>
 
+      {/* ── Stats ── */}
       <section className="bg-tint/50 py-16 dark:bg-dark-card/40">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -114,29 +157,135 @@ export function Home() {
         </div>
       </section>
 
-      <section className="bg-tint/30 py-20 dark:bg-dark-card/30">
+      {/* ── Why Alber ── */}
+      <section className="py-24">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal className="text-center">
-            <h2 className="mb-12 text-4xl font-bold">Upcoming Events</h2>
+          <ScrollReveal className="mb-16 text-center">
+            <span className="mb-3 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
+              Why Choose Us
+            </span>
+            <h2 className="text-4xl font-bold md:text-5xl">The Alber Difference</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted">
+              Six pillars that set Alber School apart from every other institution in Kirinyaga County.
+            </p>
           </ScrollReveal>
-          <div className="relative border-l-2 border-gold pl-8">
-            {events.filter((e) => !e.isPast).slice(0, 6).map((e, i) => (
-              <ScrollReveal key={e.id} delay={i * 0.08}>
-                <div className="relative mb-10">
-                  <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-gold ring-4 ring-gold/20" />
-                  <GlassCard className="p-6">
-                    <span className="text-xs font-semibold text-gold">{e.date}</span>
-                    <h3 className="mt-1 text-xl font-bold">{e.title}</h3>
-                    <p className="text-sm text-muted">{e.location} · {e.description}</p>
-                  </GlassCard>
-                </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {WHY_ALBER.map((item, i) => (
+              <ScrollReveal key={item.title} delay={i * 0.07}>
+                <GlassCard className="flex gap-5 p-6 h-full">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 dark:bg-gold/10">
+                    <item.icon className="h-6 w-6 text-primary dark:text-gold" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-foreground">{item.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-muted">{item.desc}</p>
+                  </div>
+                </GlassCard>
               </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20">
+      {/* ── Programs Teaser ── */}
+      <section className="bg-tint/30 py-24 dark:bg-dark-card/30">
+        <div className="mx-auto max-w-7xl px-4">
+          <ScrollReveal className="mb-16 text-center">
+            <span className="mb-3 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
+              Our Programs
+            </span>
+            <h2 className="text-4xl font-bold md:text-5xl">A School for Every Stage</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted">
+              From first steps to university readiness — a single, nurturing institution your child can grow with for 16 years.
+            </p>
+          </ScrollReveal>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {programLevels.map((prog, i) => (
+              <ScrollReveal key={prog.id} delay={i * 0.08}>
+                <Link to="/academics" className="group block h-full">
+                  <GlassCard className="overflow-hidden p-0 h-full transition-all group-hover:ring-2 group-hover:ring-gold/60">
+                    <div className="relative h-44 overflow-hidden">
+                      <img
+                        src={prog.image}
+                        alt={prog.name}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <span className="absolute bottom-3 left-3 text-3xl">{PROGRAM_ICONS[prog.id]}</span>
+                      <span className="absolute top-3 right-3 rounded-full bg-gold/90 px-2 py-0.5 text-xs font-bold text-black">
+                        {prog.ages}
+                      </span>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold text-foreground">{prog.name}</h3>
+                      <p className="mt-1 text-sm leading-relaxed text-muted">{prog.description}</p>
+                      <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary dark:text-gold group-hover:gap-2 transition-all">
+                        Learn more <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </GlassCard>
+                </Link>
+              </ScrollReveal>
+            ))}
+          </div>
+          <ScrollReveal className="mt-10 text-center">
+            <Link to="/academics">
+              <Button variant="outline">View Full Curriculum <ArrowRight className="h-4 w-4" /></Button>
+            </Link>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── Director's Welcome ── */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-4">
+          <ScrollReveal className="mb-16 text-center">
+            <span className="mb-3 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
+              A Message From Our Director
+            </span>
+          </ScrollReveal>
+          <ScrollReveal>
+            <GlassCard className="overflow-hidden lg:flex">
+              <div className="flex flex-col items-center justify-center bg-primary/5 p-10 lg:w-80 lg:shrink-0 dark:bg-gold/5">
+                <div className="h-36 w-36 overflow-hidden rounded-full border-4 border-gold/40">
+                  <img
+                    src="https://picsum.photos/seed/director-alber/400/400"
+                    alt="School Director"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <h3 className="mt-5 text-xl font-bold text-primary dark:text-gold">Mr. Albert Njeru</h3>
+                <p className="mt-1 text-sm text-muted">Founder & School Director</p>
+                <p className="mt-1 text-xs text-muted">M.Ed., University of Nairobi</p>
+                <div className="mt-4 h-1 w-12 rounded-full bg-gold/60" />
+              </div>
+              <div className="flex flex-1 flex-col justify-center p-10">
+                <Quote className="mb-6 h-10 w-10 text-gold opacity-50" />
+                <p className="text-lg leading-relaxed text-muted">
+                  When I founded Alber School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.
+                </p>
+                <p className="mt-5 text-lg leading-relaxed text-muted">
+                  Today, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Alber School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.
+                </p>
+                <p className="mt-5 text-lg leading-relaxed text-muted">
+                  We warmly welcome you to come and see it for yourself.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <Link to="/contact">
+                    <Button variant="primary">Book a Campus Tour</Button>
+                  </Link>
+                  <Link to="/admissions">
+                    <Button variant="outline">Apply for 2026 <ArrowRight className="h-4 w-4" /></Button>
+                  </Link>
+                </div>
+              </div>
+            </GlassCard>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* ── Testimonials ── */}
+      <section className="bg-tint/30 py-20 dark:bg-dark-card/30">
         <div className="mx-auto max-w-4xl px-4 text-center">
           <ScrollReveal>
             <h2 className="mb-12 text-4xl font-bold">What Our Community Says</h2>
@@ -165,10 +314,14 @@ export function Home() {
         </div>
       </section>
 
-      <section className="pb-20">
+      {/* ── Gallery ── */}
+      <section className="py-20">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal className="text-center">
-            <h2 className="mb-8 text-4xl font-bold">Life at Alber</h2>
+          <ScrollReveal className="mb-8 flex items-end justify-between">
+            <h2 className="text-4xl font-bold">Life at Alber</h2>
+            <Link to="/gallery" className="text-sm font-semibold text-primary dark:text-gold hover:underline flex items-center gap-1">
+              See all photos <ArrowRight className="h-4 w-4" />
+            </Link>
           </ScrollReveal>
           <div className="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-3">
             {GALLERY.map((url, i) => (
@@ -186,6 +339,33 @@ export function Home() {
         </div>
       </section>
 
+      {/* ── Upcoming Events ── */}
+      <section className="bg-tint/30 py-20 dark:bg-dark-card/30">
+        <div className="mx-auto max-w-7xl px-4">
+          <ScrollReveal className="mb-12 flex items-end justify-between">
+            <h2 className="text-4xl font-bold">Upcoming Events</h2>
+            <Link to="/contact" className="text-sm font-semibold text-primary dark:text-gold hover:underline flex items-center gap-1">
+              View calendar <ArrowRight className="h-4 w-4" />
+            </Link>
+          </ScrollReveal>
+          <div className="relative border-l-2 border-gold pl-8">
+            {events.filter((e) => !e.isPast).slice(0, 6).map((e, i) => (
+              <ScrollReveal key={e.id} delay={i * 0.08}>
+                <div className="relative mb-10">
+                  <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-gold ring-4 ring-gold/20" />
+                  <GlassCard className="p-6">
+                    <span className="text-xs font-semibold text-gold">{e.date}</span>
+                    <h3 className="mt-1 text-xl font-bold">{e.title}</h3>
+                    <p className="text-sm text-muted">{e.location} · {e.description}</p>
+                  </GlassCard>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
       <section className="bg-primary py-16 dark:bg-gold/20">
         <div className="mx-auto max-w-3xl px-4 text-center">
           <ScrollReveal>

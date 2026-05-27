@@ -12,22 +12,22 @@ interface TeacherModalProps {
 
 export function TeacherModal({ open, teacher, onClose }: TeacherModalProps) {
   const contentRef = useRef<HTMLDivElement>(null)
+  const scrollYRef = useRef(0)
 
   useEffect(() => {
     if (open) {
-      const scrollY = window.scrollY
+      scrollYRef.current = window.scrollY
       document.body.style.position = 'fixed'
-      document.body.style.top = `-${scrollY}px`
+      document.body.style.top = `-${scrollYRef.current}px`
       document.body.style.width = '100%'
       if (contentRef.current) {
         contentRef.current.scrollTop = 0
       }
     } else {
-      const scrollY = document.body.style.top
       document.body.style.position = ''
       document.body.style.top = ''
       document.body.style.width = ''
-      window.scrollTo(0, parseInt(scrollY || '0') * -1)
+      window.scrollTo(0, scrollYRef.current)
     }
     return () => {
       document.body.style.position = ''

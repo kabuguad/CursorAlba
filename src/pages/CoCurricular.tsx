@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
@@ -90,7 +90,24 @@ const CATEGORIES = [
 ]
 
 export function CoCurricular() {
-  const [active, setActive] = useState('sports')
+  const location = useLocation()
+  const [active, setActive] = useState(() => {
+    const hash = location.hash.slice(1)
+    return CATEGORIES.some((c) => c.id === hash) ? hash : 'sports'
+  })
+
+  useEffect(() => {
+    const hash = location.hash.slice(1)
+    if (CATEGORIES.some((c) => c.id === hash)) {
+      setActive(hash)
+    }
+  }, [location.hash])
+
+  const setTab = (id: string) => {
+    setActive(id)
+    window.history.replaceState(null, '', `#${id}`)
+  }
+
   const current = CATEGORIES.find((c) => c.id === active)!
 
   return (
@@ -107,7 +124,7 @@ export function CoCurricular() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setActive(cat.id)}
+              onClick={() => setTab(cat.id)}
               className={cn(
                 'flex items-center flex-shrink-0 gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition-all hover:scale-105 whitespace-nowrap',
                 active === cat.id

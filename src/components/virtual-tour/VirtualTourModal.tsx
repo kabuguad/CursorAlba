@@ -6,71 +6,90 @@ import { PanoViewer } from './PanoViewer'
 import type { PanoScene } from './PanoViewer'
 
 /**
- * Equirectangular panorama images used for the virtual tour demo.
- * Replace these URLs with real school panoramas shot with a 360° camera
- * (e.g. Insta360, Ricoh Theta, or any equirectangular export from Panotour Pro).
+ * Equirectangular panorama images — sourced from Poly Haven (CC0 licence).
+ * To use real Alber School panoramas, swap each `image` URL with an
+ * equirectangular JPG/PNG exported from a Ricoh Theta, Insta360, or Panotour Pro.
+ *
+ * Poly Haven thumbs are 3000×1500 px, CC0, CORS-enabled (~1–6 MB each).
  */
+
+const PH_THUMB = (name: string) =>
+  `https://cdn.polyhaven.com/asset_img/thumbs/${name}.png?width=400&height=200`
+
+const PH_FULL  = (name: string) =>
+  `https://cdn.polyhaven.com/asset_img/thumbs/${name}.png?width=3000&height=1500`
+
+const PH_TONE  = (name: string) =>
+  `https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/${name}.jpg`
+
 const SCENES: PanoScene[] = [
   {
-    id: 'campus',
-    label: 'Campus Entrance',
-    icon: '🏫',
-    image: 'https://pannellum.org/images/cerro-toco-0.jpg',
-    pitch: 0,
-    yaw: 0,
+    id:      'campus',
+    label:   'Campus Entrance',
+    icon:    '🏫',
+    image:   PH_FULL('school_quad'),
+    preview: PH_THUMB('school_quad'),
+    pitch:   0,
+    yaw:     0,
     hotspots: [
-      { pitch: -2,  yaw:  80, targetScene: 'classrooms', text: '→ Smart Classrooms' },
-      { pitch: -2,  yaw: -80, targetScene: 'sports',     text: '→ Sports Complex'   },
-      { pitch:  3,  yaw: 160, targetScene: 'library',    text: '→ Digital Library'  },
+      { pitch: -3, yaw:   60, targetScene: 'classrooms', text: '→ Smart Classrooms' },
+      { pitch: -3, yaw:  -60, targetScene: 'sports',     text: '→ Sports Complex'   },
+      { pitch: -3, yaw:  170, targetScene: 'library',    text: '→ Digital Library'  },
     ],
   },
   {
-    id: 'classrooms',
-    label: 'Smart Classrooms',
-    icon: '🖥️',
-    image: 'https://pannellum.org/images/cerro-toco-0.jpg',
-    pitch: 5,
-    yaw: 90,
+    id:      'classrooms',
+    label:   'Smart Classrooms',
+    icon:    '🖥️',
+    image:   PH_FULL('school_hall'),
+    preview: PH_THUMB('school_hall'),
+    pitch:   0,
+    yaw:     0,
     hotspots: [
-      { pitch: -2, yaw: -60, targetScene: 'campus',   text: '→ Campus Entrance' },
-      { pitch: -2, yaw: 180, targetScene: 'library',  text: '→ Digital Library' },
-      { pitch: -2, yaw:  90, targetScene: 'music',    text: '→ Music Studio'    },
+      { pitch: -3, yaw: -120, targetScene: 'campus',  text: '→ Campus Entrance' },
+      { pitch: -3, yaw:  120, targetScene: 'library', text: '→ Digital Library' },
+      { pitch: -3, yaw:    0, targetScene: 'music',   text: '→ Music Studio'    },
     ],
   },
   {
-    id: 'library',
-    label: 'Digital Library',
-    icon: '📚',
-    image: 'https://pannellum.org/images/cerro-toco-0.jpg',
-    pitch: -8,
-    yaw: 180,
+    id:      'library',
+    label:   'Digital Library',
+    icon:    '📚',
+    image:   PH_FULL('reading_room'),
+    preview: PH_THUMB('reading_room'),
+    pitch:   -5,
+    yaw:     0,
     hotspots: [
-      { pitch: -2, yaw:   0, targetScene: 'classrooms', text: '→ Classrooms'    },
-      { pitch: -2, yaw:  90, targetScene: 'sports',     text: '→ Sports Fields' },
+      { pitch: -3, yaw: -90, targetScene: 'classrooms', text: '→ Smart Classrooms' },
+      { pitch: -3, yaw:  90, targetScene: 'sports',     text: '→ Sports Complex'   },
+      { pitch: -3, yaw: 170, targetScene: 'campus',     text: '→ Campus Entrance'  },
     ],
   },
   {
-    id: 'music',
-    label: 'Music Studio',
-    icon: '🎹',
-    image: 'https://pannellum.org/images/cerro-toco-0.jpg',
-    pitch: 3,
-    yaw: -45,
+    id:      'music',
+    label:   'Music Studio',
+    icon:    '🎹',
+    image:   PH_TONE('music_hall_01'),
+    preview: PH_THUMB('music_hall_01'),
+    pitch:   0,
+    yaw:     0,
     hotspots: [
-      { pitch: -2, yaw:  60, targetScene: 'classrooms', text: '→ Classrooms'   },
-      { pitch: -2, yaw: 180, targetScene: 'sports',     text: '→ Sports Complex' },
+      { pitch: -3, yaw: -90, targetScene: 'classrooms', text: '→ Smart Classrooms' },
+      { pitch: -3, yaw:  90, targetScene: 'sports',     text: '→ Sports Complex'   },
     ],
   },
   {
-    id: 'sports',
-    label: 'Sports Complex',
-    icon: '🏟️',
-    image: 'https://pannellum.org/images/cerro-toco-0.jpg',
-    pitch: 0,
-    yaw: -90,
+    id:      'sports',
+    label:   'Sports Complex',
+    icon:    '🏟️',
+    image:   PH_TONE('gym_01'),
+    preview: PH_THUMB('gym_01'),
+    pitch:   0,
+    yaw:     0,
     hotspots: [
-      { pitch: -2, yaw:  90, targetScene: 'campus',  text: '→ Campus Entrance' },
-      { pitch: -2, yaw: -45, targetScene: 'library', text: '→ Library'         },
+      { pitch: -3, yaw: -90, targetScene: 'campus',  text: '→ Campus Entrance' },
+      { pitch: -3, yaw:   0, targetScene: 'music',   text: '→ Music Studio'    },
+      { pitch: -3, yaw:  90, targetScene: 'library', text: '→ Digital Library' },
     ],
   },
 ]

@@ -27,6 +27,7 @@ export interface PanoScene {
   label: string
   icon: string
   image: string
+  preview?: string
   pitch?: number
   yaw?: number
   hotspots?: Hotspot[]
@@ -136,6 +137,7 @@ export function PanoViewer({ scenes, initialScene, autoRotate = 2 }: PanoViewerP
       scenesConfig[s.id] = {
         title:    s.label,
         panorama: s.image,
+        preview:  s.preview,
         pitch:    s.pitch ?? 0,
         yaw:      s.yaw   ?? 0,
         hotSpots: buildHotspots(s),

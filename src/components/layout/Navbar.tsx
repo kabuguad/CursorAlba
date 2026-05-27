@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, LogIn, ChevronDown, Orbit } from 'lucide-react'
 import { ThemeToggle } from '../ui/ThemeToggle'
@@ -39,7 +39,14 @@ export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [tourOpen, setTourOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const openDropdown = () => {
     if (dropdownTimer.current) clearTimeout(dropdownTimer.current)
@@ -52,8 +59,8 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-3">
-        <nav className="glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated px-4 py-4 text-foreground lg:px-8">
+      <header className={`fixed top-0 left-0 right-0 z-50 px-4 pt-3 transition-all duration-300 ${scrolled ? 'pt-2' : 'pt-3'}`}>
+        <nav className={`glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl px-4 py-4 text-foreground lg:px-8 transition-all duration-300 ${scrolled ? 'bg-surface-elevated/95 shadow-lg shadow-black/20 backdrop-blur-xl' : 'bg-surface-elevated'}`}>
           <Link to="/" className="flex items-center gap-2 transition hover:scale-105">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-gold font-bold text-lg">
               A

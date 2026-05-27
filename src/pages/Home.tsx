@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen, Globe, Users } from 'lucide-react'
+import { ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen, Globe, Users, Baby, FlaskConical, GraduationCap, Sprout } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
@@ -36,34 +36,46 @@ const GALLERY = [
 
 const WHY_ALBER = [
   {
-    icon: BookOpen,
-    title: 'Dual Curriculum',
-    desc: 'The only school in Kirinyaga offering both the CBC national framework and Cambridge IGCSE & A-Level pathways under one roof.',
+    icon: Baby,
+    level: 'ECDE · PP1 & PP2',
+    title: 'Play-Based Early Years',
+    desc: 'Our trained ECD specialists guide children aged 2–5 through structured play, sensory discovery, and social development — laying a confident foundation before formal schooling begins.',
+    color: 'bg-pink-500/10 text-pink-500 dark:bg-pink-400/10 dark:text-pink-400',
   },
   {
-    icon: Music,
-    title: 'Professional Music Academy',
-    desc: 'Steinway-ready studios, ABRSM examination centre, and ensemble halls — nurturing musicians from Grade 1 to A-Level.',
+    icon: BookOpen,
+    level: 'Primary · Grades 1–6',
+    title: 'CBC Literacy & Numeracy Excellence',
+    desc: 'Learner-centred, project-based CBC teaching builds strong literacy, numeracy, and critical thinking. Continuous assessment replaces high-stakes exams — every child progresses at their own pace.',
+    color: 'bg-blue-500/10 text-blue-500 dark:bg-blue-400/10 dark:text-blue-400',
+  },
+  {
+    icon: FlaskConical,
+    level: 'Junior Secondary · Grades 7–9',
+    title: 'STEM, Careers & Community',
+    desc: "Kenya's CBC Junior Secondary curriculum with dedicated STEM labs, career pathway exploration, Community Service Learning (CSL), and Career & Technical Skills — preparing learners for a modern economy.",
+    color: 'bg-emerald-500/10 text-emerald-500 dark:bg-emerald-400/10 dark:text-emerald-400',
+  },
+  {
+    icon: GraduationCap,
+    level: 'Senior School · Grades 10–12',
+    title: 'KCSE & IGCSE University Pathways',
+    desc: 'Rigorous KCSE preparation alongside optional Cambridge IGCSE & A-Level tracks. Dedicated university counselling from Grade 10 — graduates placed in Kenyan and international universities.',
+    color: 'bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-400',
   },
   {
     icon: Trophy,
-    title: 'Elite Sports Complex',
-    desc: '25m pool, 400m athletics track, football pitches, and a fully equipped gym — developing county and national champions.',
-  },
-  {
-    icon: Globe,
-    title: 'Global University Ready',
-    desc: 'Dedicated university counselling from Grade 10, with graduates placed in universities across Kenya, UK, USA, and Canada.',
+    level: 'All Levels',
+    title: 'Holistic Co-Curricular Life',
+    desc: 'Every learner — from PP1 to Grade 12 — participates in sports, music, drama, or dance. Our professional coaches and ABRSM-registered music teachers develop talent alongside academics.',
+    color: 'bg-gold/10 text-gold dark:bg-gold/10 dark:text-gold',
   },
   {
     icon: ShieldCheck,
-    title: 'Safe & Nurturing Campus',
-    desc: "CCTV-monitored, fully fenced campus adjacent to the Governor's Offices — giving parents total peace of mind.",
-  },
-  {
-    icon: Users,
-    title: 'Small Class Sizes',
-    desc: 'A maximum of 30 learners per class ensures every child receives individualised attention from our expert educators.',
+    level: 'All Levels',
+    title: 'Safe, Certified & Fully Staffed',
+    desc: 'TSC-registered teachers, CCTV-monitored classrooms, a fully fenced campus, and a maximum of 30 learners per class — a structured, safe environment where every child is known by name.',
+    color: 'bg-primary/10 text-primary dark:bg-primary/10 dark:text-gold',
   },
 ]
 
@@ -272,19 +284,24 @@ export function Home() {
             </span>
             <h2 className="text-4xl font-bold md:text-5xl">The Alber Difference</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted">
-              Six pillars that set Alber School apart from every other institution in Kirinyaga County.
+              What outstanding education looks like at every stage — from first steps to university.
             </p>
           </ScrollReveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {WHY_ALBER.map((item, i) => (
               <ScrollReveal key={item.title} delay={i * 0.07}>
-                <GlassCard className="flex gap-5 p-6 h-full">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 dark:bg-gold/10">
-                    <item.icon className="h-6 w-6 text-primary dark:text-gold" />
+                <GlassCard className="flex flex-col gap-4 p-6 h-full">
+                  <div className="flex items-center gap-4">
+                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${item.color}`}>
+                      <item.icon className="h-6 w-6" />
+                    </div>
+                    <span className="rounded-full border border-current/20 bg-current/5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-muted">
+                      {item.level}
+                    </span>
                   </div>
                   <div>
                     <h3 className="font-bold text-foreground">{item.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted">{item.desc}</p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.desc}</p>
                   </div>
                 </GlassCard>
               </ScrollReveal>

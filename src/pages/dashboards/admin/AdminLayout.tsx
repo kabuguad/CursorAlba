@@ -5,7 +5,7 @@ import {
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
-  Moon, Sun,
+  Moon, Sun, UserCog,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
@@ -55,6 +55,7 @@ const NAV = [
   {
     group: 'System',
     items: [
+      { label: 'Accounts',      icon: UserCog,          path: '/dashboard/admin/accounts'          },
       { label: 'Site Settings', icon: Settings,         path: '/dashboard/admin/settings'         },
     ],
   },

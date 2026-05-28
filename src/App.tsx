@@ -77,6 +77,7 @@ import { AdmissionsManager }    from './pages/dashboards/admin/AdmissionsManager
 import { ReportsManager }       from './pages/dashboards/admin/ReportsManager'
 import { TimetableManager }     from './pages/dashboards/admin/TimetableManager'
 import { PaymentsManager }      from './pages/dashboards/admin/PaymentsManager'
+import { AccountsManager }      from './pages/dashboards/admin/AccountsManager'
 
 function App() {
   return (
@@ -180,6 +181,7 @@ function App() {
                 <Route path="fees"          element={<FeesManager />} />
                 <Route path="announcements" element={<AnnouncementsManager />} />
                 <Route path="reports"       element={<ReportsManager />} />
+                <Route path="accounts"      element={<AccountsManager />} />
                 <Route path="settings"      element={<SettingsManager />} />
               </Route>
 

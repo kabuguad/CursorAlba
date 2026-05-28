@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Save, School, Phone, Globe, Link2, Map } from 'lucide-react'
 import { useToast } from '../../../contexts/ToastContext'
+import { useUpdateSettings } from '../../../hooks/useAdminData'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
 const LABEL = 'mb-1 block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider'
@@ -66,7 +67,19 @@ export function SettingsManager() {
     sports:     'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/gym_01.jpg',
   })
 
-  const save = () => showToast('Settings saved ✓')
+  const updateSettings = useUpdateSettings()
+
+  const save = async () => {
+    await updateSettings.mutateAsync({
+      schoolName: school.name,
+      schoolMotto: school.motto,
+      address: contact.address,
+      phone: contact.phone1,
+      email: contact.email,
+      whatsapp: contact.whatsapp,
+    })
+    showToast('Settings saved ✓')
+  }
 
   return (
     <div className="p-6 lg:p-8 max-w-4xl mx-auto">

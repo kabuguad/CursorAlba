@@ -1,301 +1,257 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Button } from '../../../components/ui/Button'
-import { Download, Printer, Award, TrendingUp, TrendingDown, Minus } from 'lucide-react'
-import { useToast } from '../../../contexts/ToastContext'
+import { Download, Printer, Award, User, Calendar } from 'lucide-react'
+import {
+  useParentGradesHistory, useParentStudentProfile, useParentAttendance,
+} from '../../../hooks/useParentData'
+import jsPDF from 'jspdf'
 
-interface SubjectReport {
-  subject: string
-  cat1: number
-  cat2: number
-  exam: number
-  total: number
-  grade: string
-  points: number
-  remarks: string
-  teacher: string
+const GRADE_BADGE: Record<string,string> = {
+  A:'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+  'B+':'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+  B:'bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-300',
+  'C+':'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
+  C:'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+  D:'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
 }
 
-interface TermReport {
-  term: string
-  year: number
-  student: string
-  admNo: string
-  class: string
-  classTeacher: string
-  streamSize: number
-  position: number
-  totalMarks: number
-  meanScore: number
-  meanGrade: string
-  classMean: number
-  conduct: string
-  classTeacherComment: string
-  principalComment: string
-  nextTermBegins: string
-  subjects: SubjectReport[]
-}
+const TEACHER_REMARKS = [
+  'Good grasp. Work on problem areas.',
+  'Excellent comprehension. Keep it up.',
+  'Good effort. Consistency needed.',
+  'Theory strong. Practice more.',
+  'Outstanding creative work.',
+  'Very good. Maintain the pace.',
+  'Great physical fitness. Well done.',
+  'Excellent understanding.',
+]
 
-const REPORTS: Record<string, TermReport> = {
-  '2026-T2': {
-    term: 'Term 2', year: 2026,
-    student: 'Amani Kariuki', admNo: 'AS/2019/0847',
-    class: 'Grade 5 Gold', classTeacher: 'Mrs. Grace Kamau',
-    streamSize: 32, position: 4,
-    totalMarks: 542, meanScore: 77.4, meanGrade: 'B+', classMean: 71.2,
-    conduct: 'Excellent',
-    classTeacherComment: 'Amani is a focused and enthusiastic learner. She participates actively in class and demonstrates strong analytical skills. I encourage her to continue building confidence in Science practicals.',
-    principalComment: 'A commendable performance. Amani represents the values of Alber School — discipline, curiosity and excellence. Keep striving for the top.',
-    nextTermBegins: '1 September 2026',
-    subjects: [
-      { subject: 'Mathematics',    cat1: 68, cat2: 78, exam: 80, total: 82, grade: 'A-', points: 11, remarks: 'Good grasp of algebra. Work on geometry.', teacher: 'Mr. Ochieng'  },
-      { subject: 'English',        cat1: 74, cat2: 76, exam: 82, total: 84, grade: 'A-', points: 11, remarks: 'Excellent comprehension. Polish written expression.', teacher: 'Mrs. Wanjiku' },
-      { subject: 'Kiswahili',      cat1: 70, cat2: 72, exam: 75, total: 76, grade: 'B+', points: 10, remarks: 'Good effort. Improve on insha structure.', teacher: 'Ms. Akinyi'   },
-      { subject: 'Science',        cat1: 65, cat2: 72, exam: 74, total: 75, grade: 'B+', points: 10, remarks: 'Theory is strong. More focus on practical work.', teacher: 'Mr. Kamau'    },
-      { subject: 'Social Studies', cat1: 80, cat2: 82, exam: 85, total: 86, grade: 'A',  points: 12, remarks: 'Outstanding. Top of the class.', teacher: 'Mr. Njoroge'  },
-      { subject: 'CRE',            cat1: 78, cat2: 80, exam: 82, total: 83, grade: 'A-', points: 11, remarks: 'Excellent understanding of values.', teacher: 'Mr. Gitonga'  },
-      { subject: 'Creative Arts',  cat1: 72, cat2: 75, exam: 76, total: 78, grade: 'B+', points: 10, remarks: 'Creative and expressive. Well done.', teacher: 'Ms. Chebet'   },
-    ],
-  },
-  '2026-T1': {
-    term: 'Term 1', year: 2026,
-    student: 'Amani Kariuki', admNo: 'AS/2019/0847',
-    class: 'Grade 5 Gold', classTeacher: 'Mrs. Grace Kamau',
-    streamSize: 32, position: 7,
-    totalMarks: 498, meanScore: 71.1, meanGrade: 'B', classMean: 69.8,
-    conduct: 'Good',
-    classTeacherComment: 'Amani showed steady improvement throughout the term. She is disciplined and well-behaved. She should work on completing assignments on time.',
-    principalComment: 'Good effort this term. I look forward to seeing even stronger performance in Term 2.',
-    nextTermBegins: '28 April 2026',
-    subjects: [
-      { subject: 'Mathematics',    cat1: 60, cat2: 65, exam: 68, total: 70, grade: 'B',  points: 9,  remarks: 'Satisfactory. More practice needed.', teacher: 'Mr. Ochieng'  },
-      { subject: 'English',        cat1: 70, cat2: 72, exam: 74, total: 75, grade: 'B+', points: 10, remarks: 'Good reading skills. Work on composition.', teacher: 'Mrs. Wanjiku' },
-      { subject: 'Kiswahili',      cat1: 65, cat2: 68, exam: 70, total: 71, grade: 'B',  points: 9,  remarks: 'Average performance. Improve vocabulary.', teacher: 'Ms. Akinyi'   },
-      { subject: 'Science',        cat1: 60, cat2: 62, exam: 68, total: 68, grade: 'B',  points: 9,  remarks: 'Work harder on experiments.', teacher: 'Mr. Kamau'    },
-      { subject: 'Social Studies', cat1: 75, cat2: 78, exam: 80, total: 80, grade: 'A-', points: 11, remarks: 'Very good understanding of map work.', teacher: 'Mr. Njoroge'  },
-      { subject: 'CRE',            cat1: 72, cat2: 74, exam: 76, total: 77, grade: 'B+', points: 10, remarks: 'Good participation.', teacher: 'Mr. Gitonga'  },
-      { subject: 'Creative Arts',  cat1: 60, cat2: 62, exam: 65, total: 67, grade: 'B',  points: 9,  remarks: 'Needs more effort in portfolio.', teacher: 'Ms. Chebet'   },
-    ],
-  },
-  '2025-T3': {
-    term: 'Term 3', year: 2025,
-    student: 'Amani Kariuki', admNo: 'AS/2019/0847',
-    class: 'Grade 4 Gold', classTeacher: 'Mr. David Mwangi',
-    streamSize: 30, position: 9,
-    totalMarks: 476, meanScore: 68.0, meanGrade: 'B', classMean: 67.5,
-    conduct: 'Good',
-    classTeacherComment: 'Amani is a pleasant student who works hard. She has shown improvement from Term 2 and we expect even better results next year.',
-    principalComment: 'Well done completing Grade 4. We look forward to seeing you grow in Grade 5.',
-    nextTermBegins: '20 January 2026',
-    subjects: [
-      { subject: 'Mathematics',    cat1: 55, cat2: 60, exam: 64, total: 64, grade: 'B-', points: 8,  remarks: 'Must revise number operations.', teacher: 'Mr. Ochieng'  },
-      { subject: 'English',        cat1: 68, cat2: 70, exam: 72, total: 72, grade: 'B',  points: 9,  remarks: 'Good reading. Improve writing.', teacher: 'Mrs. Wanjiku' },
-      { subject: 'Kiswahili',      cat1: 62, cat2: 65, exam: 68, total: 68, grade: 'B',  points: 9,  remarks: 'Satisfactory.', teacher: 'Ms. Akinyi'   },
-      { subject: 'Science',        cat1: 58, cat2: 60, exam: 65, total: 65, grade: 'B-', points: 8,  remarks: 'Needs improvement in practicals.', teacher: 'Mr. Kamau'    },
-      { subject: 'Social Studies', cat1: 72, cat2: 74, exam: 76, total: 76, grade: 'B+', points: 10, remarks: 'Good map reading skills.', teacher: 'Mr. Njoroge'  },
-      { subject: 'CRE',            cat1: 68, cat2: 70, exam: 72, total: 72, grade: 'B',  points: 9,  remarks: 'Good moral values.', teacher: 'Mr. Gitonga'  },
-      { subject: 'Creative Arts',  cat1: 58, cat2: 60, exam: 62, total: 62, grade: 'B-', points: 8,  remarks: 'Participate more actively.', teacher: 'Ms. Chebet'   },
-    ],
-  },
+function gradeLabel(s: number) {
+  return s >= 80 ? 'A' : s >= 75 ? 'B+' : s >= 70 ? 'B' : s >= 65 ? 'C+' : s >= 60 ? 'C' : 'D'
 }
-
-const GRADE_COLOR: Record<string, string> = {
-  'A':  'text-green-700 dark:text-green-400 font-bold',
-  'A-': 'text-green-600 dark:text-green-400 font-bold',
-  'B+': 'text-blue-600 dark:text-blue-400 font-semibold',
-  'B':  'text-blue-500 dark:text-blue-400 font-semibold',
-  'B-': 'text-yellow-600 dark:text-yellow-400 font-semibold',
-  'C+': 'text-orange-600 dark:text-orange-400',
-  'C':  'text-red-500 dark:text-red-400',
-}
-
-const TERM_KEYS = ['2026-T2', '2026-T1', '2025-T3'] as const
 
 export function ParentReportCards() {
-  const { showToast } = useToast()
-  const [selected, setSelected] = useState<string>('2026-T2')
-  const printRef = useRef<HTMLDivElement>(null)
-  const report = REPORTS[selected]
+  const { data: profile }   = useParentStudentProfile()
+  const { data: history }   = useParentGradesHistory()
+  const { data: attendance } = useParentAttendance()
 
-  const prevKey = TERM_KEYS[TERM_KEYS.indexOf(selected as typeof TERM_KEYS[number]) + 1]
-  const prev = prevKey ? REPORTS[prevKey] : null
-  const trend = prev
-    ? report.meanScore > prev.meanScore ? 'up'
-      : report.meanScore < prev.meanScore ? 'down' : 'same'
-    : 'same'
-  const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus
-  const trendColor = trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-500' : 'text-gray-400'
+  const [selYear, setSelYear] = useState<string | null>(null)
+  const [selTerm, setSelTerm] = useState<string | null>(null)
 
-  const handlePrint = () => {
-    window.print()
-    showToast('Print dialog opened')
+  const student   = profile?.student
+  const classInfo = profile?.classInfo
+
+  const years = history ?? []
+  const activeYear = years.find(y => y.yearId === selYear) ?? years[0]
+  const terms      = activeYear?.terms ?? []
+  const activeTerm = terms.find(t => t.termId === selTerm) ?? terms.find(t => !t.isCurrent) ?? terms[0]
+  const grades     = activeTerm?.grades.filter(g => g.total !== null) ?? []
+  const avg        = grades.length ? Math.round(grades.reduce((s, g) => s + (g.total ?? 0), 0) / grades.length) : null
+
+  function downloadPDF() {
+    if (!student || !grades.length) return
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' })
+    const W = 210
+
+    doc.setFillColor(124, 58, 237)
+    doc.rect(0, 0, W, 38, 'F')
+    doc.setTextColor(255,255,255)
+    doc.setFont('helvetica','bold'); doc.setFontSize(18)
+    doc.text('ALBER SCHOOL', W/2, 14, { align:'center' })
+    doc.setFont('helvetica','normal'); doc.setFontSize(9)
+    doc.text('Excellence Meets Tomorrow', W/2, 21, { align:'center' })
+    doc.text('Kutus Town, Kirinyaga County · +254 712 345 678', W/2, 27, { align:'center' })
+    doc.setFont('helvetica','bold'); doc.setFontSize(11)
+    doc.text('STUDENT PROGRESS REPORT', W/2, 34, { align:'center' })
+
+    doc.setTextColor(0,0,0)
+    doc.setFillColor(248,250,252)
+    doc.rect(10,42,W-20,26,'F')
+    doc.setDrawColor(220,220,220); doc.rect(10,42,W-20,26,'S')
+    doc.setFont('helvetica','bold'); doc.setFontSize(9)
+    const name = `${student.firstName} ${student.lastName}`
+    doc.text('Student Name:', 14, 50); doc.setFont('helvetica','normal'); doc.text(name, 45, 50)
+    doc.setFont('helvetica','bold'); doc.text('Admission No:', 14, 57); doc.setFont('helvetica','normal'); doc.text(student.admNo, 45, 57)
+    doc.setFont('helvetica','bold'); doc.text('Class:', 14, 64); doc.setFont('helvetica','normal')
+    doc.text(classInfo ? `${classInfo.grade} ${classInfo.stream}` : '—', 45, 64)
+    doc.setFont('helvetica','bold'); doc.text('Term:', 120, 50); doc.setFont('helvetica','normal'); doc.text(activeTerm?.termLabel ?? '—', 135, 50)
+    doc.setFont('helvetica','bold'); doc.text('Year:', 120, 57); doc.setFont('helvetica','normal'); doc.text(activeYear?.yearLabel ?? '—', 135, 57)
+    doc.setFont('helvetica','bold'); doc.text('Date Issued:', 120, 64); doc.setFont('helvetica','normal')
+    doc.text(new Date().toLocaleDateString('en-KE',{day:'2-digit',month:'short',year:'numeric'}), 145, 64)
+
+    let y = 76
+    doc.setFillColor(124,58,237); doc.rect(10,y,W-20,7,'F')
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(8)
+    doc.text('SUBJECT',13,y+5); doc.text('CAT 1',75,y+5); doc.text('CAT 2',92,y+5)
+    doc.text('END TERM',109,y+5); doc.text('TOTAL',133,y+5); doc.text('GRD',150,y+5); doc.text("TEACHER'S REMARKS",160,y+5)
+
+    doc.setTextColor(0,0,0); doc.setFont('helvetica','normal'); y += 9
+    grades.forEach((g,i) => {
+      if (i%2===0) { doc.setFillColor(248,250,252); doc.rect(10,y-4.5,W-20,7,'F') }
+      doc.setFontSize(8)
+      doc.text(g.subjectName??'', 13, y)
+      doc.text(g.cat1!==null?String(g.cat1):'—', 75, y)
+      doc.text(g.cat2!==null?String(g.cat2):'—', 92, y)
+      doc.text(g.endterm!==null?String(g.endterm):'—', 109, y)
+      doc.setFont('helvetica','bold')
+      doc.text(g.total!==null?`${g.total}%`:'—', 133, y)
+      doc.text(g.grade||'—', 150, y)
+      doc.setFont('helvetica','normal'); doc.setFontSize(7)
+      doc.text((TEACHER_REMARKS[i]??'Good performance.').slice(0,42), 160, y)
+      doc.setFontSize(8); y += 7.5
+    })
+
+    doc.setFillColor(209,250,229); doc.rect(10,y,W-20,7,'F')
+    doc.setFont('helvetica','bold'); doc.setFontSize(8)
+    doc.text('TERM MEAN SCORE',13,y+5); doc.text(avg!==null?`${avg}%`:'—',133,y+5); doc.text(avg!==null?gradeLabel(avg):'—',150,y+5)
+
+    y += 14
+    if (attendance) {
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.text('ATTENDANCE SUMMARY',13,y)
+      y += 6; doc.setFillColor(248,250,252); doc.rect(10,y-4,W-20,8,'F')
+      doc.setFont('helvetica','normal'); doc.setFontSize(8)
+      doc.text(`Present: ${attendance.present}  Absent: ${attendance.absent}  Late: ${attendance.late}  Total: ${attendance.total}  Rate: ${attendance.percent}%`,13,y)
+      y += 10
+    }
+
+    doc.setFontSize(7); doc.setTextColor(180,180,180)
+    doc.text('Generated by Alber School Management System · Confidential', W/2, 289, { align:'center' })
+    doc.save(`${name} - ${activeTerm?.termLabel ?? 'Report'} ${activeYear?.yearLabel ?? ''}.pdf`)
   }
-  const handleDownload = () => showToast('Report card download coming soon')
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 space-y-6">
-
-      {/* Header */}
+    <div className="mx-auto max-w-5xl px-4 py-8 space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Report Cards</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Amani Kariuki · Adm No: AS/2019/0847</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Report Cards</h1>
+          <p className="text-sm text-gray-400 mt-0.5">
+            {student ? `${student.firstName} ${student.lastName}` : ''} — Select a term to view the report
+          </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handlePrint} className="gap-1.5 text-sm">
+          <Button onClick={() => window.print()} variant="outline" className="gap-1.5 text-sm">
             <Printer className="h-4 w-4" /> Print
           </Button>
-          <Button variant="gold" onClick={handleDownload} className="gap-1.5 text-sm">
+          <Button onClick={downloadPDF} disabled={!grades.length}
+            className="gap-1.5 text-sm bg-violet-700 hover:bg-violet-800 text-white">
             <Download className="h-4 w-4" /> Download PDF
           </Button>
         </div>
       </div>
 
-      {/* Term selector */}
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        {TERM_KEYS.map(key => {
-          const r = REPORTS[key]
-          return (
-            <button
-              key={key}
-              onClick={() => setSelected(key)}
-              className={`shrink-0 rounded-xl px-4 py-2 text-sm font-medium transition ${
-                selected === key
-                  ? 'bg-green-700 text-white'
-                  : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-              }`}
-            >
-              {r.term} {r.year}
+      {/* Selectors */}
+      <div className="flex flex-wrap gap-3">
+        <div className="flex gap-2">
+          {years.map(y => (
+            <button key={y.yearId} onClick={() => { setSelYear(y.yearId); setSelTerm(null) }}
+              className={`rounded-xl px-3 py-1.5 text-sm font-medium transition ${activeYear?.yearId === y.yearId ? 'bg-violet-700 text-white' : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+              {y.yearLabel}
             </button>
-          )
-        })}
+          ))}
+        </div>
+        <div className="flex gap-2">
+          {terms.map(t => (
+            <button key={t.termId} onClick={() => setSelTerm(t.termId)}
+              className={`rounded-xl px-3 py-1.5 text-sm font-medium transition ${activeTerm?.termId === t.termId ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900' : 'border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+              {t.termLabel}{t.isCurrent ? ' · ongoing' : ''}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div ref={printRef} className="space-y-5">
-
-        {/* Report header card */}
-        <GlassCard className="p-6">
-          <div className="flex flex-wrap gap-6 items-start justify-between">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E8B84B] text-[#0d1b0d] font-bold text-lg">A</div>
-                <div>
-                  <p className="font-bold text-gray-900 dark:text-white">Alber School</p>
-                  <p className="text-xs text-gray-400 uppercase tracking-widest">Kutus · Kirinyaga County</p>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500"><span className="font-semibold text-gray-700 dark:text-gray-300">Student:</span> {report.student}</p>
-              <p className="text-xs text-gray-500"><span className="font-semibold text-gray-700 dark:text-gray-300">Adm No:</span> {report.admNo}</p>
-              <p className="text-xs text-gray-500"><span className="font-semibold text-gray-700 dark:text-gray-300">Class:</span> {report.class}</p>
-              <p className="text-xs text-gray-500"><span className="font-semibold text-gray-700 dark:text-gray-300">Class Teacher:</span> {report.classTeacher}</p>
-              <p className="text-xs text-gray-500"><span className="font-semibold text-gray-700 dark:text-gray-300">Term:</span> {report.term} {report.year}</p>
-            </div>
-
-            <div className="flex flex-wrap gap-4">
-              {[
-                { label: 'Mean Score', value: `${report.meanScore}%`, color: 'text-green-700 dark:text-green-400' },
-                { label: 'Mean Grade', value: report.meanGrade, color: 'text-green-700 dark:text-green-400' },
-                { label: 'Position',   value: `${report.position} / ${report.streamSize}`, color: 'text-gray-900 dark:text-white' },
-                { label: 'Conduct',    value: report.conduct, color: 'text-blue-600 dark:text-blue-400' },
-              ].map(stat => (
-                <div key={stat.label} className="rounded-xl bg-gray-50 dark:bg-gray-800 px-4 py-3 text-center min-w-[90px]">
-                  <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wide mt-0.5">{stat.label}</p>
-                </div>
-              ))}
-              {prev && (
-                <div className="rounded-xl bg-gray-50 dark:bg-gray-800 px-4 py-3 text-center min-w-[90px] flex flex-col items-center justify-center gap-1">
-                  <div className="flex items-center gap-1">
-                    <TrendIcon className={`h-5 w-5 ${trendColor}`} />
-                    <span className={`text-sm font-bold ${trendColor}`}>
-                      {Math.abs(report.meanScore - prev.meanScore).toFixed(1)}%
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-wide">vs {prev.term}</p>
-                </div>
-              )}
-            </div>
+      {/* Report preview */}
+      <GlassCard className="overflow-hidden">
+        <div className="bg-gradient-to-r from-violet-700 to-purple-600 text-white px-8 py-6 text-center">
+          <h2 className="text-2xl font-extrabold tracking-wide">ALBER SCHOOL</h2>
+          <p className="text-violet-200 text-sm mt-0.5">Excellence Meets Tomorrow</p>
+          <div className="mt-3 inline-block rounded-xl bg-white/20 px-6 py-1.5">
+            <p className="text-sm font-semibold">STUDENT PROGRESS REPORT</p>
+            <p className="text-xs text-violet-200">{activeTerm?.termLabel} · {activeYear?.yearLabel}</p>
           </div>
-        </GlassCard>
-
-        {/* Subjects table */}
-        <GlassCard className="overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <Award className="h-4 w-4 text-gray-400" />
-              Academic Performance
-            </h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-                  <th className="text-left px-5 py-3 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">Subject</th>
-                  <th className="text-center px-3 py-3 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">CAT 1</th>
-                  <th className="text-center px-3 py-3 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">CAT 2</th>
-                  <th className="text-center px-3 py-3 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">Exam</th>
-                  <th className="text-center px-3 py-3 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">Total</th>
-                  <th className="text-center px-3 py-3 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide">Grade</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide hidden md:table-cell">Teacher's Remarks</th>
-                </tr>
-              </thead>
-              <tbody>
-                {report.subjects.map((s, i) => (
-                  <tr
-                    key={s.subject}
-                    className={`border-b border-gray-50 dark:border-gray-800/50 ${
-                      i % 2 === 0 ? '' : 'bg-gray-50/50 dark:bg-gray-800/20'
-                    }`}
-                  >
-                    <td className="px-5 py-3 font-medium text-gray-800 dark:text-gray-200">{s.subject}</td>
-                    <td className="px-3 py-3 text-center text-gray-600 dark:text-gray-400">{s.cat1}</td>
-                    <td className="px-3 py-3 text-center text-gray-600 dark:text-gray-400">{s.cat2}</td>
-                    <td className="px-3 py-3 text-center text-gray-600 dark:text-gray-400">{s.exam}</td>
-                    <td className="px-3 py-3 text-center font-semibold text-gray-800 dark:text-gray-200">{s.total}</td>
-                    <td className={`px-3 py-3 text-center ${GRADE_COLOR[s.grade] ?? ''}`}>{s.grade}</td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs hidden md:table-cell">{s.remarks}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
-                  <td className="px-5 py-3 font-bold text-gray-900 dark:text-white" colSpan={3}>TOTAL</td>
-                  <td className="px-3 py-3 text-center" />
-                  <td className="px-3 py-3 text-center font-bold text-gray-900 dark:text-white">{report.totalMarks}</td>
-                  <td className={`px-3 py-3 text-center ${GRADE_COLOR[report.meanGrade] ?? ''}`}>{report.meanGrade}</td>
-                  <td className="hidden md:table-cell px-4 py-3 text-xs text-gray-500">
-                    Class mean: {report.classMean}% · Position: {report.position} / {report.streamSize}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </GlassCard>
-
-        {/* Comments */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <GlassCard className="p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Class Teacher's Comment</p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed italic">"{report.classTeacherComment}"</p>
-            <p className="mt-3 text-xs font-semibold text-gray-500">— {report.classTeacher}</p>
-          </GlassCard>
-          <GlassCard className="p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Principal's Comment</p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed italic">"{report.principalComment}"</p>
-            <p className="mt-3 text-xs font-semibold text-gray-500">— Mr. Albert Njeru, M.Ed., UON</p>
-          </GlassCard>
         </div>
 
-        {/* Footer */}
-        <GlassCard className="p-4">
-          <div className="flex flex-wrap gap-6 text-xs text-gray-500 dark:text-gray-400">
-            <span><span className="font-semibold text-gray-700 dark:text-gray-300">Next Term Begins:</span> {report.nextTermBegins}</span>
-            <span><span className="font-semibold text-gray-700 dark:text-gray-300">School Phone:</span> 0712-345-678</span>
-            <span><span className="font-semibold text-gray-700 dark:text-gray-300">Email:</span> info@alberschool.ke</span>
-          </div>
-        </GlassCard>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 px-8 py-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+          {[
+            { icon:<User className="h-4 w-4"/>, label:'Student', value: student ? `${student.firstName} ${student.lastName}` : '—' },
+            { icon:<Award className="h-4 w-4"/>, label:'Admission No', value: student?.admNo ?? '—' },
+            { icon:<Calendar className="h-4 w-4"/>, label:'Class', value: classInfo ? `${classInfo.grade} ${classInfo.stream}` : '—' },
+          ].map(f => (
+            <div key={f.label} className="flex items-start gap-2">
+              <span className="mt-0.5 text-violet-600 dark:text-violet-400">{f.icon}</span>
+              <div>
+                <p className="text-xs text-gray-400">{f.label}</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">{f.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
-      </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-violet-700 text-white">
+                {['Subject','CAT 1','CAT 2','End Term','Total','Grade'].map(h => (
+                  <th key={h} className={`py-3 px-4 text-xs font-semibold uppercase tracking-wide ${h==='Subject'?'text-left':'text-center'}`}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {grades.length === 0 ? (
+                <tr><td colSpan={6} className="py-12 text-center text-gray-400">
+                  {activeTerm?.isCurrent ? 'Select a completed term to view the full report' : 'No grade data for this term'}
+                </td></tr>
+              ) : grades.map((g,i) => (
+                <tr key={g.subjectName} className={`border-b border-gray-50 dark:border-gray-800/50 ${i%2===1?'bg-gray-50/50 dark:bg-gray-800/20':''}`}>
+                  <td className="px-4 py-3 font-semibold text-gray-800 dark:text-gray-200">{g.subjectName}</td>
+                  <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300">{g.cat1??'—'}</td>
+                  <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300">{g.cat2??'—'}</td>
+                  <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-300">{g.endterm??'—'}</td>
+                  <td className="px-4 py-3 text-center font-bold text-gray-900 dark:text-white">{g.total!==null?`${g.total}%`:'—'}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold ${GRADE_BADGE[g.grade]??'bg-gray-100 text-gray-600'}`}>
+                      {g.grade||'—'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {avg !== null && (
+          <div className="px-5 py-3 border-t border-gray-200 dark:border-gray-700 bg-violet-50 dark:bg-violet-900/20 flex items-center justify-between">
+            <span className="text-sm font-bold text-gray-800 dark:text-gray-200 uppercase tracking-wide">Term Mean Score</span>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-extrabold text-violet-700 dark:text-violet-400">{avg}%</span>
+              <span className={`px-3 py-1 rounded-xl text-sm font-bold ${GRADE_BADGE[gradeLabel(avg)]??''}`}>{gradeLabel(avg)}</span>
+            </div>
+          </div>
+        )}
+
+        {attendance && (
+          <div className="px-8 py-4 border-t border-gray-100 dark:border-gray-800">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Attendance</p>
+            <div className="flex flex-wrap gap-4 text-sm">
+              {[['Present',attendance.present,'text-green-700 dark:text-green-400'],['Absent',attendance.absent,'text-red-500'],['Rate',`${attendance.percent}%`,'text-gray-900 dark:text-white']] .map(([l,v,c]) => (
+                <div key={l as string} className="flex items-center gap-1.5">
+                  <span className="text-gray-400 text-xs">{l}:</span>
+                  <span className={`font-bold ${c}`}>{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-3 gap-8 px-8 py-6 border-t border-gray-200 dark:border-gray-700">
+          {['Class Teacher','Principal','Parent/Guardian'].map(l => (
+            <div key={l} className="text-center">
+              <div className="border-b border-gray-400 dark:border-gray-600 mb-2 pb-6" />
+              <p className="text-xs text-gray-400">{l} Signature</p>
+            </div>
+          ))}
+        </div>
+      </GlassCard>
     </div>
   )
 }

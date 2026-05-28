@@ -459,6 +459,10 @@ export interface DB {
   mediaAssets: MediaAsset[]
   settings: SystemSettings
   admissions: AdmissionApplication[]
+  timetableSlots: TimetableSlot[]
+  attendanceRecords: AttendanceRecord[]
+  studentGrades: StudentGrade[]
+  homework: Homework[]
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -569,6 +573,16 @@ function createSeed(): DB {
         { id: 'TERM-2025-T1', label: 'Term 1', startDate: '2025-01-06', endDate: '2025-04-03', isCurrent: false },
         { id: 'TERM-2025-T2', label: 'Term 2', startDate: '2025-04-28', endDate: '2025-07-25', isCurrent: false },
         { id: 'TERM-2025-T3', label: 'Term 3', startDate: '2025-09-08', endDate: '2025-11-21', isCurrent: false },
+      ],
+    },
+    {
+      id: 'YEAR-2024',
+      label: '2024',
+      isCurrent: false,
+      terms: [
+        { id: 'TERM-2024-T1', label: 'Term 1', startDate: '2024-01-08', endDate: '2024-04-05', isCurrent: false },
+        { id: 'TERM-2024-T2', label: 'Term 2', startDate: '2024-04-29', endDate: '2024-07-26', isCurrent: false },
+        { id: 'TERM-2024-T3', label: 'Term 3', startDate: '2024-09-09', endDate: '2024-11-22', isCurrent: false },
       ],
     },
   ]
@@ -766,17 +780,195 @@ function createSeed(): DB {
     { id: 'APP-005', childFirstName: 'Eva', childLastName: 'Mutua', dob: '2014-06-18', gender: 'Female', applyingForGrade: 'Grade 6', parentFirstName: 'Peter', parentLastName: 'Mutua', parentEmail: 'p.mutua@gmail.com', parentPhone: '0755-200-005', address: 'Kagio, Kirinyaga', previousSchool: 'Kagio Primary School', documents: ['Birth Certificate', 'Progress Report'], status: 'rejected', submittedDate: '2026-04-15', notes: 'Grade 6 class is at capacity. Invited to reapply for 2027.', assignedTo: 'Dr. Wanjiku Mwangi' },
   ]
 
+  // ── Timetable Slots ────────────────────────────────────────────────────
+  const timetableSlots: TimetableSlot[] = [
+    // Grade 4A (cls-101) — Term 2 2026
+    { id:'tsl-001', classId:'cls-101', subjectId:'sub-001', staffId:'stf-006', day:'Monday',    startTime:'07:30', endTime:'08:30', room:'A12',   termId:TERM_ID },
+    { id:'tsl-002', classId:'cls-101', subjectId:'sub-002', staffId:'stf-003', day:'Monday',    startTime:'08:30', endTime:'09:30', room:'A12',   termId:TERM_ID },
+    { id:'tsl-003', classId:'cls-101', subjectId:'sub-004', staffId:'stf-004', day:'Monday',    startTime:'10:00', endTime:'11:00', room:'Lab1',  termId:TERM_ID },
+    { id:'tsl-004', classId:'cls-101', subjectId:'sub-003', staffId:'stf-003', day:'Monday',    startTime:'11:00', endTime:'12:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-005', classId:'cls-101', subjectId:'sub-012', staffId:'stf-009', day:'Monday',    startTime:'13:00', endTime:'14:00', room:'Field', termId:TERM_ID },
+    { id:'tsl-006', classId:'cls-101', subjectId:'sub-013', staffId:'stf-007', day:'Tuesday',   startTime:'07:30', endTime:'08:30', room:'A12',   termId:TERM_ID },
+    { id:'tsl-007', classId:'cls-101', subjectId:'sub-010', staffId:'stf-005', day:'Tuesday',   startTime:'08:30', endTime:'09:30', room:'Lab2',  termId:TERM_ID },
+    { id:'tsl-008', classId:'cls-101', subjectId:'sub-011', staffId:'stf-009', day:'Tuesday',   startTime:'10:00', endTime:'11:00', room:'Hall',  termId:TERM_ID },
+    { id:'tsl-009', classId:'cls-101', subjectId:'sub-001', staffId:'stf-006', day:'Tuesday',   startTime:'11:00', endTime:'12:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-010', classId:'cls-101', subjectId:'sub-002', staffId:'stf-003', day:'Tuesday',   startTime:'13:00', endTime:'14:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-011', classId:'cls-101', subjectId:'sub-004', staffId:'stf-004', day:'Wednesday', startTime:'07:30', endTime:'08:30', room:'Lab1',  termId:TERM_ID },
+    { id:'tsl-012', classId:'cls-101', subjectId:'sub-003', staffId:'stf-003', day:'Wednesday', startTime:'08:30', endTime:'09:30', room:'A12',   termId:TERM_ID },
+    { id:'tsl-013', classId:'cls-101', subjectId:'sub-001', staffId:'stf-006', day:'Wednesday', startTime:'10:00', endTime:'11:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-014', classId:'cls-101', subjectId:'sub-012', staffId:'stf-009', day:'Wednesday', startTime:'11:00', endTime:'12:00', room:'Field', termId:TERM_ID },
+    { id:'tsl-015', classId:'cls-101', subjectId:'sub-013', staffId:'stf-007', day:'Wednesday', startTime:'13:00', endTime:'14:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-016', classId:'cls-101', subjectId:'sub-002', staffId:'stf-003', day:'Thursday',  startTime:'07:30', endTime:'08:30', room:'A12',   termId:TERM_ID },
+    { id:'tsl-017', classId:'cls-101', subjectId:'sub-001', staffId:'stf-006', day:'Thursday',  startTime:'08:30', endTime:'09:30', room:'A12',   termId:TERM_ID },
+    { id:'tsl-018', classId:'cls-101', subjectId:'sub-010', staffId:'stf-005', day:'Thursday',  startTime:'10:00', endTime:'11:00', room:'Lab2',  termId:TERM_ID },
+    { id:'tsl-019', classId:'cls-101', subjectId:'sub-003', staffId:'stf-003', day:'Thursday',  startTime:'11:00', endTime:'12:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-020', classId:'cls-101', subjectId:'sub-011', staffId:'stf-009', day:'Thursday',  startTime:'13:00', endTime:'14:00', room:'Hall',  termId:TERM_ID },
+    { id:'tsl-021', classId:'cls-101', subjectId:'sub-011', staffId:'stf-009', day:'Friday',    startTime:'07:30', endTime:'08:30', room:'Hall',  termId:TERM_ID },
+    { id:'tsl-022', classId:'cls-101', subjectId:'sub-013', staffId:'stf-007', day:'Friday',    startTime:'08:30', endTime:'09:30', room:'A12',   termId:TERM_ID },
+    { id:'tsl-023', classId:'cls-101', subjectId:'sub-002', staffId:'stf-003', day:'Friday',    startTime:'10:00', endTime:'11:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-024', classId:'cls-101', subjectId:'sub-001', staffId:'stf-006', day:'Friday',    startTime:'11:00', endTime:'12:00', room:'A12',   termId:TERM_ID },
+    { id:'tsl-025', classId:'cls-101', subjectId:'sub-004', staffId:'stf-004', day:'Friday',    startTime:'13:00', endTime:'14:00', room:'Lab1',  termId:TERM_ID },
+    // Grade 7A (cls-201) — James Ochieng subjects
+    { id:'tsl-101', classId:'cls-201', subjectId:'sub-005', staffId:'stf-001', day:'Monday',    startTime:'07:30', endTime:'08:30', room:'Lab1',  termId:TERM_ID },
+    { id:'tsl-102', classId:'cls-201', subjectId:'sub-006', staffId:'stf-001', day:'Monday',    startTime:'10:00', endTime:'11:00', room:'Lab1',  termId:TERM_ID },
+    { id:'tsl-103', classId:'cls-201', subjectId:'sub-007', staffId:'stf-001', day:'Tuesday',   startTime:'08:30', endTime:'09:30', room:'Lab1',  termId:TERM_ID },
+    { id:'tsl-104', classId:'cls-201', subjectId:'sub-005', staffId:'stf-001', day:'Wednesday', startTime:'10:00', endTime:'11:00', room:'Lab1',  termId:TERM_ID },
+    { id:'tsl-105', classId:'cls-201', subjectId:'sub-006', staffId:'stf-001', day:'Thursday',  startTime:'07:30', endTime:'08:30', room:'Lab1',  termId:TERM_ID },
+    { id:'tsl-106', classId:'cls-201', subjectId:'sub-007', staffId:'stf-001', day:'Friday',    startTime:'11:00', endTime:'12:00', room:'Lab1',  termId:TERM_ID },
+  ]
+
+  // ── Attendance Records (stu-001 Amani, Term 2 2026) ───────────────────
+  const ATT_DAYS: Array<[string, AttendanceRecord['status'], string]> = [
+    ['2026-04-28','present',''], ['2026-04-29','present',''], ['2026-04-30','present',''],
+    ['2026-05-01','present',''], ['2026-05-05','absent','No reason provided'],
+    ['2026-05-06','present',''], ['2026-05-07','present',''],
+    ['2026-05-08','late','Arrived 20 minutes late'], ['2026-05-09','present',''],
+    ['2026-05-12','present',''], ['2026-05-13','present',''], ['2026-05-14','present',''],
+    ['2026-05-15','absent','Unwell — not in school'], ['2026-05-16','present',''],
+    ['2026-05-19','excused','Medical appointment'], ['2026-05-20','present',''],
+    ['2026-05-21','present',''], ['2026-05-22','present',''], ['2026-05-23','present',''],
+    ['2026-05-26','present',''], ['2026-05-27','present',''], ['2026-05-28','present',''],
+  ]
+  const attendanceRecords: AttendanceRecord[] = ATT_DAYS.map(([date, status, notes], i) => ({
+    id: `att-${String(i + 1).padStart(3, '0')}`,
+    studentId: 'stu-001', classId: 'cls-101', termId: TERM_ID,
+    date, status, notes, recordedBy: 'stf-006',
+  }))
+
+  // ── Student Grades (multi-year) ────────────────────────────────────────
+  function gradeLabel(total: number): string {
+    if (total >= 80) return 'A'
+    if (total >= 75) return 'B+'
+    if (total >= 70) return 'B'
+    if (total >= 65) return 'C+'
+    if (total >= 60) return 'C'
+    if (total >= 50) return 'D'
+    return 'E'
+  }
+  type GRow = { c1: number; c2: number; et: number }
+  const SUBJ4 = ['sub-001','sub-002','sub-003','sub-004','sub-010','sub-011','sub-012','sub-013']
+  const HIST: Record<string, Record<string, GRow>> = {
+    'TERM-2024-T1': {
+      'sub-001':{c1:55,c2:58,et:60},'sub-002':{c1:62,c2:65,et:68},'sub-003':{c1:60,c2:58,et:62},
+      'sub-004':{c1:55,c2:57,et:60},'sub-010':{c1:58,c2:60,et:62},'sub-011':{c1:70,c2:72,et:74},
+      'sub-012':{c1:78,c2:80,et:82},'sub-013':{c1:65,c2:68,et:70},
+    },
+    'TERM-2024-T2': {
+      'sub-001':{c1:62,c2:65,et:66},'sub-002':{c1:68,c2:70,et:72},'sub-003':{c1:63,c2:65,et:67},
+      'sub-004':{c1:60,c2:62,et:64},'sub-010':{c1:64,c2:66,et:68},'sub-011':{c1:74,c2:76,et:78},
+      'sub-012':{c1:82,c2:84,et:85},'sub-013':{c1:70,c2:72,et:74},
+    },
+    'TERM-2024-T3': {
+      'sub-001':{c1:65,c2:68,et:70},'sub-002':{c1:72,c2:74,et:75},'sub-003':{c1:66,c2:68,et:70},
+      'sub-004':{c1:62,c2:64,et:66},'sub-010':{c1:66,c2:68,et:70},'sub-011':{c1:76,c2:78,et:80},
+      'sub-012':{c1:84,c2:85,et:87},'sub-013':{c1:72,c2:74,et:76},
+    },
+    'TERM-2025-T1': {
+      'sub-001':{c1:68,c2:70,et:72},'sub-002':{c1:74,c2:76,et:78},'sub-003':{c1:68,c2:70,et:72},
+      'sub-004':{c1:64,c2:66,et:68},'sub-010':{c1:70,c2:72,et:74},'sub-011':{c1:78,c2:80,et:82},
+      'sub-012':{c1:85,c2:87,et:88},'sub-013':{c1:74,c2:76,et:78},
+    },
+    'TERM-2025-T2': {
+      'sub-001':{c1:72,c2:74,et:76},'sub-002':{c1:76,c2:78,et:80},'sub-003':{c1:70,c2:72,et:74},
+      'sub-004':{c1:68,c2:70,et:72},'sub-010':{c1:72,c2:74,et:76},'sub-011':{c1:80,c2:82,et:84},
+      'sub-012':{c1:86,c2:88,et:90},'sub-013':{c1:76,c2:78,et:80},
+    },
+    'TERM-2025-T3': {
+      'sub-001':{c1:74,c2:76,et:78},'sub-002':{c1:78,c2:80,et:82},'sub-003':{c1:72,c2:74,et:76},
+      'sub-004':{c1:70,c2:72,et:74},'sub-010':{c1:74,c2:76,et:78},'sub-011':{c1:82,c2:84,et:86},
+      'sub-012':{c1:88,c2:90,et:92},'sub-013':{c1:78,c2:80,et:82},
+    },
+    'TERM-2026-T1': {
+      'sub-001':{c1:76,c2:78,et:80},'sub-002':{c1:80,c2:82,et:84},'sub-003':{c1:74,c2:76,et:78},
+      'sub-004':{c1:72,c2:74,et:76},'sub-010':{c1:76,c2:78,et:80},'sub-011':{c1:84,c2:86,et:88},
+      'sub-012':{c1:90,c2:92,et:94},'sub-013':{c1:80,c2:82,et:84},
+    },
+  }
+  const T2_CATS: Record<string,{c1:number;c2:number}> = {
+    'sub-001':{c1:78,c2:80},'sub-002':{c1:82,c2:84},'sub-003':{c1:76,c2:78},
+    'sub-004':{c1:74,c2:76},'sub-010':{c1:78,c2:80},'sub-011':{c1:86,c2:88},
+    'sub-012':{c1:92,c2:94},'sub-013':{c1:82,c2:84},
+  }
+  let gIdx = 1
+  const studentGrades: StudentGrade[] = []
+  for (const [termId, sMap] of Object.entries(HIST)) {
+    for (const subjectId of SUBJ4) {
+      const r = sMap[subjectId]; if (!r) continue
+      const total = Math.round(r.c1 * 0.2 + r.c2 * 0.2 + r.et * 0.6)
+      studentGrades.push({ id:`grd-${String(gIdx++).padStart(3,'0')}`, studentId:'stu-001',
+        examId:`exm-hist-${termId}`, subjectId, classId:'cls-101', termId,
+        cat1:r.c1, cat2:r.c2, endterm:r.et, total, grade:gradeLabel(total), isLocked:true, enteredBy:'stf-006' })
+    }
+  }
+  for (const subjectId of SUBJ4) {
+    const r = T2_CATS[subjectId]; if (!r) continue
+    studentGrades.push({ id:`grd-${String(gIdx++).padStart(3,'0')}`, studentId:'stu-001',
+      examId:'exm-001', subjectId, classId:'cls-101', termId:TERM_ID,
+      cat1:r.c1, cat2:r.c2, endterm:null, total:null, grade:'', isLocked:false, enteredBy:'stf-006' })
+  }
+  // Grade 7A students for teacher gradebook
+  const G7_DATA: Record<string, Record<string,GRow>> = {
+    'stu-003': { 'sub-005':{c1:72,c2:75,et:78},'sub-006':{c1:68,c2:70,et:73},'sub-007':{c1:65,c2:68,et:71} },
+    'stu-011': { 'sub-005':{c1:80,c2:82,et:85},'sub-006':{c1:76,c2:78,et:80},'sub-007':{c1:74,c2:76,et:79} },
+    'stu-004': { 'sub-005':{c1:65,c2:67,et:70},'sub-006':{c1:62,c2:64,et:67},'sub-007':{c1:60,c2:62,et:65} },
+  }
+  for (const [sid, sMap] of Object.entries(G7_DATA)) {
+    for (const subjectId of ['sub-005','sub-006','sub-007']) {
+      const r = sMap[subjectId]; if (!r) continue
+      const total = Math.round(r.c1 * 0.2 + r.c2 * 0.2 + r.et * 0.6)
+      const cId = sid === 'stu-004' ? 'cls-202' : 'cls-201'
+      studentGrades.push({ id:`grd-${String(gIdx++).padStart(3,'0')}`, studentId:sid,
+        examId:'exm-001', subjectId, classId:cId, termId:TERM_ID,
+        cat1:r.c1, cat2:r.c2, endterm:r.et, total, grade:gradeLabel(total), isLocked:false, enteredBy:'stf-001' })
+    }
+  }
+
+  // ── Homework (cls-101) ────────────────────────────────────────────────
+  const homework: Homework[] = [
+    { id:'hw-001', classId:'cls-101', subjectId:'sub-001', termId:TERM_ID,
+      title:'Fractions Practice — Chapter 5 Exercises',
+      description:'Complete exercises 5.1 to 5.4 in your Mathematics workbook. Show all working clearly.',
+      assignedBy:'stf-006', assignedByName:'Ms. Lucy Akinyi',
+      assignedDate:'2026-05-26', dueDate:'2026-05-30', status:'active' },
+    { id:'hw-002', classId:'cls-101', subjectId:'sub-002', termId:TERM_ID,
+      title:'Essay: My Future Career',
+      description:'Write a 300-word essay about the career you would like to pursue and why. Use clear paragraphs.',
+      assignedBy:'stf-003', assignedByName:'Ms. Mercy Njoroge',
+      assignedDate:'2026-05-27', dueDate:'2026-06-02', status:'active' },
+    { id:'hw-003', classId:'cls-101', subjectId:'sub-004', termId:TERM_ID,
+      title:'Lab Report — Photosynthesis Experiment',
+      description:'Write a complete lab report on the photosynthesis experiment conducted on Tuesday. Include hypothesis, method, results and conclusion.',
+      assignedBy:'stf-004', assignedByName:'Mr. Samuel Kamau',
+      assignedDate:'2026-05-22', dueDate:'2026-05-27', status:'closed' },
+    { id:'hw-004', classId:'cls-101', subjectId:'sub-003', termId:TERM_ID,
+      title:'Insha: Mazingira ya Shule',
+      description:'Andika insha ya maneno 250 kuhusu mazingira ya shule yako. Tumia lugha sanifu na andishi nzuri.',
+      assignedBy:'stf-003', assignedByName:'Ms. Mercy Njoroge',
+      assignedDate:'2026-05-19', dueDate:'2026-05-23', status:'closed' },
+    { id:'hw-005', classId:'cls-101', subjectId:'sub-010', termId:TERM_ID,
+      title:'Scratch Project: Create a Simple Game',
+      description:'Design a Scratch game with at least 2 sprites, a background, sound effects and a scoring system. Share your Scratch link.',
+      assignedBy:'stf-005', assignedByName:'Mr. Peter Njeru',
+      assignedDate:'2026-05-28', dueDate:'2026-06-05', status:'active' },
+    { id:'hw-006', classId:'cls-101', subjectId:'sub-013', termId:TERM_ID,
+      title:'Values Reflection: Honesty in Daily Life',
+      description:'Write a one-page reflection on how honesty shapes your decisions and relationships at school and at home.',
+      assignedBy:'stf-007', assignedByName:'Mr. David Mwangi',
+      assignedDate:'2026-05-28', dueDate:'2026-06-10', status:'active' },
+  ]
+
   return {
     users, students, staff, academicYears, classes, subjects, assessmentSchemes,
     exams, payments, invoices, scholarships, expenses, feeStructures,
     messages, announcements, meetingSlots, leaveRequests, transportRoutes,
     vehicles, books, borrowings, auditLog, mediaAssets, settings, admissions,
+    timetableSlots, attendanceRecords, studentGrades, homework,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v2'
+const STORAGE_KEY = 'alber_db_v3'
 
 function loadStore(): DB {
   try {

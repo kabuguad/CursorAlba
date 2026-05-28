@@ -1,234 +1,125 @@
-import { useState } from 'react'
+import { CheckCircle2, XCircle, Clock, FileCheck, CalendarDays, TrendingUp } from 'lucide-react'
 import { GlassCard } from '../../../components/ui/GlassCard'
-import { useAttendance } from '../../../hooks/useAttendance'
-import { ChevronLeft, ChevronRight, Download } from 'lucide-react'
-import { useToast } from '../../../contexts/ToastContext'
+import { useParentAttendance, useParentStudentProfile } from '../../../hooks/useParentData'
 
-const LINKED_STUDENT_ID = 's-1'
-
-const MONTHS_LIST = [
-  { label: 'January',   year: 2026, month: 1 },
-  { label: 'February',  year: 2026, month: 2 },
-  { label: 'March',     year: 2026, month: 3 },
-  { label: 'April',     year: 2026, month: 4 },
-  { label: 'May',       year: 2026, month: 5 },
-]
-
-const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-
-const ABSENCE_REASONS: Record<string, string> = {
-  '2026-02-05': 'Medical — Doctor appointment',
-  '2026-02-12': 'Medical — Fever',
-  '2026-02-19': 'Family event',
+const STATUS_META = {
+  present: { label:'Present', icon:CheckCircle2, color:'text-green-600 dark:text-green-400', bg:'bg-green-100 dark:bg-green-900/30', dot:'bg-green-500' },
+  absent:  { label:'Absent',  icon:XCircle,      color:'text-red-500',                        bg:'bg-red-100 dark:bg-red-900/30',     dot:'bg-red-500'   },
+  late:    { label:'Late',    icon:Clock,         color:'text-amber-600 dark:text-amber-400',  bg:'bg-amber-100 dark:bg-amber-900/30', dot:'bg-amber-500' },
+  excused: { label:'Excused', icon:FileCheck,     color:'text-blue-600 dark:text-blue-400',    bg:'bg-blue-100 dark:bg-blue-900/30',   dot:'bg-blue-500'  },
 }
 
-const LATE_DAYS: Record<string, string> = {
-  '2026-02-08': 'Arrived 8:15 AM',
-  '2026-02-15': 'Arrived 8:00 AM',
+function Meter({ percent }: { percent: number }) {
+  const color = percent >= 90 ? '#16a34a' : percent >= 75 ? '#d97706' : '#ef4444'
+  const r = 54; const cx = 64; const cy = 64; const circ = 2 * Math.PI * r
+  const dash = (percent / 100) * circ
+  return (
+    <svg viewBox="0 0 128 128" className="w-32 h-32">
+      <circle cx={cx} cy={cy} r={r} fill="none" strokeWidth="10" stroke="rgba(0,0,0,0.06)" />
+      <circle cx={cx} cy={cy} r={r} fill="none" strokeWidth="10" stroke={color}
+        strokeDasharray={`${dash} ${circ-dash}`} strokeLinecap="round" transform={`rotate(-90 ${cx} ${cy})`} />
+      <text x={cx} y={cy-4} textAnchor="middle" fill={color} fontSize="20" fontWeight="bold">{percent}%</text>
+      <text x={cx} y={cy+14} textAnchor="middle" fill="#9ca3af" fontSize="9">Attendance</text>
+    </svg>
+  )
 }
 
 export function ParentAttendance() {
-  const { showToast } = useToast()
-  const [monthIdx, setMonthIdx] = useState(MONTHS_LIST.length - 1)
-  const { label: monthLabel, year, month } = MONTHS_LIST[monthIdx]
-  const { data: attendance, isLoading } = useAttendance(LINKED_STUDENT_ID, year, month)
+  const { data: profile } = useParentStudentProfile()
+  const { data: att, isLoading } = useParentAttendance()
 
-  const canPrev = monthIdx > 0
-  const canNext = monthIdx < MONTHS_LIST.length - 1
+  const student = profile?.student
+  const records = att?.records ?? []
+  const percent = att?.percent ?? 100
 
-  const daysInMonth = new Date(year, month, 0).getDate()
-  const firstWeekday = new Date(year, month - 1, 1).getDay()
-  const mondayOffset = firstWeekday === 0 ? 6 : firstWeekday - 1
-
-  const getStatus = (date: string) => {
-    const day = attendance?.days.find(d => d.date === date)
-    if (!day) return 'weekend'
-    if (LATE_DAYS[date]) return 'late'
-    if (day.present) return 'present'
-    return 'absent'
+  if (isLoading) {
+    return <div className="mx-auto max-w-4xl px-4 py-8 space-y-4">
+      {[1,2,3].map(i => <div key={i} className="h-28 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}
+    </div>
   }
-
-  const weeks: { date: string; dayLabel: string; status: string }[][] = []
-  let week: { date: string; dayLabel: string; status: string }[] = []
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`
-    const weekday = new Date(year, month - 1, d).getDay()
-    const isWeekend = weekday === 0 || weekday === 6
-    if (!isWeekend) {
-      week.push({ date, dayLabel: DAY_LABELS[weekday - 1] ?? '', status: getStatus(date) })
-      if (weekday === 5 || d === daysInMonth) {
-        weeks.push([...week])
-        week = []
-      }
-    }
-  }
-
-  const present  = attendance?.presentCount ?? 0
-  const absent   = attendance?.absentCount  ?? 0
-  const lateCount = Object.keys(LATE_DAYS).filter(d => d.startsWith(`${year}-${String(month).padStart(2, '0')}`)).length
-  const total    = present + absent
-  const rate     = total > 0 ? Math.round((present / total) * 100) : 0
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
-
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Attendance Record</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Amani Kariuki · Grade 5 Gold</p>
-        </div>
-        <button
-          onClick={() => showToast('Attendance report download coming soon')}
-          className="flex items-center gap-1.5 rounded-xl border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-        >
-          <Download className="h-4 w-4" />
-          Export
-        </button>
+    <div className="mx-auto max-w-4xl px-4 py-8 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Attendance Record</h1>
+        <p className="text-sm text-gray-400 mt-0.5">{student ? `${student.firstName} ${student.lastName}` : ''} · Term 2, 2026</p>
       </div>
 
-      {/* Month navigation */}
-      <div className="flex items-center justify-between gap-4">
-        <button
-          onClick={() => canPrev && setMonthIdx(i => i - 1)}
-          disabled={!canPrev}
-          className="flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-30"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">{canPrev ? MONTHS_LIST[monthIdx - 1].label : ''}</span>
-        </button>
-        <h2 className="font-bold text-gray-900 dark:text-white">{monthLabel} {year}</h2>
-        <button
-          onClick={() => canNext && setMonthIdx(i => i + 1)}
-          disabled={!canNext}
-          className="flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-30"
-        >
-          <span className="hidden sm:inline">{canNext ? MONTHS_LIST[monthIdx + 1].label : ''}</span>
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      </div>
-
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {[
-          { label: 'Attendance Rate', value: `${rate}%`,    color: rate >= 85 ? 'text-green-600 dark:text-green-400' : 'text-red-500' },
-          { label: 'Days Present',    value: present,        color: 'text-green-600 dark:text-green-400' },
-          { label: 'Days Absent',     value: absent,         color: absent > 0 ? 'text-red-500' : 'text-gray-400' },
-          { label: 'Late Arrivals',   value: lateCount,      color: lateCount > 0 ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-400' },
-        ].map(s => (
-          <GlassCard key={s.label} className="p-4 text-center">
-            {isLoading
-              ? <div className="h-7 w-16 mx-auto animate-pulse rounded-lg bg-gray-100 dark:bg-gray-700" />
-              : <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
-            }
-            <p className="text-xs text-gray-400 mt-0.5">{s.label}</p>
-          </GlassCard>
-        ))}
-      </div>
-
-      {/* Calendar */}
-      <GlassCard className="p-5">
-        {/* Day headers */}
-        <div className="grid grid-cols-5 mb-2">
-          {DAY_LABELS.map(d => (
-            <div key={d} className="text-center text-[10px] font-bold uppercase tracking-wide text-gray-400 py-1">{d}</div>
-          ))}
-        </div>
-
-        {isLoading ? (
-          <div className="h-48 animate-pulse rounded-xl bg-gray-100 dark:bg-gray-700" />
-        ) : (
-          <div className="space-y-1.5">
-            {weeks.map((week, wi) => (
-              <div key={wi} className="grid grid-cols-5 gap-1.5">
-                {week.map(day => {
-                  const reason = ABSENCE_REASONS[day.date]
-                  const lateNote = LATE_DAYS[day.date]
-                  return (
-                    <div
-                      key={day.date}
-                      title={reason ?? lateNote ?? day.date}
-                      className={`relative flex flex-col items-center justify-center rounded-xl py-2 text-center cursor-default group ${
-                        day.status === 'present' ? 'bg-green-100 dark:bg-green-900/30' :
-                        day.status === 'absent'  ? 'bg-red-100 dark:bg-red-900/30' :
-                        day.status === 'late'    ? 'bg-yellow-100 dark:bg-yellow-900/30' :
-                        'bg-gray-50 dark:bg-gray-800/30'
-                      }`}
-                    >
-                      <span className="text-[10px] text-gray-400 dark:text-gray-500">
-                        {new Date(day.date + 'T00:00').getDate()}
-                      </span>
-                      <span className={`text-sm font-bold ${
-                        day.status === 'present' ? 'text-green-700 dark:text-green-400' :
-                        day.status === 'absent'  ? 'text-red-600 dark:text-red-400' :
-                        day.status === 'late'    ? 'text-yellow-700 dark:text-yellow-400' :
-                        'text-gray-300 dark:text-gray-600'
-                      }`}>
-                        {day.status === 'present' ? '✓' : day.status === 'absent' ? '✗' : day.status === 'late' ? '~' : '·'}
-                      </span>
-                      {(reason || lateNote) && (
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 z-10 hidden group-hover:block w-40 rounded-lg bg-gray-900 text-white text-[10px] px-2 py-1 text-center shadow-lg">
-                          {reason ?? lateNote}
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <GlassCard className="p-6 flex items-center gap-6">
+          <Meter percent={percent} />
+          <div>
+            <p className="text-sm text-gray-400 mb-1">This Term</p>
+            <p className="text-3xl font-extrabold text-gray-900 dark:text-white">{att?.total ?? 0} days</p>
+            <p className="text-sm text-gray-400 mt-1">School days recorded</p>
+            <div className="mt-3 flex items-center gap-1.5 text-xs">
+              <TrendingUp className="h-3.5 w-3.5 text-green-500" />
+              <span className={percent >= 90 ? 'text-green-600 dark:text-green-400' : percent >= 75 ? 'text-amber-600' : 'text-red-500'}>
+                {percent >= 90 ? 'Excellent attendance' : percent >= 75 ? 'Acceptable' : 'Needs improvement'}
+              </span>
+            </div>
           </div>
-        )}
+        </GlassCard>
+        <div className="grid grid-cols-2 gap-3">
+          {([['present','Present',att?.present??0],['absent','Absent',att?.absent??0],['late','Late',att?.late??0],['excused','Excused',att?.excused??0]] as const).map(([k,l,v]) => {
+            const m = STATUS_META[k]
+            return (
+              <GlassCard key={k} className="p-4 flex items-center gap-3">
+                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${m.bg}`}>
+                  <m.icon className={`h-5 w-5 ${m.color}`} />
+                </div>
+                <div>
+                  <p className={`text-xl font-bold ${m.color}`}>{v}</p>
+                  <p className="text-xs text-gray-400">{l}</p>
+                </div>
+              </GlassCard>
+            )
+          })}
+        </div>
+      </div>
 
-        {/* Legend */}
-        <div className="mt-4 flex flex-wrap gap-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-500 dark:text-gray-400">
-          {[
-            { color: 'bg-green-100 dark:bg-green-900/30', symbol: '✓', label: 'Present' },
-            { color: 'bg-red-100 dark:bg-red-900/30',     symbol: '✗', label: 'Absent'  },
-            { color: 'bg-yellow-100 dark:bg-yellow-900/30', symbol: '~', label: 'Late arrival' },
-          ].map(l => (
-            <span key={l.label} className="flex items-center gap-1.5">
-              <span className={`flex h-5 w-5 items-center justify-center rounded ${l.color} text-[10px] font-bold`}>{l.symbol}</span>
-              {l.label}
-            </span>
-          ))}
+      <GlassCard className="overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-2">
+          <CalendarDays className="h-4 w-4 text-violet-600" />
+          <h2 className="font-bold text-gray-900 dark:text-white">Daily Record — {records.length} days</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                {['Date','Day','Status','Notes'].map(h => (
+                  <th key={h} className={`py-3 px-4 text-xs font-semibold uppercase tracking-wide text-gray-400 ${h==='Status'?'text-center':h==='Notes'?'text-left hidden sm:table-cell':'text-left'}`}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {records.length === 0 ? (
+                <tr><td colSpan={4} className="py-10 text-center text-gray-400">No records this term</td></tr>
+              ) : records.map((r, i) => {
+                const meta = STATUS_META[r.status] ?? STATUS_META.present
+                const d    = new Date(r.date)
+                return (
+                  <tr key={r.id} className={`border-b border-gray-50 dark:border-gray-800/50 ${i%2===1?'bg-gray-50/40 dark:bg-gray-800/20':''}`}>
+                    <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">
+                      {d.toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' })}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
+                      {d.toLocaleDateString('en-KE', { weekday:'short' })}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${meta.bg} ${meta.color}`}>
+                        <span className={`h-1.5 w-1.5 rounded-full ${meta.dot}`} />
+                        {meta.label}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-gray-400 hidden sm:table-cell">{r.notes || '—'}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
       </GlassCard>
-
-      {/* Absence reasons */}
-      {Object.keys(ABSENCE_REASONS).some(d => d.startsWith(`${year}-${String(month).padStart(2, '0')}`)) && (
-        <GlassCard className="p-5">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-3">Absence Notes</h3>
-          <div className="space-y-2">
-            {Object.entries(ABSENCE_REASONS)
-              .filter(([d]) => d.startsWith(`${year}-${String(month).padStart(2, '0')}`))
-              .map(([date, reason]) => (
-                <div key={date} className="flex items-start gap-3 rounded-xl bg-red-50 dark:bg-red-900/20 px-4 py-2.5">
-                  <span className="text-xs font-mono text-red-600 dark:text-red-400 shrink-0">{date}</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">{reason}</span>
-                </div>
-              ))}
-          </div>
-        </GlassCard>
-      )}
-
-      {/* Late arrivals */}
-      {Object.keys(LATE_DAYS).some(d => d.startsWith(`${year}-${String(month).padStart(2, '0')}`)) && (
-        <GlassCard className="p-5">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-3">Late Arrival Notes</h3>
-          <div className="space-y-2">
-            {Object.entries(LATE_DAYS)
-              .filter(([d]) => d.startsWith(`${year}-${String(month).padStart(2, '0')}`))
-              .map(([date, note]) => (
-                <div key={date} className="flex items-start gap-3 rounded-xl bg-yellow-50 dark:bg-yellow-900/20 px-4 py-2.5">
-                  <span className="text-xs font-mono text-yellow-600 dark:text-yellow-400 shrink-0">{date}</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-400">{note}</span>
-                </div>
-              ))}
-          </div>
-        </GlassCard>
-      )}
-
     </div>
   )
 }

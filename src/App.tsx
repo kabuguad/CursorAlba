@@ -23,6 +23,8 @@ import { BlogPost } from './pages/BlogPost'
 import { StudentPortalLayout }  from './pages/dashboards/student/StudentPortalLayout'
 import { StudentOverview }      from './pages/dashboards/student/StudentOverview'
 import { StudentGrades }        from './pages/dashboards/student/StudentGrades'
+import { StudentReportCard }    from './pages/dashboards/student/StudentReportCard'
+import { StudentAttendance }    from './pages/dashboards/student/StudentAttendance'
 import { StudentHomework }      from './pages/dashboards/student/StudentHomework'
 import { StudentTimetable }     from './pages/dashboards/student/StudentTimetable'
 import { StudentNotices }       from './pages/dashboards/student/StudentNotices'
@@ -108,11 +110,13 @@ function App() {
                 path="dashboard/student"
                 element={<ProtectedRoute role="student"><StudentPortalLayout /></ProtectedRoute>}
               >
-                <Route index             element={<StudentOverview />} />
-                <Route path="grades"     element={<StudentGrades />} />
-                <Route path="homework"   element={<StudentHomework />} />
-                <Route path="timetable"  element={<StudentTimetable />} />
-                <Route path="notices"    element={<StudentNotices />} />
+                <Route index                element={<StudentOverview />} />
+                <Route path="grades"        element={<StudentGrades />} />
+                <Route path="report-card"   element={<StudentReportCard />} />
+                <Route path="attendance"    element={<StudentAttendance />} />
+                <Route path="homework"      element={<StudentHomework />} />
+                <Route path="timetable"     element={<StudentTimetable />} />
+                <Route path="notices"       element={<StudentNotices />} />
               </Route>
 
               {/* ── Teacher Portal ── */}

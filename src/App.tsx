@@ -28,12 +28,19 @@ import { StudentTimetable }     from './pages/dashboards/student/StudentTimetabl
 import { StudentNotices }       from './pages/dashboards/student/StudentNotices'
 
 import { TeacherPortalLayout }  from './pages/dashboards/teacher/TeacherPortalLayout'
+import { TeacherOverview }      from './pages/dashboards/teacher/TeacherOverview'
 import { TeacherGrades }        from './pages/dashboards/teacher/TeacherGrades'
+import { TeacherGradebook }     from './pages/dashboards/teacher/TeacherGradebook'
 import { TeacherAttendance }    from './pages/dashboards/teacher/TeacherAttendance'
 import { TeacherAssignments }   from './pages/dashboards/teacher/TeacherAssignments'
 import { TeacherClass }         from './pages/dashboards/teacher/TeacherClass'
 import { TeacherTimetable }     from './pages/dashboards/teacher/TeacherTimetable'
 import { TeacherMessages }      from './pages/dashboards/teacher/TeacherMessages'
+import { TeacherReports }       from './pages/dashboards/teacher/TeacherReports'
+import { TeacherLessonPlans }   from './pages/dashboards/teacher/TeacherLessonPlans'
+import { TeacherLeaveRequest }  from './pages/dashboards/teacher/TeacherLeaveRequest'
+import { TeacherNotices }       from './pages/dashboards/teacher/TeacherNotices'
+import { TeacherSettings }      from './pages/dashboards/teacher/TeacherSettings'
 
 import { ParentPortalLayout }   from './pages/dashboards/parent/ParentPortalLayout'
 import { ParentOverview }       from './pages/dashboards/parent/ParentOverview'
@@ -113,12 +120,19 @@ function App() {
                 path="dashboard/teacher"
                 element={<ProtectedRoute role="teacher"><TeacherPortalLayout /></ProtectedRoute>}
               >
-                <Route index              element={<TeacherGrades />} />
-                <Route path="attendance"  element={<TeacherAttendance />} />
-                <Route path="assignments" element={<TeacherAssignments />} />
-                <Route path="myclass"     element={<TeacherClass />} />
-                <Route path="timetable"   element={<TeacherTimetable />} />
-                <Route path="messages"    element={<TeacherMessages />} />
+                <Route index                   element={<TeacherOverview />} />
+                <Route path="gradebook"        element={<TeacherGradebook />} />
+                <Route path="grades"           element={<TeacherGrades />} />
+                <Route path="attendance"       element={<TeacherAttendance />} />
+                <Route path="assignments"      element={<TeacherAssignments />} />
+                <Route path="myclass"          element={<TeacherClass />} />
+                <Route path="timetable"        element={<TeacherTimetable />} />
+                <Route path="messages"         element={<TeacherMessages />} />
+                <Route path="reports"          element={<TeacherReports />} />
+                <Route path="lesson-plans"     element={<TeacherLessonPlans />} />
+                <Route path="leave"            element={<TeacherLeaveRequest />} />
+                <Route path="notices"          element={<TeacherNotices />} />
+                <Route path="settings"         element={<TeacherSettings />} />
               </Route>
 
               {/* ── Parent Portal ── */}

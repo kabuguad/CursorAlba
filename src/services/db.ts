@@ -378,6 +378,59 @@ export interface AdmissionApplication {
   assignedTo: string | null
 }
 
+export interface TimetableSlot {
+  id: string
+  classId: string
+  subjectId: string
+  staffId: string
+  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday'
+  startTime: string
+  endTime: string
+  room: string
+  termId: string
+}
+
+export interface AttendanceRecord {
+  id: string
+  studentId: string
+  classId: string
+  date: string
+  status: 'present' | 'absent' | 'late' | 'excused'
+  recordedBy: string
+  notes: string
+  termId: string
+}
+
+export interface StudentGrade {
+  id: string
+  studentId: string
+  examId: string
+  subjectId: string
+  classId: string
+  termId: string
+  cat1: number | null
+  cat2: number | null
+  endterm: number | null
+  total: number | null
+  grade: string
+  isLocked: boolean
+  enteredBy: string
+}
+
+export interface Homework {
+  id: string
+  title: string
+  description: string
+  subjectId: string
+  classId: string
+  assignedBy: string
+  assignedByName: string
+  assignedDate: string
+  dueDate: string
+  status: 'active' | 'closed'
+  termId: string
+}
+
 // ── DB Shape ───────────────────────────────────────────────────────────────
 
 export interface DB {

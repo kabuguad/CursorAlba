@@ -20,7 +20,7 @@ public class AnnouncementConfiguration : IEntityTypeConfiguration<Announcement>
         b.Property(a => a.Title).HasMaxLength(500).IsRequired();
         b.Property(a => a.Priority).HasConversion<string>().HasMaxLength(20);
         b.Property(a => a.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(a => a.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(a => a.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(a => a.Author).WithMany().HasForeignKey(a => a.CreatedBy).OnDelete(DeleteBehavior.Restrict);
     }
 }
@@ -53,7 +53,7 @@ public class AnnouncementReadConfiguration : IEntityTypeConfiguration<Announceme
     {
         b.ToTable("AnnouncementReads");
         b.HasKey(ar => new { ar.AnnouncementId, ar.UserId });
-        b.Property(ar => ar.ReadAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(ar => ar.ReadAt).HasDefaultValueSql("NOW()");
         b.HasOne(ar => ar.Announcement).WithMany(a => a.Reads).HasForeignKey(ar => ar.AnnouncementId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(ar => ar.User).WithMany().HasForeignKey(ar => ar.UserId).OnDelete(DeleteBehavior.Cascade);
     }
@@ -68,7 +68,7 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
         b.Property(m => m.ThreadId).IsRequired();
         b.HasIndex(m => m.ThreadId);
         b.Property(m => m.Subject).HasMaxLength(500);
-        b.Property(m => m.SentAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(m => m.SentAt).HasDefaultValueSql("NOW()");
         b.HasOne(m => m.FromUser).WithMany().HasForeignKey(m => m.FromUserId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne(m => m.ToUser).WithMany().HasForeignKey(m => m.ToUserId).OnDelete(DeleteBehavior.Restrict);
     }
@@ -97,7 +97,7 @@ public class TransportRouteConfiguration : IEntityTypeConfiguration<TransportRou
         b.HasKey(r => r.Id);
         b.Property(r => r.Name).HasMaxLength(200).IsRequired();
         b.Property(r => r.Description).HasMaxLength(500);
-        b.Property(r => r.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(r => r.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(r => r.Vehicle).WithMany(v => v.Routes).HasForeignKey(r => r.VehicleId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(r => r.Driver).WithMany().HasForeignKey(r => r.DriverId).OnDelete(DeleteBehavior.SetNull);
     }
@@ -123,14 +123,14 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         b.ToTable("Books");
         b.HasKey(bk => bk.Id);
         b.Property(bk => bk.Isbn).HasMaxLength(20);
-        b.HasIndex(bk => bk.Isbn).IsUnique().HasFilter("[Isbn] IS NOT NULL");
+        b.HasIndex(bk => bk.Isbn).IsUnique().HasFilter("\"Isbn\" IS NOT NULL");
         b.Property(bk => bk.Title).HasMaxLength(500).IsRequired();
         b.Property(bk => bk.Author).HasMaxLength(300);
         b.Property(bk => bk.Publisher).HasMaxLength(300);
         b.Property(bk => bk.Category).HasMaxLength(100);
         b.Property(bk => bk.CoverUrl).HasMaxLength(1000);
         b.Property(bk => bk.Location).HasMaxLength(200);
-        b.Property(bk => bk.AddedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(bk => bk.AddedAt).HasDefaultValueSql("NOW()");
     }
 }
 
@@ -171,7 +171,7 @@ public class AdmissionApplicationConfiguration : IEntityTypeConfiguration<Admiss
         b.Property(a => a.Address).HasMaxLength(500);
         b.Property(a => a.Status).HasConversion<string>().HasMaxLength(20);
         b.Property(a => a.Notes).HasMaxLength(2000);
-        b.Property(a => a.SubmittedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(a => a.SubmittedAt).HasDefaultValueSql("NOW()");
         b.HasOne(a => a.AssignedToUser).WithMany().HasForeignKey(a => a.AssignedTo).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(a => a.LinkedStudent).WithMany().HasForeignKey(a => a.LinkedStudentId).OnDelete(DeleteBehavior.SetNull);
     }
@@ -185,7 +185,7 @@ public class AdmissionDocumentConfiguration : IEntityTypeConfiguration<Admission
         b.HasKey(d => d.Id);
         b.Property(d => d.Name).HasMaxLength(200);
         b.Property(d => d.Url).HasMaxLength(1000).IsRequired();
-        b.Property(d => d.UploadedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(d => d.UploadedAt).HasDefaultValueSql("NOW()");
         b.HasOne(d => d.Application).WithMany(a => a.Documents).HasForeignKey(d => d.ApplicationId).OnDelete(DeleteBehavior.Cascade);
     }
 }
@@ -235,7 +235,7 @@ public class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         b.Property(p => p.FeaturedImageUrl).HasMaxLength(1000);
         b.Property(p => p.Category).HasMaxLength(100);
         b.Property(p => p.Tags).HasMaxLength(500);
-        b.Property(p => p.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(p => p.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(p => p.Author).WithMany().HasForeignKey(p => p.AuthorId).OnDelete(DeleteBehavior.SetNull);
     }
 }
@@ -250,7 +250,7 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         b.Property(e => e.ImageUrl).HasMaxLength(1000);
         b.Property(e => e.Location).HasMaxLength(300);
         b.Property(e => e.Category).HasMaxLength(100);
-        b.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(e => e.Creator).WithMany().HasForeignKey(e => e.CreatedBy).OnDelete(DeleteBehavior.SetNull);
     }
 }
@@ -264,7 +264,7 @@ public class GalleryAlbumConfiguration : IEntityTypeConfiguration<GalleryAlbum>
         b.Property(a => a.Title).HasMaxLength(300).IsRequired();
         b.Property(a => a.CoverImageUrl).HasMaxLength(1000);
         b.Property(a => a.Category).HasMaxLength(100);
-        b.Property(a => a.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(a => a.CreatedAt).HasDefaultValueSql("NOW()");
     }
 }
 
@@ -277,7 +277,7 @@ public class GalleryImageConfiguration : IEntityTypeConfiguration<GalleryImage>
         b.Property(i => i.Url).HasMaxLength(1000).IsRequired();
         b.Property(i => i.ThumbnailUrl).HasMaxLength(1000);
         b.Property(i => i.Caption).HasMaxLength(500);
-        b.Property(i => i.UploadedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(i => i.UploadedAt).HasDefaultValueSql("NOW()");
         b.HasOne(i => i.Album).WithMany(a => a.Images).HasForeignKey(i => i.AlbumId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(i => i.Uploader).WithMany().HasForeignKey(i => i.UploadedBy).OnDelete(DeleteBehavior.SetNull);
     }
@@ -295,7 +295,7 @@ public class MediaAssetConfiguration : IEntityTypeConfiguration<MediaAsset>
         b.Property(m => m.Type).HasConversion<string>().HasMaxLength(20);
         b.Property(m => m.MimeType).HasMaxLength(100);
         b.Property(m => m.Category).HasMaxLength(100);
-        b.Property(m => m.UploadedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(m => m.UploadedAt).HasDefaultValueSql("NOW()");
         b.HasOne(m => m.Uploader).WithMany().HasForeignKey(m => m.UploadedBy).OnDelete(DeleteBehavior.SetNull);
     }
 }
@@ -309,7 +309,7 @@ public class SystemSettingsConfiguration : IEntityTypeConfiguration<SystemSettin
         b.ToTable("SystemSettings");
         b.HasKey(s => s.Id);
         b.Property(s => s.Id).HasDefaultValue(1);
-        b.ToTable(t => t.HasCheckConstraint("CK_SystemSettings_SingleRow", "[Id] = 1"));
+        b.ToTable(t => t.HasCheckConstraint("CK_SystemSettings_SingleRow", "\"Id\" = 1"));
         b.Property(s => s.SchoolName).HasMaxLength(300).IsRequired();
         b.Property(s => s.SchoolMotto).HasMaxLength(500);
         b.Property(s => s.County).HasMaxLength(100);
@@ -354,13 +354,13 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
     {
         b.ToTable("Notifications");
         b.HasKey(n => n.Id);
-        b.Property(n => n.Id).UseIdentityColumn();
+        b.Property(n => n.Id).UseIdentityByDefaultColumn();
         b.Property(n => n.Title).HasMaxLength(300).IsRequired();
         b.Property(n => n.Body).HasMaxLength(1000);
         b.Property(n => n.Type).HasMaxLength(50);
         b.Property(n => n.ResourceType).HasMaxLength(50);
         b.Property(n => n.ResourceId).HasMaxLength(50);
-        b.Property(n => n.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(n => n.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(n => n.User).WithMany().HasForeignKey(n => n.UserId).OnDelete(DeleteBehavior.Cascade);
     }
 }

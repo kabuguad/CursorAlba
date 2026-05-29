@@ -15,9 +15,27 @@ public static class ServiceCollectionExtensions
     /// <summary>Register EF Core and the database context.</summary>
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration config)
     {
+        // Prefer individual PG* env vars (most reliable with Replit), then DATABASE_URL, then appsettings
+        string connStr;
+
+        var pgHost = Environment.GetEnvironmentVariable("PGHOST");
+        if (!string.IsNullOrEmpty(pgHost))
+        {
+            var pgPort = Environment.GetEnvironmentVariable("PGPORT") ?? "5432";
+            var pgUser = Environment.GetEnvironmentVariable("PGUSER") ?? "postgres";
+            var pgPassword = Environment.GetEnvironmentVariable("PGPASSWORD") ?? "";
+            var pgDatabase = Environment.GetEnvironmentVariable("PGDATABASE") ?? "postgres";
+            connStr = $"Host={pgHost};Port={pgPort};Database={pgDatabase};Username={pgUser};Password={pgPassword};SSL Mode=Disable;Trust Server Certificate=true;";
+        }
+        else
+        {
+            connStr = config.GetConnectionString("DefaultConnection")
+                      ?? throw new InvalidOperationException("No database connection string configured.");
+        }
+
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("DefaultConnection"),
-                sql => sql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)));
+            options.UseNpgsql(connStr,
+                npgsql => npgsql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(5), null)));
         return services;
     }
 
@@ -46,6 +64,9 @@ public static class ServiceCollectionExtensions
     /// <summary>Register all repository implementations for DI.</summary>
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
+        // Open-generic fallback — covers any IBaseRepository<T> without a dedicated concrete type
+        services.AddScoped(typeof(IBaseRepository<>), typeof(AlberSchoolApi.Infrastructure.Repositories.GenericRepository<>));
+
         // Identity
         services.AddScoped<IUserRepository, UserRepository>();
 
@@ -85,6 +106,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IGalleryRepository, GalleryRepository>();
         services.AddScoped<IMediaAssetRepository, MediaAssetRepository>();
+
+        // Library
+        services.AddScoped<IBookRepository, BookRepository>();
+        services.AddScoped<IBorrowingRepository, BorrowingRepository>();
 
         // System
         services.AddScoped<ISystemSettingsRepository, SystemSettingsRepository>();
@@ -150,7 +175,18 @@ public static class ServiceCollectionExtensions
         services.AddCors(options =>
         {
             options.AddPolicy("AlberPolicy", builder =>
-                builder.WithOrigins(origins)
+                builder
+                    .SetIsOriginAllowed(origin =>
+                    {
+                        if (string.IsNullOrWhiteSpace(origin)) return false;
+                        var uri = new Uri(origin);
+                        var host = uri.Host;
+                        // Allow exact matches
+                        if (origins.Any(o => string.Equals(o, origin, StringComparison.OrdinalIgnoreCase)))
+                            return true;
+                        // Allow *.replit.app, *.replit.dev, *.repl.co
+                        return host.EndsWith(".replit.app") || host.EndsWith(".replit.dev") || host.EndsWith(".repl.co");
+                    })
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());

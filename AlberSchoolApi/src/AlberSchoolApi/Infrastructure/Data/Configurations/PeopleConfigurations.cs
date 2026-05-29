@@ -11,7 +11,7 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
         b.ToTable("Students");
         b.HasKey(s => s.Id);
         b.Property(s => s.AdmNo).HasMaxLength(20).IsRequired();
-        b.HasIndex(s => s.AdmNo).IsUnique().HasFilter("[IsDeleted] = 0");
+        b.HasIndex(s => s.AdmNo).IsUnique().HasFilter("\"IsDeleted\" = false");
         b.Property(s => s.FirstName).HasMaxLength(100).IsRequired();
         b.Property(s => s.LastName).HasMaxLength(100).IsRequired();
         b.Property(s => s.Gender).HasConversion<string>().HasMaxLength(10);
@@ -21,7 +21,7 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
         b.Property(s => s.SpecialNeeds).HasMaxLength(1000);
         b.Property(s => s.PreviousSchool).HasMaxLength(300);
         b.Property(s => s.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(s => s.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(s => s.CreatedAt).HasDefaultValueSql("NOW()");
 
         b.HasOne(s => s.TransportRoute).WithMany(r => r.Students).HasForeignKey(s => s.TransportRouteId).OnDelete(DeleteBehavior.SetNull);
     }
@@ -59,11 +59,11 @@ public class StaffMemberConfiguration : IEntityTypeConfiguration<StaffMember>
         b.ToTable("StaffMembers");
         b.HasKey(s => s.Id);
         b.Property(s => s.StaffNo).HasMaxLength(20).IsRequired();
-        b.HasIndex(s => s.StaffNo).IsUnique().HasFilter("[IsDeleted] = 0");
+        b.HasIndex(s => s.StaffNo).IsUnique().HasFilter("\"IsDeleted\" = false");
         b.Property(s => s.FirstName).HasMaxLength(100).IsRequired();
         b.Property(s => s.LastName).HasMaxLength(100).IsRequired();
         b.Property(s => s.Email).HasMaxLength(320).IsRequired();
-        b.HasIndex(s => s.Email).IsUnique().HasFilter("[IsDeleted] = 0");
+        b.HasIndex(s => s.Email).IsUnique().HasFilter("\"IsDeleted\" = false");
         b.Property(s => s.Phone).HasMaxLength(50);
         b.Property(s => s.Gender).HasConversion<string>().HasMaxLength(10);
         b.Property(s => s.Photo).HasMaxLength(1000);
@@ -79,7 +79,7 @@ public class StaffMemberConfiguration : IEntityTypeConfiguration<StaffMember>
         b.Property(s => s.NhifNo).HasMaxLength(50);
         b.Property(s => s.NssfNo).HasMaxLength(50);
         b.Property(s => s.Address).HasMaxLength(500);
-        b.Property(s => s.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(s => s.CreatedAt).HasDefaultValueSql("NOW()");
     }
 }
 

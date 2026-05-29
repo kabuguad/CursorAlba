@@ -20,7 +20,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         b.Property(u => u.Status).HasConversion<string>().HasMaxLength(20);
         b.Property(u => u.LinkedProfileType).HasConversion<string>().HasMaxLength(20);
         b.Property(u => u.PasswordResetToken).HasMaxLength(512);
-        b.Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(u => u.CreatedAt).HasDefaultValueSql("NOW()");
     }
 }
 
@@ -43,7 +43,7 @@ public class UserPermissionConfiguration : IEntityTypeConfiguration<UserPermissi
     {
         b.ToTable("UserPermissions");
         b.HasKey(up => new { up.UserId, up.PermissionId });
-        b.Property(up => up.GrantedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(up => up.GrantedAt).HasDefaultValueSql("NOW()");
 
         b.HasOne(up => up.User).WithMany(u => u.UserPermissions).HasForeignKey(up => up.UserId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(up => up.Permission).WithMany(p => p.UserPermissions).HasForeignKey(up => up.PermissionId).OnDelete(DeleteBehavior.Cascade);
@@ -60,7 +60,7 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
         b.Property(r => r.Token).HasMaxLength(1000).IsRequired();
         b.HasIndex(r => r.Token).IsUnique();
         b.Property(r => r.ReplacedByToken).HasMaxLength(1000);
-        b.Property(r => r.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(r => r.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(r => r.User).WithMany(u => u.RefreshTokens).HasForeignKey(r => r.UserId).OnDelete(DeleteBehavior.Cascade);
     }
 }
@@ -71,7 +71,7 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
     {
         b.ToTable("AuditLogs");
         b.HasKey(a => a.Id);
-        b.Property(a => a.Id).UseIdentityColumn();
+        b.Property(a => a.Id).UseIdentityByDefaultColumn();
         b.Property(a => a.UserName).HasMaxLength(200);
         b.Property(a => a.UserRole).HasMaxLength(20);
         b.Property(a => a.Action).HasConversion<string>().HasMaxLength(20);
@@ -80,7 +80,7 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         b.Property(a => a.Details).HasMaxLength(2000);
         b.Property(a => a.IpAddress).HasMaxLength(50);
         b.Property(a => a.SessionId).HasMaxLength(200);
-        b.Property(a => a.Timestamp).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(a => a.Timestamp).HasDefaultValueSql("NOW()");
         b.HasOne(a => a.User).WithMany(u => u.AuditLogs).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.SetNull);
     }
 }

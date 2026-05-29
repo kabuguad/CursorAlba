@@ -13,7 +13,7 @@ public class AcademicYearConfiguration : IEntityTypeConfiguration<AcademicYear>
         b.Property(a => a.Name).HasMaxLength(50).IsRequired();
         b.HasIndex(a => a.Name).IsUnique();
         b.Property(a => a.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(a => a.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(a => a.CreatedAt).HasDefaultValueSql("NOW()");
     }
 }
 
@@ -39,7 +39,7 @@ public class SchoolClassConfiguration : IEntityTypeConfiguration<SchoolClass>
         b.Property(c => c.Name).HasMaxLength(100).IsRequired();
         b.Property(c => c.Grade).HasMaxLength(50).IsRequired();
         b.Property(c => c.Stream).HasMaxLength(20);
-        b.Property(c => c.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(c => c.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(c => c.AcademicYear).WithMany(y => y.Classes).HasForeignKey(c => c.AcademicYearId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne(c => c.ClassTeacher).WithMany().HasForeignKey(c => c.ClassTeacherId).OnDelete(DeleteBehavior.SetNull);
     }
@@ -93,7 +93,7 @@ public class AssessmentSchemeConfiguration : IEntityTypeConfiguration<Assessment
         b.ToTable("AssessmentSchemes");
         b.HasKey(s => s.Id);
         b.Property(s => s.Name).HasMaxLength(200).IsRequired();
-        b.Property(s => s.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(s => s.CreatedAt).HasDefaultValueSql("NOW()");
     }
 }
 
@@ -118,7 +118,7 @@ public class ExamConfiguration : IEntityTypeConfiguration<Exam>
         b.HasKey(e => e.Id);
         b.Property(e => e.Name).HasMaxLength(200).IsRequired();
         b.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(e => e.Term).WithMany(t => t.Exams).HasForeignKey(e => e.TermId).OnDelete(DeleteBehavior.Restrict);
     }
 }
@@ -144,7 +144,7 @@ public class StudentResultConfiguration : IEntityTypeConfiguration<StudentResult
         b.Property(r => r.Grade).HasMaxLength(10);
         b.Property(r => r.Band).HasMaxLength(50);
         b.Property(r => r.TeacherRemarks).HasMaxLength(1000);
-        b.Property(r => r.RecordedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(r => r.RecordedAt).HasDefaultValueSql("NOW()");
         b.HasIndex(r => new { r.StudentId, r.ExamId, r.SubjectId }).IsUnique();
         b.HasOne(r => r.Student).WithMany().HasForeignKey(r => r.StudentId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(r => r.Exam).WithMany(e => e.Results).HasForeignKey(r => r.ExamId).OnDelete(DeleteBehavior.Cascade);
@@ -175,10 +175,10 @@ public class HomeworkConfiguration : IEntityTypeConfiguration<Homework>
         b.HasKey(h => h.Id);
         b.Property(h => h.Title).HasMaxLength(500).IsRequired();
         b.Property(h => h.AttachmentUrl).HasMaxLength(1000);
-        b.Property(h => h.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(h => h.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(h => h.Class).WithMany(c => c.Homeworks).HasForeignKey(h => h.ClassId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(h => h.Subject).WithMany().HasForeignKey(h => h.SubjectId).OnDelete(DeleteBehavior.Restrict);
-        b.HasOne(h => h.Teacher).WithMany(sm => sm.Homeworks).HasForeignKey(h => h.TeacherId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne(h => h.Teacher).WithMany().HasForeignKey(h => h.TeacherId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 
@@ -207,7 +207,7 @@ public class LeaveRequestConfiguration : IEntityTypeConfiguration<LeaveRequest>
         b.Property(l => l.Status).HasConversion<string>().HasMaxLength(20);
         b.Property(l => l.Reason).HasMaxLength(1000);
         b.Property(l => l.ReviewNotes).HasMaxLength(500);
-        b.Property(l => l.SubmittedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(l => l.SubmittedAt).HasDefaultValueSql("NOW()");
         b.HasOne(l => l.StaffMember).WithMany(sm => sm.LeaveRequests).HasForeignKey(l => l.StaffMemberId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(l => l.Reviewer).WithMany().HasForeignKey(l => l.ReviewedBy).OnDelete(DeleteBehavior.SetNull);
     }
@@ -221,7 +221,7 @@ public class MeetingSlotConfiguration : IEntityTypeConfiguration<MeetingSlot>
         b.HasKey(m => m.Id);
         b.Property(m => m.Status).HasConversion<string>().HasMaxLength(20);
         b.Property(m => m.Notes).HasMaxLength(1000);
-        b.Property(m => m.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(m => m.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(m => m.Teacher).WithMany(sm => sm.MeetingSlots).HasForeignKey(m => m.TeacherId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(m => m.BookedByUser).WithMany().HasForeignKey(m => m.BookedByUserId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(m => m.Student).WithMany().HasForeignKey(m => m.StudentId).OnDelete(DeleteBehavior.SetNull);

@@ -16,7 +16,7 @@ public class FeeStructureConfiguration : IEntityTypeConfiguration<FeeStructure>
         b.Property(f => f.Activities).HasColumnType("decimal(10,2)");
         b.Property(f => f.Boarding).HasColumnType("decimal(10,2)");
         b.Property(f => f.Meals).HasColumnType("decimal(10,2)");
-        b.Property(f => f.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(f => f.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasIndex(f => new { f.TermId, f.GradeLevel }).IsUnique();
         b.HasOne(f => f.Term).WithMany(t => t.FeeStructures).HasForeignKey(f => f.TermId).OnDelete(DeleteBehavior.Restrict);
     }
@@ -35,7 +35,7 @@ public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
         b.Property(i => i.DiscountAmount).HasColumnType("decimal(10,2)");
         b.Property(i => i.DiscountReason).HasMaxLength(500);
         b.Property(i => i.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(i => i.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(i => i.CreatedAt).HasDefaultValueSql("NOW()");
         b.Ignore(i => i.Balance);
         b.HasOne(i => i.Student).WithMany(s => s.Invoices).HasForeignKey(i => i.StudentId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne(i => i.Term).WithMany(t => t.Invoices).HasForeignKey(i => i.TermId).OnDelete(DeleteBehavior.Restrict);
@@ -68,7 +68,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         b.Property(p => p.ParentName).HasMaxLength(200);
         b.Property(p => p.Phone).HasMaxLength(50);
         b.Property(p => p.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(p => p.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(p => p.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(p => p.Student).WithMany(s => s.Payments).HasForeignKey(p => p.StudentId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne(p => p.Invoice).WithMany(i => i.Payments).HasForeignKey(p => p.InvoiceId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(p => p.Term).WithMany(t => t.Payments).HasForeignKey(p => p.TermId).OnDelete(DeleteBehavior.Restrict);
@@ -86,7 +86,7 @@ public class ScholarshipConfiguration : IEntityTypeConfiguration<Scholarship>
         b.Property(s => s.Value).HasColumnType("decimal(10,2)");
         b.Property(s => s.Reason).HasMaxLength(500);
         b.Property(s => s.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(s => s.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(s => s.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(s => s.Student).WithMany(st => st.Scholarships).HasForeignKey(s => s.StudentId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(s => s.StartTerm).WithMany().HasForeignKey(s => s.StartTermId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne(s => s.EndTerm).WithMany().HasForeignKey(s => s.EndTermId).OnDelete(DeleteBehavior.Restrict);
@@ -117,7 +117,7 @@ public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
         b.Property(e => e.Payee).HasMaxLength(300);
         b.Property(e => e.ReceiptNo).HasMaxLength(100);
         b.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
-        b.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+        b.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
         b.HasOne(e => e.Category).WithMany(c => c.Expenses).HasForeignKey(e => e.CategoryId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(e => e.ApprovedByUser).WithMany().HasForeignKey(e => e.ApprovedBy).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(e => e.SubmittedByUser).WithMany().HasForeignKey(e => e.SubmittedBy).OnDelete(DeleteBehavior.SetNull);

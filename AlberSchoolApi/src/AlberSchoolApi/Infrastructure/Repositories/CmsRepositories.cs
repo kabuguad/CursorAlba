@@ -110,7 +110,11 @@ public class AdmissionsRepository : BaseRepository<Domain.Entities.Admissions.Ad
     }
     public async Task UpdateStatusAsync(int id, Domain.Enums.AdmissionStatus status, int? reviewedBy = null, string? notes = null, CancellationToken ct = default)
     {
-        await _set.Where(a => a.Id == id).ExecuteUpdateAsync(s => s.SetProperty(a => a.Status, status).SetProperty(a => a.Notes, notes ?? a.Notes).SetProperty(a => a.ReviewedAt, DateTime.UtcNow).SetProperty(a => a.AssignedTo, reviewedBy ?? a.AssignedTo), ct);
+        await _set.Where(a => a.Id == id).ExecuteUpdateAsync(s => s
+            .SetProperty(a => a.Status, status)
+            .SetProperty(a => a.Notes, a => notes ?? a.Notes)
+            .SetProperty(a => a.ReviewedAt, DateTime.UtcNow)
+            .SetProperty(a => a.AssignedTo, a => reviewedBy ?? a.AssignedTo), ct);
     }
     public async Task<Dictionary<Domain.Enums.AdmissionStatus, int>> GetCountsByStatusAsync(CancellationToken ct = default) => await _set.GroupBy(a => a.Status).ToDictionaryAsync(g => g.Key, g => g.Count(), ct);
 }

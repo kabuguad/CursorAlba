@@ -1,64 +1,73 @@
 import { useQuery } from '@tanstack/react-query'
-import { unwrap } from '../services/mockApi'
 import { portalService } from '../services/portalService'
 import { useAuth } from '../contexts/AuthContext'
 
-function useLinkedStudentId(override?: string) {
-  const { user } = useAuth()
-  return override ?? user?.linkedId ?? ''
+function unwrap<T>(res: { data: T | null; error: string | null }): T {
+  if (res.error) throw new Error(res.error)
+  return res.data as T
 }
 
-export function useParentStudentProfile(overrideStudentId?: string) {
+export function useParentChildren() {
   const { user } = useAuth()
   return useQuery({
-    queryKey: ['portal:parent:profile', user?.id, overrideStudentId],
-    queryFn: () => portalService.getStudentByUserId(user!.id).then(unwrap),
+    queryKey: ['portal:parent:children', user?.id],
+    queryFn: () => portalService.getParentChildren().then(unwrap),
     enabled: !!user?.id,
   })
 }
 
-export function useParentGradesHistory(overrideStudentId?: string) {
-  const studentId = useLinkedStudentId(overrideStudentId)
+export function useParentStudentProfile(childId?: string) {
+  const { user } = useAuth()
+  const cid = childId ?? ''
   return useQuery({
-    queryKey: ['portal:grades', studentId],
-    queryFn: () => portalService.getStudentGradesHistory(studentId).then(unwrap),
-    enabled: !!studentId,
+    queryKey: ['portal:parent:profile', user?.id, cid],
+    queryFn: () => portalService.getParentChildProfile(cid).then(unwrap),
+    enabled: !!user?.id && !!cid,
   })
 }
 
-export function useParentAttendance(overrideStudentId?: string) {
-  const studentId = useLinkedStudentId(overrideStudentId)
+export function useParentGradesHistory(childId?: string) {
+  const cid = childId ?? ''
   return useQuery({
-    queryKey: ['portal:attendance', studentId],
-    queryFn: () => portalService.getStudentAttendance(studentId).then(unwrap),
-    enabled: !!studentId,
+    queryKey: ['portal:grades', cid],
+    queryFn: () => portalService.getParentChildGrades(cid).then(unwrap),
+    enabled: !!cid,
   })
 }
 
-export function useParentTimetable(overrideStudentId?: string) {
-  const studentId = useLinkedStudentId(overrideStudentId)
+export function useParentAttendance(childId?: string) {
+  const cid = childId ?? ''
   return useQuery({
-    queryKey: ['portal:timetable', studentId],
-    queryFn: () => portalService.getStudentTimetable(studentId).then(unwrap),
-    enabled: !!studentId,
+    queryKey: ['portal:attendance', cid],
+    queryFn: () => portalService.getParentChildAttendance(cid).then(unwrap),
+    enabled: !!cid,
   })
 }
 
-export function useParentHomework(overrideStudentId?: string) {
-  const studentId = useLinkedStudentId(overrideStudentId)
+export function useParentTimetable(childId?: string) {
+  const cid = childId ?? ''
   return useQuery({
-    queryKey: ['portal:homework', studentId],
-    queryFn: () => portalService.getStudentHomework(studentId).then(unwrap),
-    enabled: !!studentId,
+    queryKey: ['portal:timetable', cid],
+    queryFn: () => portalService.getParentChildTimetable(cid).then(unwrap),
+    enabled: !!cid,
   })
 }
 
-export function useParentInvoice(overrideStudentId?: string) {
-  const studentId = useLinkedStudentId(overrideStudentId)
+export function useParentHomework(childId?: string) {
+  const cid = childId ?? ''
   return useQuery({
-    queryKey: ['portal:invoice', studentId],
-    queryFn: () => portalService.getStudentInvoice(studentId).then(unwrap),
-    enabled: !!studentId,
+    queryKey: ['portal:homework', cid],
+    queryFn: () => portalService.getParentChildAssignments(cid).then(unwrap),
+    enabled: !!cid,
+  })
+}
+
+export function useParentInvoice(childId?: string) {
+  const cid = childId ?? ''
+  return useQuery({
+    queryKey: ['portal:invoice', cid],
+    queryFn: () => portalService.getParentChildFees(cid).then(unwrap),
+    enabled: !!cid,
   })
 }
 

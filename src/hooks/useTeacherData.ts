@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { unwrap } from '../services/mockApi'
 import { portalService } from '../services/portalService'
 import { useAuth } from '../contexts/AuthContext'
-import type { StudentGrade, AttendanceRecord } from '../services/db'
 
+function unwrap<T>(res: { data: T | null; error: string | null }): T {
+  if (res.error) throw new Error(res.error)
+  return res.data as T
+}
 
 export function useTeacherProfile() {
   const { user } = useAuth()
@@ -14,11 +16,12 @@ export function useTeacherProfile() {
   })
 }
 
-export function useTeacherClasses(staffId?: string) {
+export function useTeacherClasses() {
+  const { user } = useAuth()
   return useQuery({
-    queryKey: ['portal:classes', staffId],
-    queryFn: () => portalService.getTeacherClasses(staffId!).then(unwrap),
-    enabled: !!staffId,
+    queryKey: ['portal:classes', user?.id],
+    queryFn: () => portalService.getTeacherClasses(user!.id).then(unwrap),
+    enabled: !!user?.id,
   })
 }
 
@@ -50,7 +53,7 @@ export function useClassAttendance(classId?: string) {
 export function useSaveGrades() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (grades: Omit<StudentGrade, 'id'>[]) => portalService.saveGrades(grades).then(unwrap),
+    mutationFn: (grades: unknown[]) => portalService.saveGrades(grades).then(unwrap),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['portal:classGrades'] }),
   })
 }
@@ -58,24 +61,26 @@ export function useSaveGrades() {
 export function useSaveAttendance() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (records: Omit<AttendanceRecord, 'id'>[]) => portalService.saveAttendance(records).then(unwrap),
+    mutationFn: (records: unknown[]) => portalService.saveAttendance(records).then(unwrap),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['portal:classAttendance'] }),
   })
 }
 
-export function useTeacherTimetable(staffId?: string) {
+export function useTeacherTimetable() {
+  const { user } = useAuth()
   return useQuery({
-    queryKey: ['portal:teacherTimetable', staffId],
-    queryFn: () => portalService.getTeacherTimetable(staffId!).then(unwrap),
-    enabled: !!staffId,
+    queryKey: ['portal:teacherTimetable', user?.id],
+    queryFn: () => portalService.getTeacherTimetable(user!.id).then(unwrap),
+    enabled: !!user?.id,
   })
 }
 
-export function useTeacherLeaveRequests(staffId?: string) {
+export function useTeacherLeaveRequests() {
+  const { user } = useAuth()
   return useQuery({
-    queryKey: ['portal:leaveRequests', staffId],
-    queryFn: () => portalService.getLeaveRequests(staffId!).then(unwrap),
-    enabled: !!staffId,
+    queryKey: ['portal:leaveRequests', user?.id],
+    queryFn: () => portalService.getLeaveRequests(user!.id).then(unwrap),
+    enabled: !!user?.id,
   })
 }
 

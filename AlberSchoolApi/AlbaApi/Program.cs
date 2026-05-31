@@ -1,3 +1,4 @@
+using AlbaApi;
 using AlbaApi.Extensions;
 using AlbaApi.Presentation;
 using AlbaApi.Presentation.ActionFilters;
@@ -38,7 +39,7 @@ builder.Services.Configure<FormOptions>(options =>
     options.MultipartBodyLengthLimit = 50 * 1024 * 1024;
 });
 
-builder.Services.AddAutoMapper(typeof(Service.Utils.AutoMapperProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<Service.Utils.AutoMapperProfile>());
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddScoped<ValidationFilterAttribute>();

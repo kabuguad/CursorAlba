@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations_backup\**" />
+    <EmbeddedResource Remove="Migrations_backup\**" />
+    <None Remove="Migrations_backup\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />

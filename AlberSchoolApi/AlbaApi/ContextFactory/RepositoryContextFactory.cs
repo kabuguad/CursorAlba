@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Design;
 using Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,8 +14,8 @@ public class RepositoryContextFactory : IDesignTimeDbContextFactory<RepositoryCo
             .AddJsonFile("appsettings.json")
             .Build();
         var dbContextOptionsBuilder = new DbContextOptionsBuilder<RepositoryContext>()
-            .UseSqlServer(configurationRoot.GetConnectionString("sqlConnection"),
-                sqlServerDbContextOptionsBuilder => sqlServerDbContextOptionsBuilder.MigrationsAssembly("AlbaApi"));
+            .UseSqlite(configurationRoot.GetConnectionString("sqlConnection"),
+                sqliteDbContextOptionsBuilder => sqliteDbContextOptionsBuilder.MigrationsAssembly("AlbaApi"));
         return new RepositoryContext(dbContextOptionsBuilder.Options);
     }
 }

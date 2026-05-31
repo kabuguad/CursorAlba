@@ -1,3 +1,3 @@
 #!/bin/bash
 cd AlberSchoolApi/AlbaApi
-exec dotnet run --no-build --project AlbaApi.csproj
+exec dotnet run --project AlbaApi.csproj

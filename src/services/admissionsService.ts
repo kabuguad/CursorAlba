@@ -1,57 +1,66 @@
-import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
-import { getDB, mutateDB } from './db'
-import type { AdmissionApplication } from './db'
-import { addAudit } from './auditService'
+import apiClient from '../lib/axios'
 
-export type { AdmissionApplication }
+export interface AdmissionApplication {
+  id: string
+  childFirstName: string
+  childLastName: string
+  dob: string
+  gender: string
+  applyingForGrade: string
+  applyingForClassId?: number | null
+  previousSchool?: string | null
+  parentFirstName: string
+  parentLastName: string
+  parentEmail: string
+  parentPhone: string
+  parentRelationship?: string
+  address?: string
+  documents: string[]
+  status: 'pending' | 'reviewing' | 'approved' | 'rejected'
+  notes: string
+  submittedDate: string
+  assignedTo?: string | null
+  reviewedAt?: string | null
+}
+
+export interface AdmissionsStats {
+  total: number
+  pending: number
+  reviewing: number
+  approved: number
+  rejected: number
+}
 
 export const admissionsService = {
-  list: () => mockGet(() => getDB().admissions.sort((a, b) => b.submittedDate.localeCompare(a.submittedDate))),
+  list: async (): Promise<AdmissionApplication[]> => {
+    const { data } = await apiClient.get<AdmissionApplication[]>('/admin/admissions')
+    return data
+  },
 
-  getById: (id: string) => mockGet(() => {
-    const a = getDB().admissions.find(x => x.id === id)
-    if (!a) throw new Error('Application not found')
-    return a
-  }),
+  getById: async (id: string): Promise<AdmissionApplication> => {
+    const { data } = await apiClient.get<AdmissionApplication>(`/admin/admissions/${id}`)
+    return data
+  },
 
-  create: (data: Omit<AdmissionApplication, 'id' | 'status' | 'notes' | 'assignedTo'>) => mockPost(() => {
-    const app: AdmissionApplication = {
-      id: newId('APP'),
-      ...data,
-      status: 'pending',
-      notes: '',
-      assignedTo: null,
-    }
-    mutateDB(db => { db.admissions.push(app) })
-    addAudit({ action: 'CREATE', resource: 'Admission', resourceId: app.id, details: `New application: ${app.childFirstName} ${app.childLastName}` })
-    return app
-  }),
+  updateStatus: async (
+    id: string,
+    status: AdmissionApplication['status'],
+    notes: string,
+  ): Promise<AdmissionApplication> => {
+    const backendStatus = status.charAt(0).toUpperCase() + status.slice(1)
+    const { data } = await apiClient.patch<AdmissionApplication>(
+      `/admin/admissions/${id}/status`,
+      { status: backendStatus, notes },
+    )
+    return data
+  },
 
-  updateStatus: (id: string, status: AdmissionApplication['status'], notes: string, assignedTo?: string) => mockPut(() => {
-    let updated: AdmissionApplication | undefined
-    mutateDB(db => {
-      const idx = db.admissions.findIndex(a => a.id === id)
-      if (idx < 0) throw new Error('Application not found')
-      db.admissions[idx] = { ...db.admissions[idx], status, notes, assignedTo: assignedTo ?? db.admissions[idx].assignedTo }
-      updated = db.admissions[idx]
-    })
-    addAudit({ action: 'UPDATE', resource: 'Admission', resourceId: id, details: `Status → ${status}: ${updated?.childFirstName} ${updated?.childLastName}` })
-    return updated!
-  }),
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/admin/admissions/${id}`)
+  },
 
-  delete: (id: string) => mockDelete(() => {
-    mutateDB(db => { db.admissions = db.admissions.filter(a => a.id !== id) })
-    addAudit({ action: 'DELETE', resource: 'Admission', resourceId: id, details: 'Application deleted' })
-  }),
-
-  getStats: () => mockGet(() => {
-    const apps = getDB().admissions
-    return {
-      total: apps.length,
-      pending: apps.filter(a => a.status === 'pending').length,
-      reviewing: apps.filter(a => a.status === 'reviewing').length,
-      approved: apps.filter(a => a.status === 'approved').length,
-      rejected: apps.filter(a => a.status === 'rejected').length,
-    }
-  }),
+  getStats: async (): Promise<AdmissionsStats> => {
+    const { data } = await apiClient.get<AdmissionsStats>('/admin/admissions/stats')
+    return data
+  },
 }

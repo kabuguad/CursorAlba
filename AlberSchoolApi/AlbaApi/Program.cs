@@ -61,6 +61,7 @@ builder.Services.ConfigureJwtAuthentication(builder.Configuration);
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddSingleton<IFileUploadService, FileUploadService>();
 
 builder.Services.Configure<Service.JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 

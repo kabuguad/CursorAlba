@@ -25,6 +25,24 @@ public class BlogPostService : IBlogPostService
         return _mapper.Map<IEnumerable<BlogPostDto>>(posts);
     }
 
+    public async Task<IEnumerable<BlogPostDto>> GetAllAsync(bool trackChanges)
+    {
+        var posts = await _repositoryManager.BlogPostRepository
+            .FindByCondition(b => !b.IsDeleted, trackChanges)
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+        return _mapper.Map<IEnumerable<BlogPostDto>>(posts);
+    }
+
+    public async Task<BlogPostDto?> GetByIdAsync(int id, bool trackChanges)
+    {
+        var post = await _repositoryManager.BlogPostRepository
+            .FindByCondition(b => b.Id == id && !b.IsDeleted, trackChanges)
+            .FirstOrDefaultAsync();
+        if (post == null) return null;
+        return _mapper.Map<BlogPostDto>(post);
+    }
+
     public async Task<BlogPostDto?> GetBySlugAsync(string slug, bool trackChanges)
     {
         var post = await _repositoryManager.BlogPostRepository.GetBySlugAsync(slug, trackChanges);

@@ -13,6 +13,7 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         CreateMap<ApplicationUser, UserResponseDto>();
+        CreateMap<Entities.Models.Content.BlogPost, DTOs.Blog.BlogPostDto>();
         CreateMap<UserRegistrationDto, ApplicationUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));

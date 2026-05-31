@@ -2,6 +2,7 @@ using Contracts.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
 
@@ -32,7 +33,7 @@ public class ClassesController : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> CreateClass(
-        [FromBody] CreateClassDto dto,
+        [FromBody] UpsertClassDto dto,
         [FromServices] IRepositoryManager repo)
     {
         var cls = new Entities.Models.Academics.Class
@@ -43,8 +44,41 @@ public class ClassesController : ControllerBase
         };
         repo.ClassRepository.Create(cls);
         await repo.SaveAsync();
-        return StatusCode(201, new { cls.Id });
+        return StatusCode(201, new { cls.Id, cls.Name, cls.Section, cls.Description });
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateClass(int id,
+        [FromBody] UpsertClassDto dto,
+        [FromServices] IRepositoryManager repo)
+    {
+        var cls = await repo.ClassRepository
+            .FindByCondition(c => c.Id == id, true)
+            .FirstOrDefaultAsync();
+        if (cls == null) return NotFound();
+
+        cls.Name = dto.Name;
+        cls.Section = dto.Section;
+        cls.Description = dto.Description;
+        cls.UpdatedAt = DateTime.UtcNow;
+
+        repo.Update(cls);
+        await repo.SaveAsync();
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteClass(int id, [FromServices] IRepositoryManager repo)
+    {
+        var cls = await repo.ClassRepository
+            .FindByCondition(c => c.Id == id, true)
+            .FirstOrDefaultAsync();
+        if (cls == null) return NotFound();
+
+        repo.ClassRepository.Delete(cls);
+        await repo.SaveAsync();
+        return NoContent();
     }
 }
 
-public record CreateClassDto(string Name, string? Section, string? Description);
+public record UpsertClassDto(string Name, string? Section, string? Description);

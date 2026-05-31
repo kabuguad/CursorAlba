@@ -6,7 +6,6 @@ import {
   useAdmissions, useAdmissionsStats,
   useUpdateAdmissionStatus, useDeleteAdmission,
 } from '../../../hooks/useAdminData'
-import { unwrap } from '../../../services/mockApi'
 import type { AdmissionApplication } from '../../../services/admissionsService'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
@@ -68,7 +67,7 @@ export function AdmissionsManager() {
 
   const handleUpdateStatus = async (id: string, status: AppStatus) => {
     try {
-      await updateStatus.mutateAsync({ id, status, notes: notes || selected?.notes || '' }).then(unwrap)
+      await updateStatus.mutateAsync({ id, status, notes: notes || selected?.notes || '' })
       showToast(`Application ${status} ✓`)
       setSelected(null)
     } catch {

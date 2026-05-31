@@ -349,13 +349,13 @@ export const useSetMaintenanceMode = () => {
 }
 
 // ── Admissions ────────────────────────────────────────────────────────────
-export const useAdmissions = () => useQuery({ queryKey: ['admissions'], queryFn: () => admissionsService.list().then(unwrap) })
-export const useAdmissionsStats = () => useQuery({ queryKey: ['admissions', 'stats'], queryFn: () => admissionsService.getStats().then(unwrap) })
+export const useAdmissions = () => useQuery({ queryKey: ['admissions'], queryFn: () => admissionsService.list() })
+export const useAdmissionsStats = () => useQuery({ queryKey: ['admissions', 'stats'], queryFn: () => admissionsService.getStats() })
 export const useUpdateAdmissionStatus = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, status, notes, assignedTo }: { id: string; status: Parameters<typeof admissionsService.updateStatus>[1]; notes: string; assignedTo?: string }) =>
-      admissionsService.updateStatus(id, status, notes, assignedTo),
+    mutationFn: ({ id, status, notes }: { id: string; status: Parameters<typeof admissionsService.updateStatus>[1]; notes: string; assignedTo?: string }) =>
+      admissionsService.updateStatus(id, status, notes),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admissions'] }); qc.invalidateQueries({ queryKey: ['analytics'] }) },
   })
 }

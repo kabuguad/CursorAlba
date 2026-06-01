@@ -18,6 +18,7 @@ import { libraryService } from '../services/libraryService'
 import { auditService } from '../services/auditService'
 import { systemService } from '../services/systemService'
 import { admissionsService } from '../services/admissionsService'
+import { adminApi } from '../services/adminApiService'
 
 // ── Users ─────────────────────────────────────────────────────────────────
 export const useUsers = () => useQuery({ queryKey: ['users'], queryFn: () => userService.list().then(unwrap) })
@@ -345,6 +346,75 @@ export const useSetMaintenanceMode = () => {
   return useMutation({
     mutationFn: ({ enabled, message }: { enabled: boolean; message?: string }) => systemService.setMaintenanceMode(enabled, message),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['settings'] }),
+  })
+}
+
+// ── Site Content ──────────────────────────────────────────────────────────
+
+export const useSiteSettings = () =>
+  useQuery({ queryKey: ['content', 'settings'], queryFn: () => adminApi.content.getSettings() })
+
+export const useSaveSettings = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (settings: { key: string; value: string }[]) => adminApi.content.saveSettings(settings),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'settings'] }),
+  })
+}
+
+export const useProgramLevels = () =>
+  useQuery({ queryKey: ['content', 'program-levels'], queryFn: () => adminApi.content.getProgramLevels() })
+
+export const useCreateProgramLevel = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: adminApi.content.createProgramLevel,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'program-levels'] }),
+  })
+}
+
+export const useUpdateProgramLevel = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: number; dto: Parameters<typeof adminApi.content.updateProgramLevel>[1] }) =>
+      adminApi.content.updateProgramLevel(id, dto),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'program-levels'] }),
+  })
+}
+
+export const useDeleteProgramLevel = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: adminApi.content.deleteProgramLevel,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'program-levels'] }),
+  })
+}
+
+export const usePublicFees = () =>
+  useQuery({ queryKey: ['content', 'public-fees'], queryFn: () => adminApi.content.getPublicFees() })
+
+export const useCreatePublicFeeRow = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: adminApi.content.createPublicFeeRow,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'public-fees'] }),
+  })
+}
+
+export const useUpdatePublicFeeRow = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: number; dto: Parameters<typeof adminApi.content.updatePublicFeeRow>[1] }) =>
+      adminApi.content.updatePublicFeeRow(id, dto),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'public-fees'] }),
+  })
+}
+
+export const useDeletePublicFeeRow = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: adminApi.content.deletePublicFeeRow,
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['content', 'public-fees'] }),
   })
 }
 

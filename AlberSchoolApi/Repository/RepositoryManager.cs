@@ -24,6 +24,9 @@ public class RepositoryManager : IRepositoryManager
     private readonly Lazy<IBlogPostRepository> _blogPostRepository;
     private readonly Lazy<IEventRepository> _eventRepository;
     private readonly Lazy<IGalleryImageRepository> _galleryImageRepository;
+    private readonly Lazy<ISiteSettingRepository> _siteSettingRepository;
+    private readonly Lazy<IProgramLevelRepository> _programLevelRepository;
+    private readonly Lazy<IPublicFeeRowRepository> _publicFeeRowRepository;
     private bool _disposed;
 
     public RepositoryManager(RepositoryContext context)
@@ -46,6 +49,9 @@ public class RepositoryManager : IRepositoryManager
         _blogPostRepository = new Lazy<IBlogPostRepository>(() => new BlogPostRepository(_context));
         _eventRepository = new Lazy<IEventRepository>(() => new EventRepository(_context));
         _galleryImageRepository = new Lazy<IGalleryImageRepository>(() => new GalleryImageRepository(_context));
+        _siteSettingRepository = new Lazy<ISiteSettingRepository>(() => new SiteSettingRepository(_context));
+        _programLevelRepository = new Lazy<IProgramLevelRepository>(() => new ProgramLevelRepository(_context));
+        _publicFeeRowRepository = new Lazy<IPublicFeeRowRepository>(() => new PublicFeeRowRepository(_context));
     }
 
     public IStudentRepository StudentRepository => _studentRepository.Value;
@@ -65,6 +71,9 @@ public class RepositoryManager : IRepositoryManager
     public IBlogPostRepository BlogPostRepository => _blogPostRepository.Value;
     public IEventRepository EventRepository => _eventRepository.Value;
     public IGalleryImageRepository GalleryImageRepository => _galleryImageRepository.Value;
+    public ISiteSettingRepository SiteSettingRepository => _siteSettingRepository.Value;
+    public IProgramLevelRepository ProgramLevelRepository => _programLevelRepository.Value;
+    public IPublicFeeRowRepository PublicFeeRowRepository => _publicFeeRowRepository.Value;
 
     public async Task SaveAsync() => await _context.SaveChangesAsync();
     public void Update<T>(T entity) where T : class => _context.Set<T>().Update(entity);

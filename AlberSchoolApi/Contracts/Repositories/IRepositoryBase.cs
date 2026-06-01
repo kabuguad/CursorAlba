@@ -36,4 +36,7 @@ public interface IRepositoryManager : IDisposable
     IBlogPostRepository BlogPostRepository { get; }
     IEventRepository EventRepository { get; }
     IGalleryImageRepository GalleryImageRepository { get; }
+    ISiteSettingRepository SiteSettingRepository { get; }
+    IProgramLevelRepository ProgramLevelRepository { get; }
+    IPublicFeeRowRepository PublicFeeRowRepository { get; }
 }

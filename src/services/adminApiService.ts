@@ -219,8 +219,65 @@ const fees = {
   delete: (id: number) => apiClient.delete(`/admin/fees/${id}`).then(r => r.data),
 }
 
+// ── Site Content ──────────────────────────────────────────────────────────
+
+export interface ApiSiteSetting { key: string; value: string }
+
+export interface ApiProgramLevel {
+  id: number
+  slug: string
+  name: string
+  ages: string
+  description: string
+  imageUrl: string | null
+  sortOrder: number
+  createdAt: string
+}
+
+export interface ApiPublicFeeRow {
+  id: number
+  level: string
+  tuition: number
+  transport: number
+  activities: number
+  total: number
+  sortOrder: number
+}
+
+const content = {
+  getSettings: () =>
+    apiClient.get<ApiSiteSetting[]>('/admin/content/settings').then(r => r.data),
+
+  saveSettings: (settings: ApiSiteSetting[]) =>
+    apiClient.put('/admin/content/settings', settings).then(r => r.data),
+
+  getProgramLevels: () =>
+    apiClient.get<ApiProgramLevel[]>('/admin/content/program-levels').then(r => r.data),
+
+  createProgramLevel: (dto: { slug: string; name: string; ages: string; description: string; imageUrl?: string; sortOrder: number }) =>
+    apiClient.post<ApiProgramLevel>('/admin/content/program-levels', dto).then(r => r.data),
+
+  updateProgramLevel: (id: number, dto: { slug: string; name: string; ages: string; description: string; imageUrl?: string; sortOrder: number }) =>
+    apiClient.put(`/admin/content/program-levels/${id}`, dto).then(r => r.data),
+
+  deleteProgramLevel: (id: number) =>
+    apiClient.delete(`/admin/content/program-levels/${id}`).then(r => r.data),
+
+  getPublicFees: () =>
+    apiClient.get<ApiPublicFeeRow[]>('/admin/content/public-fees').then(r => r.data),
+
+  createPublicFeeRow: (dto: { level: string; tuition: number; transport: number; activities: number; sortOrder: number }) =>
+    apiClient.post<ApiPublicFeeRow>('/admin/content/public-fees', dto).then(r => r.data),
+
+  updatePublicFeeRow: (id: number, dto: { level: string; tuition: number; transport: number; activities: number; sortOrder: number }) =>
+    apiClient.put(`/admin/content/public-fees/${id}`, dto).then(r => r.data),
+
+  deletePublicFeeRow: (id: number) =>
+    apiClient.delete(`/admin/content/public-fees/${id}`).then(r => r.data),
+}
+
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
 }
 
-export const adminApi = { blog, events, gallery, upload, admissions, staff, students, classes, subjects, fees }
+export const adminApi = { blog, events, gallery, upload, admissions, staff, students, classes, subjects, fees, content }

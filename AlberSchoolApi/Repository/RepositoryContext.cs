@@ -37,6 +37,10 @@ public class RepositoryContext(DbContextOptions options) : IdentityDbContext<App
     public DbSet<Event> Events { get; set; }
     public DbSet<GalleryImage> GalleryImages { get; set; }
 
+    public DbSet<SiteSetting> SiteSettings { get; set; }
+    public DbSet<ProgramLevel> ProgramLevels { get; set; }
+    public DbSet<PublicFeeRow> PublicFeeRows { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -130,5 +134,21 @@ modelBuilder.Entity<TimetableEntry>()
         modelBuilder.Entity<Payment>()
             .Property(p => p.Amount)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<PublicFeeRow>()
+            .Property(f => f.Tuition)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<PublicFeeRow>()
+            .Property(f => f.Transport)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<PublicFeeRow>()
+            .Property(f => f.Activities)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<SiteSetting>()
+            .HasIndex(s => s.Key)
+            .IsUnique();
     }
 }

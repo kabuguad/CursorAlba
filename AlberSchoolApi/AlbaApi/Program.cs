@@ -5,6 +5,7 @@ using AlbaApi.Presentation.ActionFilters;
 using Microsoft.EntityFrameworkCore;
 using Entities.Models.Academics;
 using Entities.Models.Attendance;
+using Entities.Models.Content;
 using Entities.Models.Finance;
 using Entities.Models.Grade;
 using Entities.Models.User;
@@ -132,6 +133,57 @@ static async Task SeedDatabaseAsync(WebApplication app)
         {
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole<int>(role));
+        }
+
+        // Seed site content tables independently (run even when users already exist)
+        if (!await context.SiteSettings.AnyAsync())
+        {
+            context.SiteSettings.AddRange(
+                new SiteSetting { Key = "home.hero.tagline",           Value = "Where Excellence" },
+                new SiteSetting { Key = "home.hero.taglineGold",       Value = "Meets Tomorrow" },
+                new SiteSetting { Key = "home.hero.subtitle",          Value = "Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof." },
+                new SiteSetting { Key = "home.hero.directorName",      Value = "Mr. Albert Njeru" },
+                new SiteSetting { Key = "home.hero.directorTitle",     Value = "Founder & Director" },
+                new SiteSetting { Key = "home.hero.directorCredential",Value = "M.Ed., UoN" },
+                new SiteSetting { Key = "home.hero.directorQuote",     Value = "Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day." },
+                new SiteSetting { Key = "home.stats.0.label",          Value = "Students" },
+                new SiteSetting { Key = "home.stats.0.value",          Value = "2,000+" },
+                new SiteSetting { Key = "home.stats.1.label",          Value = "Educators" },
+                new SiteSetting { Key = "home.stats.1.value",          Value = "120+" },
+                new SiteSetting { Key = "home.stats.2.label",          Value = "School Buses" },
+                new SiteSetting { Key = "home.stats.2.value",          Value = "8" },
+                new SiteSetting { Key = "home.stats.3.label",          Value = "Sports Codes" },
+                new SiteSetting { Key = "home.stats.3.value",          Value = "12" },
+                new SiteSetting { Key = "about.mission",  Value = "To provide world-class holistic education that develops academically excellent, morally upright, and socially responsible citizens who will transform Kenya and the world." },
+                new SiteSetting { Key = "about.vision",   Value = "To be the leading center of educational excellence in East Africa, recognised for outstanding academic outcomes, character formation, and innovation." },
+                new SiteSetting { Key = "about.history",  Value = "Alber School was founded in Kutus, Kirinyaga County, adjacent to the Governor's Offices. Starting with a handful of students, the school has grown to over 2,000 learners and 120 expert educators, offering both the CBC national framework and Cambridge IGCSE & A-Level pathways." },
+                new SiteSetting { Key = "about.values",   Value = "Excellence · Integrity · Innovation · Compassion · Patriotism" },
+                new SiteSetting { Key = "programs.cbcFramework",   Value = "Competency-based assessment\nLearner-centered projects\nNational values integration\nCareer pathways from Grade 7\nContinuous assessment portfolios" },
+                new SiteSetting { Key = "programs.igcseFramework", Value = "Cambridge international standards\nIGCSE & A-Level examinations\nGlobal university recognition\nRigorous external assessment\nCross-cultural curriculum breadth" }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.ProgramLevels.AnyAsync())
+        {
+            context.ProgramLevels.AddRange(
+                new ProgramLevel { Slug = "daycare", Name = "Daycare & Early Years", Ages = "2–5 years", Description = "Nurturing foundation with play-based learning and sensory exploration.", ImageUrl = "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&h=600&fit=crop", SortOrder = 1 },
+                new ProgramLevel { Slug = "primary", Name = "Primary School",         Ages = "6–12 years", Description = "CBC-aligned excellence with literacy, numeracy, and creative foundations.",     ImageUrl = "https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&h=600&fit=crop", SortOrder = 2 },
+                new ProgramLevel { Slug = "junior",  Name = "Junior Secondary",       Ages = "13–15 years", Description = "Pre-IGCSE pathways with STEM labs and leadership development.",                ImageUrl = "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop", SortOrder = 3 },
+                new ProgramLevel { Slug = "senior",  Name = "Senior School",          Ages = "16–18 years", Description = "Cambridge IGCSE & A-Level preparation with university counseling.",             ImageUrl = "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop", SortOrder = 4 }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.PublicFeeRows.AnyAsync())
+        {
+            context.PublicFeeRows.AddRange(
+                new PublicFeeRow { Level = "Daycare",          Tuition = 85000,  Transport = 18000, Activities = 12000, SortOrder = 1 },
+                new PublicFeeRow { Level = "Primary",          Tuition = 145000, Transport = 22000, Activities = 15000, SortOrder = 2 },
+                new PublicFeeRow { Level = "Junior Secondary", Tuition = 185000, Transport = 25000, Activities = 18000, SortOrder = 3 },
+                new PublicFeeRow { Level = "Senior / IGCSE",   Tuition = 245000, Transport = 28000, Activities = 22000, SortOrder = 4 }
+            );
+            await context.SaveChangesAsync();
         }
 
         if (await userManager.Users.AnyAsync()) return;

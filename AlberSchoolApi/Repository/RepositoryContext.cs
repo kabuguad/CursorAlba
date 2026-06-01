@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 namespace Repository;
 
 public class RepositoryContext(DbContextOptions options) : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>(options)
 {
-
     public DbSet<Student> Students { get; set; }
     public DbSet<Teacher> Teachers { get; set; }
     public DbSet<Parent> Parents { get; set; }
@@ -44,6 +44,7 @@ public class RepositoryContext(DbContextOptions options) : IdentityDbContext<App
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RepositoryContext).Assembly);
 
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
             v => v.ToUniversalTime(),
@@ -67,9 +68,6 @@ public class RepositoryContext(DbContextOptions options) : IdentityDbContext<App
         modelBuilder.Entity<Parent>()
             .HasIndex(p => p.UserId)
             .IsUnique();
-
-        modelBuilder.Entity<Subject>()
-            .HasIndex(s => s.ClassId);
 
         modelBuilder.Entity<Assignment>()
             .HasOne(a => a.Subject)
@@ -95,7 +93,7 @@ public class RepositoryContext(DbContextOptions options) : IdentityDbContext<App
             .HasForeignKey(t => t.SubjectId)
             .OnDelete(DeleteBehavior.Cascade);
 
-modelBuilder.Entity<TimetableEntry>()
+        modelBuilder.Entity<TimetableEntry>()
             .HasOne(t => t.Teacher)
             .WithMany()
             .HasForeignKey(t => t.TeacherId)
@@ -117,38 +115,6 @@ modelBuilder.Entity<TimetableEntry>()
 
         modelBuilder.Entity<BlogPost>()
             .HasIndex(b => b.Slug)
-            .IsUnique();
-
-        modelBuilder.Entity<FeeStructure>()
-            .Property(f => f.Amount)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<StudentFee>()
-            .Property(f => f.AmountDue)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<StudentFee>()
-            .Property(f => f.AmountPaid)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<Payment>()
-            .Property(p => p.Amount)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<PublicFeeRow>()
-            .Property(f => f.Tuition)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<PublicFeeRow>()
-            .Property(f => f.Transport)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<PublicFeeRow>()
-            .Property(f => f.Activities)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<SiteSetting>()
-            .HasIndex(s => s.Key)
             .IsUnique();
     }
 }

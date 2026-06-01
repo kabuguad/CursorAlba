@@ -15,6 +15,7 @@ using Service.Contracts;
 using Service.Contracts.Authentication;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 namespace AlbaApi.Extensions;
 
@@ -48,6 +49,13 @@ public static partial class ServiceExtensions
         return builder;
     }
 
+    // Configure IIS integration (if hosting on IIS)
+    public static void ConfigureIisIntegration(this IServiceCollection services) =>
+        services.Configure<IISOptions>(options =>
+        {
+
+        });
+
     public static void ConfigureLoggerService(this IServiceCollection services)
         => services.AddSingleton<ILoggerManager, LoggerManager>();
 
@@ -65,49 +73,49 @@ public static partial class ServiceExtensions
     {
         services.AddRateLimiter(opt =>
         {
-            opt.GlobalLimiter = System.Threading.RateLimiting.PartitionedRateLimiter.Create<HttpContext, string>(
-                _ => System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("global"));
+            opt.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
+                _ => RateLimitPartition.GetNoLimiter("global"));
 
             opt.AddPolicy("contact", ctx =>
             {
                 var ip = ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-                return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
-                { AutoReplenishment = true, PermitLimit = 5, Window = System.TimeSpan.FromMinutes(1), QueueLimit = 0 });
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new FixedWindowRateLimiterOptions
+                { AutoReplenishment = true, PermitLimit = 5, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 });
             });
 
             opt.AddPolicy("api", ctx =>
             {
                 var userId = ctx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
-                return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(partitionKey: userId, factory: _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
-                { AutoReplenishment = true, PermitLimit = 120, Window = System.TimeSpan.FromMinutes(1), QueueLimit = 10 });
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey: userId, factory: _ => new FixedWindowRateLimiterOptions
+                { AutoReplenishment = true, PermitLimit = 120, Window = TimeSpan.FromMinutes(1), QueueLimit = 10 });
             });
 
             opt.AddPolicy("auth", ctx =>
             {
                 var ip = ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-                return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
-                { AutoReplenishment = true, PermitLimit = 10, Window = System.TimeSpan.FromMinutes(1), QueueLimit = 2 });
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new FixedWindowRateLimiterOptions
+                { AutoReplenishment = true, PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 2 });
             });
 
             opt.AddPolicy("public", ctx =>
             {
                 var ip = ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-                return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
-                { AutoReplenishment = true, PermitLimit = 200, Window = System.TimeSpan.FromMinutes(1), QueueLimit = 10 });
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new FixedWindowRateLimiterOptions
+                { AutoReplenishment = true, PermitLimit = 200, Window = TimeSpan.FromMinutes(1), QueueLimit = 10 });
             });
 
             opt.AddPolicy("write", ctx =>
             {
                 var ip = ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-                return System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
-                { AutoReplenishment = true, PermitLimit = 30, Window = System.TimeSpan.FromMinutes(1), QueueLimit = 5 });
+                return RateLimitPartition.GetFixedWindowLimiter(partitionKey: ip, factory: _ => new FixedWindowRateLimiterOptions
+                { AutoReplenishment = true, PermitLimit = 30, Window = TimeSpan.FromMinutes(1), QueueLimit = 5 });
             });
 
             opt.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             opt.OnRejected = async (context, token) =>
             {
-                if (!context.Lease.TryGetMetadata(System.Threading.RateLimiting.MetadataName.RetryAfter, out var retryAfter))
-                    retryAfter = System.TimeSpan.FromSeconds(60);
+                if (!context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+                    retryAfter = TimeSpan.FromSeconds(60);
                 await context.HttpContext.Response.WriteAsync(
                     $"Too many requests. Try again after {retryAfter.TotalSeconds:.0f} seconds.", token);
             };
@@ -165,7 +173,7 @@ public static partial class ServiceExtensions
                     {
                         context.Token = authHeader;
                     }
-                    return System.Threading.Tasks.Task.CompletedTask;
+                    return Task.CompletedTask;
                 }
             };
         });

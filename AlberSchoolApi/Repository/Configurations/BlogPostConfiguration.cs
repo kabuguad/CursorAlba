@@ -1,0 +1,22 @@
+using Entities.Models.Content;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Repository.Configurations;
+
+public class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
+{
+    public void Configure(EntityTypeBuilder<BlogPost> builder)
+    {
+        builder.HasIndex(b => b.Slug).IsUnique();
+
+        builder.HasData(
+            new BlogPost { Id = 1, Title = "Alber School Opens State-of-the-Art Music Academy", Slug = "music-academy-opening", Summary = "Our new piano studio and recording suite redefine arts education in Kirinyaga.", Content = "Alber School proudly unveils its Music Academy adjacent to the Governor's Offices in Kutus. The facility features Steinway-ready piano rooms, acoustic-treated recording booths, and ensemble rehearsal spaces designed for CBC and IGCSE pathways alike.\n\nStudents will access world-class instruction from our 120+ faculty, including dedicated music specialists. Trial lessons are now open for prospective families.", CoverImageUrl = "https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=800&h=500&fit=crop", IsPublished = true, PublishedAt = new DateTime(2026, 1, 15) },
+            new BlogPost { Id = 2, Title = "CBC vs IGCSE: Choosing the Right Pathway", Slug = "cbc-vs-igcse-guide", Summary = "A guide for parents navigating Kenya's dual curriculum excellence.", Content = "At Alber School, we offer both Competency-Based Curriculum (CBC) and Cambridge IGCSE frameworks. Our academic leadership team helps families align pathway choice with student strengths, university goals, and learning style.\n\nSchedule a consultation through our admissions portal to explore personalized recommendations.", CoverImageUrl = "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop", IsPublished = true, PublishedAt = new DateTime(2026, 2, 2) },
+            new BlogPost { Id = 3, Title = "Champions on the Field: Term 1 Sports Recap", Slug = "term1-sports-recap", Summary = "Our athletes dominate regional fixtures across football, rugby, and swimming.", Content = "From the premium sports complex to inter-school championships, Alber athletes continue to set records. Player of the Month honors go to Form 3 striker Brian Mutua for exceptional leadership.\n\nUpcoming fixtures are live on our Sports page with real-time status badges.", CoverImageUrl = "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=500&fit=crop", IsPublished = true, PublishedAt = new DateTime(2026, 2, 28) },
+            new BlogPost { Id = 4, Title = "Sustainable Campus Initiative Launches", Slug = "sustainable-campus-initiative", Summary = "Solar panels and green roofs power our commitment to environmental stewardship.", Content = "Alber School invests in renewable energy and student-led sustainability clubs. Environmental Day features tree planting across our 15-acre campus with views toward Kirinyaga's rolling hills.", CoverImageUrl = "https://images.unsplash.com/photo-1541339907198-e08756dedfbf?w=800&h=500&fit=crop", IsPublished = true, PublishedAt = new DateTime(2026, 3, 10) },
+            new BlogPost { Id = 5, Title = "Parent Portal: M-Pesa Fee Payments Now Live", Slug = "mpesa-fee-payments-live", Summary = "Pay school fees securely via Paybill 522522 — Account: ALBER + Student ID.", Content = "Our parent dashboard integrates mock M-Pesa Paybill flows for demonstration. Real deployments would connect to Safaricom Daraja API. Track invoices, attendance heatmaps, and grade progress in one premium interface.", CoverImageUrl = "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=500&fit=crop", IsPublished = true, PublishedAt = new DateTime(2026, 3, 20) },
+            new BlogPost { Id = 6, Title = "Drama & Dance: Behind the Showcase", Slug = "drama-dance-showcase", Summary = "Mirror-walled studios and professional lighting elevate performing arts.", Content = "Our Drama & Dance Academy features sprung floors, full-wall mirrors, and 4K capture for portfolio development. Book a trial lesson through the arts pages.", CoverImageUrl = "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800&h=500&fit=crop", IsPublished = true, PublishedAt = new DateTime(2026, 4, 1) }
+        );
+    }
+}

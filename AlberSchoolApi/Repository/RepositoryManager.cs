@@ -27,6 +27,7 @@ public class RepositoryManager : IRepositoryManager
     private readonly Lazy<ISiteSettingRepository> _siteSettingRepository;
     private readonly Lazy<IProgramLevelRepository> _programLevelRepository;
     private readonly Lazy<IPublicFeeRowRepository> _publicFeeRowRepository;
+    private readonly Lazy<ITheAlberDifferenceRepository> _alberDifferenceRepository;
     private bool _disposed;
 
     public RepositoryManager(RepositoryContext context)
@@ -52,6 +53,7 @@ public class RepositoryManager : IRepositoryManager
         _siteSettingRepository = new Lazy<ISiteSettingRepository>(() => new SiteSettingRepository(_context));
         _programLevelRepository = new Lazy<IProgramLevelRepository>(() => new ProgramLevelRepository(_context));
         _publicFeeRowRepository = new Lazy<IPublicFeeRowRepository>(() => new PublicFeeRowRepository(_context));
+        _alberDifferenceRepository = new Lazy<ITheAlberDifferenceRepository>(() => new TheAlberDifferenceRepository(_context));
     }
 
     public IStudentRepository StudentRepository => _studentRepository.Value;
@@ -74,6 +76,7 @@ public class RepositoryManager : IRepositoryManager
     public ISiteSettingRepository SiteSettingRepository => _siteSettingRepository.Value;
     public IProgramLevelRepository ProgramLevelRepository => _programLevelRepository.Value;
     public IPublicFeeRowRepository PublicFeeRowRepository => _publicFeeRowRepository.Value;
+    public ITheAlberDifferenceRepository AlberDifferenceRepository => _alberDifferenceRepository.Value;
 
     public async Task SaveAsync() => await _context.SaveChangesAsync();
     public void Update<T>(T entity) where T : class => _context.Set<T>().Update(entity);

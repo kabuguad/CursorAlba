@@ -39,4 +39,5 @@ public interface IRepositoryManager : IDisposable
     ISiteSettingRepository SiteSettingRepository { get; }
     IProgramLevelRepository ProgramLevelRepository { get; }
     IPublicFeeRowRepository PublicFeeRowRepository { get; }
+    ITheAlberDifferenceRepository AlberDifferenceRepository { get; }
 }

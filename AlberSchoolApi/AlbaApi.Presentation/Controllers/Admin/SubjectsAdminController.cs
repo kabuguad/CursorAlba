@@ -1,9 +1,8 @@
-using Contracts.Repositories;
-using Entities.Models.Academics;
+using DTOs.Academics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
 
@@ -13,73 +12,38 @@ namespace AlbaApi.Presentation.Controllers.Admin;
 [Authorize(Policy = "RequireAdmin")]
 public class SubjectsAdminController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromServices] IRepositoryManager repo,
-        [FromQuery] int? classId)
+    private readonly IServiceManager _serviceManager;
+
+    public SubjectsAdminController(IServiceManager serviceManager)
     {
-        var query = repo.SubjectRepository.FindAll(false);
-        if (classId.HasValue)
-            query = query.Where(s => s.ClassId == classId.Value);
+        _serviceManager = serviceManager;
+    }
 
-        var subjects = await query
-            .Include(s => s.Class)
-            .OrderBy(s => s.ClassId).ThenBy(s => s.Name)
-            .ToListAsync();
-
-        return Ok(subjects.Select(s => new
-        {
-            s.Id, s.Name, s.Code, s.ClassId,
-            ClassName = s.Class?.Name ?? "",
-            ClassSection = s.Class?.Section ?? "",
-        }));
+    [HttpGet]
+    public async Task<IActionResult> GetAll([FromQuery] int? classId)
+    {
+        var subjects = await _serviceManager.SubjectService.GetAllSubjectsAsync(false, classId);
+        return Ok(subjects);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] UpsertSubjectDto dto,
-        [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Create([FromBody] UpsertSubjectDto dto)
     {
-        var subject = new Subject
-        {
-            Name = dto.Name,
-            Code = dto.Code,
-            ClassId = dto.ClassId,
-        };
-        repo.SubjectRepository.Create(subject);
-        await repo.SaveAsync();
-        return StatusCode(201, new { subject.Id, subject.Name, subject.Code, subject.ClassId });
+        var subjectDto = await _serviceManager.SubjectService.CreateSubjectAsync(dto);
+        return StatusCode(201, subjectDto);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpsertSubjectDto dto,
-        [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Update(int id, [FromBody] UpsertSubjectDto dto)
     {
-        var subject = await repo.SubjectRepository
-            .FindByCondition(s => s.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (subject == null) return NotFound();
-
-        subject.Name = dto.Name;
-        subject.Code = dto.Code;
-        subject.ClassId = dto.ClassId;
-        subject.UpdatedAt = DateTime.UtcNow;
-
-        repo.Update(subject);
-        await repo.SaveAsync();
+        await _serviceManager.SubjectService.UpdateSubjectAsync(id, dto);
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id, [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Delete(int id)
     {
-        var subject = await repo.SubjectRepository
-            .FindByCondition(s => s.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (subject == null) return NotFound();
-
-        repo.SubjectRepository.Delete(subject);
-        await repo.SaveAsync();
+        await _serviceManager.SubjectService.DeleteSubjectAsync(id);
         return NoContent();
     }
 }
-
-public record UpsertSubjectDto(string Name, string Code, int ClassId);

@@ -40,6 +40,7 @@ public class RepositoryContext(DbContextOptions options) : IdentityDbContext<App
     public DbSet<SiteSetting> SiteSettings { get; set; }
     public DbSet<ProgramLevel> ProgramLevels { get; set; }
     public DbSet<PublicFeeRow> PublicFeeRows { get; set; }
+    public DbSet<TheAlberDifference> AlberDifferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

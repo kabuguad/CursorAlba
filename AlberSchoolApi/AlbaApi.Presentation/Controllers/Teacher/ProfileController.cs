@@ -1,7 +1,8 @@
-using Contracts.Repositories;
+using DTOs.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Teacher;
 
@@ -11,22 +12,30 @@ namespace AlbaApi.Presentation.Controllers.Teacher;
 [Authorize(Policy = "RequireTeacher")]
 public class ProfileController : ControllerBase
 {
+    private readonly IServiceManager _serviceManager;
+
+    public ProfileController(IServiceManager serviceManager)
+    {
+        _serviceManager = serviceManager;
+    }
+
     [HttpGet]
-    public async Task<IActionResult> GetProfile([FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetProfile()
     {
         var userId = User.GetUserId();
-        var teacher = await repo.TeacherRepository.GetByUserIdAsync(userId, false);
-        if (teacher == null) return NotFound(new { message = "Teacher profile not found." });
+        var teacherDto = await _serviceManager.TeacherService.GetTeacherByUserIdAsync(userId, false);
+        if (teacherDto == null) 
+            return NotFound(new { message = "Teacher profile not found." });
 
         return Ok(new
         {
-            teacher.Id,
-            UserId = teacher.UserId,
-            FullName = teacher.User?.FullName ?? "Unknown",
-            Email = teacher.User?.Email ?? "",
-            teacher.Qualification,
-            teacher.Specialization,
-            HireDate = teacher.HireDate,
+            teacherDto.Id,
+            UserId = teacherDto.UserId,
+            FullName = teacherDto.FirstName + " " + teacherDto.LastName,
+            Email = teacherDto.Email,
+            teacherDto.Qualification,
+            teacherDto.Specialization,
+            teacherDto.HireDate,
         });
     }
 }

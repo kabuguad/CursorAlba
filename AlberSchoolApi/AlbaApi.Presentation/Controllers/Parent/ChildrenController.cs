@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Service.Contracts;
+using DTOs.User;
 using System.Security.Claims;
 
 namespace AlbaApi.Presentation.Controllers.Parent;
@@ -13,24 +14,13 @@ namespace AlbaApi.Presentation.Controllers.Parent;
 public class ChildrenController(IServiceManager service) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetMyChildren([FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetMyChildren()
     {
         var userId = User.GetUserId();
-        var parent = await repo.ParentRepository.GetByUserIdAsync(userId, false);
+        var parent = await service.ParentService.GetByUserIdAsync(userId, false);
         if (parent == null) return NotFound(new { message = "Parent profile not found." });
-        var children = await repo.ParentRepository.GetChildrenAsync(parent.Id);
-        return Ok(children.Select(s => new
-        {
-            s.Id,
-            UserId = s.UserId,
-            FullName = s.User != null ? s.User.FullName : "Unknown",
-            ClassName = s.Class != null ? $"{s.Class.Name} {s.Class.Section}".Trim() : "Unknown",
-            ClassId = s.ClassId,
-            s.Gender,
-            s.DateOfBirth,
-            s.Address,
-            s.ParentId,
-        }));
+        var children = await service.ParentService.GetChildrenAsync(parent.Id);
+        return Ok(children);
     }
 
     [HttpGet("{studentId:int}/grades")]

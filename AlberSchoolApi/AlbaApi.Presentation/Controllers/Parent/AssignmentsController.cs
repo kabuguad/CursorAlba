@@ -1,8 +1,8 @@
-using Contracts.Repositories;
 using DTOs.Academics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Parent;
 
@@ -12,24 +12,23 @@ namespace AlbaApi.Presentation.Controllers.Parent;
 [Authorize(Policy = "RequireParent")]
 public class AssignmentsController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetChildAssignments(int studentId, [FromServices] IRepositoryManager repo)
+    private readonly IServiceManager _serviceManager;
+
+    public AssignmentsController(IServiceManager serviceManager)
     {
-        var student = await repo.StudentRepository.GetWithDetailsAsync(studentId, false);
-        if (student == null) return NotFound(new { message = "Student not found." });
+        _serviceManager = serviceManager;
+    }
 
-        var assignments = await repo.AssignmentRepository.GetByClassAsync(student.ClassId, false);
-        var result = assignments.Select(a => new AssignmentDto
-        {
-            Id = a.Id,
-            Title = a.Title,
-            Description = a.Description,
-            DueDate = a.DueDate,
-            SubjectName = a.Subject?.Name ?? "Unknown",
-            TeacherName = a.Teacher?.User != null ? a.Teacher.User.FullName : "TBA",
-            CreatedAt = a.CreatedAt,
-        });
+    [HttpGet]
+    public async Task<IActionResult> GetChildAssignments(int studentId)
+    {
+        // First get the student to verify it exists and get the classId
+        var student = await _serviceManager.StudentService.GetWithDetailsAsync(studentId, false);
+        if (student == null) 
+            return NotFound(new { message = "Student not found." });
 
-        return Ok(result);
+        // Get assignments for the student's class
+        var assignments = await _serviceManager.AssignmentService.GetByClassAsync(student.ClassId, false);
+        return Ok(assignments);
     }
 }

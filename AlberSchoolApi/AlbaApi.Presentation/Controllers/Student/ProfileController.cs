@@ -1,8 +1,8 @@
-using Contracts.Repositories;
 using DTOs.Student;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Student;
 
@@ -13,28 +13,30 @@ namespace AlbaApi.Presentation.Controllers.Student;
 public class ProfileController(IServiceManager service) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetProfile([FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetProfile()
     {
         var userId = User.GetUserId();
-        var student = await repo.StudentRepository.GetByUserIdAsync(userId, false);
-        if (student == null) return NotFound(new { message = "Student profile not found." });
+        var student = await service.StudentService.GetByUserIdAsync(userId, false);
+        if (student == null) 
+            return NotFound(new { message = "Student profile not found." });
 
-        var cls = student.ClassId > 0
-            ? repo.ClassRepository.FindByCondition(c => c.Id == student.ClassId, false).FirstOrDefault()
-            : null;
+        // Get detailed student info including class information
+        var studentDto = await service.StudentService.GetStudentByIdAsync(student.Id, false);
+        if (studentDto == null)
+            return NotFound(new { message = "Student profile not found." });
 
         return Ok(new StudentProfileDto
         {
-            Id = student.Id,
-            UserId = student.UserId,
-            FullName = student.User != null ? student.User.FullName : "Unknown",
-            Gender = student.Gender,
-            DateOfBirth = student.DateOfBirth,
-            Address = student.Address,
-            ClassId = student.ClassId,
-            ClassName = cls != null ? $"{cls.Name} {cls.Section}".Trim() : "Unknown",
-            ClassSection = cls?.Section,
-            ParentId = student.ParentId,
+            Id = studentDto.Id,
+            UserId = studentDto.UserId,
+            FullName = $"{studentDto.FirstName} {studentDto.LastName}".Trim(),
+            Gender = studentDto.Gender,
+            DateOfBirth = studentDto.DateOfBirth,
+            Address = studentDto.Address,
+            ClassId = studentDto.ClassId,
+            ClassName = studentDto.ClassName,
+            ClassSection = studentDto.ClassSection,
+            ParentId = studentDto.ParentId,
         });
     }
 }

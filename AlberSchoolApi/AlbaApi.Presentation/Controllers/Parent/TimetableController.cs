@@ -1,8 +1,8 @@
-using Contracts.Repositories;
 using DTOs.Academics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Parent;
 
@@ -12,25 +12,21 @@ namespace AlbaApi.Presentation.Controllers.Parent;
 [Authorize(Policy = "RequireParent")]
 public class TimetableController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetChildTimetable(int studentId, [FromServices] IRepositoryManager repo)
+    private readonly IServiceManager _serviceManager;
+
+    public TimetableController(IServiceManager serviceManager)
     {
-        var student = await repo.StudentRepository.GetWithDetailsAsync(studentId, false);
-        if (student == null) return NotFound(new { message = "Student not found." });
+        _serviceManager = serviceManager;
+    }
 
-        var entries = await repo.TimetableRepository.GetByClassAsync(student.ClassId, false);
-        var result = entries.Select(e => new TimetableEntryDto
-        {
-            Id = e.Id,
-            DayOfWeek = e.DayOfWeek.ToString(),
-            StartTime = e.StartTime.ToString(@"hh\:mm"),
-            EndTime = e.EndTime.ToString(@"hh\:mm"),
-            SubjectName = e.Subject?.Name ?? "Unknown",
-            SubjectCode = e.Subject?.Code,
-            TeacherName = e.Teacher?.User != null ? e.Teacher.User.FullName : "TBA",
-            ClassId = e.ClassId,
-        });
+    [HttpGet]
+    public async Task<IActionResult> GetChildTimetable(int studentId)
+    {
+        var student = await _serviceManager.StudentService.GetWithDetailsAsync(studentId, false);
+        if (student == null) 
+            return NotFound(new { message = "Student not found." });
 
-        return Ok(result);
+        var entries = await _serviceManager.TimetableEntryService.GetByClassAsync(student.ClassId, false);
+        return Ok(entries);
     }
 }

@@ -1,8 +1,8 @@
-using Contracts.Repositories;
+using DTOs.Academics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
 
@@ -12,73 +12,38 @@ namespace AlbaApi.Presentation.Controllers.Admin;
 [Authorize(Policy = "RequireAdmin")]
 public class ClassesController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult GetAllClasses([FromServices] IRepositoryManager repo)
-    {
-        var classes = repo.ClassRepository.FindAll(false).ToList();
-        var studentCounts = repo.StudentRepository.FindAll(false)
-            .GroupBy(s => s.ClassId)
-            .ToDictionary(g => g.Key, g => g.Count());
+    private readonly IServiceManager _serviceManager;
 
-        return Ok(classes.Select(c => new
-        {
-            c.Id,
-            c.Name,
-            c.Section,
-            FullName = $"{c.Name} {c.Section}".Trim(),
-            c.Description,
-            StudentCount = studentCounts.TryGetValue(c.Id, out var cnt) ? cnt : 0,
-        }));
+    public ClassesController(IServiceManager serviceManager)
+    {
+        _serviceManager = serviceManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllClasses()
+    {
+        var classes = await _serviceManager.ClassService.GetAllClassesAsync(false);
+        return Ok(classes);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateClass(
-        [FromBody] UpsertClassDto dto,
-        [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> CreateClass([FromBody] UpsertClassDto dto)
     {
-        var cls = new Entities.Models.Academics.Class
-        {
-            Name = dto.Name,
-            Section = dto.Section,
-            Description = dto.Description,
-        };
-        repo.ClassRepository.Create(cls);
-        await repo.SaveAsync();
-        return StatusCode(201, new { cls.Id, cls.Name, cls.Section, cls.Description });
+        var classDto = await _serviceManager.ClassService.CreateClassAsync(dto);
+        return StatusCode(201, classDto);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateClass(int id,
-        [FromBody] UpsertClassDto dto,
-        [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> UpdateClass(int id, [FromBody] UpsertClassDto dto)
     {
-        var cls = await repo.ClassRepository
-            .FindByCondition(c => c.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (cls == null) return NotFound();
-
-        cls.Name = dto.Name;
-        cls.Section = dto.Section;
-        cls.Description = dto.Description;
-        cls.UpdatedAt = DateTime.UtcNow;
-
-        repo.Update(cls);
-        await repo.SaveAsync();
+        await _serviceManager.ClassService.UpdateClassAsync(id, dto);
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteClass(int id, [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> DeleteClass(int id)
     {
-        var cls = await repo.ClassRepository
-            .FindByCondition(c => c.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (cls == null) return NotFound();
-
-        repo.ClassRepository.Delete(cls);
-        await repo.SaveAsync();
+        await _serviceManager.ClassService.DeleteClassAsync(id);
         return NoContent();
     }
 }
-
-public record UpsertClassDto(string Name, string? Section, string? Description);

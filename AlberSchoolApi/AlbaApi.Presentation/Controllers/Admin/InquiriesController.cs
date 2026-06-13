@@ -1,8 +1,8 @@
-using Contracts.Repositories;
+using DTOs.Admissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
 
@@ -12,46 +12,31 @@ namespace AlbaApi.Presentation.Controllers.Admin;
 [Authorize(Policy = "RequireAdmin")]
 public class InquiriesController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromServices] IRepositoryManager repo)
+    private readonly IServiceManager _serviceManager;
+
+    public InquiriesController(IServiceManager serviceManager)
     {
-        var inquiries = await repo.InquiryRepository
-            .FindAll(false)
-            .OrderByDescending(i => i.CreatedAt)
-            .ToListAsync();
+        _serviceManager = serviceManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var inquiries = await _serviceManager.AdmissionsService.GetAllInquiriesAsync(false);
         return Ok(inquiries);
     }
 
     [HttpPatch("{id:int}/respond")]
-    public async Task<IActionResult> Respond(int id,
-        [FromBody] RespondDto dto,
-        [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Respond(int id, [FromBody] RespondDto dto)
     {
-        var inquiry = await repo.InquiryRepository
-            .FindByCondition(i => i.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (inquiry == null) return NotFound();
-
-        inquiry.Response = dto.Response;
-        inquiry.Status = "Responded";
-        inquiry.UpdatedAt = DateTime.UtcNow;
-        repo.Update(inquiry);
-        await repo.SaveAsync();
-        return Ok(inquiry);
+        var inquiryDto = await _serviceManager.AdmissionsService.RespondToInquiryAsync(id, dto);
+        return Ok(inquiryDto);
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id, [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Delete(int id)
     {
-        var inquiry = await repo.InquiryRepository
-            .FindByCondition(i => i.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (inquiry == null) return NotFound();
-
-        repo.InquiryRepository.Delete(inquiry);
-        await repo.SaveAsync();
+        await _serviceManager.AdmissionsService.DeleteInquiryAsync(id);
         return NoContent();
     }
 }
-
-public record RespondDto(string Response);

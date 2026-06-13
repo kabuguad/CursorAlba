@@ -14,12 +14,11 @@ public class AttendanceController(IServiceManager service) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetMyAttendance(
-        [FromServices] IRepositoryManager repo,
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to)
     {
         var userId = User.GetUserId();
-        var student = await repo.StudentRepository.GetByUserIdAsync(userId, false);
+        var student = await service.StudentService.GetByUserIdAsync(userId, false);
         if (student == null) return NotFound(new { message = "Student profile not found." });
         var fromDate = from ?? DateTime.UtcNow.AddMonths(-3);
         var toDate = to ?? DateTime.UtcNow;

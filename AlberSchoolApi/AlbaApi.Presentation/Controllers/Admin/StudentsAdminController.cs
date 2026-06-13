@@ -1,11 +1,10 @@
-using Contracts.Repositories;
+using DTOs.Student;
 using Entities.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
-using StudentEntity = Entities.Models.User.Student;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
 
@@ -15,153 +14,110 @@ namespace AlbaApi.Presentation.Controllers.Admin;
 [Authorize(Policy = "RequireAdmin")]
 public class StudentsAdminController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromServices] IRepositoryManager repo)
-    {
-        var students = await repo.StudentRepository
-            .FindAll(false)
-            .Include(s => s.User)
-            .Include(s => s.Class)
-            .Include(s => s.Parent).ThenInclude(p => p!.User)
-            .ToListAsync();
+    private readonly IServiceManager _serviceManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-        return Ok(students.Select(s => MapStudent(s)));
+    public StudentsAdminController(IServiceManager serviceManager, UserManager<ApplicationUser> userManager)
+    {
+        _serviceManager = serviceManager;
+        _userManager = userManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var students = await _serviceManager.StudentService.GetAllStudentsAsync(false);
+        return Ok(students);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id, [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetById(int id)
     {
-        var student = await repo.StudentRepository
-            .FindByCondition(s => s.Id == id, false)
-            .Include(s => s.User)
-            .Include(s => s.Class)
-            .Include(s => s.Parent).ThenInclude(p => p!.User)
-            .FirstOrDefaultAsync();
+        var student = await _serviceManager.StudentService.GetStudentByIdAsync(id, false);
         if (student == null) return NotFound();
-        return Ok(MapStudent(student));
+        return Ok(student);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(
-        [FromBody] CreateStudentDto dto,
-        [FromServices] UserManager<ApplicationUser> userManager,
-        [FromServices] IRepositoryManager repo)
+        [FromBody] StudentCreateRequestDto requestDto)
     {
         var user = new ApplicationUser
         {
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            Email = dto.Email,
-            UserName = dto.Email,
+            FirstName = requestDto.FirstName,
+            LastName = requestDto.LastName,
+            Email = requestDto.Email,
+            UserName = requestDto.Email,
             EmailConfirmed = true,
         };
-        var result = await userManager.CreateAsync(user, dto.Password);
+        var result = await _userManager.CreateAsync(user, requestDto.Password);
         if (!result.Succeeded)
             return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
 
-        await userManager.AddToRoleAsync(user, "Student");
+        await _userManager.AddToRoleAsync(user, "Student");
 
-        var student = new StudentEntity
+        var studentCreateDto = new StudentCreateDto
         {
-            UserId = user.Id,
-            ClassId = dto.ClassId,
-            ParentId = dto.ParentId,
-            DateOfBirth = dto.DateOfBirth.HasValue ? dto.DateOfBirth.Value.ToUniversalTime() : null,
-            Gender = dto.Gender,
-            Address = dto.Address,
+            ClassId = requestDto.ClassId,
+            ParentId = requestDto.ParentId,
+            DateOfBirth = requestDto.DateOfBirth,
+            Gender = requestDto.Gender,
+            Address = requestDto.Address
         };
-        repo.StudentRepository.Create(student);
-        await repo.SaveAsync();
 
-        var created = await repo.StudentRepository
-            .FindByCondition(s => s.Id == student.Id, false)
-            .Include(s => s.User)
-            .Include(s => s.Class)
-            .FirstOrDefaultAsync();
-
-        return StatusCode(201, MapStudent(created!));
+        var studentDto = await _serviceManager.StudentService.CreateStudentAsync(user.Id, studentCreateDto);
+        return StatusCode(201, studentDto);
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id,
-        [FromBody] UpdateStudentDto dto,
-        [FromServices] IRepositoryManager repo,
-        [FromServices] UserManager<ApplicationUser> userManager)
+        [FromBody] StudentUpdateRequestDto requestDto)
     {
-        var student = await repo.StudentRepository
-            .FindByCondition(s => s.Id == id, true)
-            .Include(s => s.User)
-            .FirstOrDefaultAsync();
-
+        // Update user info via UserManager
+        var student = await _serviceManager.StudentService.GetStudentByIdAsync(id, false);
         if (student == null) return NotFound();
 
-        if (student.User != null)
+        var user = await _userManager.FindByIdAsync(student.UserId.ToString());
+        if (user == null) return NotFound(); // Should not happen
+
+        user.FirstName = requestDto.FirstName;
+        user.LastName = requestDto.LastName;
+        if (requestDto.Email != user.Email)
         {
-            student.User.FirstName = dto.FirstName;
-            student.User.LastName = dto.LastName;
-            if (dto.Email != student.User.Email)
-            {
-                student.User.Email = dto.Email;
-                student.User.UserName = dto.Email;
-            }
-            await userManager.UpdateAsync(student.User);
+            user.Email = requestDto.Email;
+            user.UserName = requestDto.Email;
         }
+        await _userManager.UpdateAsync(user);
 
-        student.ClassId = dto.ClassId;
-        student.ParentId = dto.ParentId;
-        if (dto.DateOfBirth.HasValue) student.DateOfBirth = dto.DateOfBirth.Value.ToUniversalTime();
-        student.Gender = dto.Gender;
-        student.Address = dto.Address;
-        student.UpdatedAt = DateTime.UtcNow;
+        // Update student details via service
+        var studentUpdateDto = new StudentUpdateDto
+        {
+            ClassId = requestDto.ClassId,
+            ParentId = requestDto.ParentId,
+            DateOfBirth = requestDto.DateOfBirth,
+            Gender = requestDto.Gender,
+            Address = requestDto.Address
+        };
 
-        repo.Update(student);
-        await repo.SaveAsync();
+        await _serviceManager.StudentService.UpdateStudentAsync(id, studentUpdateDto);
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id,
-        [FromServices] IRepositoryManager repo,
         [FromServices] UserManager<ApplicationUser> userManager)
     {
-        var student = await repo.StudentRepository
-            .FindByCondition(s => s.Id == id, true)
-            .Include(s => s.User)
-            .FirstOrDefaultAsync();
-
+        var student = await _serviceManager.StudentService.GetStudentByIdAsync(id, false);
         if (student == null) return NotFound();
 
-        repo.StudentRepository.Delete(student);
-        await repo.SaveAsync();
+        // Delete student via service (which will delete student entity)
+        await _serviceManager.StudentService.DeleteStudentAsync(id);
 
-        if (student.User != null)
-            await userManager.DeleteAsync(student.User);
+        // Delete user via UserManager
+        var user = await userManager.FindByIdAsync(student.UserId.ToString());
+        if (user != null)
+            await userManager.DeleteAsync(user);
 
         return NoContent();
     }
-
-    private static object MapStudent(StudentEntity s) => new
-    {
-        id = s.Id.ToString(),
-        userId = s.UserId,
-        firstName = s.User?.FirstName ?? "",
-        lastName = s.User?.LastName ?? "",
-        email = s.User?.Email ?? "",
-        classId = s.ClassId,
-        className = s.Class?.Name ?? "",
-        classSection = s.Class?.Section ?? "",
-        parentId = s.ParentId,
-        parentName = s.Parent?.User?.FullName ?? "",
-        dateOfBirth = s.DateOfBirth?.ToString("yyyy-MM-dd"),
-        gender = s.Gender,
-        address = s.Address,
-    };
 }
-
-public record CreateStudentDto(
-    string FirstName, string LastName, string Email, string Password,
-    int ClassId, int? ParentId, DateTime? DateOfBirth, string? Gender, string? Address);
-
-public record UpdateStudentDto(
-    string FirstName, string LastName, string Email,
-    int ClassId, int? ParentId, DateTime? DateOfBirth, string? Gender, string? Address);

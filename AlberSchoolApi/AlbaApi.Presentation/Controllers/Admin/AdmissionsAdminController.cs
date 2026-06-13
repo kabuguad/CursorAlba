@@ -1,9 +1,8 @@
-using Contracts.Repositories;
-using Entities.Models.Admissions;
+using DTOs.Admissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
 
@@ -13,127 +12,66 @@ namespace AlbaApi.Presentation.Controllers.Admin;
 [Authorize(Policy = "RequireAdmin")]
 public class AdmissionsAdminController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromServices] IRepositoryManager repo)
-    {
-        var apps = await repo.ApplicationRepository
-            .FindAll(false)
-            .Include(a => a.ApplyingForClass)
-            .OrderByDescending(a => a.CreatedAt)
-            .ToListAsync();
+    private readonly IServiceManager _serviceManager;
 
-        return Ok(apps.Select(a => MapApplication(a)));
+    public AdmissionsAdminController(IServiceManager serviceManager)
+    {
+        _serviceManager = serviceManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var applications = await _serviceManager.AdmissionsService.GetAllApplicationsAsync(false);
+        return Ok(applications);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id, [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetById(int id)
     {
-        var app = await repo.ApplicationRepository
-            .FindByCondition(a => a.Id == id, false)
-            .Include(a => a.ApplyingForClass)
-            .FirstOrDefaultAsync();
-        if (app == null) return NotFound();
-        return Ok(MapApplication(app));
+        var application = await _serviceManager.AdmissionsService.GetApplicationByIdAsync(id, false);
+        if (application == null) return NotFound();
+        return Ok(application);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateApplicationDto dto,
-        [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Create([FromBody] CreateApplicationDto dto)
     {
-        var app = new Application
-        {
-            FirstName = dto.ChildFirstName,
-            LastName = dto.ChildLastName,
-            DateOfBirth = DateTime.Parse(dto.Dob).ToUniversalTime(),
-            Gender = dto.Gender,
-            PreviousSchool = dto.PreviousSchool,
-            ApplyingForClassId = dto.ApplyingForClassId,
-            ParentName = $"{dto.ParentFirstName} {dto.ParentLastName}".Trim(),
-            ParentPhone = dto.ParentPhone,
-            ParentEmail = dto.ParentEmail,
-            Address = dto.Address,
-            Status = "Pending",
-        };
-        repo.ApplicationRepository.Create(app);
-        await repo.SaveAsync();
-        return StatusCode(201, MapApplication(app));
+        var applicationDto = await _serviceManager.AdmissionsService.CreateApplicationAsync(dto);
+        return StatusCode(201, applicationDto);
     }
 
     [HttpPatch("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id,
-        [FromBody] UpdateStatusDto dto,
-        [FromServices] IRepositoryManager repo)
+        [FromBody] UpdateStatusDto dto)
     {
-        var app = await repo.ApplicationRepository
-            .FindByCondition(a => a.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (app == null) return NotFound();
-
-        app.Status = dto.Status;
-        app.ReviewNotes = dto.Notes;
-        app.ReviewedAt = DateTime.UtcNow;
-        repo.Update(app);
-        await repo.SaveAsync();
-        return Ok(MapApplication(app));
+        var applicationDto = await _serviceManager.AdmissionsService.UpdateApplicationStatusAsync(id, dto);
+        return Ok(applicationDto);
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id, [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Delete(int id)
     {
-        var app = await repo.ApplicationRepository
-            .FindByCondition(a => a.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (app == null) return NotFound();
-
-        repo.ApplicationRepository.Delete(app);
-        await repo.SaveAsync();
+        await _serviceManager.AdmissionsService.DeleteApplicationAsync(id);
         return NoContent();
     }
 
     [HttpGet("stats")]
-    public async Task<IActionResult> GetStats([FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetStats()
     {
-        var apps = await repo.ApplicationRepository.FindAll(false).ToListAsync();
+        var applications = await _serviceManager.AdmissionsService.GetAllApplicationsAsync(false);
+        var total = applications.Count();
+        var pending = applications.Count(a => a.status == "pending");
+        var reviewing = applications.Count(a => a.status == "reviewing");
+        var approved = applications.Count(a => a.status == "approved");
+        var rejected = applications.Count(a => a.status == "rejected");
         return Ok(new
         {
-            total = apps.Count,
-            pending = apps.Count(a => a.Status == "Pending"),
-            reviewing = apps.Count(a => a.Status == "Reviewing"),
-            approved = apps.Count(a => a.Status == "Approved"),
-            rejected = apps.Count(a => a.Status == "Rejected"),
+            total,
+            pending,
+            reviewing,
+            approved,
+            rejected
         });
     }
-
-    private static object MapApplication(Application a) => new
-    {
-        id = a.Id.ToString(),
-        childFirstName = a.FirstName,
-        childLastName = a.LastName,
-        dob = a.DateOfBirth.ToString("yyyy-MM-dd"),
-        gender = a.Gender ?? "Unknown",
-        applyingForGrade = a.ApplyingForClass?.Name ?? $"Class {a.ApplyingForClassId}",
-        applyingForClassId = a.ApplyingForClassId,
-        previousSchool = a.PreviousSchool,
-        parentFirstName = a.ParentName?.Split(' ').FirstOrDefault() ?? "",
-        parentLastName = a.ParentName != null && a.ParentName.Contains(' ')
-            ? string.Join(' ', a.ParentName.Split(' ').Skip(1)) : "",
-        parentEmail = a.ParentEmail ?? "",
-        parentPhone = a.ParentPhone ?? "",
-        parentRelationship = "Parent/Guardian",
-        address = a.Address ?? "",
-        documents = Array.Empty<string>(),
-        status = a.Status.ToLower(),
-        notes = a.ReviewNotes ?? "",
-        submittedDate = a.CreatedAt.ToString("yyyy-MM-dd"),
-        assignedTo = a.ReviewedById,
-        reviewedAt = a.ReviewedAt,
-    };
 }
-
-public record CreateApplicationDto(
-    string ChildFirstName, string ChildLastName, string Dob, string? Gender,
-    string? PreviousSchool, int? ApplyingForClassId,
-    string ParentFirstName, string ParentLastName, string? ParentEmail, string? ParentPhone,
-    string? Address);
-
-public record UpdateStatusDto(string Status, string? Notes);

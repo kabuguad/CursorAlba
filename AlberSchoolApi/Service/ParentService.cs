@@ -22,8 +22,9 @@ public class ParentService : IParentService
         return await _repositoryManager.ParentRepository.GetByUserIdAsync(userId, trackChanges);
     }
 
-    public async Task<IEnumerable<Student>> GetChildrenAsync(int parentId)
+    public async Task<IEnumerable<ChildDto>> GetChildrenAsync(int parentId)
     {
-        return await _repositoryManager.ParentRepository.GetChildrenAsync(parentId);
+        var children = await _repositoryManager.ParentRepository.GetChildrenAsync(parentId);
+        return _mapper.Map<IEnumerable<ChildDto>>(children);
     }
 }

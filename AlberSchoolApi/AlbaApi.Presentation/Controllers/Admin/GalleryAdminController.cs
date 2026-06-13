@@ -2,7 +2,6 @@ using Entities.Models.Content;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
@@ -36,23 +35,19 @@ public class GalleryAdminController(IServiceManager service) : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpsertGalleryImageDto dto,
-        [FromServices] Contracts.Repositories.IRepositoryManager repo)
+    public async Task<IActionResult> Update(int id, [FromBody] UpsertGalleryImageDto dto)
     {
-        var existing = await repo.GalleryImageRepository
-            .FindByCondition(g => g.Id == id, true)
-            .FirstOrDefaultAsync();
-        if (existing == null) return NotFound();
+        var existingImage = new GalleryImage
+        {
+            Id = id,
+            Url = dto.Url,
+            Caption = dto.Caption,
+            Category = dto.Category,
+            SortOrder = dto.SortOrder,
+            IsPublic = dto.IsPublic,
+        };
 
-        existing.Url = dto.Url;
-        existing.Caption = dto.Caption;
-        existing.Category = dto.Category;
-        existing.SortOrder = dto.SortOrder;
-        existing.IsPublic = dto.IsPublic;
-        existing.UpdatedAt = DateTime.UtcNow;
-
-        repo.Update(existing);
-        await repo.SaveAsync();
+        await service.GalleryImageService.UpdateAsync(id, existingImage);
         return NoContent();
     }
 

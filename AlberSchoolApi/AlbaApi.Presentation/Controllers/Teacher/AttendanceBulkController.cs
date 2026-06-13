@@ -1,10 +1,8 @@
-using Contracts.Repositories;
 using DTOs.Attendance;
-using Entities.Models.Attendance;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Teacher;
 
@@ -25,40 +23,16 @@ public class AttendanceBulkController(IServiceManager service) : ControllerBase
     [HttpPost("bulk")]
     public async Task<IActionResult> SaveBulkAttendance(
         int classId,
-        [FromBody] List<AttendanceMarkDto> records,
-        [FromServices] IRepositoryManager repo)
+        [FromBody] List<AttendanceMarkDto> records)
     {
         if (records == null || records.Count == 0)
             return BadRequest(new { message = "No attendance records provided." });
 
-        var userId = User.GetUserId();
         foreach (var dto in records)
         {
-            var date = dto.Date.Date;
-            var existing = await repo.AttendanceRepository
-                .FindByCondition(a => a.StudentId == dto.StudentId && a.Date == date, true)
-                .FirstOrDefaultAsync();
-
-            if (existing != null)
-            {
-                existing.Status = (Entities.Models.Attendance.AttendanceStatus)(int)dto.Status;
-                existing.Remarks = dto.Remarks;
-            }
-            else
-            {
-                var record = new AttendanceRecord
-                {
-                    StudentId = dto.StudentId,
-                    Date = date,
-                    Status = (Entities.Models.Attendance.AttendanceStatus)(int)dto.Status,
-                    Remarks = dto.Remarks,
-                    RecordedById = userId,
-                };
-                repo.AttendanceRepository.Create(record);
-            }
+            await service.AttendanceService.MarkAttendanceAsync(dto);
         }
 
-        await repo.SaveAsync();
         return Ok(new { saved = records.Count });
     }
 }

@@ -1,4 +1,7 @@
 using DTOs.Grade;
+using DTOs.Academics;
+using DTOs.Content;
+using DTOs.User;
 using Entities.Models.User;
 
 namespace Service.Contracts;
@@ -16,4 +19,12 @@ public interface IServiceManager : IDisposable
     IBlogPostService BlogPostService { get; }
     IEventService EventService { get; }
     IGalleryImageService GalleryImageService { get; }
+    ITheAlberDifferenceService AlberDifferenceService { get; }
+    IClassService ClassService { get; }
+    ISubjectService SubjectService { get; }
+    IAssignmentService AssignmentService { get; }
+    ITimetableEntryService TimetableEntryService { get; }
+    IAuthenticationService AuthenticationService { get; }
+    IContentService ContentService { get; }
+    IFileUploadService FileUploadService { get; }
 }

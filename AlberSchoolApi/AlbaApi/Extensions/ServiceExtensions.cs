@@ -1,3 +1,4 @@
+using AutoMapper;
 using Contracts.Repositories;
 using Entities.Models.User;
 using LoggerService;
@@ -63,7 +64,17 @@ public static partial class ServiceExtensions
         => services.AddScoped<IRepositoryManager, RepositoryManager>();
 
     public static void ConfigureServiceManager(this IServiceCollection services)
-        => services.AddScoped<IServiceManager, ServiceManager>();
+        => services.AddScoped<IServiceManager>(sp => 
+            new ServiceManager(
+                sp.GetRequiredService<IRepositoryManager>(),
+                sp.GetRequiredService<ILoggerManager>(),
+                sp.GetRequiredService<IMapper>(),
+                sp.GetRequiredService<IWebHostEnvironment>(),
+                sp.GetRequiredService<UserManager<Entities.Models.User.ApplicationUser>>(),
+                sp.GetRequiredService<RoleManager<IdentityRole<int>>>(),
+                sp.GetRequiredService<ITokenService>(),
+                sp.GetRequiredService<SignInManager<Entities.Models.User.ApplicationUser>>()
+            ));
 
     public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
         => services.AddDbContext<Repository.RepositoryContext>(opt =>

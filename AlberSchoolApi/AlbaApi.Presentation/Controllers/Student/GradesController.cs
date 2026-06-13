@@ -13,10 +13,10 @@ namespace AlbaApi.Presentation.Controllers.Student;
 public class GradesController(IServiceManager service) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetMyGrades([FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetMyGrades()
     {
         var userId = User.GetUserId();
-        var student = await repo.StudentRepository.GetByUserIdAsync(userId, false);
+        var student = await service.StudentService.GetByUserIdAsync(userId, false);
         if (student == null) return NotFound(new { message = "Student profile not found." });
         var grades = await service.GradeService.GetGradesForStudentAsync(student.Id, false);
         return Ok(grades);

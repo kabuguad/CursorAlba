@@ -37,6 +37,26 @@ public class GalleryImageService : IGalleryImageService
         return image;
     }
 
+    public async Task UpdateAsync(int id, GalleryImage image)
+    {
+        var existing = await _repositoryManager.GalleryImageRepository
+            .FindByCondition(g => g.Id == id, true)
+            .FirstOrDefaultAsync();
+
+        if (existing == null)
+            throw new NotFoundException($"GalleryImage with id {id} not found.");
+
+        existing.Url = image.Url;
+        existing.Caption = image.Caption;
+        existing.Category = image.Category;
+        existing.SortOrder = image.SortOrder;
+        existing.IsPublic = image.IsPublic;
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        _repositoryManager.GalleryImageRepository.Update(existing);
+        await _repositoryManager.SaveAsync();
+    }
+
     public async Task DeleteAsync(int id)
     {
         var image = await _repositoryManager.GalleryImageRepository

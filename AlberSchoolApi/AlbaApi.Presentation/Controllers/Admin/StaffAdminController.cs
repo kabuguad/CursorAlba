@@ -1,11 +1,10 @@
-using Contracts.Repositories;
+using DTOs.User;
 using Entities.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
-using TeacherEntity = Entities.Models.User.Teacher;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Admin;
 
@@ -15,29 +14,34 @@ namespace AlbaApi.Presentation.Controllers.Admin;
 [Authorize(Policy = "RequireAdmin")]
 public class StaffAdminController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll([FromServices] IRepositoryManager repo,
-        [FromServices] UserManager<ApplicationUser> userManager)
-    {
-        var teachers = await repo.TeacherRepository
-            .FindAll(false)
-            .Include(t => t.User)
-            .ToListAsync();
+    private readonly IServiceManager _serviceManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
+    public StaffAdminController(IServiceManager serviceManager, UserManager<ApplicationUser> userManager)
+    {
+        _serviceManager = serviceManager;
+        _userManager = userManager;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var teachers = await _serviceManager.TeacherService.GetAllTeachersAsync(false);
         var result = new List<object>();
-        foreach (var t in teachers)
+        foreach (var teacher in teachers)
         {
-            var roles = t.User != null ? await userManager.GetRolesAsync(t.User) : new List<string>();
+            var user = await _userManager.FindByIdAsync(teacher.UserId.ToString());
+            var roles = user != null ? await _userManager.GetRolesAsync(user) : new List<string>();
             result.Add(new
             {
-                id = t.Id.ToString(),
-                userId = t.UserId,
-                firstName = t.User?.FirstName ?? "",
-                lastName = t.User?.LastName ?? "",
-                email = t.User?.Email ?? "",
-                qualification = t.Qualification,
-                specialization = t.Specialization,
-                hireDate = t.HireDate?.ToString("yyyy-MM-dd"),
+                id = teacher.Id.ToString(),
+                userId = teacher.UserId,
+                firstName = teacher.FirstName,
+                lastName = teacher.LastName,
+                email = teacher.Email,
+                qualification = teacher.Qualification,
+                specialization = teacher.Specialization,
+                hireDate = teacher.HireDate?.ToString("yyyy-MM-dd"),
                 role = roles.FirstOrDefault() ?? "Teacher",
                 status = "active",
             });
@@ -46,10 +50,7 @@ public class StaffAdminController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(
-        [FromBody] CreateStaffDto dto,
-        [FromServices] UserManager<ApplicationUser> userManager,
-        [FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> Create([FromBody] CreateStaffDto dto)
     {
         var user = new ApplicationUser
         {
@@ -59,32 +60,30 @@ public class StaffAdminController : ControllerBase
             UserName = dto.Email,
             EmailConfirmed = true,
         };
-        var result = await userManager.CreateAsync(user, dto.Password);
+        var result = await _userManager.CreateAsync(user, dto.Password);
         if (!result.Succeeded)
             return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
 
-        await userManager.AddToRoleAsync(user, "Teacher");
+        await _userManager.AddToRoleAsync(user, "Teacher");
 
-        var teacher = new TeacherEntity
+        var teacherCreateDto = new TeacherCreateDto
         {
-            UserId = user.Id,
             Qualification = dto.Qualification,
             Specialization = dto.Specialization,
-            HireDate = dto.HireDate.HasValue ? dto.HireDate.Value.ToUniversalTime() : DateTime.UtcNow,
+            HireDate = dto.HireDate
         };
-        repo.TeacherRepository.Create(teacher);
-        await repo.SaveAsync();
 
+        var teacherDto = await _serviceManager.TeacherService.CreateTeacherAsync(teacherCreateDto);
         return StatusCode(201, new
         {
-            id = teacher.Id.ToString(),
-            userId = user.Id,
-            firstName = user.FirstName,
-            lastName = user.LastName,
-            email = user.Email,
-            qualification = teacher.Qualification,
-            specialization = teacher.Specialization,
-            hireDate = teacher.HireDate?.ToString("yyyy-MM-dd"),
+            id = teacherDto.Id.ToString(),
+            userId = teacherDto.UserId,
+            firstName = teacherDto.FirstName,
+            lastName = teacherDto.LastName,
+            email = teacherDto.Email,
+            qualification = teacherDto.Qualification,
+            specialization = teacherDto.Specialization,
+            hireDate = teacherDto.HireDate?.ToString("yyyy-MM-dd"),
             role = "Teacher",
             status = "active",
         });
@@ -92,65 +91,51 @@ public class StaffAdminController : ControllerBase
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id,
-        [FromBody] UpdateStaffDto dto,
-        [FromServices] IRepositoryManager repo,
-        [FromServices] UserManager<ApplicationUser> userManager)
+        [FromBody] UpdateStaffDto dto)
     {
-        var teacher = await repo.TeacherRepository
-            .FindByCondition(t => t.Id == id, true)
-            .Include(t => t.User)
-            .FirstOrDefaultAsync();
-
+        // Update user info via UserManager
+        var teacher = await _serviceManager.TeacherService.GetTeacherByIdAsync(id, false);
         if (teacher == null) return NotFound();
 
-        if (teacher.User != null)
+        var user = await _userManager.FindByIdAsync(teacher.UserId.ToString());
+        if (user == null) return NotFound(); // Should not happen
+
+        user.FirstName = dto.FirstName;
+        user.LastName = dto.LastName;
+        if (dto.Email != user.Email)
         {
-            teacher.User.FirstName = dto.FirstName;
-            teacher.User.LastName = dto.LastName;
-            if (dto.Email != teacher.User.Email)
-            {
-                teacher.User.Email = dto.Email;
-                teacher.User.UserName = dto.Email;
-            }
-            await userManager.UpdateAsync(teacher.User);
+            user.Email = dto.Email;
+            user.UserName = dto.Email;
         }
+        await _userManager.UpdateAsync(user);
 
-        teacher.Qualification = dto.Qualification;
-        teacher.Specialization = dto.Specialization;
-        if (dto.HireDate.HasValue) teacher.HireDate = dto.HireDate.Value.ToUniversalTime();
-        teacher.UpdatedAt = DateTime.UtcNow;
+        // Update teacher details via service
+        TeacherUpdateDto teacherUpdateDto = new TeacherUpdateDto
+        {
+            Qualification = dto.Qualification,
+            Specialization = dto.Specialization,
+            HireDate = dto.HireDate
+        };
 
-        repo.Update(teacher);
-        await repo.SaveAsync();
+        await _serviceManager.TeacherService.UpdateTeacherAsync(id, teacherUpdateDto);
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id,
-        [FromServices] IRepositoryManager repo,
         [FromServices] UserManager<ApplicationUser> userManager)
     {
-        var teacher = await repo.TeacherRepository
-            .FindByCondition(t => t.Id == id, true)
-            .Include(t => t.User)
-            .FirstOrDefaultAsync();
-
+        var teacher = await _serviceManager.TeacherService.GetTeacherByIdAsync(id, false);
         if (teacher == null) return NotFound();
 
-        repo.TeacherRepository.Delete(teacher);
-        await repo.SaveAsync();
+        // Delete teacher via service
+        await _serviceManager.TeacherService.DeleteTeacherAsync(id);
 
-        if (teacher.User != null)
-            await userManager.DeleteAsync(teacher.User);
+        // Delete user via UserManager
+        var user = await userManager.FindByIdAsync(teacher.UserId.ToString());
+        if (user != null)
+            await userManager.DeleteAsync(user);
 
         return NoContent();
     }
 }
-
-public record CreateStaffDto(
-    string FirstName, string LastName, string Email, string Password,
-    string? Qualification, string? Specialization, DateTime? HireDate);
-
-public record UpdateStaffDto(
-    string FirstName, string LastName, string Email,
-    string? Qualification, string? Specialization, DateTime? HireDate);

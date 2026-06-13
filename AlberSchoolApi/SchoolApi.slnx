@@ -1,13 +1,11 @@
 <Solution>
-  <Folder Name="/AlbaApi/">
-    <Project Path="AlbaApi.Presentation/AlbaApi.Presentation.csproj" />
-    <Project Path="AlbaApi/AlbaApi.csproj" />
-    <Project Path="Contracts/Contracts.csproj" />
-    <Project Path="DTOs/DTOs.csproj" />
-    <Project Path="Entities/Entities.csproj" />
-    <Project Path="LoggerService/LoggerService.csproj" />
-    <Project Path="Repository/Repository.csproj" />
-    <Project Path="Service.Contracts/Service.Contracts.csproj" />
-    <Project Path="Service/Service.csproj" />
-  </Folder>
+  <Project Path="AlbaApi.Presentation/AlbaApi.Presentation.csproj" />
+  <Project Path="AlbaApi/AlbaApi.csproj" />
+  <Project Path="Contracts/Contracts.csproj" />
+  <Project Path="DTOs/DTOs.csproj" />
+  <Project Path="Entities/Entities.csproj" />
+  <Project Path="LoggerService/LoggerService.csproj" />
+  <Project Path="Repository/Repository.csproj" />
+  <Project Path="Service.Contracts/Service.Contracts.csproj" />
+  <Project Path="Service/Service.csproj" />
 </Solution>

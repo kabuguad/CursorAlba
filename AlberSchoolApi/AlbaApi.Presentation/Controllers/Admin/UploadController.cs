@@ -10,10 +10,14 @@ namespace AlbaApi.Presentation.Controllers.Admin;
 [Route("api/admin/upload")]
 [EnableRateLimiting("write")]
 [Authorize(Policy = "RequireAdmin")]
-public class UploadController(IFileUploadService fileUploadService) : ControllerBase
+public class UploadController : ControllerBase
 {
-    private static readonly HashSet<string> AllowedExtensions =
-        [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".pdf", ".doc", ".docx"];
+    private readonly IServiceManager _serviceManager;
+
+    public UploadController(IServiceManager serviceManager)
+    {
+        _serviceManager = serviceManager;
+    }
 
     [HttpPost]
     public async Task<IActionResult> Upload(IFormFile file, [FromQuery] string? folder)
@@ -28,7 +32,7 @@ public class UploadController(IFileUploadService fileUploadService) : Controller
         if (!AllowedExtensions.Contains(extension))
             return BadRequest(new { error = $"File type '{extension}' is not allowed." });
 
-        var url = await fileUploadService.UploadAsync(file, folder ?? "");
+        var url = await _serviceManager.FileUploadService.UploadAsync(file, folder ?? "");
         return Ok(new { url, fileName = file.FileName, size = file.Length });
     }
 
@@ -38,7 +42,10 @@ public class UploadController(IFileUploadService fileUploadService) : Controller
         if (string.IsNullOrWhiteSpace(fileUrl))
             return BadRequest(new { error = "File URL is required." });
 
-        fileUploadService.Delete(fileUrl);
+        _serviceManager.FileUploadService.Delete(fileUrl);
         return NoContent();
     }
+
+    private static readonly HashSet<string> AllowedExtensions =
+        [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".pdf", ".doc", ".docx"];
 }

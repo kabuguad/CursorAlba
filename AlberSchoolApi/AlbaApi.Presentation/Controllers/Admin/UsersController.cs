@@ -15,7 +15,7 @@ public class UsersController(IServiceManager service) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllUsers()
     {
-        var students = await service.StudentService.GetAllStudentsAsync(false);
+        var students = await service.StudentService.GetAllStudentUsersAsync(false);
         var teachers = await service.TeacherService.GetAllAsync(false);
         return Ok(new { Students = students, Teachers = teachers });
     }
@@ -23,7 +23,7 @@ public class UsersController(IServiceManager service) : ControllerBase
     [HttpGet("students")]
     public async Task<IActionResult> GetAllStudents()
     {
-        var students = await service.StudentService.GetAllStudentsAsync(false);
+        var students = await service.StudentService.GetAllStudentUsersAsync(false);
         return Ok(students);
     }
 

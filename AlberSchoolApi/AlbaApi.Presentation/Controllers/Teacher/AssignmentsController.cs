@@ -1,9 +1,8 @@
-using AlbaApi.Presentation.ActionFilters;
-using Contracts.Repositories;
 using DTOs.Academics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Service.Contracts;
 
 namespace AlbaApi.Presentation.Controllers.Teacher;
 
@@ -13,51 +12,35 @@ namespace AlbaApi.Presentation.Controllers.Teacher;
 [Authorize(Policy = "RequireTeacher")]
 public class AssignmentsController : ControllerBase
 {
+    private readonly IServiceManager _serviceManager;
+
+    public AssignmentsController(IServiceManager serviceManager)
+    {
+        _serviceManager = serviceManager;
+    }
+
     [HttpGet]
-    public async Task<IActionResult> GetMyAssignments([FromServices] IRepositoryManager repo)
+    public async Task<IActionResult> GetMyAssignments()
     {
         var userId = User.GetUserId();
-        var teacher = await repo.TeacherRepository.GetByUserIdAsync(userId, false);
-        if (teacher == null) return NotFound(new { message = "Teacher profile not found." });
+        var teacher = await _serviceManager.TeacherService.GetByUserIdAsync(userId, false);
+        if (teacher == null) 
+            return NotFound(new { message = "Teacher profile not found." });
 
-        var assignments = await repo.AssignmentRepository.GetByTeacherAsync(teacher.Id, false);
-        var result = assignments.Select(a => new AssignmentDto
-        {
-            Id = a.Id,
-            Title = a.Title,
-            Description = a.Description,
-            DueDate = a.DueDate,
-            SubjectName = a.Subject?.Name ?? "Unknown",
-            TeacherName = teacher.User?.FullName ?? "TBA",
-            ClassName = a.Class != null ? $"{a.Class.Name} {a.Class.Section}".Trim() : "Unknown",
-            CreatedAt = a.CreatedAt,
-        });
-
-        return Ok(result);
+        var assignments = await _serviceManager.AssignmentService.GetByTeacherAsync(teacher.Id, false);
+        return Ok(assignments);
     }
 
     [HttpPost]
-    [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> CreateAssignment(
-        [FromBody] AssignmentCreateDto dto,
-        [FromServices] IRepositoryManager repo)
+    [ServiceFilter(typeof(AlbaApi.Presentation.ActionFilters.ValidationFilterAttribute))]
+    public async Task<IActionResult> CreateAssignment([FromBody] AssignmentCreateDto dto)
     {
         var userId = User.GetUserId();
-        var teacher = await repo.TeacherRepository.GetByUserIdAsync(userId, false);
-        if (teacher == null) return NotFound(new { message = "Teacher profile not found." });
+        var teacher = await _serviceManager.TeacherService.GetByUserIdAsync(userId, false);
+        if (teacher == null) 
+            return NotFound(new { message = "Teacher profile not found." });
 
-        var assignment = new Entities.Models.Academics.Assignment
-        {
-            Title = dto.Title,
-            Description = dto.Description,
-            DueDate = dto.DueDate,
-            ClassId = dto.ClassId,
-            SubjectId = dto.SubjectId,
-            TeacherId = teacher.Id,
-        };
-
-        repo.AssignmentRepository.Create(assignment);
-        await repo.SaveAsync();
-        return StatusCode(201, new { assignment.Id });
+        var assignmentDto = await _serviceManager.AssignmentService.CreateAsync(dto, teacher.Id);
+        return StatusCode(201, assignmentDto);
     }
 }

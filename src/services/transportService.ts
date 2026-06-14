@@ -1,80 +1,33 @@
-import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
-import { getDB, mutateDB } from './db'
-import type { TransportRoute, Vehicle } from './db'
-import { addAudit } from './auditService'
-
-export type { TransportRoute, Vehicle }
+import { apiClient } from './apiClient'
 
 export const transportService = {
-  listRoutes: () => mockGet(() => getDB().transportRoutes),
+  listRoutes: () =>
+    apiClient.get('/admin/transport/routes').then(r => r.data),
 
-  createRoute: (data: Omit<TransportRoute, 'id'>) => mockPost(() => {
-    const route: TransportRoute = { id: newId('RTE'), ...data }
-    mutateDB(db => { db.transportRoutes.push(route) })
-    addAudit({ action: 'CREATE', resource: 'TransportRoute', resourceId: route.id, details: `Route created: ${route.name}` })
-    return route
-  }),
+  createRoute: (dto: any) =>
+    apiClient.post('/admin/transport/routes', dto).then(r => r.data),
 
-  updateRoute: (id: string, data: Partial<TransportRoute>) => mockPut(() => {
-    let updated: TransportRoute | undefined
-    mutateDB(db => {
-      const idx = db.transportRoutes.findIndex(r => r.id === id)
-      if (idx < 0) throw new Error('Route not found')
-      db.transportRoutes[idx] = { ...db.transportRoutes[idx], ...data }
-      updated = db.transportRoutes[idx]
-    })
-    addAudit({ action: 'UPDATE', resource: 'TransportRoute', resourceId: id, details: `Route updated: ${updated?.name}` })
-    return updated!
-  }),
+  updateRoute: (id: number, dto: any) =>
+    apiClient.put(`/admin/transport/routes/${id}`, dto).then(r => r.data),
 
-  deleteRoute: (id: string) => mockDelete(() => {
-    mutateDB(db => { db.transportRoutes = db.transportRoutes.filter(r => r.id !== id) })
-    addAudit({ action: 'DELETE', resource: 'TransportRoute', resourceId: id, details: 'Route deleted' })
-  }),
+  deleteRoute: (id: number) =>
+    apiClient.delete(`/admin/transport/routes/${id}`).then(r => r.data),
 
-  listVehicles: () => mockGet(() => getDB().vehicles),
+  getRouteStudents: (routeId: number) =>
+    apiClient.get(`/admin/transport/routes/${routeId}/students`).then(r => r.data),
 
-  createVehicle: (data: Omit<Vehicle, 'id'>) => mockPost(() => {
-    const v: Vehicle = { id: newId('VEH'), ...data }
-    mutateDB(db => { db.vehicles.push(v) })
-    addAudit({ action: 'CREATE', resource: 'Vehicle', resourceId: v.id, details: `Vehicle added: ${v.registration}` })
-    return v
-  }),
+  listVehicles: () =>
+    apiClient.get('/admin/transport/vehicles').then(r => r.data),
 
-  updateVehicle: (id: string, data: Partial<Vehicle>) => mockPut(() => {
-    let updated: Vehicle | undefined
-    mutateDB(db => {
-      const idx = db.vehicles.findIndex(v => v.id === id)
-      if (idx < 0) throw new Error('Vehicle not found')
-      db.vehicles[idx] = { ...db.vehicles[idx], ...data }
-      updated = db.vehicles[idx]
-    })
-    addAudit({ action: 'UPDATE', resource: 'Vehicle', resourceId: id, details: `Vehicle updated: ${updated?.registration}` })
-    return updated!
-  }),
+  createVehicle: (dto: any) =>
+    apiClient.post('/admin/transport/vehicles', dto).then(r => r.data),
 
-  getRouteStudents: (routeId: string) => mockGet(() => {
-    return getDB().students.filter(s => s.transportRouteId === routeId && s.status === 'active')
-  }),
+  updateVehicle: (id: number, dto: any) =>
+    apiClient.put(`/admin/transport/vehicles/${id}`, dto).then(r => r.data),
 
-  assignStudentToRoute: (studentId: string, routeId: string | null) => mockPut(() => {
-    mutateDB(db => {
-      const s = db.students.find(x => x.id === studentId)
-      if (s) s.transportRouteId = routeId
-    })
-    addAudit({ action: 'UPDATE', resource: 'Student', resourceId: studentId, details: `Transport route → ${routeId ?? 'none'}` })
-    return true
-  }),
+  deleteVehicle: (id: number) =>
+    apiClient.delete(`/admin/transport/vehicles/${id}`).then(r => r.data),
 
-  getStats: () => mockGet(() => {
-    const db = getDB()
-    return {
-      totalRoutes: db.transportRoutes.length,
-      activeRoutes: db.transportRoutes.filter(r => r.status === 'active').length,
-      totalVehicles: db.vehicles.length,
-      vehiclesMaintenance: db.vehicles.filter(v => v.status === 'maintenance').length,
-      studentsOnTransport: db.students.filter(s => s.transportRouteId && s.status === 'active').length,
-      totalCapacity: db.vehicles.reduce((s, v) => s + v.capacity, 0),
-    }
-  }),
+  getStats: () =>
+    apiClient.get('/admin/transport/stats').then(r => r.data),
 }

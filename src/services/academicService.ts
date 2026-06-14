@@ -1,147 +1,91 @@
-import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
-import { getDB, mutateDB } from './db'
-import type { AcademicYear, SchoolClass, Subject, AssessmentScheme, Exam, Term } from './db'
-import { addAudit } from './auditService'
-
-export type { AcademicYear, SchoolClass, Subject, AssessmentScheme, Exam, Term }
+import { apiClient } from './apiClient'
 
 export const academicService = {
-  // Academic Years & Terms
-  listYears: () => mockGet(() => getDB().academicYears),
+  // Academic Years
+  listYears: () =>
+    apiClient.get('/admin/academic-years').then(r => r.data),
 
-  getCurrentYear: () => mockGet(() => getDB().academicYears.find(y => y.isCurrent) ?? getDB().academicYears[0]),
+  getCurrentYear: () =>
+    apiClient.get('/admin/academic-years/current').then(r => r.data),
 
-  getCurrentTerm: () => mockGet(() => {
-    const year = getDB().academicYears.find(y => y.isCurrent)
-    return year?.terms.find(t => t.isCurrent) ?? year?.terms[0] ?? null
-  }),
+  getCurrentTerm: () =>
+    apiClient.get('/admin/academic-years/current').then(r => {
+      const data = r.data.data
+      if (data?.terms?.length) {
+        const currentTerm = data.terms.find((t: any) => t.isCurrent) || data.terms[0]
+        return { success: true, data: currentTerm, error: null }
+      }
+      return { success: true, data: null, error: null }
+    }),
 
-  createYear: (label: string, terms: Omit<Term, 'id'>[]) => mockPost(() => {
-    const year: AcademicYear = {
-      id: newId('YEAR'),
-      label,
-      isCurrent: false,
-      terms: terms.map(t => ({ ...t, id: newId('TERM') })),
-    }
-    mutateDB(db => { db.academicYears.push(year) })
-    addAudit({ action: 'CREATE', resource: 'AcademicYear', resourceId: year.id, details: `Created academic year: ${label}` })
-    return year
-  }),
+  createYear: (label: string, terms: any[]) =>
+    apiClient.post('/admin/academic-years', { label, terms }).then(r => r.data),
 
-  setCurrentYear: (yearId: string, termId: string) => mockPut(() => {
-    mutateDB(db => {
-      db.academicYears.forEach(y => {
-        y.isCurrent = y.id === yearId
-        y.terms.forEach(t => { t.isCurrent = t.id === termId })
-      })
-      db.settings.currentAcademicYearId = yearId
-      db.settings.currentTermId = termId
-    })
-    addAudit({ action: 'UPDATE', resource: 'AcademicYear', resourceId: yearId, details: `Set as current year/term` })
-    return getDB().academicYears.find(y => y.id === yearId)!
-  }),
+  setCurrentYear: (yearId: string, termId: string) =>
+    apiClient.patch('/admin/academic-years/current', { yearId: Number(yearId), termId: Number(termId) }).then(r => r.data),
 
   // Classes
-  listClasses: () => mockGet(() => getDB().classes),
+  listClasses: () =>
+    apiClient.get('/admin/classes').then(r => r.data),
 
-  createClass: (data: Omit<SchoolClass, 'id'>) => mockPost(() => {
-    const cls: SchoolClass = { id: newId('CLS'), ...data }
-    mutateDB(db => { db.classes.push(cls) })
-    addAudit({ action: 'CREATE', resource: 'Class', resourceId: cls.id, details: `Created class: ${cls.grade} ${cls.stream}` })
-    return cls
-  }),
+  createClass: (data: any) =>
+    apiClient.post('/admin/classes', data).then(r => r.data),
 
-  updateClass: (id: string, data: Partial<SchoolClass>) => mockPut(() => {
-    let updated: SchoolClass | undefined
-    mutateDB(db => {
-      const idx = db.classes.findIndex(c => c.id === id)
-      if (idx < 0) throw new Error('Class not found')
-      db.classes[idx] = { ...db.classes[idx], ...data }
-      updated = db.classes[idx]
-    })
-    addAudit({ action: 'UPDATE', resource: 'Class', resourceId: id, details: `Updated class: ${updated?.grade} ${updated?.stream}` })
-    return updated!
-  }),
+  updateClass: (id: string, data: any) =>
+    apiClient.put(`/admin/classes/${id}`, data).then(r => r.data),
 
-  deleteClass: (id: string) => mockDelete(() => {
-    mutateDB(db => { db.classes = db.classes.filter(c => c.id !== id) })
-    addAudit({ action: 'DELETE', resource: 'Class', resourceId: id, details: 'Class deleted' })
-  }),
+  deleteClass: (id: string) =>
+    apiClient.delete(`/admin/classes/${id}`).then(r => r.data),
 
   // Subjects
-  listSubjects: () => mockGet(() => getDB().subjects),
+  listSubjects: () =>
+    apiClient.get('/admin/subjects').then(r => r.data),
 
-  createSubject: (data: Omit<Subject, 'id'>) => mockPost(() => {
-    const sub: Subject = { id: newId('SUB'), ...data }
-    mutateDB(db => { db.subjects.push(sub) })
-    addAudit({ action: 'CREATE', resource: 'Subject', resourceId: sub.id, details: `Created subject: ${sub.name}` })
-    return sub
-  }),
+  createSubject: (data: any) =>
+    apiClient.post('/admin/subjects', data).then(r => r.data),
 
-  updateSubject: (id: string, data: Partial<Subject>) => mockPut(() => {
-    let updated: Subject | undefined
-    mutateDB(db => {
-      const idx = db.subjects.findIndex(s => s.id === id)
-      if (idx < 0) throw new Error('Subject not found')
-      db.subjects[idx] = { ...db.subjects[idx], ...data }
-      updated = db.subjects[idx]
-    })
-    return updated!
-  }),
+  updateSubject: (id: string, data: any) =>
+    apiClient.put(`/admin/subjects/${id}`, data).then(r => r.data),
 
-  deleteSubject: (id: string) => mockDelete(() => {
-    mutateDB(db => { db.subjects = db.subjects.filter(s => s.id !== id) })
-  }),
+  deleteSubject: (id: string) =>
+    apiClient.delete(`/admin/subjects/${id}`).then(r => r.data),
 
   // Assessment Schemes
-  listSchemes: () => mockGet(() => getDB().assessmentSchemes),
+  listAssessmentSchemes: () =>
+    apiClient.get('/admin/assessment-schemes').then(r => r.data),
+  listSchemes: function () { return this.listAssessmentSchemes() },
 
-  createScheme: (data: Omit<AssessmentScheme, 'id'>) => mockPost(() => {
-    const scheme: AssessmentScheme = { id: newId('ASC'), ...data }
-    mutateDB(db => { db.assessmentSchemes.push(scheme) })
-    addAudit({ action: 'CREATE', resource: 'AssessmentScheme', resourceId: scheme.id, details: `Created scheme: ${scheme.name}` })
-    return scheme
-  }),
+  createScheme: (data: any) =>
+    apiClient.post('/admin/assessment-schemes', data).then(r => r.data),
+  updateScheme: (id: string, data: any) =>
+    apiClient.put(`/admin/assessment-schemes/${id}`, data).then(r => r.data),
 
-  updateScheme: (id: string, data: Partial<AssessmentScheme>) => mockPut(() => {
-    let updated: AssessmentScheme | undefined
-    mutateDB(db => {
-      const idx = db.assessmentSchemes.findIndex(s => s.id === id)
-      if (idx < 0) throw new Error('Scheme not found')
-      db.assessmentSchemes[idx] = { ...db.assessmentSchemes[idx], ...data }
-      updated = db.assessmentSchemes[idx]
-    })
-    return updated!
-  }),
-
-  deleteScheme: (id: string) => mockDelete(() => {
-    mutateDB(db => { db.assessmentSchemes = db.assessmentSchemes.filter(s => s.id !== id) })
-  }),
+  deleteScheme: (id: string) =>
+    apiClient.delete(`/admin/assessment-schemes/${id}`).then(r => r.data),
 
   // Exams
-  listExams: () => mockGet(() => getDB().exams),
+  listExams: () =>
+    apiClient.get('/admin/exams').then(r => r.data),
 
-  createExam: (data: Omit<Exam, 'id' | 'createdAt'>) => mockPost(() => {
-    const exam: Exam = { id: newId('EXM'), ...data, createdAt: new Date().toISOString() }
-    mutateDB(db => { db.exams.push(exam) })
-    addAudit({ action: 'CREATE', resource: 'Exam', resourceId: exam.id, details: `Scheduled exam: ${exam.name}` })
-    return exam
-  }),
+  createExam: (data: any) =>
+    apiClient.post('/admin/exams', data).then(r => r.data),
 
-  updateExam: (id: string, data: Partial<Exam>) => mockPut(() => {
-    let updated: Exam | undefined
-    mutateDB(db => {
-      const idx = db.exams.findIndex(e => e.id === id)
-      if (idx < 0) throw new Error('Exam not found')
-      db.exams[idx] = { ...db.exams[idx], ...data }
-      updated = db.exams[idx]
-    })
-    addAudit({ action: 'UPDATE', resource: 'Exam', resourceId: id, details: `Updated exam: ${updated?.name}` })
-    return updated!
-  }),
+  updateExam: (id: string, data: any) =>
+    apiClient.put(`/admin/exams/${id}`, data).then(r => r.data),
 
-  deleteExam: (id: string) => mockDelete(() => {
-    mutateDB(db => { db.exams = db.exams.filter(e => e.id !== id) })
-    addAudit({ action: 'DELETE', resource: 'Exam', resourceId: id, details: 'Exam deleted' })
-  }),
+  deleteExam: (id: string) =>
+    apiClient.delete(`/admin/exams/${id}`).then(r => r.data),
+
+  // Timetable
+  listTimetable: (classId: number) =>
+    apiClient.get(`/admin/timetable/class/${classId}`).then(r => r.data),
+
+  createTimetableEntry: (data: any) =>
+    apiClient.post('/admin/timetable', data).then(r => r.data),
+
+  updateTimetableEntry: (id: number, data: any) =>
+    apiClient.put(`/admin/timetable/${id}`, data).then(r => r.data),
+
+  deleteTimetableEntry: (id: number) =>
+    apiClient.delete(`/admin/timetable/${id}`).then(r => r.data),
 }

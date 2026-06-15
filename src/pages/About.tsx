@@ -1,6 +1,12 @@
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { HistoryStepper } from '../components/about/HistoryStepper'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-about')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const HISTORY = [
   { year: '2005', title: 'Foundation', desc: 'Alber School established in Kutus, Kirinyaga County, with a bold vision to deliver premium education adjacent to the Governor\'s Offices.' },
@@ -48,12 +54,13 @@ const LEADERSHIP = [
 ]
 
 export function About() {
+  const get = useCms()
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold text-primary dark:text-gold md:text-7xl">About Us</h1>
+        <h1 className="mb-4 text-5xl font-bold text-primary dark:text-gold md:text-7xl">{get('hero.headline', 'About Us')}</h1>
         <p className="mx-auto max-w-2xl text-lg text-muted">
-          Adjacent to the Governor's Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005.
+          {get('hero.subheadline', "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005.")}
         </p>
       </ScrollReveal>
 
@@ -62,7 +69,7 @@ export function About() {
           <GlassCard className="relative z-10 -rotate-1 p-8 lg:mt-12">
             <h2 className="mb-4 text-3xl font-bold text-primary dark:text-gold">Our Mission</h2>
             <p className="leading-relaxed text-muted">
-              To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence. We nurture every learner's genius — academically, artistically, and athletically.
+              {get('mission', "To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence. We nurture every learner's genius — academically, artistically, and athletically.")}
             </p>
           </GlassCard>
         </ScrollReveal>
@@ -70,7 +77,7 @@ export function About() {
           <GlassCard className="relative z-20 rotate-1 p-8 lg:-mt-8 lg:ml-12">
             <h2 className="mb-4 text-3xl font-bold text-primary dark:text-gold">Our Vision</h2>
             <p className="leading-relaxed text-muted">
-              To be East Africa's most sought-after private institution — where every learner discovers their genius in world-class facilities, guided by expert educators who inspire curiosity and ambition in equal measure.
+              {get('vision', "To be East Africa's most sought-after private institution — where every learner discovers their genius in world-class facilities, guided by expert educators who inspire curiosity and ambition in equal measure.")}
             </p>
           </GlassCard>
         </ScrollReveal>
@@ -112,7 +119,7 @@ export function About() {
       <ScrollReveal className="text-center">
         <h2 className="mb-8 text-4xl font-bold">Our History</h2>
         <p className="mx-auto mb-10 max-w-xl text-muted">
-          Two decades of excellence — from a single campus in Kutus to Kirinyaga's premier educational institution.
+          {get('history.intro', "Two decades of excellence — from a single campus in Kutus to Kirinyaga's premier educational institution.")}
         </p>
       </ScrollReveal>
       <ScrollReveal delay={0.1} className="flex justify-center">

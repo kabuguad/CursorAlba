@@ -4,6 +4,12 @@ import { cn } from '../lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-sports')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const statusStyles = {
   upcoming: 'bg-primary/20 text-primary dark:text-gold',
@@ -38,6 +44,7 @@ const PLAYER_OF_MONTH = {
 }
 
 export function Sports() {
+  const get = useCms()
   const { data: fixtures = [], isLoading } = useQuery({
     queryKey: ['public-sports-fixtures'],
     queryFn: () => contentService.listSportFixtures().then(unwrap),
@@ -45,8 +52,8 @@ export function Sports() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Sports & Athletics</h1>
-        <p className="mx-auto max-w-2xl text-muted">Premium facilities · Professional coaching · County, regional and national competition.</p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Sports & Athletics')}</h1>
+        <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'Premium facilities · Professional coaching · County, regional and national competition.')}</p>
       </ScrollReveal>
 
       <ScrollReveal className="mt-16">

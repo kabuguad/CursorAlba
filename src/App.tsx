@@ -78,6 +78,7 @@ import { ReportsManager }       from './pages/dashboards/admin/ReportsManager'
 import { TimetableManager }     from './pages/dashboards/admin/TimetableManager'
 import { PaymentsManager }      from './pages/dashboards/admin/PaymentsManager'
 import { AccountsManager }      from './pages/dashboards/admin/AccountsManager'
+import { PagesManager }         from './pages/dashboards/admin/PagesManager'
 
 function App() {
   return (
@@ -183,6 +184,7 @@ function App() {
                 <Route path="reports"       element={<ReportsManager />} />
                 <Route path="accounts"      element={<AccountsManager />} />
                 <Route path="settings"      element={<SettingsManager />} />
+                <Route path="pages"         element={<PagesManager />} />
               </Route>
 
               <Route path="dashboard" element={<Navigate to="/login" replace />} />

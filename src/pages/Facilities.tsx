@@ -6,6 +6,12 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-facilities')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const FACILITIES = [
   {
@@ -162,14 +168,15 @@ function FacilityModal({ open, facility, onClose }: FacilityModalProps) {
 }
 
 export function Facilities() {
+  const get = useCms()
   const [selected, setSelected] = useState<string | null>(null)
   const active = FACILITIES.find((f) => f.id === selected) ?? null
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Facilities</h1>
-        <p className="mx-auto max-w-2xl text-muted">World-class infrastructure designed for modern learning — click any facility to explore.</p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Facilities')}</h1>
+        <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'World-class infrastructure designed for modern learning — click any facility to explore.')}</p>
       </ScrollReveal>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -203,8 +210,8 @@ export function Facilities() {
 
       <ScrollReveal className="mt-16 text-center">
         <GlassCard className="p-10">
-          <h2 className="mb-4 text-3xl font-bold">Experience It In Person</h2>
-          <p className="mb-8 text-muted">Book a campus tour and see our facilities first-hand. Adjacent to the Governor's Offices, Kutus.</p>
+          <h2 className="mb-4 text-3xl font-bold">{get('cta.headline', 'Experience It In Person')}</h2>
+          <p className="mb-8 text-muted">{get('cta.subtext', "Book a campus tour and see our facilities first-hand. Adjacent to the Governor's Offices, Kutus.")}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/contact">
               <Button variant="primary">Book a Campus Tour</Button>

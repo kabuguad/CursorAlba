@@ -4,6 +4,12 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-cocurr')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const CATEGORIES = [
   {
@@ -90,6 +96,7 @@ const CATEGORIES = [
 ]
 
 export function CoCurricular() {
+  const get = useCms()
   const location = useLocation()
   const [active, setActive] = useState(() => {
     const hash = location.hash.slice(1)
@@ -113,9 +120,9 @@ export function CoCurricular() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Co-Curricular</h1>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Co-Curricular')}</h1>
         <p className="mx-auto max-w-2xl text-muted">
-          Beyond the classroom — four pillars of holistic development aligned to Kenya's CBC framework and Alber School's vision of whole-learner excellence.
+          {get('hero.subheadline', "Beyond the classroom — four pillars of holistic development aligned to Kenya's CBC framework and Alber School's vision of whole-learner excellence.")}
         </p>
       </ScrollReveal>
 
@@ -182,9 +189,9 @@ export function CoCurricular() {
 
       <ScrollReveal className="mt-20">
         <GlassCard className="p-8 text-center">
-          <h2 className="mb-4 text-3xl font-bold">Enrich Your Child's Journey</h2>
+          <h2 className="mb-4 text-3xl font-bold">{get('cta.headline', "Enrich Your Child's Journey")}</h2>
           <p className="mb-8 text-muted max-w-2xl mx-auto">
-            Every learner at Alber participates in co-curricular activities as part of their holistic CBC assessment. Talk to us about pathways that match your child's passions.
+            {get('cta.subtext', "Every learner at Alber participates in co-curricular activities as part of their holistic CBC assessment. Talk to us about pathways that match your child's passions.")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/admissions"><Button variant="primary">Apply for Admission</Button></Link>

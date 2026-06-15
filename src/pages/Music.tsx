@@ -3,6 +3,12 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { Button } from '../components/ui/Button'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { useToast } from '../contexts/ToastContext'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-music')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const INSTRUMENTS = [
   { name: 'Piano', icon: '🎹', desc: 'Steinway-ready studios. Lessons from beginner to Grade 8 ABRSM.' },
@@ -43,6 +49,7 @@ const SCHEDULE = [
 ]
 
 export function Music() {
+  const get = useCms()
   const { showToast } = useToast()
   const [form, setForm] = useState({ name: '', email: '', phone: '', instrument: 'Piano', level: 'Beginner' })
 
@@ -60,8 +67,8 @@ export function Music() {
       />
       <div className="relative mx-auto max-w-7xl px-4 py-12">
         <ScrollReveal className="mb-16 text-center">
-          <h1 className="mb-4 text-5xl font-bold md:text-7xl">Music Academy</h1>
-          <p className="mx-auto max-w-2xl text-muted">Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.</p>
+          <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Music Academy')}</h1>
+          <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.')}</p>
         </ScrollReveal>
 
         <ScrollReveal className="mt-16">

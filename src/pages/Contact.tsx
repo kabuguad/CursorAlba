@@ -4,43 +4,15 @@ import { Button } from '../components/ui/Button'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { useToast } from '../contexts/ToastContext'
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react'
+import { useCmsBlocks } from '../hooks/useCmsData'
 
-const CONTACT_CARDS = [
-  {
-    icon: Phone,
-    label: 'Phone',
-    value: '+254 712 345 678',
-    sub: '+254 734 567 890',
-    href: 'tel:+254712345678',
-    color: 'text-primary dark:text-gold',
-  },
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'info@alberschool.ke',
-    sub: 'admissions@alberschool.ke',
-    href: 'mailto:info@alberschool.ke',
-    color: 'text-primary dark:text-gold',
-  },
-  {
-    icon: MessageCircle,
-    label: 'WhatsApp',
-    value: '+254 712 345 678',
-    sub: 'Mon–Sat 8:00 AM–6:00 PM',
-    href: 'https://wa.me/254712345678?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School',
-    color: 'text-green-600 dark:text-green-400',
-  },
-  {
-    icon: MapPin,
-    label: 'Address',
-    value: 'Adjacent to Governor\'s Offices',
-    sub: 'Kutus Town, Kirinyaga County',
-    href: 'https://maps.google.com/?q=Kutus,Kirinyaga,Kenya',
-    color: 'text-primary dark:text-gold',
-  },
-]
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-contact')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 export function Contact() {
+  const get = useCms()
   const { showToast } = useToast()
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -63,11 +35,55 @@ export function Contact() {
     }
   }
 
+  const phonePrimary  = get('phone.primary',  '+254 712 345 678')
+  const phoneSecondary= get('phone.secondary', '+254 734 567 890')
+  const emailPrimary  = get('email.primary',  'info@alberschool.ke')
+  const emailSecondary= get('email.secondary','admissions@alberschool.ke')
+  const whatsapp      = get('whatsapp',        '254712345678')
+  const addressLine1  = get('address.line1',  "Adjacent to Governor's Offices")
+  const addressLine2  = get('address.line2',  'Kutus Town, Kirinyaga County')
+  const hours         = get('hours',           'Monday – Friday 7:30 AM – 5:00 PM · Saturday 8:00 AM – 1:00 PM')
+
+  const CONTACT_CARDS = [
+    {
+      icon: Phone,
+      label: 'Phone',
+      value: phonePrimary,
+      sub: phoneSecondary,
+      href: `tel:${phonePrimary.replace(/\s/g, '')}`,
+      color: 'text-primary dark:text-gold',
+    },
+    {
+      icon: Mail,
+      label: 'Email',
+      value: emailPrimary,
+      sub: emailSecondary,
+      href: `mailto:${emailPrimary}`,
+      color: 'text-primary dark:text-gold',
+    },
+    {
+      icon: MessageCircle,
+      label: 'WhatsApp',
+      value: phonePrimary,
+      sub: 'Mon–Sat 8:00 AM–6:00 PM',
+      href: `https://wa.me/${whatsapp}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`,
+      color: 'text-green-600 dark:text-green-400',
+    },
+    {
+      icon: MapPin,
+      label: 'Address',
+      value: addressLine1,
+      sub: addressLine2,
+      href: 'https://maps.google.com/?q=Kutus,Kirinyaga,Kenya',
+      color: 'text-primary dark:text-gold',
+    },
+  ]
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Contact Us</h1>
-        <p className="mx-auto max-w-2xl text-muted">Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.</p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Contact Us')}</h1>
+        <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', "Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.")}</p>
       </ScrollReveal>
 
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -127,7 +143,7 @@ export function Contact() {
       <ScrollReveal className="mt-12">
         <GlassCard className="p-6 text-center">
           <p className="text-sm text-muted">
-            <span className="font-semibold text-foreground">Office Hours:</span> Monday – Friday 7:30 AM – 5:00 PM · Saturday 8:00 AM – 1:00 PM
+            <span className="font-semibold text-foreground">Office Hours:</span> {hours}
           </p>
           <p className="mt-1 text-sm text-muted">
             For urgent matters outside office hours, please use WhatsApp.
@@ -136,7 +152,7 @@ export function Contact() {
       </ScrollReveal>
 
       <a
-        href="https://wa.me/254712345678?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School"
+        href={`https://wa.me/${whatsapp}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`}
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-xl transition hover:scale-110 hover:bg-green-600"

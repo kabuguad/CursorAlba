@@ -4,6 +4,12 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-academics')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const SCHOOL_LEVELS = [
   {
@@ -172,15 +178,16 @@ const KEY_ASSESSMENTS = [
 ]
 
 export function Academics() {
+  const get = useCms()
   const [active, setActive] = useState('playgroup')
   const current = SCHOOL_LEVELS.find((l) => l.id === active)!
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Programs & Academics</h1>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Programs & Academics')}</h1>
         <p className="mx-auto max-w-2xl text-muted">
-          From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.
+          {get('hero.subheadline', 'From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.')}
         </p>
       </ScrollReveal>
 
@@ -386,9 +393,9 @@ export function Academics() {
 
       <ScrollReveal>
         <GlassCard className="p-8 text-center">
-          <h2 className="mb-4 text-3xl font-bold">Ready to Enrol?</h2>
+          <h2 className="mb-4 text-3xl font-bold">{get('cta.headline', 'Ready to Enrol?')}</h2>
           <p className="mb-8 max-w-xl mx-auto text-muted">
-            Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.
+            {get('cta.subtext', 'Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.')}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/admissions"><Button variant="primary">Apply Now</Button></Link>

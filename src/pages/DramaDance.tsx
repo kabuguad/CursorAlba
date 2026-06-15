@@ -3,6 +3,12 @@ import { Button } from '../components/ui/Button'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { useToast } from '../contexts/ToastContext'
 import { useState } from 'react'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-drama')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const DANCE_STYLES = [
   { style: 'Ballet', icon: '🩰', desc: 'Classical technique from foundational positions to pointe work.' },
@@ -56,6 +62,7 @@ const SCHEDULE = [
 ]
 
 export function DramaDance() {
+  const get = useCms()
   const { showToast } = useToast()
   const [form, setForm] = useState({ name: '', email: '', interest: 'Drama' })
 
@@ -80,8 +87,8 @@ export function DramaDance() {
 
       <div className="mx-auto max-w-7xl px-4 py-12">
         <ScrollReveal className="mb-16 text-center">
-          <h1 className="mb-4 text-5xl font-bold md:text-7xl">Drama & Dance</h1>
-          <p className="mx-auto max-w-2xl text-muted">Mirror-walled studios · Professional lighting · Sprung floors · 4K capture for portfolio development.</p>
+          <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Drama & Dance')}</h1>
+          <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'Mirror-walled studios · Professional lighting · Sprung floors · 4K capture for portfolio development.')}</p>
         </ScrollReveal>
 
         <ScrollReveal className="mt-16">

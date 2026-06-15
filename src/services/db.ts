@@ -511,6 +511,32 @@ export interface SportFixture {
   status: 'upcoming' | 'live' | 'completed'
 }
 
+// ── CMS / Page Builder ─────────────────────────────────────────────────────
+
+export type CmsBlockType = 'text' | 'textarea' | 'image' | 'list'
+
+export interface CmsPage {
+  id: string
+  slug: string
+  parentId: string | null
+  title: string
+  icon: string
+  path: string
+  isPublished: boolean
+  sortOrder: number
+}
+
+export interface CmsBlock {
+  id: string
+  pageId: string
+  key: string
+  label: string
+  type: CmsBlockType
+  value: string
+  helpText: string
+  sortOrder: number
+}
+
 // ── DB Shape ───────────────────────────────────────────────────────────────
 
 export interface DB {
@@ -550,6 +576,8 @@ export interface DB {
   publicFeeRows: PublicFeeRow[]
   publicTeachers: PublicTeacher[]
   publicSportFixtures: SportFixture[]
+  cmsPages: CmsPage[]
+  cmsBlocks: CmsBlock[]
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -1122,6 +1150,98 @@ function createSeed(): DB {
     { id:'pub-fit-6', sport:'Tennis', opponent:'Hillcrest Prep', date:'2026-04-10', venue:'Away', result:'—', status:'upcoming' },
   ]
 
+  // ── CMS Pages ──────────────────────────────────────────────────────────
+  const cmsPages: CmsPage[] = [
+    { id: 'pg-home',        slug: 'home',          parentId: null,          title: 'Home',          icon: '🏠', path: '/',            isPublished: true, sortOrder: 1 },
+    { id: 'pg-about',       slug: 'about',         parentId: null,          title: 'About',         icon: 'ℹ️', path: '/about',        isPublished: true, sortOrder: 2 },
+    { id: 'pg-academics',   slug: 'academics',     parentId: null,          title: 'Academics',     icon: '🎓', path: '/academics',    isPublished: true, sortOrder: 3 },
+    { id: 'pg-admissions',  slug: 'admissions',    parentId: null,          title: 'Admissions',    icon: '📋', path: '/admissions',   isPublished: true, sortOrder: 4 },
+    { id: 'pg-cocurr',      slug: 'co-curricular', parentId: null,          title: 'Co-Curricular', icon: '🎭', path: '/co-curricular',isPublished: true, sortOrder: 5 },
+    { id: 'pg-music',       slug: 'music',         parentId: 'pg-cocurr',   title: 'Music Academy', icon: '🎵', path: '/music',        isPublished: true, sortOrder: 1 },
+    { id: 'pg-drama',       slug: 'drama-dance',   parentId: 'pg-cocurr',   title: 'Drama & Dance', icon: '💃', path: '/drama-dance',  isPublished: true, sortOrder: 2 },
+    { id: 'pg-sports',      slug: 'sports',        parentId: 'pg-cocurr',   title: 'Sports',        icon: '🏆', path: '/sports',       isPublished: true, sortOrder: 3 },
+    { id: 'pg-blog',        slug: 'blog',          parentId: null,          title: 'Blog',          icon: '📰', path: '/blog',         isPublished: true, sortOrder: 6 },
+    { id: 'pg-contact',     slug: 'contact',       parentId: null,          title: 'Contact',       icon: '📞', path: '/contact',      isPublished: true, sortOrder: 7 },
+    { id: 'pg-facilities',  slug: 'facilities',    parentId: null,          title: 'Facilities',    icon: '🏗️', path: '/facilities',   isPublished: true, sortOrder: 8 },
+  ]
+
+  function blk(id: string, pageId: string, key: string, label: string, type: CmsBlockType, value: string, helpText: string, sortOrder: number): CmsBlock {
+    return { id, pageId, key, label, type, value, helpText, sortOrder }
+  }
+
+  const cmsBlocks: CmsBlock[] = [
+    // ── Home ──────────────────────────────────────────────────────────────
+    blk('cb-h-01','pg-home','hero.tagline',      'Hero Tagline (white)',          'text',    'Where Excellence',           'First line of the hero headline — displayed in white', 1),
+    blk('cb-h-02','pg-home','hero.taglineGold',  'Hero Tagline (gold)',           'text',    'Meets Tomorrow',             'Second line displayed in gold — the accent phrase', 2),
+    blk('cb-h-03','pg-home','hero.subtitle',     'Hero Subtitle',                 'textarea','Kenya\'s premier learning institution — where every learner discovers their genius in world-class facilities guided by expert educators.','Shown below the hero headline', 3),
+    blk('cb-h-04','pg-home','stats.students',    'Stats — Students',              'text',    '2,000+',                     'Number shown on the homepage stats bar', 4),
+    blk('cb-h-05','pg-home','stats.teachers',    'Stats — Teachers',              'text',    '120+',                       'Number shown on the homepage stats bar', 5),
+    blk('cb-h-06','pg-home','stats.established', 'Stats — Years Established',     'text',    '2005',                       'Year the school was established', 6),
+    blk('cb-h-07','pg-home','director.name',     'Director Name',                 'text',    'Dr. Alice Mwangi',           'Name shown in the Director\'s Message section', 7),
+    blk('cb-h-08','pg-home','director.title',    'Director Title',                'text',    'School Director',            'Title shown below the director\'s name', 8),
+    blk('cb-h-09','pg-home','director.quote',    'Director Quote',                'textarea','At Alber School, we believe every child is born with unique genius waiting to be unlocked. Our duty — as educators, parents and community — is to create the conditions for that genius to flourish. We do this through world-class curriculum, exceptional faculty, and a culture that celebrates every learner.','The director\'s message paragraph shown on the homepage', 9),
+
+    // ── About ─────────────────────────────────────────────────────────────
+    blk('cb-a-01','pg-about','hero.headline',    'Page Headline',                 'text',    'About Us',                   'Main heading at the top of the About page', 1),
+    blk('cb-a-02','pg-about','hero.subheadline', 'Page Subheadline',              'textarea','Adjacent to the Governor\'s Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005.','Shown below the main heading', 2),
+    blk('cb-a-03','pg-about','mission',          'Mission Statement',             'textarea','To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence. We nurture every learner\'s genius — academically, artistically, and athletically.','Displayed in the Mission card', 3),
+    blk('cb-a-04','pg-about','vision',           'Vision Statement',              'textarea','To be East Africa\'s most sought-after private institution — where every learner discovers their genius in world-class facilities, guided by expert educators who inspire curiosity and ambition in equal measure.','Displayed in the Vision card', 4),
+    blk('cb-a-05','pg-about','history.intro',    'Our History — Intro Text',      'textarea','Two decades of excellence — from a single campus in Kutus to Kirinyaga\'s premier educational institution.','Paragraph shown above the history timeline', 5),
+
+    // ── Academics ─────────────────────────────────────────────────────────
+    blk('cb-ac-01','pg-academics','hero.headline',   'Page Headline',             'text',    'Programs & Academics',        'Main heading at the top of the Academics page', 1),
+    blk('cb-ac-02','pg-academics','hero.subheadline','Page Subheadline',          'textarea','From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.','Shown below the main heading', 2),
+    blk('cb-ac-03','pg-academics','cta.headline',    'CTA Box Headline',          'text',    'Ready to Enrol?',             'Heading in the call-to-action box at the bottom of the page', 3),
+    blk('cb-ac-04','pg-academics','cta.subtext',     'CTA Box Subtext',           'textarea','Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.','Body text in the call-to-action box', 4),
+
+    // ── Admissions ────────────────────────────────────────────────────────
+    blk('cb-ad-01','pg-admissions','hero.headline',   'Page Headline',            'text',    'Admissions',                  'Main heading at the top of the Admissions page', 1),
+    blk('cb-ad-02','pg-admissions','hero.subheadline','Page Subheadline',         'textarea','Join Alber School — applications open for 2026 intake.','Shown below the main heading', 2),
+    blk('cb-ad-03','pg-admissions','payment.paybill', 'M-Pesa Paybill Number',    'text',    '522522',                      'The M-Pesa Paybill number shown on the payment step', 3),
+    blk('cb-ad-04','pg-admissions','payment.account', 'M-Pesa Account Number',    'text',    'ALBER2026',                   'The account number shown on the payment step', 4),
+    blk('cb-ad-05','pg-admissions','payment.note',    'Payment Note',             'text',    'Amount will be confirmed upon review','Small note shown below the account number', 5),
+
+    // ── Co-Curricular ─────────────────────────────────────────────────────
+    blk('cb-cc-01','pg-cocurr','hero.headline',   'Page Headline',                'text',    'Co-Curricular',               'Main heading at the top of the Co-Curricular page', 1),
+    blk('cb-cc-02','pg-cocurr','hero.subheadline','Page Subheadline',             'textarea','Beyond the classroom — four pillars of holistic development aligned to Kenya\'s CBC framework and Alber School\'s vision of whole-learner excellence.','Shown below the main heading', 2),
+    blk('cb-cc-03','pg-cocurr','cta.headline',    'CTA Box Headline',             'text',    'Enrich Your Child\'s Journey','Heading in the call-to-action box at the bottom of the page', 3),
+    blk('cb-cc-04','pg-cocurr','cta.subtext',     'CTA Box Subtext',              'textarea','Every learner at Alber participates in co-curricular activities as part of their holistic CBC assessment. Talk to us about pathways that match your child\'s passions.','Body text in the call-to-action box', 4),
+
+    // ── Music ─────────────────────────────────────────────────────────────
+    blk('cb-mu-01','pg-music','hero.headline',   'Page Headline',                 'text',    'Music Academy',               'Main heading at the top of the Music Academy page', 1),
+    blk('cb-mu-02','pg-music','hero.subheadline','Page Subheadline',              'textarea','Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.','Shown below the main heading', 2),
+
+    // ── Drama & Dance ─────────────────────────────────────────────────────
+    blk('cb-dr-01','pg-drama','hero.headline',   'Page Headline',                 'text',    'Drama & Dance',               'Main heading at the top of the Drama & Dance page', 1),
+    blk('cb-dr-02','pg-drama','hero.subheadline','Page Subheadline',              'textarea','Mirror-walled studios · Professional lighting · Sprung floors · 4K capture for portfolio development.','Shown below the main heading', 2),
+
+    // ── Sports ────────────────────────────────────────────────────────────
+    blk('cb-sp-01','pg-sports','hero.headline',   'Page Headline',                'text',    'Sports',                      'Main heading at the top of the Sports page', 1),
+    blk('cb-sp-02','pg-sports','hero.subheadline','Page Subheadline',             'textarea','Competing at county, national and regional level across a full spectrum of sporting disciplines.','Shown below the main heading', 2),
+
+    // ── Blog ──────────────────────────────────────────────────────────────
+    blk('cb-bl-01','pg-blog','hero.headline',   'Page Headline',                  'text',    'Blog',                        'Main heading at the top of the Blog page', 1),
+    blk('cb-bl-02','pg-blog','hero.subheadline','Page Subheadline',               'textarea','News, stories, and insights from the Alber School community.','Shown below the main heading', 2),
+
+    // ── Contact ───────────────────────────────────────────────────────────
+    blk('cb-co-01','pg-contact','hero.headline',    'Page Headline',              'text',    'Contact Us',                  'Main heading at the top of the Contact page', 1),
+    blk('cb-co-02','pg-contact','hero.subheadline', 'Page Subheadline',           'textarea','Adjacent to the Governor\'s Offices, Kutus — Kirinyaga County. We\'re here to help.','Shown below the main heading', 2),
+    blk('cb-co-03','pg-contact','phone.primary',    'Primary Phone Number',       'text',    '+254 712 345 678',            'Main phone number displayed on the contact cards', 3),
+    blk('cb-co-04','pg-contact','phone.secondary',  'Secondary Phone Number',     'text',    '+254 734 567 890',            'Second phone number displayed below the primary', 4),
+    blk('cb-co-05','pg-contact','email.primary',    'Primary Email',              'text',    'info@alberschool.ke',         'Main email address shown on the contact card', 5),
+    blk('cb-co-06','pg-contact','email.secondary',  'Admissions Email',           'text',    'admissions@alberschool.ke',   'Admissions-specific email address', 6),
+    blk('cb-co-07','pg-contact','whatsapp',         'WhatsApp Number (no +)',     'text',    '254712345678',               'WhatsApp number in international format without the + sign (used in links)', 7),
+    blk('cb-co-08','pg-contact','address.line1',    'Address Line 1',             'text',    'Adjacent to Governor\'s Offices','First line of the physical address', 8),
+    blk('cb-co-09','pg-contact','address.line2',    'Address Line 2',             'text',    'Kutus Town, Kirinyaga County','Second line of the physical address', 9),
+    blk('cb-co-10','pg-contact','hours',            'Office Hours',               'text',    'Monday – Friday 7:30 AM – 5:00 PM · Saturday 8:00 AM – 1:00 PM','Office hours shown at the bottom of the contact page', 10),
+
+    // ── Facilities ────────────────────────────────────────────────────────
+    blk('cb-fa-01','pg-facilities','hero.headline',   'Page Headline',            'text',    'Facilities',                  'Main heading at the top of the Facilities page', 1),
+    blk('cb-fa-02','pg-facilities','hero.subheadline','Page Subheadline',         'textarea','World-class infrastructure designed for modern learning — click any facility to explore.','Shown below the main heading', 2),
+    blk('cb-fa-03','pg-facilities','cta.headline',    'CTA Box Headline',         'text',    'Experience It In Person',     'Heading in the call-to-action box at the bottom of the page', 3),
+    blk('cb-fa-04','pg-facilities','cta.subtext',     'CTA Box Subtext',          'textarea','Book a campus tour and see our facilities first-hand. Adjacent to the Governor\'s Offices, Kutus.','Body text in the call-to-action box', 4),
+  ]
+
   return {
     users, students, staff, academicYears, classes, subjects, assessmentSchemes,
     exams, payments, invoices, scholarships, expenses, feeStructures,
@@ -1130,12 +1250,13 @@ function createSeed(): DB {
     timetableSlots, attendanceRecords, studentGrades, homework,
     publicBlogPosts, publicEvents, publicGalleryImages, publicProgramLevels,
     publicFeeRows, publicTeachers, publicSportFixtures,
+    cmsPages, cmsBlocks,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v4'
+const STORAGE_KEY = 'alber_db_v5'
 
 function loadStore(): DB {
   try {

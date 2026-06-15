@@ -7,9 +7,16 @@ import { useToast } from '../contexts/ToastContext'
 import { formatKES } from '../lib/utils'
 import { cn } from '../lib/utils'
 import { ChevronDown } from 'lucide-react'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-admissions')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 const STEPS = ['Child Info', 'Parent Info', 'Documents', 'Payment']
 export function Admissions() {
+  const get = useCms()
   const { showToast } = useToast()
   const [step, setStep] = useState(0)
   const [openFee, setOpenFee] = useState<number | null>(0)
@@ -22,8 +29,8 @@ export function Admissions() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
       <ScrollReveal className="mb-4 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">Admissions</h1>
-        <p className="mx-auto max-w-xl text-muted">Join Alber School — applications open for 2026 intake.</p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Admissions')}</h1>
+        <p className="mx-auto max-w-xl text-muted">{get('hero.subheadline', 'Join Alber School — applications open for 2026 intake.')}</p>
       </ScrollReveal>
 
       <div className="mt-8 mb-8">
@@ -71,9 +78,9 @@ export function Admissions() {
           )}
           {step === 3 && (
             <div className="text-center">
-              <p className="mb-4 text-muted">Mock payment — M-Pesa Paybill 522522</p>
-              <p className="text-3xl font-bold text-primary dark:text-gold">Account: ALBER2026</p>
-              <p className="mt-2 text-sm">Amount will be confirmed upon review</p>
+              <p className="mb-4 text-muted">Mock payment — M-Pesa Paybill {get('payment.paybill', '522522')}</p>
+              <p className="text-3xl font-bold text-primary dark:text-gold">Account: {get('payment.account', 'ALBER2026')}</p>
+              <p className="mt-2 text-sm">{get('payment.note', 'Amount will be confirmed upon review')}</p>
             </div>
           )}
           <div className="mt-8 flex gap-4">

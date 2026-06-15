@@ -1,9 +1,9 @@
 import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
 import { getDB, mutateDB } from './db'
-import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture } from './db'
+import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType } from './db'
 import { addAudit } from './auditService'
 
-export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture }
+export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType }
 
 export const contentService = {
   // Media Library
@@ -259,5 +259,53 @@ export const contentService = {
   deleteSportFixture: (id: string) => mockDelete(() => {
     mutateDB(db => { db.publicSportFixtures = db.publicSportFixtures.filter(f => f.id !== id) })
     addAudit({ action: 'DELETE', resource: 'SportFixture', resourceId: id, details: 'Deleted fixture' })
+  }),
+
+  // ── CMS Pages ────────────────────────────────────────────────────────────
+  listCmsPages: () => mockGet(() => [...getDB().cmsPages].sort((a, b) => {
+    if (a.parentId === null && b.parentId !== null) return -1
+    if (a.parentId !== null && b.parentId === null) return 1
+    return a.sortOrder - b.sortOrder
+  })),
+
+  updateCmsPage: (id: string, dto: Partial<Omit<CmsPage, 'id'>>) => mockPut(() => {
+    let updated: CmsPage | undefined
+    mutateDB(db => {
+      const idx = db.cmsPages.findIndex(p => p.id === id)
+      if (idx === -1) throw new Error('Page not found')
+      updated = { ...db.cmsPages[idx], ...dto }
+      db.cmsPages[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'CmsPage', resourceId: id, details: `Updated page: ${updated?.title}` })
+    return updated!
+  }),
+
+  // ── CMS Blocks ───────────────────────────────────────────────────────────
+  getCmsBlocks: (pageId: string) => mockGet(() =>
+    [...getDB().cmsBlocks.filter(b => b.pageId === pageId)].sort((a, b) => a.sortOrder - b.sortOrder)
+  ),
+
+  updateCmsBlock: (id: string, value: string) => mockPut(() => {
+    let updated: CmsBlock | undefined
+    mutateDB(db => {
+      const idx = db.cmsBlocks.findIndex(b => b.id === id)
+      if (idx === -1) throw new Error('Block not found')
+      updated = { ...db.cmsBlocks[idx], value }
+      db.cmsBlocks[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'CmsBlock', resourceId: id, details: `Updated block: ${updated?.key}` })
+    return updated!
+  }),
+
+  createCmsBlock: (dto: Omit<CmsBlock, 'id'>) => mockPost(() => {
+    const block: CmsBlock = { id: newId('CB'), ...dto }
+    mutateDB(db => { db.cmsBlocks.push(block) })
+    addAudit({ action: 'CREATE', resource: 'CmsBlock', resourceId: block.id, details: `Created block: ${block.key}` })
+    return block
+  }),
+
+  deleteCmsBlock: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.cmsBlocks = db.cmsBlocks.filter(b => b.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'CmsBlock', resourceId: id, details: 'Deleted CMS block' })
   }),
 }

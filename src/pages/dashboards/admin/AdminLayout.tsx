@@ -5,7 +5,7 @@ import {
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
-  Moon, Sun, UserCog,
+  Moon, Sun, UserCog, Globe,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
@@ -23,6 +23,7 @@ const NAV = [
   {
     group: 'Content',
     items: [
+      { label: 'Pages',         icon: Globe,            path: '/dashboard/admin/pages'            },
       { label: 'Home & About',  icon: FileText,         path: '/dashboard/admin/content'          },
       { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
       { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },

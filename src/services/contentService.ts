@@ -1,9 +1,9 @@
 import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
 import { getDB, mutateDB } from './db'
-import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType } from './db'
+import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem } from './db'
 import { addAudit } from './auditService'
 
-export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType }
+export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem }
 
 export const contentService = {
   // Media Library
@@ -307,5 +307,63 @@ export const contentService = {
   deleteCmsBlock: (id: string) => mockDelete(() => {
     mutateDB(db => { db.cmsBlocks = db.cmsBlocks.filter(b => b.id !== id) })
     addAudit({ action: 'DELETE', resource: 'CmsBlock', resourceId: id, details: 'Deleted CMS block' })
+  }),
+
+  // ── About — Core Values ──────────────────────────────────────────────────
+  listCoreValues: () => mockGet(() =>
+    [...getDB().aboutCoreValues].sort((a, b) => a.sortOrder - b.sortOrder)
+  ),
+
+  createCoreValue: (dto: Omit<AboutCoreValue, 'id'>) => mockPost(() => {
+    const item: AboutCoreValue = { id: newId('CV'), ...dto }
+    mutateDB(db => { db.aboutCoreValues.push(item) })
+    addAudit({ action: 'CREATE', resource: 'AboutCoreValue', resourceId: item.id, details: `Added core value: ${item.title}` })
+    return item
+  }),
+
+  updateCoreValue: (id: string, dto: Partial<Omit<AboutCoreValue, 'id'>>) => mockPut(() => {
+    let updated: AboutCoreValue | undefined
+    mutateDB(db => {
+      const idx = db.aboutCoreValues.findIndex(v => v.id === id)
+      if (idx === -1) throw new Error('Core value not found')
+      updated = { ...db.aboutCoreValues[idx], ...dto }
+      db.aboutCoreValues[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'AboutCoreValue', resourceId: id, details: `Updated core value: ${updated?.title}` })
+    return updated!
+  }),
+
+  deleteCoreValue: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.aboutCoreValues = db.aboutCoreValues.filter(v => v.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'AboutCoreValue', resourceId: id, details: 'Deleted core value' })
+  }),
+
+  // ── About — History Items ────────────────────────────────────────────────
+  listHistoryItems: () => mockGet(() =>
+    [...getDB().aboutHistoryItems].sort((a, b) => a.sortOrder - b.sortOrder)
+  ),
+
+  createHistoryItem: (dto: Omit<AboutHistoryItem, 'id'>) => mockPost(() => {
+    const item: AboutHistoryItem = { id: newId('HI'), ...dto }
+    mutateDB(db => { db.aboutHistoryItems.push(item) })
+    addAudit({ action: 'CREATE', resource: 'AboutHistoryItem', resourceId: item.id, details: `Added history item: ${item.year} ${item.title}` })
+    return item
+  }),
+
+  updateHistoryItem: (id: string, dto: Partial<Omit<AboutHistoryItem, 'id'>>) => mockPut(() => {
+    let updated: AboutHistoryItem | undefined
+    mutateDB(db => {
+      const idx = db.aboutHistoryItems.findIndex(h => h.id === id)
+      if (idx === -1) throw new Error('History item not found')
+      updated = { ...db.aboutHistoryItems[idx], ...dto }
+      db.aboutHistoryItems[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'AboutHistoryItem', resourceId: id, details: `Updated history item: ${updated?.year}` })
+    return updated!
+  }),
+
+  deleteHistoryItem: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.aboutHistoryItems = db.aboutHistoryItems.filter(h => h.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'AboutHistoryItem', resourceId: id, details: 'Deleted history item' })
   }),
 }

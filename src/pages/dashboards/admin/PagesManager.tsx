@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2 } from 'lucide-react'
+import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2, Edit2, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { contentService } from '../../../services/contentService'
-import type { CmsPage, CmsBlock, CmsBlockType } from '../../../services/contentService'
+import type { CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem } from '../../../services/contentService'
 import { unwrap } from '../../../services/mockApi'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Button } from '../../../components/ui/Button'
@@ -273,6 +273,258 @@ function AddBlockModal({
   )
 }
 
+// ── Shared styles ─────────────────────────────────────────────────────────
+const FIELD = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
+const BTN_GOLD = 'flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-3 py-1.5 text-xs font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition disabled:opacity-60'
+const BTN_GHOST = 'rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition'
+
+// ── Core Values CRUD Panel ─────────────────────────────────────────────────
+function CoreValuesPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: values = [] } = useQuery({
+    queryKey: ['about-core-values'],
+    queryFn: () => contentService.listCoreValues().then(unwrap),
+    staleTime: 30_000,
+  })
+
+  const create = useMutation({
+    mutationFn: (dto: Omit<AboutCoreValue, 'id'>) => contentService.createCoreValue(dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['about-core-values'] }); showToast('Core value added') },
+  })
+  const update = useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<AboutCoreValue, 'id'>> }) =>
+      contentService.updateCoreValue(id, dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['about-core-values'] }); showToast('Core value updated') },
+  })
+  const del = useMutation({
+    mutationFn: (id: string) => contentService.deleteCoreValue(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['about-core-values'] }); showToast('Core value deleted') },
+  })
+
+  type Draft = { icon: string; title: string; desc: string; sortOrder: number }
+  const blank: Draft = { icon: '⭐', title: '', desc: '', sortOrder: values.length + 1 }
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>(blank)
+  const [saving, setSaving] = useState(false)
+
+  const openEdit = (v: AboutCoreValue) => { setForm({ icon: v.icon, title: v.title, desc: v.desc, sortOrder: v.sortOrder }); setEditing(v.id) }
+  const openNew  = () => { setForm({ ...blank, sortOrder: values.length + 1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+
+  const handleSave = async () => {
+    if (!form.title.trim()) return
+    setSaving(true)
+    try {
+      if (editing === 'new') await create.mutateAsync(form)
+      else if (typeof editing === 'string') await update.mutateAsync({ id: editing, dto: form })
+      close()
+    } finally { setSaving(false) }
+  }
+
+  return (
+    <div className="mt-8 max-w-3xl space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted">Core Values</h2>
+          <p className="text-xs text-muted mt-0.5">Add, edit or remove the value cards shown on the About page.</p>
+        </div>
+        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5" /> Add Value</button>
+      </div>
+
+      {editing === 'new' && (
+        <GlassCard className="p-5 border-gold/40 space-y-3">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wider">New Core Value</p>
+          <div className="grid grid-cols-[72px_1fr] gap-3">
+            <div>
+              <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Icon</label>
+              <input className={FIELD} value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} placeholder="🎓" />
+            </div>
+            <div>
+              <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Title <span className="text-gold">*</span></label>
+              <input className={FIELD} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. Innovation" autoFocus />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Description</label>
+            <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} placeholder="Short description shown on the card…" />
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button onClick={handleSave} disabled={saving || !form.title.trim()} className={BTN_GOLD}>
+              {saving ? 'Saving…' : <><Check className="h-3.5 w-3.5" /> Save</>}
+            </button>
+            <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+          </div>
+        </GlassCard>
+      )}
+
+      <div className="space-y-2">
+        {[...values].sort((a, b) => a.sortOrder - b.sortOrder).map(v => (
+          <div key={v.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {editing === v.id ? (
+              <div className="p-5 space-y-3">
+                <div className="grid grid-cols-[72px_1fr] gap-3">
+                  <div>
+                    <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Icon</label>
+                    <input className={FIELD} value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Title <span className="text-gold">*</span></label>
+                    <input className={FIELD} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} autoFocus />
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Description</label>
+                  <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} />
+                </div>
+                <div className="flex gap-2 pt-1">
+                  <button onClick={handleSave} disabled={saving || !form.title.trim()} className={BTN_GOLD}>
+                    {saving ? 'Saving…' : <><Check className="h-3.5 w-3.5" /> Save</>}
+                  </button>
+                  <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 px-4 py-3">
+                <span className="text-2xl w-9 text-center flex-shrink-0">{v.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate">{v.title}</p>
+                  <p className="text-xs text-muted truncate">{v.desc}</p>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button onClick={() => openEdit(v)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60 dark:hover:bg-dark-card transition" title="Edit">
+                    <Edit2 className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={() => del.mutate(v.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500 transition" title="Delete">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── History Items CRUD Panel ───────────────────────────────────────────────
+function HistoryItemsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({
+    queryKey: ['about-history'],
+    queryFn: () => contentService.listHistoryItems().then(unwrap),
+    staleTime: 30_000,
+  })
+
+  const create = useMutation({
+    mutationFn: (dto: Omit<AboutHistoryItem, 'id'>) => contentService.createHistoryItem(dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['about-history'] }); showToast('History milestone added') },
+  })
+  const update = useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<AboutHistoryItem, 'id'>> }) =>
+      contentService.updateHistoryItem(id, dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['about-history'] }); showToast('History milestone updated') },
+  })
+  const del = useMutation({
+    mutationFn: (id: string) => contentService.deleteHistoryItem(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['about-history'] }); showToast('History milestone deleted') },
+  })
+
+  type Draft = { year: string; title: string; desc: string; sortOrder: number }
+  const blank: Draft = { year: '', title: '', desc: '', sortOrder: items.length + 1 }
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>(blank)
+  const [saving, setSaving] = useState(false)
+
+  const openEdit = (h: AboutHistoryItem) => { setForm({ year: h.year, title: h.title, desc: h.desc, sortOrder: h.sortOrder }); setEditing(h.id) }
+  const openNew  = () => { setForm({ ...blank, sortOrder: items.length + 1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+
+  const handleSave = async () => {
+    if (!form.year.trim() || !form.title.trim()) return
+    setSaving(true)
+    try {
+      if (editing === 'new') await create.mutateAsync(form)
+      else if (typeof editing === 'string') await update.mutateAsync({ id: editing, dto: form })
+      close()
+    } finally { setSaving(false) }
+  }
+
+  const ItemForm = () => (
+    <div className="space-y-3">
+      <div className="grid grid-cols-[100px_1fr] gap-3">
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Year <span className="text-gold">*</span></label>
+          <input className={FIELD} value={form.year} onChange={e => setForm(f => ({ ...f, year: e.target.value }))} placeholder="2005" autoFocus />
+        </div>
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Title <span className="text-gold">*</span></label>
+          <input className={FIELD} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. Foundation" />
+        </div>
+      </div>
+      <div>
+        <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Description</label>
+        <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} placeholder="What happened that year…" />
+      </div>
+      <div>
+        <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Sort Order</label>
+        <input type="number" min={1} className={`${FIELD} w-24`} value={form.sortOrder} onChange={e => setForm(f => ({ ...f, sortOrder: Number(e.target.value) }))} />
+      </div>
+      <div className="flex gap-2 pt-1">
+        <button onClick={handleSave} disabled={saving || !form.year.trim() || !form.title.trim()} className={BTN_GOLD}>
+          {saving ? 'Saving…' : <><Check className="h-3.5 w-3.5" /> Save</>}
+        </button>
+        <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="mt-8 max-w-3xl space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted">Our History</h2>
+          <p className="text-xs text-muted mt-0.5">Manage timeline milestones shown on the About page.</p>
+        </div>
+        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5" /> Add Milestone</button>
+      </div>
+
+      {editing === 'new' && (
+        <GlassCard className="p-5 border-gold/40">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-3">New Milestone</p>
+          <ItemForm />
+        </GlassCard>
+      )}
+
+      <div className="space-y-2">
+        {[...items].sort((a, b) => a.sortOrder - b.sortOrder).map(h => (
+          <div key={h.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {editing === h.id ? (
+              <div className="p-5"><ItemForm /></div>
+            ) : (
+              <div className="flex items-center gap-4 px-4 py-3">
+                <span className="text-lg font-bold text-[#E8B84B] w-12 flex-shrink-0">{h.year}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate">{h.title}</p>
+                  <p className="text-xs text-muted truncate">{h.desc}</p>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button onClick={() => openEdit(h)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60 dark:hover:bg-dark-card transition" title="Edit">
+                    <Edit2 className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={() => del.mutate(h.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500 transition" title="Delete">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function PagesManager() {
   const { showToast } = useToast()
   const queryClient = useQueryClient()
@@ -494,6 +746,7 @@ export function PagesManager() {
                         <p className="mt-1 text-xs text-muted">Click <strong>Add Block</strong> above to create the first one.</p>
                       </GlassCard>
                     )}
+
                     {blocks.map((block) => {
                       const val = getDraft(block)
                       const changed = block.id in drafts && drafts[block.id] !== block.value
@@ -585,6 +838,17 @@ export function PagesManager() {
                       <Plus className="h-4 w-4" />
                       Add new content block
                     </button>
+
+                    {/* About-specific structured data panels */}
+                    {selectedPageId === 'pg-about' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <CoreValuesPanel qc={queryClient} />
+                        <hr className="my-2 border-theme" />
+                        <HistoryItemsPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
                   </div>
                 )}
               </div>

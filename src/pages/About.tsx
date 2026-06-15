@@ -2,29 +2,14 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { HistoryStepper } from '../components/about/HistoryStepper'
 import { useCmsBlocks } from '../hooks/useCmsData'
+import { useQuery } from '@tanstack/react-query'
+import { unwrap } from '../services/mockApi'
+import { contentService } from '../services/contentService'
 
 function useCms() {
   const { data: blocks = [] } = useCmsBlocks('pg-about')
   return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
 }
-
-const HISTORY = [
-  { year: '2005', title: 'Foundation', desc: 'Alber School established in Kutus, Kirinyaga County, with a bold vision to deliver premium education adjacent to the Governor\'s Offices.' },
-  { year: '2010', title: 'Primary Expansion', desc: 'Full primary school opened with 400 students. CBC-aligned curriculum launched alongside dedicated science laboratories.' },
-  { year: '2014', title: 'Arts Academy', desc: 'Music studios, drama theatre, and dance halls launched — the first dedicated performing arts complex in Kirinyaga County.' },
-  { year: '2018', title: 'IGCSE Pathway', desc: 'Cambridge international curriculum introduced, giving students a globally recognised academic pathway from Grade 10.' },
-  { year: '2022', title: 'Sports Complex', desc: 'New sports complex completed — football pitch, basketball courts, swimming pool, and athletics track.' },
-  { year: '2026', title: 'Digital Frontier', desc: '360° virtual tours, smart classrooms, and digital learning platforms launched. 2,000+ students, 120+ staff.' },
-]
-
-const CORE_VALUES = [
-  { icon: '🎓', title: 'Academic Excellence', desc: 'Rigorous standards across CBC and Cambridge IGCSE frameworks with continuous assessment.' },
-  { icon: '🤝', title: 'Integrity', desc: 'Honesty and ethical conduct are the foundation of every interaction in our community.' },
-  { icon: '🌍', title: 'Global Citizenship', desc: 'Celebrating Kenyan heritage while preparing learners for a connected, diverse world.' },
-  { icon: '💡', title: 'Innovation', desc: 'Encouraging curiosity, creativity, and problem-solving across all disciplines.' },
-  { icon: '🏆', title: 'Holistic Growth', desc: 'Developing the whole child — academically, physically, artistically, and emotionally.' },
-  { icon: '🌱', title: 'Sustainability', desc: 'Stewardship of our community and environment for future generations.' },
-]
 
 const LEADERSHIP = [
   {
@@ -55,6 +40,19 @@ const LEADERSHIP = [
 
 export function About() {
   const get = useCms()
+
+  const { data: coreValues = [] } = useQuery({
+    queryKey: ['about-core-values'],
+    queryFn: () => contentService.listCoreValues().then(unwrap),
+    staleTime: 30_000,
+  })
+
+  const { data: historyItems = [] } = useQuery({
+    queryKey: ['about-history'],
+    queryFn: () => contentService.listHistoryItems().then(unwrap),
+    staleTime: 30_000,
+  })
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
@@ -83,20 +81,24 @@ export function About() {
         </ScrollReveal>
       </div>
 
-      <ScrollReveal className="text-center">
-        <h2 className="mb-8 text-4xl font-bold">Core Values</h2>
-      </ScrollReveal>
-      <div className="mb-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {CORE_VALUES.map((v, i) => (
-          <ScrollReveal key={v.title} delay={i * 0.08}>
-            <GlassCard className="p-6">
-              <span className="mb-3 block text-4xl">{v.icon}</span>
-              <h3 className="mb-2 text-lg font-bold text-primary dark:text-gold">{v.title}</h3>
-              <p className="text-sm text-muted">{v.desc}</p>
-            </GlassCard>
+      {coreValues.length > 0 && (
+        <>
+          <ScrollReveal className="text-center">
+            <h2 className="mb-8 text-4xl font-bold">Core Values</h2>
           </ScrollReveal>
-        ))}
-      </div>
+          <div className="mb-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[...coreValues].sort((a, b) => a.sortOrder - b.sortOrder).map((v, i) => (
+              <ScrollReveal key={v.id} delay={i * 0.08}>
+                <GlassCard className="p-6">
+                  <span className="mb-3 block text-4xl">{v.icon}</span>
+                  <h3 className="mb-2 text-lg font-bold text-primary dark:text-gold">{v.title}</h3>
+                  <p className="text-sm text-muted">{v.desc}</p>
+                </GlassCard>
+              </ScrollReveal>
+            ))}
+          </div>
+        </>
+      )}
 
       <ScrollReveal className="text-center">
         <h2 className="mb-8 text-4xl font-bold">Leadership Team</h2>
@@ -116,15 +118,19 @@ export function About() {
         ))}
       </div>
 
-      <ScrollReveal className="text-center">
-        <h2 className="mb-8 text-4xl font-bold">Our History</h2>
-        <p className="mx-auto mb-10 max-w-xl text-muted">
-          {get('history.intro', "Two decades of excellence — from a single campus in Kutus to Kirinyaga's premier educational institution.")}
-        </p>
-      </ScrollReveal>
-      <ScrollReveal delay={0.1} className="flex justify-center">
-        <HistoryStepper steps={HISTORY} />
-      </ScrollReveal>
+      {historyItems.length > 0 && (
+        <>
+          <ScrollReveal className="text-center">
+            <h2 className="mb-8 text-4xl font-bold">Our History</h2>
+            <p className="mx-auto mb-10 max-w-xl text-muted">
+              {get('history.intro', "Two decades of excellence — from a single campus in Kutus to Kirinyaga's premier educational institution.")}
+            </p>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1} className="flex justify-center">
+            <HistoryStepper steps={[...historyItems].sort((a, b) => a.sortOrder - b.sortOrder)} />
+          </ScrollReveal>
+        </>
+      )}
     </div>
   )
 }

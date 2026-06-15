@@ -511,6 +511,24 @@ export interface SportFixture {
   status: 'upcoming' | 'live' | 'completed'
 }
 
+// ── About Page Structured Data ─────────────────────────────────────────────
+
+export interface AboutCoreValue {
+  id: string
+  icon: string
+  title: string
+  desc: string
+  sortOrder: number
+}
+
+export interface AboutHistoryItem {
+  id: string
+  year: string
+  title: string
+  desc: string
+  sortOrder: number
+}
+
 // ── CMS / Page Builder ─────────────────────────────────────────────────────
 
 export type CmsBlockType = 'text' | 'textarea' | 'image' | 'list'
@@ -578,6 +596,8 @@ export interface DB {
   publicSportFixtures: SportFixture[]
   cmsPages: CmsPage[]
   cmsBlocks: CmsBlock[]
+  aboutCoreValues: AboutCoreValue[]
+  aboutHistoryItems: AboutHistoryItem[]
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -1242,6 +1262,24 @@ function createSeed(): DB {
     blk('cb-fa-04','pg-facilities','cta.subtext',     'CTA Box Subtext',          'textarea','Book a campus tour and see our facilities first-hand. Adjacent to the Governor\'s Offices, Kutus.','Body text in the call-to-action box', 4),
   ]
 
+  const aboutCoreValues: AboutCoreValue[] = [
+    { id: 'cv-1', icon: '🎓', title: 'Academic Excellence', desc: 'Rigorous standards across CBC and Cambridge IGCSE frameworks with continuous assessment.', sortOrder: 1 },
+    { id: 'cv-2', icon: '🤝', title: 'Integrity',            desc: 'Honesty and ethical conduct are the foundation of every interaction in our community.', sortOrder: 2 },
+    { id: 'cv-3', icon: '🌍', title: 'Global Citizenship',  desc: 'Celebrating Kenyan heritage while preparing learners for a connected, diverse world.', sortOrder: 3 },
+    { id: 'cv-4', icon: '💡', title: 'Innovation',           desc: 'Encouraging curiosity, creativity, and problem-solving across all disciplines.', sortOrder: 4 },
+    { id: 'cv-5', icon: '🏆', title: 'Holistic Growth',      desc: 'Developing the whole child — academically, physically, artistically, and emotionally.', sortOrder: 5 },
+    { id: 'cv-6', icon: '🌱', title: 'Sustainability',        desc: 'Stewardship of our community and environment for future generations.', sortOrder: 6 },
+  ]
+
+  const aboutHistoryItems: AboutHistoryItem[] = [
+    { id: 'hi-1', year: '2005', title: 'Foundation',       desc: "Alber School established in Kutus, Kirinyaga County, with a bold vision to deliver premium education adjacent to the Governor's Offices.", sortOrder: 1 },
+    { id: 'hi-2', year: '2010', title: 'Primary Expansion', desc: 'Full primary school opened with 400 students. CBC-aligned curriculum launched alongside dedicated science laboratories.', sortOrder: 2 },
+    { id: 'hi-3', year: '2014', title: 'Arts Academy',      desc: 'Music studios, drama theatre, and dance halls launched — the first dedicated performing arts complex in Kirinyaga County.', sortOrder: 3 },
+    { id: 'hi-4', year: '2018', title: 'IGCSE Pathway',     desc: 'Cambridge international curriculum introduced, giving students a globally recognised academic pathway from Grade 10.', sortOrder: 4 },
+    { id: 'hi-5', year: '2022', title: 'Sports Complex',    desc: 'New sports complex completed — football pitch, basketball courts, swimming pool, and athletics track.', sortOrder: 5 },
+    { id: 'hi-6', year: '2026', title: 'Digital Frontier',  desc: '360° virtual tours, smart classrooms, and digital learning platforms launched. 2,000+ students, 120+ staff.', sortOrder: 6 },
+  ]
+
   return {
     users, students, staff, academicYears, classes, subjects, assessmentSchemes,
     exams, payments, invoices, scholarships, expenses, feeStructures,
@@ -1251,12 +1289,13 @@ function createSeed(): DB {
     publicBlogPosts, publicEvents, publicGalleryImages, publicProgramLevels,
     publicFeeRows, publicTeachers, publicSportFixtures,
     cmsPages, cmsBlocks,
+    aboutCoreValues, aboutHistoryItems,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v5'
+const STORAGE_KEY = 'alber_db_v6'
 
 function loadStore(): DB {
   try {

@@ -1,9 +1,9 @@
 import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
 import { getDB, mutateDB } from './db'
-import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility, CocurrActivity, CocurrCategoryId, SportOffered, SportTrophy, MusicInstrument, MusicTeacher, MusicScheduleSlot, DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot } from './db'
+import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility, CocurrActivity, CocurrCategoryId, SportOffered, SportTrophy, MusicInstrument, MusicTeacher, MusicScheduleSlot, DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot, WhyChooseUsItem } from './db'
 import { addAudit } from './auditService'
 
-export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility, CocurrActivity, CocurrCategoryId, SportOffered, SportTrophy, MusicInstrument, MusicTeacher, MusicScheduleSlot, DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot }
+export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility, CocurrActivity, CocurrCategoryId, SportOffered, SportTrophy, MusicInstrument, MusicTeacher, MusicScheduleSlot, DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot, WhyChooseUsItem }
 
 export const contentService = {
   // Media Library
@@ -682,5 +682,34 @@ export const contentService = {
   }),
   deleteDramaScheduleSlot: (id: string) => mockDelete(() => {
     mutateDB(db => { db.dramaScheduleSlots = db.dramaScheduleSlots.filter(s => s.id !== id) })
+  }),
+
+  // ── Why Choose Us ─────────────────────────────────────────────────────────
+  listWhyChooseUsItems: () => mockGet(() =>
+    [...getDB().whyChooseUsItems].sort((a, b) => a.sortOrder - b.sortOrder)
+  ),
+
+  createWhyChooseUsItem: (dto: Omit<WhyChooseUsItem, 'id'>) => mockPost(() => {
+    const item: WhyChooseUsItem = { id: newId('WCU'), ...dto }
+    mutateDB(db => { db.whyChooseUsItems.push(item) })
+    addAudit({ action: 'CREATE', resource: 'WhyChooseUsItem', resourceId: item.id, details: `Added: ${item.title}` })
+    return item
+  }),
+
+  updateWhyChooseUsItem: (id: string, dto: Partial<Omit<WhyChooseUsItem, 'id'>>) => mockPut(() => {
+    let updated: WhyChooseUsItem | undefined
+    mutateDB(db => {
+      const idx = db.whyChooseUsItems.findIndex(w => w.id === id)
+      if (idx === -1) throw new Error('Item not found')
+      updated = { ...db.whyChooseUsItems[idx], ...dto }
+      db.whyChooseUsItems[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'WhyChooseUsItem', resourceId: id, details: `Updated: ${updated?.title}` })
+    return updated!
+  }),
+
+  deleteWhyChooseUsItem: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.whyChooseUsItems = db.whyChooseUsItems.filter(w => w.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'WhyChooseUsItem', resourceId: id, details: 'Deleted why-choose-us item' })
   }),
 }

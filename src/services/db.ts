@@ -753,6 +753,20 @@ export interface DB {
   dramaPlays: DramaPlay[]
   dramaFaculty: DramaFaculty[]
   dramaScheduleSlots: DramaScheduleSlot[]
+  whyChooseUsItems: WhyChooseUsItem[]
+}
+
+export interface WhyChooseUsItem {
+  id: string
+  icon: string
+  title: string
+  subtitle: string
+  desc: string
+  stat: string
+  statLabel: string
+  color: string
+  sortOrder: number
+  isPublished: boolean
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -1596,6 +1610,105 @@ function createSeed(): DB {
     { id: 'dss-5', day: 'Friday',    activity: 'Full Company Rehearsal — 3:30–6:00 PM',  sortOrder: 5 },
   ]
 
+  const whyChooseUsItems: WhyChooseUsItem[] = [
+    {
+      id: 'wcu-1',
+      icon: '🏆',
+      title: 'Academic Excellence',
+      subtitle: 'Top Results, Year After Year',
+      desc: 'Alber School consistently ranks among the top-performing schools in Kirinyaga County. Our dual CBC and Cambridge IGCSE pathways are delivered by subject specialists who hold degrees from Kenya\'s leading universities and internationally accredited institutions.',
+      stat: '97%',
+      statLabel: 'KCSE Pass Rate',
+      color: 'gold',
+      sortOrder: 1,
+      isPublished: true,
+    },
+    {
+      id: 'wcu-2',
+      icon: '🏗️',
+      title: 'World-Class Facilities',
+      subtitle: 'Premium Learning Environments',
+      desc: '86 air-conditioned smart classrooms, 4 fully-equipped science labs, a 10,000-volume digital library, professional music studios, sprung-floor dance studios, a 25m heated swimming pool, and GPS-tracked transport — all on one campus in Kutus.',
+      stat: '86',
+      statLabel: 'Smart Classrooms',
+      color: 'blue',
+      sortOrder: 2,
+      isPublished: true,
+    },
+    {
+      id: 'wcu-3',
+      icon: '🎓',
+      title: 'Dual Curriculum Pathways',
+      subtitle: 'CBC & Cambridge IGCSE',
+      desc: 'We are one of the very few schools in Kirinyaga County offering both the Kenya CBC and Cambridge International IGCSE. Students in Grade 10–12 can choose the pathway that best aligns with their future — national universities or international study abroad.',
+      stat: '2',
+      statLabel: 'Curriculum Pathways',
+      color: 'green',
+      sortOrder: 3,
+      isPublished: true,
+    },
+    {
+      id: 'wcu-4',
+      icon: '🎨',
+      title: 'Holistic Co-Curricular Programme',
+      subtitle: 'Arts, Sports & Community',
+      desc: 'From national athletics to ABRSM music exams, ballet to Model UN — our co-curricular programme spans 30+ activities across sports, performing arts, community service, and career & technical education. Every learner finds their genius.',
+      stat: '30+',
+      statLabel: 'Co-Curricular Activities',
+      color: 'purple',
+      sortOrder: 4,
+      isPublished: true,
+    },
+    {
+      id: 'wcu-5',
+      icon: '👩‍🏫',
+      title: 'Expert, Passionate Faculty',
+      subtitle: '120+ Qualified Educators',
+      desc: 'Our 120+ teaching staff hold degrees from the University of Nairobi, Kenyatta University, Moi University, and Cambridge-accredited programmes. Many are TSC-registered specialists with 10+ years of classroom experience and a genuine passion for mentorship.',
+      stat: '120+',
+      statLabel: 'Qualified Staff',
+      color: 'teal',
+      sortOrder: 5,
+      isPublished: true,
+    },
+    {
+      id: 'wcu-6',
+      icon: '🛡️',
+      title: 'Safe & Nurturing Environment',
+      subtitle: 'Where Every Child Thrives',
+      desc: 'CCTV-monitored campus, a dedicated counselling team, an anti-bullying programme, and a student welfare committee ensure every learner feels safe, seen, and supported. Our inclusive culture celebrates diversity and champions every child\'s mental health.',
+      stat: '2,000+',
+      statLabel: 'Happy Students',
+      color: 'rose',
+      sortOrder: 6,
+      isPublished: true,
+    },
+    {
+      id: 'wcu-7',
+      icon: '💰',
+      title: 'Affordable Excellence',
+      subtitle: 'Value That Goes Beyond Fees',
+      desc: 'We believe premium education should be accessible. Competitive fee structures, merit scholarships, sibling discounts, and flexible payment plans via M-Pesa make an Alber School education a genuine investment — not a barrier — for families across Kirinyaga County.',
+      stat: '15+',
+      statLabel: 'Scholarship Awards Annually',
+      color: 'amber',
+      sortOrder: 7,
+      isPublished: true,
+    },
+    {
+      id: 'wcu-8',
+      icon: '🤝',
+      title: 'Strong Community & Values',
+      subtitle: 'Rooted in Kirinyaga, Ready for the World',
+      desc: 'Founded in Kutus in 2005, Alber School is deeply woven into the Kirinyaga community. Our annual cultural festivals, CSL projects, and parent-school partnership programmes build a family where every member — student, parent, and teacher — belongs.',
+      stat: '20+',
+      statLabel: 'Years Serving Kirinyaga',
+      color: 'green',
+      sortOrder: 8,
+      isPublished: true,
+    },
+  ]
+
   return {
     users, students, staff, academicYears, classes, subjects, assessmentSchemes,
     exams, payments, invoices, scholarships, expenses, feeStructures,
@@ -1611,12 +1724,13 @@ function createSeed(): DB {
     cocurrActivities, sportsOffered, sportTrophies,
     musicInstruments, musicTeachers, musicScheduleSlots,
     danceStyles, dramaPlays, dramaFaculty, dramaScheduleSlots,
+    whyChooseUsItems,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v10'
+const STORAGE_KEY = 'alber_db_v11'
 
 function loadStore(): DB {
   try {

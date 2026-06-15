@@ -21,6 +21,7 @@ const NAV_LEFT = [
   { to: '/about', label: 'About' },
   { to: '/academics', label: 'Programs & Academics' },
   { to: '/facilities', label: 'Facilities' },
+  { to: '/why-choose-us', label: 'Why Choose Us' },
 ]
 
 const NAV_RIGHT = [

@@ -20,6 +20,7 @@ import { Staff } from './pages/Staff'
 import { Login } from './pages/Login'
 import { Blog } from './pages/Blog'
 import { BlogPost } from './pages/BlogPost'
+import { WhyChooseUs } from './pages/WhyChooseUs'
 
 import { StudentPortalLayout }  from './pages/dashboards/student/StudentPortalLayout'
 import { StudentOverview }      from './pages/dashboards/student/StudentOverview'
@@ -84,6 +85,7 @@ import { CoCurrManager }       from './pages/dashboards/admin/CoCurrManager'
 import { SportsManager }       from './pages/dashboards/admin/SportsManager'
 import { MusicManager }        from './pages/dashboards/admin/MusicManager'
 import { DramaDanceManager }   from './pages/dashboards/admin/DramaDanceManager'
+import { WhyChooseUsManager }  from './pages/dashboards/admin/WhyChooseUsManager'
 
 function App() {
   return (
@@ -110,6 +112,7 @@ function App() {
                 <Route path="staff"         element={<Staff />} />
                 <Route path="blog"          element={<Blog />} />
                 <Route path="blog/:id"      element={<BlogPost />} />
+                <Route path="why-choose-us" element={<WhyChooseUs />} />
                 <Route path="login"         element={<Login />} />
               </Route>
 
@@ -183,6 +186,7 @@ function App() {
                 <Route path="sports"        element={<SportsManager />} />
                 <Route path="music"         element={<MusicManager />} />
                 <Route path="drama"         element={<DramaDanceManager />} />
+                <Route path="why-choose-us" element={<WhyChooseUsManager />} />
                 <Route path="admissions"    element={<AdmissionsManager />} />
                 <Route path="students"      element={<StudentsManager />} />
                 <Route path="staff"         element={<StaffManager />} />

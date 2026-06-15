@@ -5,7 +5,7 @@ import {
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
-  Moon, Sun, UserCog, Globe, Trophy, Music, Star, Activity,
+  Moon, Sun, UserCog, Globe, Trophy, Music, Star, Activity, ThumbsUp,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
@@ -24,6 +24,7 @@ const NAV = [
     group: 'Content',
     items: [
       { label: 'Content',       icon: Globe,            path: '/dashboard/admin/pages'            },
+      { label: 'Why Choose Us', icon: ThumbsUp,         path: '/dashboard/admin/why-choose-us'   },
       { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
       { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },
       { label: 'Gallery',       icon: ImageIcon,        path: '/dashboard/admin/gallery'          },

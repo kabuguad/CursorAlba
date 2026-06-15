@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom'
+import { useState, useMemo } from 'react'
+import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, BookOpen, CalendarDays, ImageIcon,
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
-  Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
+  Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight, ChevronDown,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
   Moon, Sun, UserCog, Globe, Trophy, Music, Star, Activity, ThumbsUp,
 } from 'lucide-react'
@@ -21,9 +21,9 @@ const NAV = [
     ],
   },
   {
-    group: 'Content',
+    group: 'Content & Media',
     items: [
-      { label: 'Content',       icon: Globe,            path: '/dashboard/admin/pages'            },
+      { label: 'Pages & Text',  icon: Globe,            path: '/dashboard/admin/pages'            },
       { label: 'Why Choose Us', icon: ThumbsUp,         path: '/dashboard/admin/why-choose-us'   },
       { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
       { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },
@@ -40,26 +40,21 @@ const NAV = [
     ],
   },
   {
-    group: 'School',
+    group: 'School Management',
     items: [
       { label: 'Admissions',    icon: ClipboardList,    path: '/dashboard/admin/admissions'       },
       { label: 'Students',      icon: Users,            path: '/dashboard/admin/students'         },
       { label: 'Staff',         icon: UserCheck,        path: '/dashboard/admin/staff'            },
       { label: 'Academics',     icon: GraduationCap,    path: '/dashboard/admin/academics'        },
       { label: 'Timetable',     icon: Clock,            path: '/dashboard/admin/timetable'        },
+      { label: 'Announcements', icon: Megaphone,        path: '/dashboard/admin/announcements'    },
     ],
   },
   {
-    group: 'Finances',
+    group: 'Finance',
     items: [
       { label: 'Payments',      icon: CreditCard,       path: '/dashboard/admin/payments'         },
       { label: 'Fee Structure', icon: Banknote,         path: '/dashboard/admin/fees'             },
-    ],
-  },
-  {
-    group: 'Comms',
-    items: [
-      { label: 'Announcements', icon: Megaphone,        path: '/dashboard/admin/announcements'    },
     ],
   },
   {
@@ -76,6 +71,7 @@ export function AdminLayout() {
   const { showToast } = useToast()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
+  const location = useLocation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [collapsed,  setCollapsed]  = useState(false)
 
@@ -86,6 +82,28 @@ export function AdminLayout() {
     showToast('Logged out successfully')
     navigate('/login')
   }
+
+  const activeGroup = useMemo(() =>
+    NAV.find(g => g.items.some(i =>
+      i.path === '/dashboard/admin'
+        ? location.pathname === i.path
+        : location.pathname.startsWith(i.path)
+    ))?.group ?? 'Overview'
+  , [location.pathname])
+
+  const [openGroups, setOpenGroups] = useState<Set<string>>(
+    () => new Set(NAV.map(g => g.group))
+  )
+
+  const toggleGroup = (group: string) => {
+    setOpenGroups(prev => {
+      const next = new Set(prev)
+      next.has(group) ? next.delete(group) : next.add(group)
+      return next
+    })
+  }
+
+  const isGroupOpen = (group: string) => openGroups.has(group) || activeGroup === group
 
   const SidebarContent = () => (
     <>
@@ -113,38 +131,58 @@ export function AdminLayout() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-2 py-4">
-        {NAV.map(group => (
-          <div key={group.group} className="mb-3">
-            {!collapsed && (
-              <p className="mb-1 px-3 text-[9px] font-bold uppercase tracking-widest text-gray-400 dark:text-white/25">
-                {group.group}
-              </p>
-            )}
-            <div className="space-y-0.5">
-              {group.items.map(item => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.path === '/dashboard/admin'}
-                  onClick={() => setDrawerOpen(false)}
-                  title={collapsed ? item.label : undefined}
-                  className={({ isActive }) => cn(
-                    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
-                    'hover:bg-gray-100 dark:hover:bg-white/8',
+      <nav className="flex-1 overflow-y-auto px-2 py-3">
+        {NAV.map(group => {
+          const open = isGroupOpen(group.group)
+          const isActive = activeGroup === group.group
+          return (
+            <div key={group.group} className="mb-1">
+              {!collapsed && (
+                <button
+                  onClick={() => toggleGroup(group.group)}
+                  className={cn(
+                    'flex w-full items-center justify-between rounded-lg px-3 py-1.5 mb-0.5 transition-colors',
                     isActive
-                      ? 'bg-[#E8B84B]/12 text-[#E8B84B] ring-1 ring-inset ring-[#E8B84B]/25'
-                      : 'text-gray-500 dark:text-white/55 hover:text-gray-900 dark:hover:text-white/90',
-                    collapsed && 'justify-center px-0 py-3',
+                      ? 'text-[#E8B84B]'
+                      : 'text-gray-400 dark:text-white/30 hover:text-gray-600 dark:hover:text-white/60',
                   )}
                 >
-                  <item.icon className="h-[18px] w-[18px] shrink-0" />
-                  {!collapsed && <span>{item.label}</span>}
-                </NavLink>
-              ))}
+                  <span className="text-[9px] font-bold uppercase tracking-widest">
+                    {group.group}
+                  </span>
+                  <ChevronDown className={cn(
+                    'h-3 w-3 transition-transform duration-200',
+                    !open && '-rotate-90',
+                  )} />
+                </button>
+              )}
+              {(open || collapsed) && (
+                <div className="space-y-0.5">
+                  {group.items.map(item => (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      end={item.path === '/dashboard/admin'}
+                      onClick={() => setDrawerOpen(false)}
+                      title={collapsed ? item.label : undefined}
+                      className={({ isActive }) => cn(
+                        'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
+                        'hover:bg-gray-100 dark:hover:bg-white/8',
+                        isActive
+                          ? 'bg-[#E8B84B]/12 text-[#E8B84B] ring-1 ring-inset ring-[#E8B84B]/25'
+                          : 'text-gray-500 dark:text-white/55 hover:text-gray-900 dark:hover:text-white/90',
+                        collapsed && 'justify-center px-0 py-3',
+                      )}
+                    >
+                      <item.icon className="h-[18px] w-[18px] shrink-0" />
+                      {!collapsed && <span>{item.label}</span>}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
       </nav>
 
       {/* Bottom */}

@@ -5,7 +5,7 @@ import {
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
-  Moon, Sun, UserCog, Globe,
+  Moon, Sun, UserCog, Globe, Trophy, Music, Star, Activity,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
@@ -27,6 +27,15 @@ const NAV = [
       { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
       { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },
       { label: 'Gallery',       icon: ImageIcon,        path: '/dashboard/admin/gallery'          },
+    ],
+  },
+  {
+    group: 'Co-Curricular',
+    items: [
+      { label: 'Activities',    icon: Activity,         path: '/dashboard/admin/co-curricular'    },
+      { label: 'Sports',        icon: Trophy,           path: '/dashboard/admin/sports'           },
+      { label: 'Music Academy', icon: Music,            path: '/dashboard/admin/music'            },
+      { label: 'Drama & Dance', icon: Star,             path: '/dashboard/admin/drama'            },
     ],
   },
   {

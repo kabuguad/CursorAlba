@@ -80,6 +80,10 @@ import { TimetableManager }     from './pages/dashboards/admin/TimetableManager'
 import { PaymentsManager }      from './pages/dashboards/admin/PaymentsManager'
 import { AccountsManager }      from './pages/dashboards/admin/AccountsManager'
 import { PagesManager }         from './pages/dashboards/admin/PagesManager'
+import { CoCurrManager }       from './pages/dashboards/admin/CoCurrManager'
+import { SportsManager }       from './pages/dashboards/admin/SportsManager'
+import { MusicManager }        from './pages/dashboards/admin/MusicManager'
+import { DramaDanceManager }   from './pages/dashboards/admin/DramaDanceManager'
 
 function App() {
   return (
@@ -175,6 +179,10 @@ function App() {
                 <Route path="blog"          element={<BlogManager />} />
                 <Route path="events"        element={<EventsManager />} />
                 <Route path="gallery"       element={<GalleryManager />} />
+                <Route path="co-curricular" element={<CoCurrManager />} />
+                <Route path="sports"        element={<SportsManager />} />
+                <Route path="music"         element={<MusicManager />} />
+                <Route path="drama"         element={<DramaDanceManager />} />
                 <Route path="admissions"    element={<AdmissionsManager />} />
                 <Route path="students"      element={<StudentsManager />} />
                 <Route path="staff"         element={<StaffManager />} />

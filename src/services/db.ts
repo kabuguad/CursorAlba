@@ -511,6 +511,17 @@ export interface SportFixture {
   status: 'upcoming' | 'live' | 'completed'
 }
 
+// ── Academics — CBC Competencies ───────────────────────────────────────────
+
+export interface AcademicsCompetency {
+  id: string
+  icon: string
+  title: string
+  desc: string
+  isFeatured: boolean
+  sortOrder: number
+}
+
 // ── Academics — School Levels ──────────────────────────────────────────────
 
 export interface AcademicsSchoolLevel {
@@ -613,6 +624,7 @@ export interface DB {
   aboutCoreValues: AboutCoreValue[]
   aboutHistoryItems: AboutHistoryItem[]
   academicsSchoolLevels: AcademicsSchoolLevel[]
+  academicsCompetencies: AcademicsCompetency[]
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -1277,6 +1289,16 @@ function createSeed(): DB {
     blk('cb-fa-04','pg-facilities','cta.subtext',     'CTA Box Subtext',          'textarea','Book a campus tour and see our facilities first-hand. Adjacent to the Governor\'s Offices, Kutus.','Body text in the call-to-action box', 4),
   ]
 
+  const academicsCompetencies: AcademicsCompetency[] = [
+    { id: 'ac-1', icon: '🗣️', title: 'Communication & Collaboration',    desc: 'Learners express ideas clearly, listen actively, and work effectively in teams — skills essential in every career and community.',                                                              isFeatured: false, sortOrder: 1 },
+    { id: 'ac-2', icon: '🧠', title: 'Critical Thinking & Problem Solving', desc: 'Structured inquiry, analysis, and creative problem-solving are woven into every subject so learners tackle real challenges with confidence.',                                                         isFeatured: false, sortOrder: 2 },
+    { id: 'ac-3', icon: '💡', title: 'Creativity & Imagination',           desc: 'From arts to STEM, learners are challenged to generate original ideas, experiment boldly, and appreciate diverse forms of expression.',                                                                  isFeatured: false, sortOrder: 3 },
+    { id: 'ac-4', icon: '🌍', title: 'Citizenship',                        desc: 'Understanding rights, duties, and active community participation builds responsible, patriotic, and globally aware young Kenyans.',                                                                      isFeatured: false, sortOrder: 4 },
+    { id: 'ac-5', icon: '💻', title: 'Digital Literacy',                   desc: 'ICT is a cross-cutting element at Alber — from responsible internet use and data privacy to coding and digital content creation.',                                                                     isFeatured: false, sortOrder: 5 },
+    { id: 'ac-6', icon: '📖', title: 'Learning to Learn',                  desc: 'Learners develop metacognitive skills — reflection, self-regulation, and adaptability — so they grow continuously throughout life.',                                                                    isFeatured: false, sortOrder: 6 },
+    { id: 'ac-7', icon: '💪', title: 'Self-Efficacy',                      desc: 'Building self-confidence, resilience, and a growth mindset ensures every learner believes in their ability to overcome obstacles.',                                                                     isFeatured: true,  sortOrder: 7 },
+  ]
+
   const academicsSchoolLevels: AcademicsSchoolLevel[] = [
     { id: 'sl-1', slug: 'playgroup',     name: 'Playgroup',      ages: 'Ages 2 – 3',               icon: '🧸', colorKey: 'pink',   desc: 'A warm, nurturing environment that sparks curiosity through play. Children develop social, emotional, and early language skills in our purpose-built Playgroup centre.',          highlights: 'Play-based learning\nStructured routines\nCreative exploration\nSocial development\nMusic & movement\nEarly number sense',                                                                                                                                         sortOrder: 1 },
     { id: 'sl-2', slug: 'ecde',          name: 'ECDE',           ages: 'PP1 & PP2 · Ages 4 – 5',   icon: '🌱', colorKey: 'green',  desc: 'Early Childhood Development Education aligned to the CBC framework. PP1 and PP2 build foundational literacy, numeracy, and environmental awareness through structured activities.', highlights: 'Language Activities\nMathematical Activities\nEnvironmental Activities\nPsychomotor & Creative Arts\nReligious Education\nMusic',                                                                                                                                    sortOrder: 2 },
@@ -1314,13 +1336,13 @@ function createSeed(): DB {
     publicFeeRows, publicTeachers, publicSportFixtures,
     cmsPages, cmsBlocks,
     aboutCoreValues, aboutHistoryItems,
-    academicsSchoolLevels,
+    academicsSchoolLevels, academicsCompetencies,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v7'
+const STORAGE_KEY = 'alber_db_v8'
 
 function loadStore(): DB {
   try {

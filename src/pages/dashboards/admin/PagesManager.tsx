@@ -11,6 +11,7 @@ import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
 import { useCreateCmsBlock, useDeleteCmsBlock } from '../../../hooks/useCmsData'
 import { LEVEL_COLOR_MAP } from '../../../lib/academicsColors'
+import type { AcademicsCompetency } from '../../../services/contentService'
 
 const BLOCK_TYPES: { value: CmsBlockType; label: string; hint: string }[] = [
   { value: 'text',     label: 'Text',     hint: 'Single-line text (headline, name, phone…)' },
@@ -516,6 +517,149 @@ function HistoryItemsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
                     <Edit2 className="h-3.5 w-3.5" />
                   </button>
                   <button onClick={() => del.mutate(h.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500 transition" title="Delete">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── CBC Competencies CRUD Panel ───────────────────────────────────────────
+function CompetenciesPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({
+    queryKey: ['academics-competencies'],
+    queryFn: () => contentService.listCompetencies().then(unwrap),
+    staleTime: 30_000,
+  })
+
+  const create = useMutation({
+    mutationFn: (dto: Omit<AcademicsCompetency, 'id'>) => contentService.createCompetency(dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['academics-competencies'] }); showToast('Competency added') },
+  })
+  const update = useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<AcademicsCompetency, 'id'>> }) =>
+      contentService.updateCompetency(id, dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['academics-competencies'] }); showToast('Competency updated') },
+  })
+  const del = useMutation({
+    mutationFn: (id: string) => contentService.deleteCompetency(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['academics-competencies'] }); showToast('Competency deleted') },
+  })
+
+  type Draft = { icon: string; title: string; desc: string; isFeatured: boolean; sortOrder: number }
+  const blank: Draft = { icon: '⭐', title: '', desc: '', isFeatured: false, sortOrder: items.length + 1 }
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>(blank)
+  const [saving, setSaving] = useState(false)
+
+  const openEdit = (c: AcademicsCompetency) => {
+    setForm({ icon: c.icon, title: c.title, desc: c.desc, isFeatured: c.isFeatured, sortOrder: c.sortOrder })
+    setEditing(c.id)
+  }
+  const openNew = () => { setForm({ ...blank, sortOrder: items.length + 1 }); setEditing('new') }
+  const close   = () => setEditing(null)
+
+  const handleSave = async () => {
+    if (!form.title.trim()) return
+    setSaving(true)
+    try {
+      if (editing === 'new') await create.mutateAsync(form)
+      else if (typeof editing === 'string') await update.mutateAsync({ id: editing, dto: form })
+      close()
+    } finally { setSaving(false) }
+  }
+
+  function CompForm() {
+    return (
+      <div className="space-y-3">
+        <div className="grid grid-cols-[64px_1fr] gap-3">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Icon</label>
+            <input className={FIELD} value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} placeholder="💡" />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Title <span className="text-gold">*</span></label>
+            <input className={FIELD} value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. Digital Literacy" autoFocus />
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Description</label>
+          <textarea rows={3} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} placeholder="What this competency means for learners…" />
+        </div>
+        <div className="flex items-center gap-6">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Sort Order</label>
+            <input type="number" min={1} className={`${FIELD} w-24`} value={form.sortOrder} onChange={e => setForm(f => ({ ...f, sortOrder: Number(e.target.value) }))} />
+          </div>
+          <div className="flex items-center gap-2 pt-4">
+            <button
+              type="button"
+              onClick={() => setForm(f => ({ ...f, isFeatured: !f.isFeatured }))}
+              className={cn(
+                'relative h-5 w-9 rounded-full transition-colors',
+                form.isFeatured ? 'bg-[#E8B84B]' : 'bg-gray-300 dark:bg-gray-600',
+              )}
+            >
+              <span className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform', form.isFeatured ? 'translate-x-4' : 'translate-x-0.5')} />
+            </button>
+            <span className="text-xs text-muted">Featured <span className="text-[10px]">(wide gold-gradient card)</span></span>
+          </div>
+        </div>
+        <div className="flex gap-2 pt-1">
+          <button onClick={handleSave} disabled={saving || !form.title.trim()} className={BTN_GOLD}>
+            {saving ? 'Saving…' : <><Check className="h-3.5 w-3.5" /> Save</>}
+          </button>
+          <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-8 max-w-3xl space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted">CBC Competencies</h2>
+          <p className="text-xs text-muted mt-0.5">Manage the competency cards in the "Our Approach / CBC Difference" section. Toggle <strong>Featured</strong> to display a card in the wider gold-accent style.</p>
+        </div>
+        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5" /> Add Competency</button>
+      </div>
+
+      {editing === 'new' && (
+        <GlassCard className="p-5 border-gold/40">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-3">New Competency</p>
+          <CompForm />
+        </GlassCard>
+      )}
+
+      <div className="space-y-2">
+        {[...items].sort((a, b) => a.sortOrder - b.sortOrder).map(c => (
+          <div key={c.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {editing === c.id ? (
+              <div className="p-5"><CompForm /></div>
+            ) : (
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-2xl w-8 text-center flex-shrink-0">{c.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold truncate">{c.title}</p>
+                    {c.isFeatured && (
+                      <span className="rounded-full bg-[#E8B84B]/20 px-2 py-0.5 text-[10px] font-bold text-[#c49830]">Featured</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted truncate">{c.desc}</p>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button onClick={() => openEdit(c)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60 dark:hover:bg-dark-card transition" title="Edit">
+                    <Edit2 className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={() => del.mutate(c.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500 transition" title="Delete">
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -1046,6 +1190,8 @@ export function PagesManager() {
                       <>
                         <hr className="my-2 border-theme" />
                         <SchoolLevelsPanel qc={queryClient} />
+                        <hr className="my-2 border-theme" />
+                        <CompetenciesPanel qc={queryClient} />
                         <div className="pb-8" />
                       </>
                     )}

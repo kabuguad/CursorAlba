@@ -1,9 +1,9 @@
 import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
 import { getDB, mutateDB } from './db'
-import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel } from './db'
+import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency } from './db'
 import { addAudit } from './auditService'
 
-export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel }
+export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency }
 
 export const contentService = {
   // Media Library
@@ -394,5 +394,34 @@ export const contentService = {
   deleteSchoolLevel: (id: string) => mockDelete(() => {
     mutateDB(db => { db.academicsSchoolLevels = db.academicsSchoolLevels.filter(s => s.id !== id) })
     addAudit({ action: 'DELETE', resource: 'AcademicsSchoolLevel', resourceId: id, details: 'Deleted school level' })
+  }),
+
+  // ── Academics — CBC Competencies ─────────────────────────────────────────
+  listCompetencies: () => mockGet(() =>
+    [...getDB().academicsCompetencies].sort((a, b) => a.sortOrder - b.sortOrder)
+  ),
+
+  createCompetency: (dto: Omit<AcademicsCompetency, 'id'>) => mockPost(() => {
+    const item: AcademicsCompetency = { id: newId('AC'), ...dto }
+    mutateDB(db => { db.academicsCompetencies.push(item) })
+    addAudit({ action: 'CREATE', resource: 'AcademicsCompetency', resourceId: item.id, details: `Added competency: ${item.title}` })
+    return item
+  }),
+
+  updateCompetency: (id: string, dto: Partial<Omit<AcademicsCompetency, 'id'>>) => mockPut(() => {
+    let updated: AcademicsCompetency | undefined
+    mutateDB(db => {
+      const idx = db.academicsCompetencies.findIndex(c => c.id === id)
+      if (idx === -1) throw new Error('Competency not found')
+      updated = { ...db.academicsCompetencies[idx], ...dto }
+      db.academicsCompetencies[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'AcademicsCompetency', resourceId: id, details: `Updated competency: ${updated?.title}` })
+    return updated!
+  }),
+
+  deleteCompetency: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.academicsCompetencies = db.academicsCompetencies.filter(c => c.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'AcademicsCompetency', resourceId: id, details: 'Deleted competency' })
   }),
 }

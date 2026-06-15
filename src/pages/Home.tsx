@@ -8,8 +8,8 @@ import { AnimatedCounter } from '../components/ui/AnimatedCounter'
 import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
+import { useCmsVal } from '../hooks/useCmsData'
 import type { PublicEvent, PublicProgramLevel } from '../services/db'
-import { useCmsBlocks } from '../hooks/useCmsData'
 
 const HERO_IMAGES = [
   'https://picsum.photos/seed/alber-campus/1200/800',
@@ -94,6 +94,8 @@ export function Home() {
   const [testimonial, setTestimonial] = useState(0)
   const { data: homeBlocks = [] } = useCmsBlocks('pg-home')
   const get = (key: string, fallback: string) => homeBlocks.find((b) => b.key === key)?.value || fallback
+
+  const get = useCmsVal('pg-home')
 
   const { data: events = [], isLoading: eventsLoading } = useQuery({
     queryKey: ['public-events'],
@@ -248,7 +250,7 @@ export function Home() {
 
             {/* Tagline */}
             <p className="mb-7 text-base leading-relaxed text-white/70">
-              {get('hero.subtitle', "Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.")}
+              {get('hero.subtitle', 'Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.')}
             </p>
 
             {/* CTAs */}
@@ -269,22 +271,17 @@ export function Home() {
           {/* Stats bar — mobile */}
           <div className="border-t border-white/10 bg-black/90">
             <div className="grid grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
-              <div className="flex flex-col items-center py-4 px-2 text-center">
-                <span className="text-2xl font-extrabold text-gold">{get('stats.students', '2,000+')}</span>
-                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">Students Enrolled</span>
-              </div>
-              <div className="flex flex-col items-center py-4 px-2 text-center">
-                <span className="text-2xl font-extrabold text-gold">{get('stats.teachers', '120+')}</span>
-                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">Expert Educators</span>
-              </div>
-              <div className="flex flex-col items-center py-4 px-2 text-center">
-                <span className="text-2xl font-extrabold text-gold"><AnimatedCounter end={8} suffix="" /></span>
-                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">School Buses</span>
-              </div>
-              <div className="flex flex-col items-center py-4 px-2 text-center">
-                <span className="text-2xl font-extrabold text-gold"><AnimatedCounter end={6} suffix="" /></span>
-                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">Sports Disciplines</span>
-              </div>
+              {[
+                { value: get('stats.students', '2,000+'), label: 'Students Enrolled' },
+                { value: get('stats.teachers', '120+'), label: 'Expert Educators' },
+                { value: get('stats.established', '2005'), label: 'Est.' },
+                { value: '6', label: 'Sports Disciplines' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center py-4 px-2 text-center">
+                  <span className="text-2xl font-extrabold text-gold">{stat.value}</span>
+                  <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">{stat.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -349,7 +346,7 @@ export function Home() {
               </div>
 
               <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
-                {get('hero.subtitle', "Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.")}
+                {get('hero.subtitle', 'Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.')}
               </p>
 
               <div className="flex flex-wrap gap-4">
@@ -404,7 +401,7 @@ export function Home() {
                         {get('director.quote', 'Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.')}
                       </p>
                       <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-                        <span className="font-serif text-lg italic text-gold/80">{get('director.name', 'Albert Njeru').split(' ').slice(-1)[0]}</span>
+                        <span className="font-serif text-lg italic text-gold/80">{get('director.name', 'Albert Njeru')}</span>
                         <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
                       </div>
                     </div>
@@ -425,22 +422,17 @@ export function Home() {
           {/* Stats bar — desktop */}
           <div className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
             <div className="mx-auto grid max-w-7xl grid-cols-4 divide-x divide-white/10">
-              <div className="flex flex-col items-center py-5 px-4 text-center">
-                <span className="text-3xl font-extrabold text-gold">{get('stats.students', '2,000+')}</span>
-                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">Students Enrolled</span>
-              </div>
-              <div className="flex flex-col items-center py-5 px-4 text-center">
-                <span className="text-3xl font-extrabold text-gold">{get('stats.teachers', '120+')}</span>
-                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">Expert Educators</span>
-              </div>
-              <div className="flex flex-col items-center py-5 px-4 text-center">
-                <span className="text-3xl font-extrabold text-gold"><AnimatedCounter end={8} suffix="" /></span>
-                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">School Buses</span>
-              </div>
-              <div className="flex flex-col items-center py-5 px-4 text-center">
-                <span className="text-3xl font-extrabold text-gold"><AnimatedCounter end={6} suffix="" /></span>
-                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">Sports Disciplines</span>
-              </div>
+              {[
+                { value: get('stats.students', '2,000+'), label: 'Students Enrolled' },
+                { value: get('stats.teachers', '120+'), label: 'Expert Educators' },
+                { value: get('stats.established', '2005'), label: 'Est.' },
+                { value: '6', label: 'Sports Disciplines' },
+              ].map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
+                  <span className="text-3xl font-extrabold text-gold">{stat.value}</span>
+                  <span className="mt-1 text-xs uppercase tracking-widest text-white/60">{stat.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -559,21 +551,15 @@ export function Home() {
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <h3 className="mt-5 text-xl font-bold text-primary dark:text-gold">Mr. Albert Njeru</h3>
-                <p className="mt-1 text-sm text-muted">Founder & School Director</p>
+                <h3 className="mt-5 text-xl font-bold text-primary dark:text-gold">{get('director.name', 'Mr. Albert Njeru')}</h3>
+                <p className="mt-1 text-sm text-muted">{get('director.title', 'Founder & School Director')}</p>
                 <p className="mt-1 text-xs text-muted">M.Ed., University of Nairobi</p>
                 <div className="mt-4 h-1 w-12 rounded-full bg-gold/60" />
               </div>
               <div className="flex flex-1 flex-col justify-center p-10">
                 <Quote className="mb-6 h-10 w-10 text-gold opacity-50" />
-                <p className="text-lg leading-relaxed text-muted">
-                  When I founded Alber School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.
-                </p>
-                <p className="mt-5 text-lg leading-relaxed text-muted">
-                  Today, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Alber School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.
-                </p>
-                <p className="mt-5 text-lg leading-relaxed text-muted">
-                  We warmly welcome you to come and see it for yourself.
+                <p className="text-lg leading-relaxed text-muted whitespace-pre-line">
+                  {get('director.quote', 'When I founded Alber School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.\n\nToday, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Alber School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.\n\nWe warmly welcome you to come and see it for yourself.')}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
                   <Link to="/contact">

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, FileText, BookOpen, CalendarDays, ImageIcon,
+  LayoutDashboard, BookOpen, CalendarDays, ImageIcon,
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
@@ -23,8 +23,7 @@ const NAV = [
   {
     group: 'Content',
     items: [
-      { label: 'Pages',         icon: Globe,            path: '/dashboard/admin/pages'            },
-      { label: 'Home & About',  icon: FileText,         path: '/dashboard/admin/content'          },
+      { label: 'Content',       icon: Globe,            path: '/dashboard/admin/pages'            },
       { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
       { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },
       { label: 'Gallery',       icon: ImageIcon,        path: '/dashboard/admin/gallery'          },

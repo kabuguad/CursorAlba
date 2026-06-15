@@ -536,6 +536,19 @@ export interface AcademicsSchoolLevel {
   sortOrder: number
 }
 
+// ── Facilities ─────────────────────────────────────────────────────────────
+
+export interface Facility {
+  id: string
+  name: string
+  icon: string
+  desc: string
+  img: string
+  highlights: string  // newline-separated list
+  sortOrder: number
+  isPublished: boolean
+}
+
 // ── About Page Structured Data ─────────────────────────────────────────────
 
 export interface AboutCoreValue {
@@ -625,6 +638,7 @@ export interface DB {
   aboutHistoryItems: AboutHistoryItem[]
   academicsSchoolLevels: AcademicsSchoolLevel[]
   academicsCompetencies: AcademicsCompetency[]
+  facilities: Facility[]
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -1326,6 +1340,41 @@ function createSeed(): DB {
     { id: 'hi-6', year: '2026', title: 'Digital Frontier',  desc: '360° virtual tours, smart classrooms, and digital learning platforms launched. 2,000+ students, 120+ staff.', sortOrder: 6 },
   ]
 
+  const facilities: Facility[] = [
+    { id: 'fac-1', name: 'Smart Classrooms',      icon: '🖥️', sortOrder: 1, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-classroom/800/600',
+      desc: '86 air-conditioned smart classrooms with interactive whiteboards, high-speed Wi-Fi, and ergonomic furniture designed for CBC and IGCSE learning.',
+      highlights: 'Interactive whiteboards\nHigh-speed fibre internet\nAir-conditioned\nCCTV monitored' },
+    { id: 'fac-2', name: 'Music Studio',           icon: '🎵', sortOrder: 2, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-music/800/600',
+      desc: 'Professional music studios with Steinway-ready piano rooms, acoustic-treated recording booths, ensemble rehearsal halls, and an ABRSM examination centre.',
+      highlights: 'Piano rooms\nRecording booth\nEnsemble hall\nABRSM centre' },
+    { id: 'fac-3', name: 'Dance Studio',           icon: '🩰', sortOrder: 3, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-dance/800/600',
+      desc: 'Full-wall mirrors, sprung wooden floors, professional lighting rigs, and 4K capture systems for portfolio development and performance recording.',
+      highlights: 'Sprung floors\nFull-wall mirrors\nProfessional lighting\n4K recording' },
+    { id: 'fac-4', name: 'Sports Complex',         icon: '🏟️', sortOrder: 4, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-sports/800/600',
+      desc: 'Premium sports complex with two football pitches, basketball and volleyball courts, 25m swimming pool, 400m athletics track, and a fully equipped gym.',
+      highlights: '25m swimming pool\nFootball pitches\nAthletics track\nFully equipped gym' },
+    { id: 'fac-5', name: 'Digital Library',        icon: '📚', sortOrder: 5, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-library/800/600',
+      desc: 'A 10,000-volume library with digital cataloguing, quiet study rooms, a maker space, and access to global online databases and journals.',
+      highlights: '10,000+ volumes\nDigital catalogue\nStudy rooms\nOnline database access' },
+    { id: 'fac-6', name: 'Dining Hall',            icon: '🍽️', sortOrder: 6, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-dining/800/600',
+      desc: 'Spacious dining hall serving 600 students per sitting. Balanced, nutritionist-approved menus with halal, vegetarian, and allergy-aware options.',
+      highlights: '600-seat capacity\nNutritionist menus\nHalal & vegetarian\nAllergy-aware' },
+    { id: 'fac-7', name: 'School Buses',           icon: '🚌', sortOrder: 7, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-buses/800/600',
+      desc: 'Eight modern, GPS-tracked school buses covering Kutus, Kerugoya, Sagana, Kagio, Kagumo, Kianyaga, Mutira, and Ngariama routes.',
+      highlights: '8 buses\nGPS tracked\n8 routes\nLicensed drivers' },
+    { id: 'fac-8', name: 'Science Laboratories',   icon: '🔬', sortOrder: 8, isPublished: true,
+      img: 'https://picsum.photos/seed/facility-science/800/600',
+      desc: 'Four dedicated labs — Biology, Chemistry, Physics, and Computer Science — equipped for KNEC and Cambridge IGCSE practical examinations.',
+      highlights: 'Biology lab\nChemistry lab\nPhysics lab\nComputer science lab' },
+  ]
+
   return {
     users, students, staff, academicYears, classes, subjects, assessmentSchemes,
     exams, payments, invoices, scholarships, expenses, feeStructures,
@@ -1337,12 +1386,13 @@ function createSeed(): DB {
     cmsPages, cmsBlocks,
     aboutCoreValues, aboutHistoryItems,
     academicsSchoolLevels, academicsCompetencies,
+    facilities,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v8'
+const STORAGE_KEY = 'alber_db_v9'
 
 function loadStore(): DB {
   try {

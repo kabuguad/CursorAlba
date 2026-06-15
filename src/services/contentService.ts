@@ -1,9 +1,9 @@
 import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
 import { getDB, mutateDB } from './db'
-import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency } from './db'
+import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility } from './db'
 import { addAudit } from './auditService'
 
-export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency }
+export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility }
 
 export const contentService = {
   // Media Library
@@ -423,5 +423,34 @@ export const contentService = {
   deleteCompetency: (id: string) => mockDelete(() => {
     mutateDB(db => { db.academicsCompetencies = db.academicsCompetencies.filter(c => c.id !== id) })
     addAudit({ action: 'DELETE', resource: 'AcademicsCompetency', resourceId: id, details: 'Deleted competency' })
+  }),
+
+  // ── Facilities ────────────────────────────────────────────────────────────
+  listFacilities: () => mockGet(() =>
+    [...getDB().facilities].sort((a, b) => a.sortOrder - b.sortOrder)
+  ),
+
+  createFacility: (dto: Omit<Facility, 'id'>) => mockPost(() => {
+    const item: Facility = { id: newId('FAC'), ...dto }
+    mutateDB(db => { db.facilities.push(item) })
+    addAudit({ action: 'CREATE', resource: 'Facility', resourceId: item.id, details: `Added facility: ${item.name}` })
+    return item
+  }),
+
+  updateFacility: (id: string, dto: Partial<Omit<Facility, 'id'>>) => mockPut(() => {
+    let updated: Facility | undefined
+    mutateDB(db => {
+      const idx = db.facilities.findIndex(f => f.id === id)
+      if (idx === -1) throw new Error('Facility not found')
+      updated = { ...db.facilities[idx], ...dto }
+      db.facilities[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'Facility', resourceId: id, details: `Updated facility: ${updated?.name}` })
+    return updated!
+  }),
+
+  deleteFacility: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.facilities = db.facilities.filter(f => f.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'Facility', resourceId: id, details: 'Deleted facility' })
   }),
 }

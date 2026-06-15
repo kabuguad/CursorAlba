@@ -1,86 +1,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
+import { X, Loader2 } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { useCmsBlocks } from '../hooks/useCmsData'
+import { contentService, type Facility } from '../services/contentService'
+import { unwrap } from '../services/mockApi'
 
 function useCms() {
   const { data: blocks = [] } = useCmsBlocks('pg-facilities')
   return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
 }
-
-const FACILITIES = [
-  {
-    id: 'classrooms',
-    name: 'Smart Classrooms',
-    icon: '🖥️',
-    desc: '86 air-conditioned smart classrooms with interactive whiteboards, high-speed Wi-Fi, and ergonomic furniture designed for CBC and IGCSE learning.',
-    img: 'https://picsum.photos/seed/facility-classroom/800/600',
-    highlights: ['Interactive whiteboards', 'High-speed fibre internet', 'Air-conditioned', 'CCTV monitored'],
-  },
-  {
-    id: 'music',
-    name: 'Music Studio',
-    icon: '🎵',
-    desc: 'Professional music studios with Steinway-ready piano rooms, acoustic-treated recording booths, ensemble rehearsal halls, and an ABRSM examination centre.',
-    img: 'https://picsum.photos/seed/facility-music/800/600',
-    highlights: ['Piano rooms', 'Recording booth', 'Ensemble hall', 'ABRSM centre'],
-  },
-  {
-    id: 'dance',
-    name: 'Dance Studio',
-    icon: '🩰',
-    desc: 'Full-wall mirrors, sprung wooden floors, professional lighting rigs, and 4K capture systems for portfolio development and performance recording.',
-    img: 'https://picsum.photos/seed/facility-dance/800/600',
-    highlights: ['Sprung floors', 'Full-wall mirrors', 'Professional lighting', '4K recording'],
-  },
-  {
-    id: 'sports',
-    name: 'Sports Complex',
-    icon: '🏟️',
-    desc: 'Premium sports complex with two football pitches, basketball and volleyball courts, 25m swimming pool, 400m athletics track, and a fully equipped gym.',
-    img: 'https://picsum.photos/seed/facility-sports/800/600',
-    highlights: ['25m swimming pool', 'Football pitches', 'Athletics track', 'Fully equipped gym'],
-  },
-  {
-    id: 'library',
-    name: 'Digital Library',
-    icon: '📚',
-    desc: 'A 10,000-volume library with digital cataloguing, quiet study rooms, a maker space, and access to global online databases and journals.',
-    img: 'https://picsum.photos/seed/facility-library/800/600',
-    highlights: ['10,000+ volumes', 'Digital catalogue', 'Study rooms', 'Online database access'],
-  },
-  {
-    id: 'dining',
-    name: 'Dining Hall',
-    icon: '🍽️',
-    desc: 'Spacious dining hall serving 600 students per sitting. Balanced, nutritionist-approved menus with halal, vegetarian, and allergy-aware options.',
-    img: 'https://picsum.photos/seed/facility-dining/800/600',
-    highlights: ['600-seat capacity', 'Nutritionist menus', 'Halal & vegetarian', 'Allergy-aware'],
-  },
-  {
-    id: 'buses',
-    name: 'School Buses',
-    icon: '🚌',
-    desc: 'Eight modern, GPS-tracked school buses covering Kutus, Kerugoya, Sagana, Kagio, Kagumo, Kianyaga, Mutira, and Ngariama routes.',
-    img: 'https://picsum.photos/seed/facility-buses/800/600',
-    highlights: ['8 buses', 'GPS tracked', '8 routes', 'Licensed drivers'],
-  },
-  {
-    id: 'science',
-    name: 'Science Laboratories',
-    icon: '🔬',
-    desc: 'Four dedicated labs — Biology, Chemistry, Physics, and Computer Science — equipped for KNEC and Cambridge IGCSE practical examinations.',
-    img: 'https://picsum.photos/seed/facility-science/800/600',
-    highlights: ['Biology lab', 'Chemistry lab', 'Physics lab', 'Computer science lab'],
-  },
-]
-
-type Facility = typeof FACILITIES[number]
 
 interface FacilityModalProps {
   open: boolean
@@ -98,9 +32,7 @@ function FacilityModal({ open, facility, onClose }: FacilityModalProps) {
       document.body.style.position = 'fixed'
       document.body.style.top = `-${scrollYRef.current}px`
       document.body.style.width = '100%'
-      if (contentRef.current) {
-        contentRef.current.scrollTop = 0
-      }
+      if (contentRef.current) contentRef.current.scrollTop = 0
     } else {
       document.body.style.position = ''
       document.body.style.top = ''
@@ -113,6 +45,10 @@ function FacilityModal({ open, facility, onClose }: FacilityModalProps) {
       document.body.style.width = ''
     }
   }, [open])
+
+  const highlights = facility?.highlights
+    ? facility.highlights.split('\n').map(h => h.trim()).filter(Boolean)
+    : []
 
   return createPortal(
     <AnimatePresence>
@@ -137,22 +73,26 @@ function FacilityModal({ open, facility, onClose }: FacilityModalProps) {
             >
               <X className="h-6 w-6" />
             </button>
-            <img
-              src={facility.img}
-              alt={facility.name}
-              className="h-64 w-full object-cover lg:h-auto lg:w-1/2 lg:max-h-[90vh]"
-            />
+            {facility.img && (
+              <img
+                src={facility.img}
+                alt={facility.name}
+                className="h-64 w-full object-cover lg:h-auto lg:w-1/2 lg:max-h-[90vh]"
+              />
+            )}
             <div className="flex-1 overflow-y-auto p-8 lg:w-1/2" ref={contentRef}>
               <span className="text-4xl">{facility.icon}</span>
               <h2 className="mt-4 text-3xl font-bold text-primary dark:text-gold">{facility.name}</h2>
               <p className="mt-4 text-muted leading-relaxed">{facility.desc}</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {facility.highlights.map((h) => (
-                  <span key={h} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium">
-                    {h}
-                  </span>
-                ))}
-              </div>
+              {highlights.length > 0 && (
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {highlights.map((h) => (
+                    <span key={h} className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium">
+                      {h}
+                    </span>
+                  ))}
+                </div>
+              )}
               <div className="mt-8">
                 <Link to="/admissions" onClick={onClose}>
                   <Button variant="primary">Apply for Admission</Button>
@@ -170,7 +110,15 @@ function FacilityModal({ open, facility, onClose }: FacilityModalProps) {
 export function Facilities() {
   const get = useCms()
   const [selected, setSelected] = useState<string | null>(null)
-  const active = FACILITIES.find((f) => f.id === selected) ?? null
+
+  const { data: facilities = [], isLoading } = useQuery({
+    queryKey: ['facilities'],
+    queryFn: () => contentService.listFacilities().then(unwrap),
+    staleTime: 60_000,
+  })
+
+  const published = facilities.filter(f => f.isPublished)
+  const active = published.find((f) => f.id === selected) ?? null
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
@@ -179,28 +127,40 @@ export function Facilities() {
         <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'World-class infrastructure designed for modern learning — click any facility to explore.')}</p>
       </ScrollReveal>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {FACILITIES.map((f, i) => (
-          <ScrollReveal key={f.id} delay={i * 0.06}>
-            <button
-              onClick={() => setSelected(f.id)}
-              className="w-full text-left transition-all hover:scale-105"
-            >
-              <GlassCard className="overflow-hidden p-0">
-                <div className="relative h-40 overflow-hidden">
-                  <img src={f.img} alt={f.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <span className="absolute bottom-3 left-3 text-3xl">{f.icon}</span>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold">{f.name}</h3>
-                  <p className="mt-1 text-xs text-muted line-clamp-2">{f.desc}</p>
-                </div>
-              </GlassCard>
-            </button>
-          </ScrollReveal>
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20 gap-3 text-muted">
+          <Loader2 className="h-5 w-5 animate-spin" /> Loading facilities…
+        </div>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {published.map((f, i) => (
+            <ScrollReveal key={f.id} delay={i * 0.06}>
+              <button
+                onClick={() => setSelected(f.id)}
+                className="w-full text-left transition-all hover:scale-105"
+              >
+                <GlassCard className="overflow-hidden p-0">
+                  <div className="relative h-40 overflow-hidden">
+                    {f.img ? (
+                      <img src={f.img} alt={f.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-gold/20 text-5xl">
+                        {f.icon}
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <span className="absolute bottom-3 left-3 text-3xl">{f.icon}</span>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold">{f.name}</h3>
+                    <p className="mt-1 text-xs text-muted line-clamp-2">{f.desc}</p>
+                  </div>
+                </GlassCard>
+              </button>
+            </ScrollReveal>
+          ))}
+        </div>
+      )}
 
       <FacilityModal
         open={!!selected}

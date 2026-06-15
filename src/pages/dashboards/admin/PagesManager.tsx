@@ -11,7 +11,7 @@ import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
 import { useCreateCmsBlock, useDeleteCmsBlock } from '../../../hooks/useCmsData'
 import { LEVEL_COLOR_MAP } from '../../../lib/academicsColors'
-import type { AcademicsCompetency } from '../../../services/contentService'
+import type { AcademicsCompetency, Facility } from '../../../services/contentService'
 import { usePillars } from '../../../contexts/PillarsContext'
 import { GRADIENT_MAP, type Pillar } from '../../../data/pillars'
 
@@ -862,6 +862,186 @@ function SchoolLevelsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
   )
 }
 
+// ── Facilities CRUD Panel ──────────────────────────────────────────────────
+function FacilitiesPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+
+  const { data: items = [] } = useQuery({
+    queryKey: ['facilities'],
+    queryFn: () => contentService.listFacilities().then(unwrap),
+    staleTime: 30_000,
+  })
+
+  const create = useMutation({
+    mutationFn: (dto: Omit<Facility, 'id'>) => contentService.createFacility(dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['facilities'] }); showToast('Facility added') },
+  })
+  const update = useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<Facility, 'id'>> }) =>
+      contentService.updateFacility(id, dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['facilities'] }); showToast('Facility saved') },
+  })
+  const del = useMutation({
+    mutationFn: (id: string) => contentService.deleteFacility(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['facilities'] }); showToast('Facility deleted') },
+  })
+
+  type Draft = Omit<Facility, 'id'>
+  const blank: Draft = { name: '', icon: '🏫', desc: '', img: '', highlights: '', sortOrder: items.length + 1, isPublished: true }
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>(blank)
+  const [saving, setSaving] = useState(false)
+
+  const openEdit = (f: Facility) => {
+    setForm({ name: f.name, icon: f.icon, desc: f.desc, img: f.img, highlights: f.highlights, sortOrder: f.sortOrder, isPublished: f.isPublished })
+    setEditing(f.id)
+  }
+  const openNew = () => { setForm({ ...blank, sortOrder: items.length + 1 }); setEditing('new') }
+  const close   = () => setEditing(null)
+
+  const handleSave = async () => {
+    if (!form.name.trim()) return
+    setSaving(true)
+    try {
+      if (editing === 'new') await create.mutateAsync(form)
+      else if (typeof editing === 'string') await update.mutateAsync({ id: editing, dto: form })
+      close()
+    } finally { setSaving(false) }
+  }
+
+  function FacilityForm() {
+    return (
+      <div className="space-y-4">
+        {/* Row 1: icon + name */}
+        <div className="grid grid-cols-[64px_1fr] gap-3">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Icon</label>
+            <input className={FIELD} value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} placeholder="🏫" />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Name <span className="text-gold">*</span></label>
+            <input className={FIELD} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Science Laboratories" autoFocus />
+          </div>
+        </div>
+
+        {/* Row 2: description */}
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Description</label>
+          <textarea rows={3} className={`${FIELD} resize-none`} value={form.desc}
+            onChange={e => setForm(f => ({ ...f, desc: e.target.value }))}
+            placeholder="Short paragraph shown in the facility detail modal…" />
+        </div>
+
+        {/* Row 3: image URL */}
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Image URL</label>
+          <input className={FIELD} type="url" value={form.img} onChange={e => setForm(f => ({ ...f, img: e.target.value }))} placeholder="https://…" />
+          {form.img && (
+            <img src={form.img} alt="preview" className="mt-2 h-24 w-full rounded-xl object-cover"
+              onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+          )}
+        </div>
+
+        {/* Row 4: highlights */}
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">
+            Highlights <span className="font-normal text-muted">(one per line — shown as tags)</span>
+          </label>
+          <textarea rows={4} className={`${FIELD} resize-none font-mono text-xs`} value={form.highlights}
+            onChange={e => setForm(f => ({ ...f, highlights: e.target.value }))}
+            placeholder={'Interactive whiteboards\nHigh-speed fibre internet\nAir-conditioned\nCCTV monitored'} />
+        </div>
+
+        {/* Row 5: sort order + publish toggle */}
+        <div className="flex items-center gap-6">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Sort Order</label>
+            <input type="number" min={1} className={`${FIELD} w-24`} value={form.sortOrder}
+              onChange={e => setForm(f => ({ ...f, sortOrder: Number(e.target.value) }))} />
+          </div>
+          <div className="flex items-center gap-2 pt-4">
+            <button type="button"
+              onClick={() => setForm(f => ({ ...f, isPublished: !f.isPublished }))}
+              className={cn('relative h-5 w-9 rounded-full transition-colors', form.isPublished ? 'bg-[#E8B84B]' : 'bg-gray-300 dark:bg-gray-600')}>
+              <span className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform', form.isPublished ? 'translate-x-4' : 'translate-x-0.5')} />
+            </button>
+            <span className="text-xs text-muted">Published <span className="text-[10px]">(visible on public site)</span></span>
+          </div>
+        </div>
+
+        <div className="flex gap-2 pt-1">
+          <button onClick={handleSave} disabled={saving || !form.name.trim()} className={BTN_GOLD}>
+            {saving ? 'Saving…' : <><Check className="h-3.5 w-3.5" /> Save</>}
+          </button>
+          <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-8 max-w-3xl space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted">Facilities</h2>
+          <p className="text-xs text-muted mt-0.5">Each card appears on the public Facilities page. Click a card to open a detail modal with image, description, and highlight tags.</p>
+        </div>
+        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5" /> Add Facility</button>
+      </div>
+
+      {editing === 'new' && (
+        <GlassCard className="p-5 border-gold/40">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-3">New Facility</p>
+          <FacilityForm />
+        </GlassCard>
+      )}
+
+      <div className="space-y-2">
+        {[...items].sort((a, b) => a.sortOrder - b.sortOrder).map(f => (
+          <div key={f.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {editing === f.id ? (
+              <div className="p-5"><FacilityForm /></div>
+            ) : (
+              <div className="flex items-center gap-3 px-4 py-3">
+                {f.img ? (
+                  <img src={f.img} alt={f.name} className="h-12 w-16 flex-shrink-0 rounded-lg object-cover" />
+                ) : (
+                  <div className="flex h-12 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 text-2xl">{f.icon}</div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{f.icon}</span>
+                    <p className="text-sm font-semibold truncate">{f.name}</p>
+                    {!f.isPublished && (
+                      <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">DRAFT</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted truncate">{f.desc}</p>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button onClick={() => openEdit(f)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60 dark:hover:bg-dark-card transition" title="Edit">
+                    <Edit2 className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={() => del.mutate(f.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500 transition" title="Delete">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {items.length === 0 && editing === null && (
+        <button onClick={openNew}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-theme py-8 text-sm text-muted transition hover:border-gold/50 hover:text-gold">
+          <Plus className="h-4 w-4" /> Add your first facility
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ── Teaching Pillars CRUD Panel ────────────────────────────────────────────
 const BLANK_PILLAR: Omit<Pillar, 'id'> = { icon: '📌', title: '', desc: '', gradient: 'green' }
 
@@ -1325,6 +1505,15 @@ export function PagesManager() {
                         <CoreValuesPanel qc={queryClient} />
                         <hr className="my-2 border-theme" />
                         <HistoryItemsPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
+
+                    {/* Facilities-specific structured data panel */}
+                    {selectedPageId === 'pg-facilities' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <FacilitiesPanel qc={queryClient} />
                         <div className="pb-8" />
                       </>
                     )}

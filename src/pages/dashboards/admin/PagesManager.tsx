@@ -3,13 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2, Edit2, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { contentService } from '../../../services/contentService'
-import type { CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem } from '../../../services/contentService'
+import type { CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel } from '../../../services/contentService'
 import { unwrap } from '../../../services/mockApi'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Button } from '../../../components/ui/Button'
 import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
 import { useCreateCmsBlock, useDeleteCmsBlock } from '../../../hooks/useCmsData'
+import { LEVEL_COLOR_MAP } from '../../../lib/academicsColors'
 
 const BLOCK_TYPES: { value: CmsBlockType; label: string; hint: string }[] = [
   { value: 'text',     label: 'Text',     hint: 'Single-line text (headline, name, phone…)' },
@@ -273,6 +274,8 @@ function AddBlockModal({
   )
 }
 
+const COLOR_OPTIONS = Object.keys(LEVEL_COLOR_MAP)
+
 // ── Shared styles ─────────────────────────────────────────────────────────
 const FIELD = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
 const BTN_GOLD = 'flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-3 py-1.5 text-xs font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition disabled:opacity-60'
@@ -520,6 +523,194 @@ function HistoryItemsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
             )}
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+// ── School Levels CRUD Panel ───────────────────────────────────────────────
+function SchoolLevelsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: levels = [] } = useQuery({
+    queryKey: ['academics-school-levels'],
+    queryFn: () => contentService.listSchoolLevels().then(unwrap),
+    staleTime: 30_000,
+  })
+
+  const create = useMutation({
+    mutationFn: (dto: Omit<AcademicsSchoolLevel, 'id'>) => contentService.createSchoolLevel(dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['academics-school-levels'] }); showToast('School level added') },
+  })
+  const update = useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<AcademicsSchoolLevel, 'id'>> }) =>
+      contentService.updateSchoolLevel(id, dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['academics-school-levels'] }); showToast('School level updated') },
+  })
+  const del = useMutation({
+    mutationFn: (id: string) => contentService.deleteSchoolLevel(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['academics-school-levels'] }); showToast('School level deleted') },
+  })
+
+  type Draft = Omit<AcademicsSchoolLevel, 'id'>
+  const blank: Draft = { slug: '', name: '', ages: '', icon: '📚', colorKey: 'blue', desc: '', highlights: '', sortOrder: levels.length + 1 }
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>(blank)
+  const [saving, setSaving] = useState(false)
+
+  const slugify = (s: string) => s.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  const [slugTouched, setSlugTouched] = useState(false)
+
+  const openEdit = (s: AcademicsSchoolLevel) => {
+    setForm({ slug: s.slug, name: s.name, ages: s.ages, icon: s.icon, colorKey: s.colorKey, desc: s.desc, highlights: s.highlights, sortOrder: s.sortOrder })
+    setSlugTouched(true)
+    setEditing(s.id)
+  }
+  const openNew = () => {
+    setForm({ ...blank, sortOrder: levels.length + 1 })
+    setSlugTouched(false)
+    setEditing('new')
+  }
+  const close = () => setEditing(null)
+
+  const handleNameChange = (v: string) => {
+    setForm(f => ({ ...f, name: v, slug: slugTouched ? f.slug : slugify(v) }))
+  }
+
+  const handleSave = async () => {
+    if (!form.name.trim() || !form.slug.trim()) return
+    setSaving(true)
+    try {
+      if (editing === 'new') await create.mutateAsync(form)
+      else if (typeof editing === 'string') await update.mutateAsync({ id: editing, dto: form })
+      close()
+    } finally { setSaving(false) }
+  }
+
+  function LevelForm() {
+    return (
+      <div className="space-y-4">
+        {/* Row 1: icon + name */}
+        <div className="grid grid-cols-[64px_1fr] gap-3">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Icon</label>
+            <input className={FIELD} value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} placeholder="📚" />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Name <span className="text-gold">*</span></label>
+            <input className={FIELD} value={form.name} onChange={e => handleNameChange(e.target.value)} placeholder="e.g. Junior School" autoFocus />
+          </div>
+        </div>
+        {/* Row 2: slug + ages */}
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Slug <span className="text-gold">*</span></label>
+            <input className={`${FIELD} font-mono text-xs`} value={form.slug} onChange={e => { setSlugTouched(true); setForm(f => ({ ...f, slug: e.target.value })) }} placeholder="junior-school" />
+            <p className="mt-0.5 text-[10px] text-muted">Used as the tab identifier — lowercase, hyphens only</p>
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Ages / Grades</label>
+            <input className={FIELD} value={form.ages} onChange={e => setForm(f => ({ ...f, ages: e.target.value }))} placeholder="e.g. Grades 7 – 9 · Ages 12 – 14" />
+          </div>
+        </div>
+        {/* Row 3: colour picker */}
+        <div>
+          <label className="mb-2 block text-[10px] font-semibold uppercase text-muted tracking-wider">Card Colour</label>
+          <div className="flex flex-wrap gap-2">
+            {COLOR_OPTIONS.map(ck => {
+              const { color, border } = LEVEL_COLOR_MAP[ck]
+              return (
+                <button
+                  key={ck}
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, colorKey: ck }))}
+                  className={cn(
+                    'h-8 w-8 rounded-lg border-2 bg-gradient-to-br transition-all',
+                    color,
+                    form.colorKey === ck ? 'border-gold scale-110 shadow-md' : border,
+                  )}
+                  title={ck}
+                />
+              )
+            })}
+            <span className="self-center ml-2 text-xs text-muted capitalize">{form.colorKey}</span>
+          </div>
+        </div>
+        {/* Row 4: description */}
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Description</label>
+          <textarea rows={3} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} placeholder="One or two sentences shown under the level name…" />
+        </div>
+        {/* Row 5: learning areas */}
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Learning Areas <span className="font-normal text-muted">(one per line)</span></label>
+          <textarea rows={5} className={`${FIELD} resize-none font-mono text-xs`} value={form.highlights} onChange={e => setForm(f => ({ ...f, highlights: e.target.value }))} placeholder={'English\nKiswahili\nMathematics\n…'} />
+        </div>
+        {/* Row 6: sort order */}
+        <div className="flex items-center gap-3">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Sort Order</label>
+            <input type="number" min={1} className={`${FIELD} w-24`} value={form.sortOrder} onChange={e => setForm(f => ({ ...f, sortOrder: Number(e.target.value) }))} />
+          </div>
+        </div>
+        <div className="flex gap-2 pt-1">
+          <button onClick={handleSave} disabled={saving || !form.name.trim() || !form.slug.trim()} className={BTN_GOLD}>
+            {saving ? 'Saving…' : <><Check className="h-3.5 w-3.5" /> Save Level</>}
+          </button>
+          <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-8 max-w-3xl space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted">School Structure</h2>
+          <p className="text-xs text-muted mt-0.5">Manage the level tabs shown in the School Structure selector on the Academics page.</p>
+        </div>
+        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5" /> Add Level</button>
+      </div>
+
+      {editing === 'new' && (
+        <GlassCard className="p-5 border-gold/40">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-4">New School Level</p>
+          <LevelForm />
+        </GlassCard>
+      )}
+
+      <div className="space-y-2">
+        {[...levels].sort((a, b) => a.sortOrder - b.sortOrder).map(s => {
+          const colors = LEVEL_COLOR_MAP[s.colorKey] ?? LEVEL_COLOR_MAP['blue']
+          return (
+            <div key={s.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+              {editing === s.id ? (
+                <div className="p-5">
+                  <LevelForm />
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <span className={cn('flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-xl', colors.color)}>
+                    {s.icon}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold">{s.name}</p>
+                    <p className="text-xs text-muted">{s.ages}</p>
+                  </div>
+                  <span className="hidden sm:block text-[10px] font-mono text-muted bg-tint/60 dark:bg-dark-card px-2 py-1 rounded">{s.slug}</span>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button onClick={() => openEdit(s)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60 dark:hover:bg-dark-card transition" title="Edit">
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button onClick={() => del.mutate(s.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500 transition" title="Delete">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -846,6 +1037,15 @@ export function PagesManager() {
                         <CoreValuesPanel qc={queryClient} />
                         <hr className="my-2 border-theme" />
                         <HistoryItemsPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
+
+                    {/* Academics-specific structured data panels */}
+                    {selectedPageId === 'pg-academics' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <SchoolLevelsPanel qc={queryClient} />
                         <div className="pb-8" />
                       </>
                     )}

@@ -511,6 +511,20 @@ export interface SportFixture {
   status: 'upcoming' | 'live' | 'completed'
 }
 
+// ── Academics — School Levels ──────────────────────────────────────────────
+
+export interface AcademicsSchoolLevel {
+  id: string
+  slug: string
+  name: string
+  ages: string
+  icon: string
+  colorKey: string
+  desc: string
+  highlights: string
+  sortOrder: number
+}
+
 // ── About Page Structured Data ─────────────────────────────────────────────
 
 export interface AboutCoreValue {
@@ -598,6 +612,7 @@ export interface DB {
   cmsBlocks: CmsBlock[]
   aboutCoreValues: AboutCoreValue[]
   aboutHistoryItems: AboutHistoryItem[]
+  academicsSchoolLevels: AcademicsSchoolLevel[]
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -1262,6 +1277,15 @@ function createSeed(): DB {
     blk('cb-fa-04','pg-facilities','cta.subtext',     'CTA Box Subtext',          'textarea','Book a campus tour and see our facilities first-hand. Adjacent to the Governor\'s Offices, Kutus.','Body text in the call-to-action box', 4),
   ]
 
+  const academicsSchoolLevels: AcademicsSchoolLevel[] = [
+    { id: 'sl-1', slug: 'playgroup',     name: 'Playgroup',      ages: 'Ages 2 – 3',               icon: '🧸', colorKey: 'pink',   desc: 'A warm, nurturing environment that sparks curiosity through play. Children develop social, emotional, and early language skills in our purpose-built Playgroup centre.',          highlights: 'Play-based learning\nStructured routines\nCreative exploration\nSocial development\nMusic & movement\nEarly number sense',                                                                                                                                         sortOrder: 1 },
+    { id: 'sl-2', slug: 'ecde',          name: 'ECDE',           ages: 'PP1 & PP2 · Ages 4 – 5',   icon: '🌱', colorKey: 'green',  desc: 'Early Childhood Development Education aligned to the CBC framework. PP1 and PP2 build foundational literacy, numeracy, and environmental awareness through structured activities.', highlights: 'Language Activities\nMathematical Activities\nEnvironmental Activities\nPsychomotor & Creative Arts\nReligious Education\nMusic',                                                                                                                                    sortOrder: 2 },
+    { id: 'sl-3', slug: 'lower-primary', name: 'Lower Primary',  ages: 'Grades 1 – 3 · Ages 6 – 8', icon: '📚', colorKey: 'blue',   desc: 'Building core competencies in literacy and numeracy. Learners engage through integrated, activity-based units that connect learning to real-life contexts in Kirinyaga and beyond.',  highlights: 'English\nKiswahili\nMathematics\nIntegrated Science\nSocial Studies\nReligious Education\nCreative Arts\nPhysical Education',                                                                                                                                       sortOrder: 3 },
+    { id: 'sl-4', slug: 'upper-primary', name: 'Upper Primary',  ages: 'Grades 4 – 6 · Ages 9 – 11', icon: '🔬', colorKey: 'violet', desc: 'Deepening competencies across all learning areas. Learners begin exploring Agriculture and are assessed through Continuous Assessment Tests (CATs) each term.',                       highlights: 'English\nKiswahili\nMathematics\nIntegrated Science\nSocial Studies\nAgriculture\nCreative Arts\nPhysical Education\nReligious Education',                                                                                                                          sortOrder: 4 },
+    { id: 'sl-5', slug: 'junior',        name: 'Junior School',  ages: 'Grades 7 – 9 · Ages 12 – 14', icon: '🎯', colorKey: 'amber',  desc: "Junior Secondary School introduces career-based learning pathways. Learners in Grade 9 sit the Kenya Junior School Education Assessment (KJSEA) — Kenya's national transition exam.", highlights: 'English\nKiswahili\nMathematics\nIntegrated Science\nSocial Studies\nBusiness Studies\nAgriculture\nPre-Technical Studies\nCreative Arts\nLife Skills',                                                                                                              sortOrder: 5 },
+    { id: 'sl-6', slug: 'senior',        name: 'Senior School',  ages: 'Grades 10 – 12 · Ages 15 – 17', icon: '🎓', colorKey: 'teal',   desc: "Senior School offers specialised pathways in Sciences, Humanities, STEM, and Arts & Sports. Learners sit the Kenya Certificate of Secondary Education (KCSE) at the end of Grade 12.", highlights: 'English\nKiswahili\nMathematics\nSciences (Biology/Chemistry/Physics)\nSocial Studies\nBusiness Studies\nComputer Science\nAgriculture\nCreative Arts & Design\nPhysical Education', sortOrder: 6 },
+  ]
+
   const aboutCoreValues: AboutCoreValue[] = [
     { id: 'cv-1', icon: '🎓', title: 'Academic Excellence', desc: 'Rigorous standards across CBC and Cambridge IGCSE frameworks with continuous assessment.', sortOrder: 1 },
     { id: 'cv-2', icon: '🤝', title: 'Integrity',            desc: 'Honesty and ethical conduct are the foundation of every interaction in our community.', sortOrder: 2 },
@@ -1290,12 +1314,13 @@ function createSeed(): DB {
     publicFeeRows, publicTeachers, publicSportFixtures,
     cmsPages, cmsBlocks,
     aboutCoreValues, aboutHistoryItems,
+    academicsSchoolLevels,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v6'
+const STORAGE_KEY = 'alber_db_v7'
 
 function loadStore(): DB {
   try {

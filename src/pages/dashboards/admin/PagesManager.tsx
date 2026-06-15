@@ -11,7 +11,7 @@ import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
 import { useCreateCmsBlock, useDeleteCmsBlock } from '../../../hooks/useCmsData'
 import { LEVEL_COLOR_MAP } from '../../../lib/academicsColors'
-import type { AcademicsCompetency, Facility } from '../../../services/contentService'
+import type { AcademicsCompetency, Facility, CocurrActivity, CocurrCategoryId, SportOffered, SportTrophy, MusicInstrument, MusicTeacher, MusicScheduleSlot, DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot } from '../../../services/contentService'
 import { usePillars } from '../../../contexts/PillarsContext'
 import { GRADIENT_MAP, type Pillar } from '../../../data/pillars'
 
@@ -862,6 +862,566 @@ function SchoolLevelsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
   )
 }
 
+// ── Co-Curricular Activities Panel ─────────────────────────────────────────
+
+const COCURR_CATS: { id: CocurrCategoryId; label: string; icon: string }[] = [
+  { id: 'sports',    label: 'Sports & Physical',          icon: '🏆' },
+  { id: 'arts',      label: 'Creative & Performing Arts',  icon: '🎭' },
+  { id: 'community', label: 'Social & Community',          icon: '🤝' },
+  { id: 'cts',       label: 'Career & Technical',          icon: '⚙️' },
+]
+
+function CocurrActivitiesPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const [activeTab, setActiveTab] = useState<CocurrCategoryId>('sports')
+  const { data: allActivities = [] } = useQuery({
+    queryKey: ['cocurr-activities'],
+    queryFn: () => contentService.listCocurrActivities().then(unwrap),
+    staleTime: 30_000,
+  })
+  const items = allActivities.filter(a => a.categoryId === activeTab)
+  const create = useMutation({
+    mutationFn: (dto: Omit<CocurrActivity, 'id'>) => contentService.createCocurrActivity(dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Activity added') },
+  })
+  const update = useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<CocurrActivity, 'id'>> }) =>
+      contentService.updateCocurrActivity(id, dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Activity saved') },
+  })
+  const del = useMutation({
+    mutationFn: (id: string) => contentService.deleteCocurrActivity(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Activity deleted') },
+  })
+  type Draft = Omit<CocurrActivity, 'id'>
+  const blank = (cat: CocurrCategoryId, n: number): Draft => ({ categoryId: cat, name: '', icon: '⭐', desc: '', sortOrder: n + 1 })
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>(blank('sports', 0))
+  const [saving, setSaving] = useState(false)
+  const openEdit = (a: CocurrActivity) => { setForm({ categoryId: a.categoryId, name: a.name, icon: a.icon, desc: a.desc, sortOrder: a.sortOrder }); setEditing(a.id) }
+  const openNew  = () => { setForm(blank(activeTab, items.length)); setEditing('new') }
+  const close    = () => setEditing(null)
+  const switchTab = (id: CocurrCategoryId) => { setActiveTab(id); close() }
+  const handleSave = async () => {
+    if (!form.name.trim()) return
+    setSaving(true)
+    try {
+      if (editing === 'new') await create.mutateAsync(form)
+      else if (typeof editing === 'string') await update.mutateAsync({ id: editing, dto: form })
+      close()
+    } finally { setSaving(false) }
+  }
+  function ActivityForm() {
+    return (
+      <div className="space-y-3">
+        <div className="grid grid-cols-[56px_1fr] gap-2">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Icon</label>
+            <input className={FIELD} value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Name <span className="text-gold">*</span></label>
+            <input className={FIELD} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} autoFocus placeholder="e.g. Athletics" />
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Description</label>
+          <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc}
+            onChange={e => setForm(f => ({ ...f, desc: e.target.value }))} placeholder="Brief description shown on the card…" />
+        </div>
+        <div className="flex items-end gap-3">
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Sort</label>
+            <input type="number" min={1} className={`${FIELD} w-20`} value={form.sortOrder}
+              onChange={e => setForm(f => ({ ...f, sortOrder: Number(e.target.value) }))} />
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleSave} disabled={saving || !form.name.trim()} className={BTN_GOLD}>
+              {saving ? 'Saving…' : <><Check className="h-3.5 w-3.5" /> Save</>}
+            </button>
+            <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="mt-8 max-w-3xl space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted">Co-Curricular Activities</h2>
+          <p className="text-xs text-muted mt-0.5">Activities shown in each tab on the public Co-Curricular page.</p>
+        </div>
+        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5" /> Add Activity</button>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {COCURR_CATS.map(cat => (
+          <button key={cat.id} onClick={() => switchTab(cat.id)}
+            className={cn('flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition',
+              activeTab === cat.id ? 'bg-primary text-white dark:bg-gold dark:text-dark' : 'glass glass-border text-muted')}>
+            {cat.icon} {cat.label}
+          </button>
+        ))}
+      </div>
+      {editing === 'new' && (
+        <GlassCard className="p-5 border-gold/40">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-3">
+            New Activity — {COCURR_CATS.find(c => c.id === activeTab)?.label}
+          </p>
+          <ActivityForm />
+        </GlassCard>
+      )}
+      <div className="space-y-2">
+        {[...items].sort((a, b) => a.sortOrder - b.sortOrder).map(act => (
+          <div key={act.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            {editing === act.id
+              ? <div className="p-4"><ActivityForm /></div>
+              : (
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <span className="text-2xl flex-shrink-0">{act.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold">{act.name}</p>
+                    <p className="text-xs text-muted truncate">{act.desc}</p>
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <button onClick={() => openEdit(act)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60 dark:hover:bg-dark-card"><Edit2 className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => del.mutate(act.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5" /></button>
+                  </div>
+                </div>
+              )}
+          </div>
+        ))}
+      </div>
+      {items.length === 0 && editing === null && (
+        <button onClick={openNew}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-theme py-6 text-sm text-muted hover:border-gold/50 hover:text-gold transition">
+          <Plus className="h-4 w-4" /> Add first activity for this category
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ── Sports Page Panels ──────────────────────────────────────────────────────
+
+function SportsOfferedSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['sports-offered'], queryFn: () => contentService.listSportsOffered().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<SportOffered,'id'>) => contentService.createSportOffered(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['sports-offered'] }); showToast('Sport added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<SportOffered,'id'>> }) => contentService.updateSportOffered(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['sports-offered'] }); showToast('Sport saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteSportOffered(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['sports-offered'] }); showToast('Sport deleted') } })
+  type Draft = Omit<SportOffered,'id'>
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ name:'', icon:'⚽', desc:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (s: SportOffered) => { setForm({ name:s.name, icon:s.icon, desc:s.desc, sortOrder:s.sortOrder }); setEditing(s.id) }
+  const openNew  = () => { setForm({ name:'', icon:'⚽', desc:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.name.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: SportOffered }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      <span className="text-2xl">{item.icon}</span>
+      <div className="flex-1 min-w-0"><p className="text-sm font-semibold">{item.name}</p><p className="text-xs text-muted truncate">{item.desc}</p></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5" /></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5" /></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <div className="grid grid-cols-[56px_1fr] gap-2">
+        <input className={FIELD} value={form.icon} onChange={e => setForm(f=>({...f,icon:e.target.value}))} autoFocus />
+        <input className={FIELD} value={form.name} onChange={e => setForm(f=>({...f,name:e.target.value}))} placeholder="Sport name" />
+      </div>
+      <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f=>({...f,desc:e.target.value}))} placeholder="Brief description…" />
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.name.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Sports Offered</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(s => <div key={s.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===s.id?<Form/>:<Row item={s}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function SportTrophiesSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['sport-trophies'], queryFn: () => contentService.listSportTrophies().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<SportTrophy,'id'>) => contentService.createSportTrophy(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['sport-trophies'] }); showToast('Trophy added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<SportTrophy,'id'>> }) => contentService.updateSportTrophy(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['sport-trophies'] }); showToast('Trophy saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteSportTrophy(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['sport-trophies'] }); showToast('Trophy deleted') } })
+  type Draft = Omit<SportTrophy,'id'>
+  const yr = String(new Date().getFullYear())
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ year: yr, title:'', category:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (t: SportTrophy) => { setForm({ year:t.year, title:t.title, category:t.category, sortOrder:t.sortOrder }); setEditing(t.id) }
+  const openNew  = () => { setForm({ year:yr, title:'', category:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.title.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: SportTrophy }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      <span className="text-xl">🏆</span>
+      <div className="flex-1 min-w-0"><p className="text-sm font-semibold truncate">{item.title}</p><p className="text-xs text-muted">{item.category} · {item.year}</p></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <div className="grid grid-cols-[80px_1fr_1fr] gap-2">
+        <input className={FIELD} value={form.year} onChange={e => setForm(f=>({...f,year:e.target.value}))} placeholder="2025" autoFocus />
+        <input className={FIELD} value={form.title} onChange={e => setForm(f=>({...f,title:e.target.value}))} placeholder="Trophy title" />
+        <input className={FIELD} value={form.category} onChange={e => setForm(f=>({...f,category:e.target.value}))} placeholder="Category" />
+      </div>
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.title.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Trophy Cabinet</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(t => <div key={t.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===t.id?<Form/>:<Row item={t}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function SportsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  return (
+    <div className="mt-8 max-w-3xl space-y-8">
+      <div>
+        <h2 className="text-sm font-bold uppercase tracking-widest text-muted">Sports Content</h2>
+        <p className="text-xs text-muted mt-0.5">Manage sports offered and trophy cabinet. Edit the Player of the Month via the CMS text blocks above (potm.name / potm.sport / potm.class / potm.image / potm.stats).</p>
+      </div>
+      <SportsOfferedSection qc={qc} />
+      <hr className="border-theme" />
+      <SportTrophiesSection qc={qc} />
+    </div>
+  )
+}
+
+// ── Music Page Panels ───────────────────────────────────────────────────────
+
+function MusicInstrumentsSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['music-instruments'], queryFn: () => contentService.listMusicInstruments().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<MusicInstrument,'id'>) => contentService.createMusicInstrument(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-instruments'] }); showToast('Instrument added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<MusicInstrument,'id'>> }) => contentService.updateMusicInstrument(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-instruments'] }); showToast('Instrument saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteMusicInstrument(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-instruments'] }); showToast('Instrument deleted') } })
+  type Draft = Omit<MusicInstrument,'id'>
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ name:'', icon:'🎵', desc:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (m: MusicInstrument) => { setForm({ name:m.name, icon:m.icon, desc:m.desc, sortOrder:m.sortOrder }); setEditing(m.id) }
+  const openNew  = () => { setForm({ name:'', icon:'🎵', desc:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.name.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: MusicInstrument }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      <span className="text-2xl">{item.icon}</span>
+      <div className="flex-1 min-w-0"><p className="text-sm font-semibold">{item.name}</p><p className="text-xs text-muted truncate">{item.desc}</p></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <div className="grid grid-cols-[56px_1fr] gap-2">
+        <input className={FIELD} value={form.icon} onChange={e => setForm(f=>({...f,icon:e.target.value}))} autoFocus />
+        <input className={FIELD} value={form.name} onChange={e => setForm(f=>({...f,name:e.target.value}))} placeholder="e.g. Piano" />
+      </div>
+      <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f=>({...f,desc:e.target.value}))} placeholder="Description…" />
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.name.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Instruments Offered</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(m => <div key={m.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===m.id?<Form/>:<Row item={m}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function MusicTeachersSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['music-teachers'], queryFn: () => contentService.listMusicTeachers().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<MusicTeacher,'id'>) => contentService.createMusicTeacher(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-teachers'] }); showToast('Teacher added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<MusicTeacher,'id'>> }) => contentService.updateMusicTeacher(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-teachers'] }); showToast('Teacher saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteMusicTeacher(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-teachers'] }); showToast('Teacher deleted') } })
+  type Draft = Omit<MusicTeacher,'id'>
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ name:'', subject:'', img:'', credentials:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (t: MusicTeacher) => { setForm({ name:t.name, subject:t.subject, img:t.img, credentials:t.credentials, sortOrder:t.sortOrder }); setEditing(t.id) }
+  const openNew  = () => { setForm({ name:'', subject:'', img:'', credentials:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.name.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: MusicTeacher }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      {item.img ? <img src={item.img} alt={item.name} className="h-10 w-10 rounded-full object-cover object-top flex-shrink-0" /> : <div className="h-10 w-10 rounded-full bg-tint flex items-center justify-center flex-shrink-0 text-lg">👤</div>}
+      <div className="flex-1 min-w-0"><p className="text-sm font-semibold">{item.name}</p><p className="text-xs text-gold">{item.subject}</p><p className="text-xs text-muted truncate">{item.credentials}</p></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        <input className={FIELD} value={form.name} onChange={e => setForm(f=>({...f,name:e.target.value}))} placeholder="Full name" autoFocus />
+        <input className={FIELD} value={form.subject} onChange={e => setForm(f=>({...f,subject:e.target.value}))} placeholder="Subject / speciality" />
+      </div>
+      <input className={FIELD} type="url" value={form.img} onChange={e => setForm(f=>({...f,img:e.target.value}))} placeholder="Photo URL (https://…)" />
+      {form.img && <img src={form.img} alt="preview" className="h-16 w-16 rounded-full object-cover object-top" onError={e=>{(e.target as HTMLImageElement).style.display='none'}} />}
+      <input className={FIELD} value={form.credentials} onChange={e => setForm(f=>({...f,credentials:e.target.value}))} placeholder="Credentials / bio line" />
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.name.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Music Faculty</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(t => <div key={t.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===t.id?<Form/>:<Row item={t}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function MusicScheduleSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['music-schedule'], queryFn: () => contentService.listMusicScheduleSlots().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<MusicScheduleSlot,'id'>) => contentService.createMusicScheduleSlot(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-schedule'] }); showToast('Day added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<MusicScheduleSlot,'id'>> }) => contentService.updateMusicScheduleSlot(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-schedule'] }); showToast('Schedule saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteMusicScheduleSlot(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['music-schedule'] }); showToast('Day deleted') } })
+  type Draft = Omit<MusicScheduleSlot,'id'>
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ day:'', slots:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (s: MusicScheduleSlot) => { setForm({ day:s.day, slots:s.slots, sortOrder:s.sortOrder }); setEditing(s.id) }
+  const openNew  = () => { setForm({ day:'', slots:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.day.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: MusicScheduleSlot }) => (
+    <div className="flex items-start gap-3 px-3 py-2.5">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-primary dark:text-gold">{item.day}</p>
+        <ul className="mt-0.5 space-y-0.5">{item.slots.split('\n').filter(Boolean).map((slot,i)=><li key={i} className="text-xs text-muted">{slot}</li>)}</ul>
+      </div>
+      <div className="flex gap-1 flex-shrink-0"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <input className={FIELD} value={form.day} onChange={e => setForm(f=>({...f,day:e.target.value}))} placeholder="e.g. Monday" autoFocus />
+      <div>
+        <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Sessions <span className="font-normal text-muted">(one per line)</span></label>
+        <textarea rows={3} className={`${FIELD} resize-none font-mono text-xs`} value={form.slots} onChange={e => setForm(f=>({...f,slots:e.target.value}))} placeholder={'Piano — 3:30–5:00 PM\nChoir Rehearsal — 4:00–5:30 PM'} />
+      </div>
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.day.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Rehearsal Schedule</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add Day</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(s => <div key={s.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===s.id?<Form/>:<Row item={s}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function MusicPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  return (
+    <div className="mt-8 max-w-3xl space-y-8">
+      <div>
+        <h2 className="text-sm font-bold uppercase tracking-widest text-muted">Music Academy Content</h2>
+        <p className="text-xs text-muted mt-0.5">Manage instruments, faculty, and rehearsal schedule for the Music Academy page.</p>
+      </div>
+      <MusicInstrumentsSection qc={qc} />
+      <hr className="border-theme" />
+      <MusicTeachersSection qc={qc} />
+      <hr className="border-theme" />
+      <MusicScheduleSection qc={qc} />
+    </div>
+  )
+}
+
+// ── Drama & Dance Page Panels ───────────────────────────────────────────────
+
+function DanceStylesSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['dance-styles'], queryFn: () => contentService.listDanceStyles().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<DanceStyle,'id'>) => contentService.createDanceStyle(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['dance-styles'] }); showToast('Style added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<DanceStyle,'id'>> }) => contentService.updateDanceStyle(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['dance-styles'] }); showToast('Style saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteDanceStyle(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['dance-styles'] }); showToast('Style deleted') } })
+  type Draft = Omit<DanceStyle,'id'>
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ style:'', icon:'💃', desc:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (d: DanceStyle) => { setForm({ style:d.style, icon:d.icon, desc:d.desc, sortOrder:d.sortOrder }); setEditing(d.id) }
+  const openNew  = () => { setForm({ style:'', icon:'💃', desc:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.style.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: DanceStyle }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      <span className="text-2xl">{item.icon}</span>
+      <div className="flex-1 min-w-0"><p className="text-sm font-semibold">{item.style}</p><p className="text-xs text-muted truncate">{item.desc}</p></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <div className="grid grid-cols-[56px_1fr] gap-2">
+        <input className={FIELD} value={form.icon} onChange={e => setForm(f=>({...f,icon:e.target.value}))} autoFocus />
+        <input className={FIELD} value={form.style} onChange={e => setForm(f=>({...f,style:e.target.value}))} placeholder="e.g. Ballet" />
+      </div>
+      <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f=>({...f,desc:e.target.value}))} placeholder="Description…" />
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.style.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Dance Styles</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(d => <div key={d.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===d.id?<Form/>:<Row item={d}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function DramaPlaysSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['drama-plays'], queryFn: () => contentService.listDramaPlays().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<DramaPlay,'id'>) => contentService.createDramaPlay(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-plays'] }); showToast('Play added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<DramaPlay,'id'>> }) => contentService.updateDramaPlay(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-plays'] }); showToast('Play saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteDramaPlay(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-plays'] }); showToast('Play deleted') } })
+  type Draft = Omit<DramaPlay,'id'>
+  const yr = String(new Date().getFullYear())
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ year:yr, title:'', desc:'', img:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (p: DramaPlay) => { setForm({ year:p.year, title:p.title, desc:p.desc, img:p.img, sortOrder:p.sortOrder }); setEditing(p.id) }
+  const openNew  = () => { setForm({ year:yr, title:'', desc:'', img:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.title.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: DramaPlay }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      {item.img && <img src={item.img} alt={item.title} className="h-12 w-16 rounded-lg object-cover flex-shrink-0" />}
+      <div className="flex-1 min-w-0"><p className="text-sm font-semibold truncate">"{item.title}"</p><p className="text-xs text-muted">{item.year} · {item.desc.slice(0,60)}{item.desc.length>60?'…':''}</p></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <div className="grid grid-cols-[80px_1fr] gap-2">
+        <input className={FIELD} value={form.year} onChange={e => setForm(f=>({...f,year:e.target.value}))} placeholder="2025" autoFocus />
+        <input className={FIELD} value={form.title} onChange={e => setForm(f=>({...f,title:e.target.value}))} placeholder='e.g. "The Lion&apos;s Roar"' />
+      </div>
+      <textarea rows={2} className={`${FIELD} resize-none`} value={form.desc} onChange={e => setForm(f=>({...f,desc:e.target.value}))} placeholder="Brief description…" />
+      <input className={FIELD} type="url" value={form.img} onChange={e => setForm(f=>({...f,img:e.target.value}))} placeholder="Cover image URL" />
+      {form.img && <img src={form.img} alt="preview" className="h-20 w-full rounded-xl object-cover" onError={e=>{(e.target as HTMLImageElement).style.display='none'}} />}
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.title.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Annual Play Archives</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add Play</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(p => <div key={p.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===p.id?<Form/>:<Row item={p}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function DramaFacultySection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['drama-faculty'], queryFn: () => contentService.listDramaFaculty().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<DramaFaculty,'id'>) => contentService.createDramaFaculty(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-faculty'] }); showToast('Faculty added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<DramaFaculty,'id'>> }) => contentService.updateDramaFaculty(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-faculty'] }); showToast('Faculty saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteDramaFaculty(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-faculty'] }); showToast('Faculty deleted') } })
+  type Draft = Omit<DramaFaculty,'id'>
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ name:'', role:'', img:'', bio:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (f: DramaFaculty) => { setForm({ name:f.name, role:f.role, img:f.img, bio:f.bio, sortOrder:f.sortOrder }); setEditing(f.id) }
+  const openNew  = () => { setForm({ name:'', role:'', img:'', bio:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.name.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: DramaFaculty }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      {item.img ? <img src={item.img} alt={item.name} className="h-10 w-10 rounded-full object-cover object-top flex-shrink-0"/> : <div className="h-10 w-10 rounded-full bg-tint flex items-center justify-center flex-shrink-0 text-lg">👤</div>}
+      <div className="flex-1 min-w-0"><p className="text-sm font-semibold">{item.name}</p><p className="text-xs text-gold">{item.role}</p><p className="text-xs text-muted truncate">{item.bio}</p></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        <input className={FIELD} value={form.name} onChange={e => setForm(f=>({...f,name:e.target.value}))} placeholder="Full name" autoFocus />
+        <input className={FIELD} value={form.role} onChange={e => setForm(f=>({...f,role:e.target.value}))} placeholder="Role / title" />
+      </div>
+      <input className={FIELD} type="url" value={form.img} onChange={e => setForm(f=>({...f,img:e.target.value}))} placeholder="Photo URL" />
+      {form.img && <img src={form.img} alt="preview" className="h-16 w-16 rounded-full object-cover object-top" onError={e=>{(e.target as HTMLImageElement).style.display='none'}} />}
+      <textarea rows={2} className={`${FIELD} resize-none`} value={form.bio} onChange={e => setForm(f=>({...f,bio:e.target.value}))} placeholder="Short bio…" />
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.name.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Drama & Dance Faculty</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(f => <div key={f.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===f.id?<Form/>:<Row item={f}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function DramaScheduleSection({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const { data: items = [] } = useQuery({ queryKey: ['drama-schedule'], queryFn: () => contentService.listDramaScheduleSlots().then(unwrap), staleTime: 30_000 })
+  const create = useMutation({ mutationFn: (dto: Omit<DramaScheduleSlot,'id'>) => contentService.createDramaScheduleSlot(dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-schedule'] }); showToast('Day added') } })
+  const update = useMutation({ mutationFn: ({ id, dto }: { id: string; dto: Partial<Omit<DramaScheduleSlot,'id'>> }) => contentService.updateDramaScheduleSlot(id, dto).then(unwrap), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-schedule'] }); showToast('Schedule saved') } })
+  const del    = useMutation({ mutationFn: (id: string) => contentService.deleteDramaScheduleSlot(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['drama-schedule'] }); showToast('Day deleted') } })
+  type Draft = Omit<DramaScheduleSlot,'id'>
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [form, setForm] = useState<Draft>({ day:'', activity:'', sortOrder: 1 })
+  const [saving, setSaving] = useState(false)
+  const openEdit = (s: DramaScheduleSlot) => { setForm({ day:s.day, activity:s.activity, sortOrder:s.sortOrder }); setEditing(s.id) }
+  const openNew  = () => { setForm({ day:'', activity:'', sortOrder: items.length+1 }); setEditing('new') }
+  const close    = () => setEditing(null)
+  const handleSave = async () => { if (!form.day.trim()) return; setSaving(true); try { editing==='new' ? await create.mutateAsync(form) : await update.mutateAsync({ id: editing!, dto: form }); close() } finally { setSaving(false) } }
+  const Row = ({ item }: { item: DramaScheduleSlot }) => (
+    <div className="flex items-center gap-3 px-3 py-2.5">
+      <div className="flex-1 min-w-0"><span className="text-sm font-bold text-primary dark:text-gold">{item.day}: </span><span className="text-xs text-muted">{item.activity}</span></div>
+      <div className="flex gap-1"><button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60"><Edit2 className="h-3.5 w-3.5"/></button><button onClick={() => del.mutate(item.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500"><Trash2 className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  const Form = () => (
+    <div className="p-3 space-y-2">
+      <input className={FIELD} value={form.day} onChange={e => setForm(f=>({...f,day:e.target.value}))} placeholder="e.g. Monday" autoFocus />
+      <input className={FIELD} value={form.activity} onChange={e => setForm(f=>({...f,activity:e.target.value}))} placeholder="e.g. Ballet — 4:00–5:30 PM" />
+      <div className="flex gap-2"><button onClick={handleSave} disabled={saving||!form.day.trim()} className={BTN_GOLD}>{saving?'Saving…':<><Check className="h-3.5 w-3.5"/>Save</>}</button><button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5"/></button></div>
+    </div>
+  )
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between"><h3 className="text-xs font-bold uppercase tracking-widest text-muted">Rehearsal Schedule</h3><button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5"/> Add Day</button></div>
+      {editing==='new' && <GlassCard className="border-gold/40"><Form /></GlassCard>}
+      <div className="space-y-1.5">{items.map(s => <div key={s.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">{editing===s.id?<Form/>:<Row item={s}/>}</div>)}</div>
+    </div>
+  )
+}
+
+function DramaPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  return (
+    <div className="mt-8 max-w-3xl space-y-8">
+      <div>
+        <h2 className="text-sm font-bold uppercase tracking-widest text-muted">Drama & Dance Content</h2>
+        <p className="text-xs text-muted mt-0.5">Manage dance styles, annual play archives, faculty, and rehearsal schedule.</p>
+      </div>
+      <DanceStylesSection qc={qc} />
+      <hr className="border-theme" />
+      <DramaPlaysSection qc={qc} />
+      <hr className="border-theme" />
+      <DramaFacultySection qc={qc} />
+      <hr className="border-theme" />
+      <DramaScheduleSection qc={qc} />
+    </div>
+  )
+}
+
 // ── Facilities CRUD Panel ──────────────────────────────────────────────────
 function FacilitiesPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
   const { showToast } = useToast()
@@ -1505,6 +2065,42 @@ export function PagesManager() {
                         <CoreValuesPanel qc={queryClient} />
                         <hr className="my-2 border-theme" />
                         <HistoryItemsPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
+
+                    {/* Co-Curricular activities panel */}
+                    {selectedPageId === 'pg-cocurr' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <CocurrActivitiesPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
+
+                    {/* Sports structured data panels */}
+                    {selectedPageId === 'pg-sports' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <SportsPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
+
+                    {/* Music structured data panels */}
+                    {selectedPageId === 'pg-music' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <MusicPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
+
+                    {/* Drama & Dance structured data panels */}
+                    {selectedPageId === 'pg-drama' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <DramaPanel qc={queryClient} />
                         <div className="pb-8" />
                       </>
                     )}

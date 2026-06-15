@@ -5,6 +5,10 @@ import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
 import { useCmsBlocks } from '../hooks/useCmsData'
+import { useQuery } from '@tanstack/react-query'
+import { unwrap } from '../services/mockApi'
+import { contentService } from '../services/contentService'
+import type { CocurrCategoryId } from '../services/contentService'
 
 function useCms() {
   const { data: blocks = [] } = useCmsBlocks('pg-cocurr')
@@ -13,109 +17,76 @@ function useCms() {
 
 const CATEGORIES = [
   {
-    id: 'sports',
+    id: 'sports' as CocurrCategoryId,
     label: 'Sports & Physical',
     icon: '🏆',
     color: 'from-green-500/20 to-emerald-500/10',
     border: 'border-green-500/30',
     heading: 'Sports & Physical Activities',
     intro: 'Physical Education is offered to all learners. Senior School students may pursue specialised sports pathways alongside competitive inter-school and national programmes.',
-    activities: [
-      { name: 'Athletics', icon: '🏃', desc: '400m track, field events, relay teams and cross-country competing at county and national level.' },
-      { name: 'Ball Games', icon: '⚽', desc: 'Football, basketball, volleyball and netball — structured leagues, coaching and inter-school fixtures.' },
-      { name: 'Gymnastics', icon: '🤸', desc: 'Floor work, apparatus and rhythmic gymnastics offered through our Physical Education programme.' },
-      { name: 'Martial Arts', icon: '🥋', desc: 'Taekwondo and karate offered as both fitness training and competitive discipline.' },
-      { name: 'Boxing', icon: '🥊', desc: 'Supervised boxing and fitness boxing under certified coaches in our dedicated ring.' },
-      { name: 'Indoor Sports', icon: '🏓', desc: 'Table tennis, chess, scrabble, and badminton available for all year groups.' },
-      { name: 'Water Sports', icon: '🏊', desc: '25m heated pool for competitive swimming, water polo and synchronized swimming.' },
-      { name: 'Outdoor Pursuits', icon: '⛰️', desc: "Hiking, orienteering, camping, and environmental trail activities in Kirinyaga's rolling hills." },
-    ],
     link: { to: '/sports', label: 'View Sports Page' },
   },
   {
-    id: 'arts',
+    id: 'arts' as CocurrCategoryId,
     label: 'Creative & Performing Arts',
     icon: '🎭',
     color: 'from-purple-500/20 to-pink-500/10',
     border: 'border-purple-500/30',
     heading: 'Creative & Performing Arts',
     intro: 'Music, dance, drama and visual arts are central to learner development at Alber. Artistic and aesthetic competencies are assessed formally as part of the CBC framework.',
-    activities: [
-      { name: 'Music', icon: '🎵', desc: 'Piano, violin, guitar, brass, woodwind, drums and choir. ABRSM examination centre on campus.' },
-      { name: 'Dance', icon: '💃', desc: 'Ballet, contemporary, African dance and hip-hop taught in our sprung-floor dance studios.' },
-      { name: 'Drama & Theatre', icon: '🎭', desc: 'Annual productions, script writing, stage craft, lighting design and performance portfolios.' },
-      { name: 'Elocution', icon: '🎤', desc: 'Public speaking, debate, poetry recitation and oratory — internal and national competitions.' },
-      { name: 'Fine Arts', icon: '🎨', desc: 'Painting, drawing, sculpture and mixed media across all levels with exhibition opportunities.' },
-      { name: 'Applied Arts', icon: '✂️', desc: 'Textile design, ceramics, graphic design and craft with real-world application.' },
-      { name: 'Visual Arts', icon: '📷', desc: 'Photography, videography and digital media explored through the lens of creative storytelling.' },
-      { name: 'Time-Based Media', icon: '🎬', desc: 'Film-making, animation and multimedia production for Senior School learners.' },
-    ],
     links: [
       { to: '/music', label: 'Music Academy' },
       { to: '/drama-dance', label: 'Drama & Dance' },
     ],
   },
   {
-    id: 'community',
+    id: 'community' as CocurrCategoryId,
     label: 'Social & Community',
     icon: '🤝',
     color: 'from-blue-500/20 to-cyan-500/10',
     border: 'border-blue-500/30',
     heading: 'Social, Cultural & Community Activities',
-    intro: 'Community Service Learning (CSL) builds ethical, moral and civic values. Learners engage with their community and Kenya\'s rich cultural heritage through structured programmes.',
-    activities: [
-      { name: 'Community Service Learning', icon: '❤️', desc: 'Structured CSL projects in Kutus and Kirinyaga County — environmental, health and education initiatives.' },
-      { name: 'Kenya National Music Festival', icon: '🎼', desc: 'Annual participation exposes learners to diverse cultural instruments and musical traditions from across Kenya.' },
-      { name: 'Cultural Festivals', icon: '🪘', desc: 'Celebrating Kenyan heritage through food, costume, language, song and storytelling.' },
-      { name: 'Debate & Model UN', icon: '🌍', desc: 'Critical thinking, diplomacy and global awareness through inter-school debate and Model UN simulations.' },
-      { name: 'Environmental Clubs', icon: '🌱', desc: 'Sustainability projects including tree planting, recycling drives and solar energy education.' },
-      { name: 'Student Council', icon: '🗳️', desc: 'Elected student leadership developing governance, advocacy and civic responsibility skills.' },
-      { name: 'Peer Counselling', icon: '🤲', desc: 'Trained student peer supporters promoting mental wellbeing and positive school culture.' },
-      { name: 'Inter-House Competitions', icon: '🏅', desc: 'Cross-disciplinary house competitions in academics, sports, arts and community engagement.' },
-    ],
+    intro: "Community Service Learning (CSL) builds ethical, moral and civic values. Learners engage with their community and Kenya's rich cultural heritage through structured programmes.",
   },
   {
-    id: 'cts',
+    id: 'cts' as CocurrCategoryId,
     label: 'Career & Technical',
     icon: '⚙️',
     color: 'from-amber-500/20 to-orange-500/10',
     border: 'border-amber-500/30',
     heading: 'Integrated Career & Technical Activities (CTS)',
     intro: 'At Senior School level (Grades 10–12), learners engage in practical and vocational options aligned to their interests and potential career paths — fully integrated into the CBC framework.',
-    activities: [
-      { name: 'Tourism & Hospitality', icon: '🏨', desc: 'Front office operations, tour guiding, event management and customer service fundamentals.' },
-      { name: 'Culinary Arts', icon: '👨‍🍳', desc: 'Food preparation, nutrition, kitchen management and catering for school and community events.' },
-      { name: 'Hairdressing & Beauty', icon: '💇', desc: 'Salon skills, cosmetology basics and entrepreneurship for the beauty industry.' },
-      { name: 'Welding & Metalwork', icon: '🔩', desc: 'Fabrication, welding techniques and basic engineering for technical career pathways.' },
-      { name: 'Photography', icon: '📸', desc: 'Digital photography, darkroom techniques, editing and commercial photography practice.' },
-      { name: 'Carpentry & Woodwork', icon: '🪚', desc: 'Joinery, furniture making and woodwork design with an entrepreneurship focus.' },
-      { name: 'Agriculture', icon: '🌾', desc: 'Crop farming, animal husbandry, agribusiness and sustainable food systems aligned to Kirinyaga\'s context.' },
-      { name: 'ICT & Digital Projects', icon: '💻', desc: 'Web development, coding, data management, app design and digital entrepreneurship projects.' },
-    ],
   },
 ]
 
 export function CoCurricular() {
   const get = useCms()
   const location = useLocation()
-  const [active, setActive] = useState(() => {
-    const hash = location.hash.slice(1)
+  const [active, setActive] = useState<CocurrCategoryId>(() => {
+    const hash = location.hash.slice(1) as CocurrCategoryId
     return CATEGORIES.some((c) => c.id === hash) ? hash : 'sports'
   })
 
+  const { data: allActivities = [] } = useQuery({
+    queryKey: ['cocurr-activities'],
+    queryFn: () => contentService.listCocurrActivities().then(unwrap),
+    staleTime: 60_000,
+  })
+
   useEffect(() => {
-    const hash = location.hash.slice(1)
+    const hash = location.hash.slice(1) as CocurrCategoryId
     if (CATEGORIES.some((c) => c.id === hash)) {
       setActive(hash)
     }
   }, [location.hash])
 
-  const setTab = (id: string) => {
+  const setTab = (id: CocurrCategoryId) => {
     setActive(id)
     window.history.replaceState(null, '', `#${id}`)
   }
 
   const current = CATEGORIES.find((c) => c.id === active)!
+  const currentActivities = allActivities.filter(a => a.categoryId === active).sort((a, b) => a.sortOrder - b.sortOrder)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">

@@ -549,6 +549,110 @@ export interface Facility {
   isPublished: boolean
 }
 
+// ── Co-Curricular Activities ────────────────────────────────────────────────
+
+export type CocurrCategoryId = 'sports' | 'arts' | 'community' | 'cts'
+
+export interface CocurrActivity {
+  id: string
+  categoryId: CocurrCategoryId
+  name: string
+  icon: string
+  desc: string
+  sortOrder: number
+}
+
+// ── Sports Offered ─────────────────────────────────────────────────────────
+
+export interface SportOffered {
+  id: string
+  name: string
+  icon: string
+  desc: string
+  sortOrder: number
+}
+
+// ── Sport Trophies ─────────────────────────────────────────────────────────
+
+export interface SportTrophy {
+  id: string
+  year: string
+  title: string
+  category: string
+  sortOrder: number
+}
+
+// ── Music Instruments ──────────────────────────────────────────────────────
+
+export interface MusicInstrument {
+  id: string
+  name: string
+  icon: string
+  desc: string
+  sortOrder: number
+}
+
+// ── Music Teachers ─────────────────────────────────────────────────────────
+
+export interface MusicTeacher {
+  id: string
+  name: string
+  subject: string
+  img: string
+  credentials: string
+  sortOrder: number
+}
+
+// ── Music Schedule Slots ───────────────────────────────────────────────────
+
+export interface MusicScheduleSlot {
+  id: string
+  day: string
+  slots: string   // newline-separated slot strings
+  sortOrder: number
+}
+
+// ── Dance Styles ───────────────────────────────────────────────────────────
+
+export interface DanceStyle {
+  id: string
+  style: string
+  icon: string
+  desc: string
+  sortOrder: number
+}
+
+// ── Drama Past Plays ───────────────────────────────────────────────────────
+
+export interface DramaPlay {
+  id: string
+  year: string
+  title: string
+  desc: string
+  img: string
+  sortOrder: number
+}
+
+// ── Drama Faculty ──────────────────────────────────────────────────────────
+
+export interface DramaFaculty {
+  id: string
+  name: string
+  role: string
+  img: string
+  bio: string
+  sortOrder: number
+}
+
+// ── Drama Schedule Slots ───────────────────────────────────────────────────
+
+export interface DramaScheduleSlot {
+  id: string
+  day: string
+  activity: string
+  sortOrder: number
+}
+
 // ── About Page Structured Data ─────────────────────────────────────────────
 
 export interface AboutCoreValue {
@@ -639,6 +743,16 @@ export interface DB {
   academicsSchoolLevels: AcademicsSchoolLevel[]
   academicsCompetencies: AcademicsCompetency[]
   facilities: Facility[]
+  cocurrActivities: CocurrActivity[]
+  sportsOffered: SportOffered[]
+  sportTrophies: SportTrophy[]
+  musicInstruments: MusicInstrument[]
+  musicTeachers: MusicTeacher[]
+  musicScheduleSlots: MusicScheduleSlot[]
+  danceStyles: DanceStyle[]
+  dramaPlays: DramaPlay[]
+  dramaFaculty: DramaFaculty[]
+  dramaScheduleSlots: DramaScheduleSlot[]
 }
 
 // ── Seed Data ──────────────────────────────────────────────────────────────
@@ -1279,6 +1393,11 @@ function createSeed(): DB {
     // ── Sports ────────────────────────────────────────────────────────────
     blk('cb-sp-01','pg-sports','hero.headline',   'Page Headline',                'text',    'Sports',                      'Main heading at the top of the Sports page', 1),
     blk('cb-sp-02','pg-sports','hero.subheadline','Page Subheadline',             'textarea','Competing at county, national and regional level across a full spectrum of sporting disciplines.','Shown below the main heading', 2),
+    blk('cb-sp-03','pg-sports','potm.name',       'Player of Month — Name',       'text',    'Brian Mutua',                     'Name shown on the Player of the Month card', 3),
+    blk('cb-sp-04','pg-sports','potm.sport',      'Player of Month — Sport',      'text',    'Football',                        'Sport they play', 4),
+    blk('cb-sp-05','pg-sports','potm.class',      'Player of Month — Class',      'text',    'Form 3 Ruby',                     'Class or year group', 5),
+    blk('cb-sp-06','pg-sports','potm.image',      'Player of Month — Photo URL',  'text',    'https://i.pravatar.cc/600?img=12', 'URL of the player photo', 6),
+    blk('cb-sp-07','pg-sports','potm.stats',      'Player of Month — Stats Line', 'text',    '14 goals · 8 assists · Captain',  'Stats line shown below the name', 7),
 
     // ── Blog ──────────────────────────────────────────────────────────────
     blk('cb-bl-01','pg-blog','hero.headline',   'Page Headline',                  'text',    'Blog',                        'Main heading at the top of the Blog page', 1),
@@ -1375,6 +1494,108 @@ function createSeed(): DB {
       highlights: 'Biology lab\nChemistry lab\nPhysics lab\nComputer science lab' },
   ]
 
+  const cocurrActivities: CocurrActivity[] = [
+    { id: 'ca-s1', categoryId: 'sports',    name: 'Athletics',                   icon: '🏃',  desc: '400m track, field events, relay teams and cross-country competing at county and national level.',                                               sortOrder: 1 },
+    { id: 'ca-s2', categoryId: 'sports',    name: 'Ball Games',                  icon: '⚽',  desc: 'Football, basketball, volleyball and netball — structured leagues, coaching and inter-school fixtures.',                                         sortOrder: 2 },
+    { id: 'ca-s3', categoryId: 'sports',    name: 'Gymnastics',                  icon: '🤸',  desc: 'Floor work, apparatus and rhythmic gymnastics offered through our Physical Education programme.',                                                sortOrder: 3 },
+    { id: 'ca-s4', categoryId: 'sports',    name: 'Martial Arts',                icon: '🥋',  desc: 'Taekwondo and karate offered as both fitness training and competitive discipline.',                                                               sortOrder: 4 },
+    { id: 'ca-s5', categoryId: 'sports',    name: 'Boxing',                      icon: '🥊',  desc: 'Supervised boxing and fitness boxing under certified coaches in our dedicated ring.',                                                             sortOrder: 5 },
+    { id: 'ca-s6', categoryId: 'sports',    name: 'Indoor Sports',               icon: '🏓',  desc: 'Table tennis, chess, scrabble, and badminton available for all year groups.',                                                                    sortOrder: 6 },
+    { id: 'ca-s7', categoryId: 'sports',    name: 'Water Sports',                icon: '🏊',  desc: '25m heated pool for competitive swimming, water polo and synchronized swimming.',                                                                sortOrder: 7 },
+    { id: 'ca-s8', categoryId: 'sports',    name: 'Outdoor Pursuits',            icon: '⛰️', desc: "Hiking, orienteering, camping, and environmental trail activities in Kirinyaga's rolling hills.",                                                sortOrder: 8 },
+    { id: 'ca-a1', categoryId: 'arts',      name: 'Music',                       icon: '🎵',  desc: 'Piano, violin, guitar, brass, woodwind, drums and choir. ABRSM examination centre on campus.',                                                  sortOrder: 1 },
+    { id: 'ca-a2', categoryId: 'arts',      name: 'Dance',                       icon: '💃',  desc: 'Ballet, contemporary, African dance and hip-hop taught in our sprung-floor dance studios.',                                                      sortOrder: 2 },
+    { id: 'ca-a3', categoryId: 'arts',      name: 'Drama & Theatre',             icon: '🎭',  desc: 'Annual productions, script writing, stage craft, lighting design and performance portfolios.',                                                   sortOrder: 3 },
+    { id: 'ca-a4', categoryId: 'arts',      name: 'Elocution',                   icon: '🎤',  desc: 'Public speaking, debate, poetry recitation and oratory — internal and national competitions.',                                                   sortOrder: 4 },
+    { id: 'ca-a5', categoryId: 'arts',      name: 'Fine Arts',                   icon: '🎨',  desc: 'Painting, drawing, sculpture and mixed media across all levels with exhibition opportunities.',                                                  sortOrder: 5 },
+    { id: 'ca-a6', categoryId: 'arts',      name: 'Applied Arts',                icon: '✂️', desc: 'Textile design, ceramics, graphic design and craft with real-world application.',                                                                sortOrder: 6 },
+    { id: 'ca-a7', categoryId: 'arts',      name: 'Visual Arts',                 icon: '📷',  desc: 'Photography, videography and digital media explored through the lens of creative storytelling.',                                                sortOrder: 7 },
+    { id: 'ca-a8', categoryId: 'arts',      name: 'Time-Based Media',            icon: '🎬',  desc: 'Film-making, animation and multimedia production for Senior School learners.',                                                                   sortOrder: 8 },
+    { id: 'ca-c1', categoryId: 'community', name: 'Community Service Learning',  icon: '❤️', desc: 'Structured CSL projects in Kutus and Kirinyaga County — environmental, health and education initiatives.',                                      sortOrder: 1 },
+    { id: 'ca-c2', categoryId: 'community', name: 'Kenya National Music Festival',icon: '🎼', desc: 'Annual participation exposes learners to diverse cultural instruments and musical traditions from across Kenya.',                                sortOrder: 2 },
+    { id: 'ca-c3', categoryId: 'community', name: 'Cultural Festivals',          icon: '🪘',  desc: 'Celebrating Kenyan heritage through food, costume, language, song and storytelling.',                                                            sortOrder: 3 },
+    { id: 'ca-c4', categoryId: 'community', name: 'Debate & Model UN',           icon: '🌍',  desc: 'Critical thinking, diplomacy and global awareness through inter-school debate and Model UN simulations.',                                        sortOrder: 4 },
+    { id: 'ca-c5', categoryId: 'community', name: 'Environmental Clubs',         icon: '🌱',  desc: 'Sustainability projects including tree planting, recycling drives and solar energy education.',                                                   sortOrder: 5 },
+    { id: 'ca-c6', categoryId: 'community', name: 'Student Council',             icon: '🗳️', desc: 'Elected student leadership developing governance, advocacy and civic responsibility skills.',                                                     sortOrder: 6 },
+    { id: 'ca-c7', categoryId: 'community', name: 'Peer Counselling',            icon: '🤲',  desc: 'Trained student peer supporters promoting mental wellbeing and positive school culture.',                                                         sortOrder: 7 },
+    { id: 'ca-c8', categoryId: 'community', name: 'Inter-House Competitions',    icon: '🏅',  desc: 'Cross-disciplinary house competitions in academics, sports, arts and community engagement.',                                                     sortOrder: 8 },
+    { id: 'ca-t1', categoryId: 'cts',       name: 'Tourism & Hospitality',       icon: '🏨',  desc: 'Front office operations, tour guiding, event management and customer service fundamentals.',                                                     sortOrder: 1 },
+    { id: 'ca-t2', categoryId: 'cts',       name: 'Culinary Arts',               icon: '👨‍🍳', desc: 'Food preparation, nutrition, kitchen management and catering for school and community events.',                                               sortOrder: 2 },
+    { id: 'ca-t3', categoryId: 'cts',       name: 'Hairdressing & Beauty',       icon: '💇',  desc: 'Salon skills, cosmetology basics and entrepreneurship for the beauty industry.',                                                                 sortOrder: 3 },
+    { id: 'ca-t4', categoryId: 'cts',       name: 'Welding & Metalwork',         icon: '🔩',  desc: 'Fabrication, welding techniques and basic engineering for technical career pathways.',                                                           sortOrder: 4 },
+    { id: 'ca-t5', categoryId: 'cts',       name: 'Photography',                 icon: '📸',  desc: 'Digital photography, darkroom techniques, editing and commercial photography practice.',                                                         sortOrder: 5 },
+    { id: 'ca-t6', categoryId: 'cts',       name: 'Carpentry & Woodwork',        icon: '🪚',  desc: 'Joinery, furniture making and woodwork design with an entrepreneurship focus.',                                                                  sortOrder: 6 },
+    { id: 'ca-t7', categoryId: 'cts',       name: 'Agriculture',                 icon: '🌾',  desc: "Crop farming, animal husbandry, agribusiness and sustainable food systems aligned to Kirinyaga's context.",                                     sortOrder: 7 },
+    { id: 'ca-t8', categoryId: 'cts',       name: 'ICT & Digital Projects',      icon: '💻',  desc: 'Web development, coding, data management, app design and digital entrepreneurship projects.',                                                    sortOrder: 8 },
+  ]
+
+  const sportsOffered: SportOffered[] = [
+    { id: 'so-1', name: 'Football',          icon: '⚽', desc: 'Two pitches, inter-house and inter-school leagues, dedicated coaching staff.',                 sortOrder: 1 },
+    { id: 'so-2', name: 'Basketball',        icon: '🏀', desc: 'Full-size courts. Boys and girls teams competing regionally.',                                  sortOrder: 2 },
+    { id: 'so-3', name: 'Volleyball',        icon: '🏐', desc: 'Indoor and outdoor courts for both competitive and recreational play.',                         sortOrder: 3 },
+    { id: 'so-4', name: 'Athletics',         icon: '🏃', desc: '400m track, field events, relay squads — training five days a week.',                          sortOrder: 4 },
+    { id: 'so-5', name: 'Swimming',          icon: '🏊', desc: '25m heated pool with certified coaches and county-level competition.',                          sortOrder: 5 },
+    { id: 'so-6', name: 'Tennis',            icon: '🎾', desc: 'Two courts for individual and doubles coaching from juniors upward.',                           sortOrder: 6 },
+  ]
+
+  const sportTrophies: SportTrophy[] = [
+    { id: 'tr-1', year: '2025', title: 'Kirinyaga County Football Champions',        category: 'Football',   sortOrder: 1 },
+    { id: 'tr-2', year: '2025', title: 'Regional Athletics — Gold (4×100m Relay)',   category: 'Athletics',  sortOrder: 2 },
+    { id: 'tr-3', year: '2024', title: 'Inter-School Basketball — Boys Division',    category: 'Basketball', sortOrder: 3 },
+    { id: 'tr-4', year: '2024', title: 'Swimming Championships — 3 Gold Medals',     category: 'Swimming',   sortOrder: 4 },
+    { id: 'tr-5', year: '2023', title: 'National Volleyball — Semi-finalists',       category: 'Volleyball', sortOrder: 5 },
+    { id: 'tr-6', year: '2023', title: 'County Cross Country Champions',             category: 'Athletics',  sortOrder: 6 },
+  ]
+
+  const musicInstruments: MusicInstrument[] = [
+    { id: 'mi-1', name: 'Piano',              icon: '🎹', desc: 'Steinway-ready studios. Lessons from beginner to Grade 8 ABRSM.',                              sortOrder: 1 },
+    { id: 'mi-2', name: 'Violin',             icon: '🎻', desc: 'Classical strings with ensemble and solo performance training.',                                 sortOrder: 2 },
+    { id: 'mi-3', name: 'Guitar',             icon: '🎸', desc: 'Acoustic, classical and electric — across all skill levels.',                                   sortOrder: 3 },
+    { id: 'mi-4', name: 'Brass',              icon: '🎺', desc: 'Trumpet, trombone, French horn — full brass section ensemble.',                                 sortOrder: 4 },
+    { id: 'mi-5', name: 'Woodwind',           icon: '🎷', desc: 'Flute, clarinet, saxophone — individual and band sessions.',                                    sortOrder: 5 },
+    { id: 'mi-6', name: 'Drums & Percussion', icon: '🥁', desc: 'Full kit, djembe, marimba and orchestral percussion.',                                          sortOrder: 6 },
+  ]
+
+  const musicTeachers: MusicTeacher[] = [
+    { id: 'mt-1', name: 'Ms. Ruth Kamau',    subject: 'Piano & Theory',     img: 'https://i.pravatar.cc/400?img=44', credentials: 'B.Mus (University of Nairobi) · ABRSM Grade 8', sortOrder: 1 },
+    { id: 'mt-2', name: 'Mr. Victor Omondi', subject: 'Strings & Ensemble', img: 'https://i.pravatar.cc/400?img=57', credentials: 'Conservatoire-trained · 12 years teaching',     sortOrder: 2 },
+    { id: 'mt-3', name: 'Ms. Nancy Wanjiru', subject: 'Vocals & Choir',     img: 'https://i.pravatar.cc/400?img=32', credentials: 'Dip. Music Ed. · Former KBC choir director',    sortOrder: 3 },
+  ]
+
+  const musicScheduleSlots: MusicScheduleSlot[] = [
+    { id: 'ms-1', day: 'Monday',    slots: 'Piano — 3:30–5:00 PM\nChoir Rehearsal — 4:00–5:30 PM',            sortOrder: 1 },
+    { id: 'ms-2', day: 'Tuesday',   slots: 'Strings Ensemble — 3:30–5:00 PM\nGuitar — 4:00–5:00 PM',          sortOrder: 2 },
+    { id: 'ms-3', day: 'Wednesday', slots: 'Brass & Woodwind — 3:30–5:00 PM\nTheory of Music — 4:00–5:00 PM', sortOrder: 3 },
+    { id: 'ms-4', day: 'Thursday',  slots: 'Drums & Percussion — 3:30–5:00 PM\nFull Orchestra — 4:00–6:00 PM',sortOrder: 4 },
+    { id: 'ms-5', day: 'Friday',    slots: 'Open Studio — 3:30–5:30 PM\nSolo Coaching (by appointment)',       sortOrder: 5 },
+  ]
+
+  const danceStyles: DanceStyle[] = [
+    { id: 'ds-1', style: 'Ballet',        icon: '🩰', desc: 'Classical technique from foundational positions to pointe work.', sortOrder: 1 },
+    { id: 'ds-2', style: 'Contemporary',  icon: '💫', desc: 'Fluid movement, floor work, and creative improvisation.',         sortOrder: 2 },
+    { id: 'ds-3', style: 'African Dance', icon: '🥁', desc: 'Traditional rhythms from across East and West Africa.',           sortOrder: 3 },
+    { id: 'ds-4', style: 'Hip-Hop',       icon: '🎤', desc: 'Street styles, breaking, and performance choreography.',          sortOrder: 4 },
+  ]
+
+  const dramaPlays: DramaPlay[] = [
+    { id: 'dp-1', year: '2024', title: "The Lion's Roar",      desc: 'An original production exploring Kenyan folklore through dance, spoken word, and music. Cast of 60 students.', img: 'https://picsum.photos/seed/drama-2024/600/400', sortOrder: 1 },
+    { id: 'dp-2', year: '2023', title: 'Echoes of Kirinyaga',  desc: 'A celebration of Kirinyaga County heritage with traditional dance, acrobatics, and drama. Standing ovation.',   img: 'https://picsum.photos/seed/drama-2023/600/400', sortOrder: 2 },
+    { id: 'dp-3', year: '2022', title: "Tomorrow's Leaders",   desc: 'A satirical play on modern education and youth ambition. Directed by Form 4 students.',                         img: 'https://picsum.photos/seed/drama-2022/600/400', sortOrder: 3 },
+  ]
+
+  const dramaFaculty: DramaFaculty[] = [
+    { id: 'df-1', name: 'Ms. Grace Achieng', role: 'Lead Choreographer · Ballet & Contemporary', img: 'https://i.pravatar.cc/400?img=36', bio: 'Trained in Nairobi and London. 15 years choreographing award-winning productions.',      sortOrder: 1 },
+    { id: 'df-2', name: 'Mr. Oscar Njoroge', role: 'Drama Director · Playwright',                img: 'https://i.pravatar.cc/400?img=52', bio: 'Graduate of Kenya National Theatre. Specialist in African contemporary drama.',           sortOrder: 2 },
+  ]
+
+  const dramaScheduleSlots: DramaScheduleSlot[] = [
+    { id: 'dss-1', day: 'Monday',    activity: 'Ballet — 4:00–5:30 PM',                  sortOrder: 1 },
+    { id: 'dss-2', day: 'Tuesday',   activity: 'Drama Workshop — 3:30–5:30 PM',          sortOrder: 2 },
+    { id: 'dss-3', day: 'Wednesday', activity: 'Contemporary Dance — 4:00–5:30 PM',      sortOrder: 3 },
+    { id: 'dss-4', day: 'Thursday',  activity: 'African Dance & Hip-Hop — 3:30–5:00 PM', sortOrder: 4 },
+    { id: 'dss-5', day: 'Friday',    activity: 'Full Company Rehearsal — 3:30–6:00 PM',  sortOrder: 5 },
+  ]
+
   return {
     users, students, staff, academicYears, classes, subjects, assessmentSchemes,
     exams, payments, invoices, scholarships, expenses, feeStructures,
@@ -1387,12 +1608,15 @@ function createSeed(): DB {
     aboutCoreValues, aboutHistoryItems,
     academicsSchoolLevels, academicsCompetencies,
     facilities,
+    cocurrActivities, sportsOffered, sportTrophies,
+    musicInstruments, musicTeachers, musicScheduleSlots,
+    danceStyles, dramaPlays, dramaFaculty, dramaScheduleSlots,
   }
 }
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v9'
+const STORAGE_KEY = 'alber_db_v10'
 
 function loadStore(): DB {
   try {

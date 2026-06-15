@@ -1,9 +1,9 @@
 import { mockGet, mockPost, mockPut, mockDelete, newId } from './mockApi'
 import { getDB, mutateDB } from './db'
-import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility } from './db'
+import type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility, CocurrActivity, CocurrCategoryId, SportOffered, SportTrophy, MusicInstrument, MusicTeacher, MusicScheduleSlot, DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot } from './db'
 import { addAudit } from './auditService'
 
-export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility }
+export type { MediaAsset, PublicBlogPost, PublicEvent, PublicGalleryImage, PublicProgramLevel, PublicFeeRow, PublicTeacher, SportFixture, CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, AcademicsCompetency, Facility, CocurrActivity, CocurrCategoryId, SportOffered, SportTrophy, MusicInstrument, MusicTeacher, MusicScheduleSlot, DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot }
 
 export const contentService = {
   // Media Library
@@ -452,5 +452,235 @@ export const contentService = {
   deleteFacility: (id: string) => mockDelete(() => {
     mutateDB(db => { db.facilities = db.facilities.filter(f => f.id !== id) })
     addAudit({ action: 'DELETE', resource: 'Facility', resourceId: id, details: 'Deleted facility' })
+  }),
+
+  // ── Co-Curricular Activities ──────────────────────────────────────────────
+  listCocurrActivities: (categoryId?: CocurrCategoryId) => mockGet(() => {
+    const all = [...getDB().cocurrActivities].sort((a, b) => a.sortOrder - b.sortOrder)
+    return categoryId ? all.filter(a => a.categoryId === categoryId) : all
+  }),
+  createCocurrActivity: (dto: Omit<CocurrActivity, 'id'>) => mockPost(() => {
+    const item: CocurrActivity = { id: newId('CAC'), ...dto }
+    mutateDB(db => { db.cocurrActivities.push(item) })
+    addAudit({ action: 'CREATE', resource: 'CocurrActivity', resourceId: item.id, details: `Added activity: ${item.name}` })
+    return item
+  }),
+  updateCocurrActivity: (id: string, dto: Partial<Omit<CocurrActivity, 'id'>>) => mockPut(() => {
+    let updated: CocurrActivity | undefined
+    mutateDB(db => {
+      const idx = db.cocurrActivities.findIndex(a => a.id === id)
+      if (idx === -1) throw new Error('Activity not found')
+      updated = { ...db.cocurrActivities[idx], ...dto }
+      db.cocurrActivities[idx] = updated
+    })
+    addAudit({ action: 'UPDATE', resource: 'CocurrActivity', resourceId: id, details: `Updated activity: ${updated?.name}` })
+    return updated!
+  }),
+  deleteCocurrActivity: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.cocurrActivities = db.cocurrActivities.filter(a => a.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'CocurrActivity', resourceId: id, details: 'Deleted co-curr activity' })
+  }),
+
+  // ── Sports Offered ────────────────────────────────────────────────────────
+  listSportsOffered: () => mockGet(() => [...getDB().sportsOffered].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createSportOffered: (dto: Omit<SportOffered, 'id'>) => mockPost(() => {
+    const item: SportOffered = { id: newId('SO'), ...dto }
+    mutateDB(db => { db.sportsOffered.push(item) })
+    addAudit({ action: 'CREATE', resource: 'SportOffered', resourceId: item.id, details: `Added sport: ${item.name}` })
+    return item
+  }),
+  updateSportOffered: (id: string, dto: Partial<Omit<SportOffered, 'id'>>) => mockPut(() => {
+    let updated: SportOffered | undefined
+    mutateDB(db => {
+      const idx = db.sportsOffered.findIndex(s => s.id === id)
+      if (idx === -1) throw new Error('Sport not found')
+      updated = { ...db.sportsOffered[idx], ...dto }
+      db.sportsOffered[idx] = updated
+    })
+    return updated!
+  }),
+  deleteSportOffered: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.sportsOffered = db.sportsOffered.filter(s => s.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'SportOffered', resourceId: id, details: 'Deleted sport offered' })
+  }),
+
+  // ── Sport Trophies ────────────────────────────────────────────────────────
+  listSportTrophies: () => mockGet(() => [...getDB().sportTrophies].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createSportTrophy: (dto: Omit<SportTrophy, 'id'>) => mockPost(() => {
+    const item: SportTrophy = { id: newId('TR'), ...dto }
+    mutateDB(db => { db.sportTrophies.push(item) })
+    addAudit({ action: 'CREATE', resource: 'SportTrophy', resourceId: item.id, details: `Added trophy: ${item.title}` })
+    return item
+  }),
+  updateSportTrophy: (id: string, dto: Partial<Omit<SportTrophy, 'id'>>) => mockPut(() => {
+    let updated: SportTrophy | undefined
+    mutateDB(db => {
+      const idx = db.sportTrophies.findIndex(t => t.id === id)
+      if (idx === -1) throw new Error('Trophy not found')
+      updated = { ...db.sportTrophies[idx], ...dto }
+      db.sportTrophies[idx] = updated
+    })
+    return updated!
+  }),
+  deleteSportTrophy: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.sportTrophies = db.sportTrophies.filter(t => t.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'SportTrophy', resourceId: id, details: 'Deleted trophy' })
+  }),
+
+  // ── Music Instruments ─────────────────────────────────────────────────────
+  listMusicInstruments: () => mockGet(() => [...getDB().musicInstruments].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createMusicInstrument: (dto: Omit<MusicInstrument, 'id'>) => mockPost(() => {
+    const item: MusicInstrument = { id: newId('MI'), ...dto }
+    mutateDB(db => { db.musicInstruments.push(item) })
+    addAudit({ action: 'CREATE', resource: 'MusicInstrument', resourceId: item.id, details: `Added instrument: ${item.name}` })
+    return item
+  }),
+  updateMusicInstrument: (id: string, dto: Partial<Omit<MusicInstrument, 'id'>>) => mockPut(() => {
+    let updated: MusicInstrument | undefined
+    mutateDB(db => {
+      const idx = db.musicInstruments.findIndex(m => m.id === id)
+      if (idx === -1) throw new Error('Instrument not found')
+      updated = { ...db.musicInstruments[idx], ...dto }
+      db.musicInstruments[idx] = updated
+    })
+    return updated!
+  }),
+  deleteMusicInstrument: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.musicInstruments = db.musicInstruments.filter(m => m.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'MusicInstrument', resourceId: id, details: 'Deleted instrument' })
+  }),
+
+  // ── Music Teachers ────────────────────────────────────────────────────────
+  listMusicTeachers: () => mockGet(() => [...getDB().musicTeachers].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createMusicTeacher: (dto: Omit<MusicTeacher, 'id'>) => mockPost(() => {
+    const item: MusicTeacher = { id: newId('MT'), ...dto }
+    mutateDB(db => { db.musicTeachers.push(item) })
+    addAudit({ action: 'CREATE', resource: 'MusicTeacher', resourceId: item.id, details: `Added teacher: ${item.name}` })
+    return item
+  }),
+  updateMusicTeacher: (id: string, dto: Partial<Omit<MusicTeacher, 'id'>>) => mockPut(() => {
+    let updated: MusicTeacher | undefined
+    mutateDB(db => {
+      const idx = db.musicTeachers.findIndex(t => t.id === id)
+      if (idx === -1) throw new Error('Teacher not found')
+      updated = { ...db.musicTeachers[idx], ...dto }
+      db.musicTeachers[idx] = updated
+    })
+    return updated!
+  }),
+  deleteMusicTeacher: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.musicTeachers = db.musicTeachers.filter(t => t.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'MusicTeacher', resourceId: id, details: 'Deleted music teacher' })
+  }),
+
+  // ── Music Schedule ────────────────────────────────────────────────────────
+  listMusicScheduleSlots: () => mockGet(() => [...getDB().musicScheduleSlots].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createMusicScheduleSlot: (dto: Omit<MusicScheduleSlot, 'id'>) => mockPost(() => {
+    const item: MusicScheduleSlot = { id: newId('MS'), ...dto }
+    mutateDB(db => { db.musicScheduleSlots.push(item) })
+    return item
+  }),
+  updateMusicScheduleSlot: (id: string, dto: Partial<Omit<MusicScheduleSlot, 'id'>>) => mockPut(() => {
+    let updated: MusicScheduleSlot | undefined
+    mutateDB(db => {
+      const idx = db.musicScheduleSlots.findIndex(s => s.id === id)
+      if (idx === -1) throw new Error('Slot not found')
+      updated = { ...db.musicScheduleSlots[idx], ...dto }
+      db.musicScheduleSlots[idx] = updated
+    })
+    return updated!
+  }),
+  deleteMusicScheduleSlot: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.musicScheduleSlots = db.musicScheduleSlots.filter(s => s.id !== id) })
+  }),
+
+  // ── Dance Styles ──────────────────────────────────────────────────────────
+  listDanceStyles: () => mockGet(() => [...getDB().danceStyles].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createDanceStyle: (dto: Omit<DanceStyle, 'id'>) => mockPost(() => {
+    const item: DanceStyle = { id: newId('DS'), ...dto }
+    mutateDB(db => { db.danceStyles.push(item) })
+    addAudit({ action: 'CREATE', resource: 'DanceStyle', resourceId: item.id, details: `Added dance style: ${item.style}` })
+    return item
+  }),
+  updateDanceStyle: (id: string, dto: Partial<Omit<DanceStyle, 'id'>>) => mockPut(() => {
+    let updated: DanceStyle | undefined
+    mutateDB(db => {
+      const idx = db.danceStyles.findIndex(d => d.id === id)
+      if (idx === -1) throw new Error('Dance style not found')
+      updated = { ...db.danceStyles[idx], ...dto }
+      db.danceStyles[idx] = updated
+    })
+    return updated!
+  }),
+  deleteDanceStyle: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.danceStyles = db.danceStyles.filter(d => d.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'DanceStyle', resourceId: id, details: 'Deleted dance style' })
+  }),
+
+  // ── Drama Plays ───────────────────────────────────────────────────────────
+  listDramaPlays: () => mockGet(() => [...getDB().dramaPlays].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createDramaPlay: (dto: Omit<DramaPlay, 'id'>) => mockPost(() => {
+    const item: DramaPlay = { id: newId('DP'), ...dto }
+    mutateDB(db => { db.dramaPlays.push(item) })
+    addAudit({ action: 'CREATE', resource: 'DramaPlay', resourceId: item.id, details: `Added play: ${item.title}` })
+    return item
+  }),
+  updateDramaPlay: (id: string, dto: Partial<Omit<DramaPlay, 'id'>>) => mockPut(() => {
+    let updated: DramaPlay | undefined
+    mutateDB(db => {
+      const idx = db.dramaPlays.findIndex(p => p.id === id)
+      if (idx === -1) throw new Error('Play not found')
+      updated = { ...db.dramaPlays[idx], ...dto }
+      db.dramaPlays[idx] = updated
+    })
+    return updated!
+  }),
+  deleteDramaPlay: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.dramaPlays = db.dramaPlays.filter(p => p.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'DramaPlay', resourceId: id, details: 'Deleted drama play' })
+  }),
+
+  // ── Drama Faculty ─────────────────────────────────────────────────────────
+  listDramaFaculty: () => mockGet(() => [...getDB().dramaFaculty].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createDramaFaculty: (dto: Omit<DramaFaculty, 'id'>) => mockPost(() => {
+    const item: DramaFaculty = { id: newId('DF'), ...dto }
+    mutateDB(db => { db.dramaFaculty.push(item) })
+    addAudit({ action: 'CREATE', resource: 'DramaFaculty', resourceId: item.id, details: `Added faculty: ${item.name}` })
+    return item
+  }),
+  updateDramaFaculty: (id: string, dto: Partial<Omit<DramaFaculty, 'id'>>) => mockPut(() => {
+    let updated: DramaFaculty | undefined
+    mutateDB(db => {
+      const idx = db.dramaFaculty.findIndex(f => f.id === id)
+      if (idx === -1) throw new Error('Faculty not found')
+      updated = { ...db.dramaFaculty[idx], ...dto }
+      db.dramaFaculty[idx] = updated
+    })
+    return updated!
+  }),
+  deleteDramaFaculty: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.dramaFaculty = db.dramaFaculty.filter(f => f.id !== id) })
+    addAudit({ action: 'DELETE', resource: 'DramaFaculty', resourceId: id, details: 'Deleted drama faculty' })
+  }),
+
+  // ── Drama Schedule ────────────────────────────────────────────────────────
+  listDramaScheduleSlots: () => mockGet(() => [...getDB().dramaScheduleSlots].sort((a, b) => a.sortOrder - b.sortOrder)),
+  createDramaScheduleSlot: (dto: Omit<DramaScheduleSlot, 'id'>) => mockPost(() => {
+    const item: DramaScheduleSlot = { id: newId('DSS'), ...dto }
+    mutateDB(db => { db.dramaScheduleSlots.push(item) })
+    return item
+  }),
+  updateDramaScheduleSlot: (id: string, dto: Partial<Omit<DramaScheduleSlot, 'id'>>) => mockPut(() => {
+    let updated: DramaScheduleSlot | undefined
+    mutateDB(db => {
+      const idx = db.dramaScheduleSlots.findIndex(s => s.id === id)
+      if (idx === -1) throw new Error('Slot not found')
+      updated = { ...db.dramaScheduleSlots[idx], ...dto }
+      db.dramaScheduleSlots[idx] = updated
+    })
+    return updated!
+  }),
+  deleteDramaScheduleSlot: (id: string) => mockDelete(() => {
+    mutateDB(db => { db.dramaScheduleSlots = db.dramaScheduleSlots.filter(s => s.id !== id) })
   }),
 }

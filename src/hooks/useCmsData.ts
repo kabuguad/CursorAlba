@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { contentService } from '../services/contentService'
+import type { CmsBlock } from '../services/contentService'
 import { unwrap } from '../services/mockApi'
 
 export function useCmsPages() {
@@ -26,6 +27,28 @@ export function useUpdateCmsBlock() {
       contentService.updateCmsBlock(id, value).then(unwrap),
     onSuccess: (updated) => {
       queryClient.invalidateQueries({ queryKey: ['cms-blocks', updated.pageId] })
+    },
+  })
+}
+
+export function useCreateCmsBlock() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (dto: Omit<CmsBlock, 'id'>) =>
+      contentService.createCmsBlock(dto).then(unwrap),
+    onSuccess: (created) => {
+      queryClient.invalidateQueries({ queryKey: ['cms-blocks', created.pageId] })
+    },
+  })
+}
+
+export function useDeleteCmsBlock() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, pageId }: { id: string; pageId: string }) =>
+      contentService.deleteCmsBlock(id).then(unwrap).then(() => ({ id, pageId })),
+    onSuccess: ({ pageId }) => {
+      queryClient.invalidateQueries({ queryKey: ['cms-blocks', pageId] })
     },
   })
 }

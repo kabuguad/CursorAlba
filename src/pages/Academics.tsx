@@ -9,18 +9,13 @@ import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
 import { LEVEL_COLOR_MAP } from '../lib/academicsColors'
+import { usePillars } from '../contexts/PillarsContext'
+import { GRADIENT_MAP } from '../data/pillars'
 
 function useCms() {
   const { data: blocks = [] } = useCmsBlocks('pg-academics')
   return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
 }
-
-const PILLARS = [
-  { icon: '🌱', title: 'Holistic Development', desc: 'CBC goes beyond rote learning. Lessons and projects integrate knowledge with life skills, fostering creativity, teamwork, and self-confidence alongside academic excellence.', color: 'from-green-500/15 to-emerald-500/5', border: 'border-green-400/30' },
-  { icon: '🎯', title: 'Learner-Centred Teaching', desc: 'Teachers at Alber act as facilitators and mentors — guiding learners through project-based and inquiry-based experiences rather than passive content delivery.', color: 'from-blue-500/15 to-cyan-500/5', border: 'border-blue-400/30' },
-  { icon: '📊', title: 'Continuous Assessment', desc: 'Formative and summative assessments throughout each term replace high-stakes cramming, rewarding skill mastery and reducing exam pressure for every learner.', color: 'from-amber-500/15 to-orange-500/5', border: 'border-amber-400/30' },
-  { icon: '🤝', title: 'Parent & Community Engagement', desc: "CBC actively involves parents and the wider Kirinyaga community. Learning extends beyond the classroom — reinforced at home and through community service projects.", color: 'from-purple-500/15 to-violet-500/5', border: 'border-purple-400/30' },
-]
 
 const VALUES = [
   { value: 'Responsibility', icon: '⚖️' },
@@ -58,6 +53,7 @@ const KEY_ASSESSMENTS = [
 
 export function Academics() {
   const get = useCms()
+  const { pillars } = usePillars()
 
   const { data: schoolLevels = [] } = useQuery({
     queryKey: ['academics-school-levels'],
@@ -184,15 +180,18 @@ export function Academics() {
           <h2 className="text-4xl font-bold">Our Four Pillars</h2>
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
-          {PILLARS.map((p, i) => (
-            <ScrollReveal key={p.title} delay={i * 0.1}>
-              <div className={cn('h-full rounded-3xl border bg-gradient-to-br p-7', p.color, p.border)}>
-                <span className="mb-4 block text-4xl">{p.icon}</span>
-                <h3 className="mb-2 text-xl font-bold">{p.title}</h3>
-                <p className="leading-relaxed text-muted">{p.desc}</p>
-              </div>
-            </ScrollReveal>
-          ))}
+          {pillars.map((p, i) => {
+            const g = GRADIENT_MAP[p.gradient] ?? GRADIENT_MAP.green
+            return (
+              <ScrollReveal key={p.id} delay={i * 0.1}>
+                <div className={cn('h-full rounded-3xl border bg-gradient-to-br p-7', g.color, g.border)}>
+                  <span className="mb-4 block text-4xl">{p.icon}</span>
+                  <h3 className="mb-2 text-xl font-bold">{p.title}</h3>
+                  <p className="leading-relaxed text-muted">{p.desc}</p>
+                </div>
+              </ScrollReveal>
+            )
+          })}
         </div>
       </ScrollReveal>
 

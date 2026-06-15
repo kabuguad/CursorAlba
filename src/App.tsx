@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { ToastProvider } from './contexts/ToastContext'
+import { PillarsProvider } from './contexts/PillarsContext'
 import { Layout } from './components/layout/Layout'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 
@@ -85,6 +86,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <ToastProvider>
+          <PillarsProvider>
           <BrowserRouter>
             <Routes>
 
@@ -191,6 +193,7 @@ function App() {
 
             </Routes>
           </BrowserRouter>
+          </PillarsProvider>
         </ToastProvider>
       </AuthProvider>
     </ThemeProvider>

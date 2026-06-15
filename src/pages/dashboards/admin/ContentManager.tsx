@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Save, Home, Info, BookOpen, DollarSign, Plus, Trash2, Loader2, Edit2, X, Check } from 'lucide-react'
+import { Save, Home, Info, BookOpen, DollarSign, Plus, Trash2, Loader2, Edit2, X, Check, Layers, ChevronUp, ChevronDown } from 'lucide-react'
 import { useToast } from '../../../contexts/ToastContext'
 import {
   useSiteSettings, useSaveSettings,
@@ -7,16 +7,19 @@ import {
   usePublicFees, useCreatePublicFeeRow, useUpdatePublicFeeRow, useDeletePublicFeeRow,
 } from '../../../hooks/useAdminData'
 import type { ApiProgramLevel, ApiPublicFeeRow } from '../../../services/adminApiService'
+import { usePillars } from '../../../contexts/PillarsContext'
+import { GRADIENT_MAP, type Pillar } from '../../../data/pillars'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
 const TEXTAREA = `${INP} resize-none`
 const LABEL = 'mb-1 block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider'
 
 const TABS = [
-  { id: 'home',     label: 'Home Page',  icon: Home     },
-  { id: 'about',    label: 'About',      icon: Info     },
-  { id: 'programs', label: 'Programs',   icon: BookOpen },
-  { id: 'fees',     label: 'Fees Table', icon: DollarSign },
+  { id: 'home',     label: 'Home Page',       icon: Home     },
+  { id: 'about',    label: 'About',           icon: Info     },
+  { id: 'programs', label: 'Programs',        icon: BookOpen },
+  { id: 'fees',     label: 'Fees Table',      icon: DollarSign },
+  { id: 'pillars',  label: 'Teaching Pillars',icon: Layers   },
 ]
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
@@ -293,6 +296,9 @@ export function ContentManager() {
               }}
             />
           )}
+
+          {/* ── PILLARS ── */}
+          {tab === 'pillars' && <PillarsTab />}
         </>
       )}
     </div>
@@ -592,6 +598,232 @@ function FeeRowForm({ form, onChange }: { form: FeeRowDto; onChange: (f: FeeRowD
       <div>
         <label className={LABEL}>Sort</label>
         <input type="number" className={INP} style={{ width: 70 }} value={form.sortOrder} onChange={e => onChange({ ...form, sortOrder: +e.target.value })} />
+      </div>
+    </div>
+  )
+}
+
+// ── Teaching Pillars Tab ─────────────────────────────────────────────────────
+
+const BLANK_PILLAR: Omit<Pillar, 'id'> = { icon: '📌', title: '', desc: '', gradient: 'green' }
+
+function PillarsTab() {
+  const { showToast } = useToast()
+  const { pillars, updatePillars } = usePillars()
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [draft, setDraft] = useState<Omit<Pillar, 'id'>>(BLANK_PILLAR)
+
+  const openEdit = (p: Pillar) => {
+    setDraft({ icon: p.icon, title: p.title, desc: p.desc, gradient: p.gradient })
+    setEditing(p.id)
+  }
+  const openNew = () => { setDraft({ ...BLANK_PILLAR }); setEditing('new') }
+  const close = () => setEditing(null)
+
+  const save = () => {
+    if (!draft.title.trim()) return showToast('Title is required')
+    let next: Pillar[]
+    if (editing === 'new') {
+      next = [...pillars, { ...draft, id: `p-${Date.now()}` }]
+    } else {
+      next = pillars.map(p => p.id === editing ? { ...draft, id: p.id } : p)
+    }
+    updatePillars(next)
+    showToast(editing === 'new' ? 'Pillar added ✓' : 'Pillar updated ✓')
+    close()
+  }
+
+  const del = (id: string) => {
+    if (!confirm('Delete this pillar?')) return
+    updatePillars(pillars.filter(p => p.id !== id))
+    showToast('Pillar deleted')
+  }
+
+  const move = (id: string, dir: -1 | 1) => {
+    const idx = pillars.findIndex(p => p.id === id)
+    const next = [...pillars]
+    const swap = idx + dir
+    if (swap < 0 || swap >= next.length) return
+    ;[next[idx], next[swap]] = [next[swap], next[idx]]
+    updatePillars(next)
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {pillars.length} pillar{pillars.length !== 1 ? 's' : ''} · changes save instantly and appear on the public Academics page.
+        </p>
+        {editing === null && (
+          <button
+            onClick={openNew}
+            className="flex items-center gap-2 rounded-xl bg-[#E8B84B] px-4 py-2 text-sm font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition"
+          >
+            <Plus className="h-4 w-4" /> Add Pillar
+          </button>
+        )}
+      </div>
+
+      {/* Pillar list */}
+      {pillars.map((p, i) => {
+        const g = GRADIENT_MAP[p.gradient] ?? GRADIENT_MAP.green
+        return (
+          <div key={p.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {editing === p.id ? (
+              <div className="p-6">
+                <PillarForm draft={draft} onChange={setDraft} />
+                <div className="mt-4 flex gap-2">
+                  <button onClick={save} className="flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-4 py-2 text-sm font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition">
+                    <Check className="h-3.5 w-3.5" /> Save
+                  </button>
+                  <button onClick={close} className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition">Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-start gap-4 p-5">
+                {/* Preview swatch */}
+                <div className={`flex-shrink-0 flex h-14 w-14 items-center justify-center rounded-xl border bg-gradient-to-br text-3xl ${g.color} ${g.border}`}>
+                  {p.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">{p.title}</h3>
+                    <span
+                      className="inline-block h-2.5 w-2.5 rounded-full ring-1 ring-black/10 flex-shrink-0"
+                      style={{ backgroundColor: GRADIENT_MAP[p.gradient]?.preview }}
+                      title={GRADIENT_MAP[p.gradient]?.label}
+                    />
+                  </div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{p.desc}</p>
+                </div>
+                <div className="flex flex-shrink-0 items-center gap-1">
+                  <button onClick={() => move(p.id, -1)} disabled={i === 0} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 transition" title="Move up">
+                    <ChevronUp className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => move(p.id, 1)} disabled={i === pillars.length - 1} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 transition" title="Move down">
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => openEdit(p)} className="rounded-lg p-1.5 text-gray-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 transition">
+                    <Edit2 className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => del(p.id)} className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 transition">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+
+      {/* New pillar form */}
+      {editing === 'new' && (
+        <div className="rounded-2xl border-2 border-dashed border-[#E8B84B]/50 bg-[#E8B84B]/5 p-6 space-y-4">
+          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+            <Layers className="h-4 w-4 text-[#E8B84B]" /> New Teaching Pillar
+          </p>
+          <PillarForm draft={draft} onChange={setDraft} />
+          <div className="flex gap-2 pt-1">
+            <button onClick={save} className="flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-4 py-2 text-sm font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition">
+              <Plus className="h-3.5 w-3.5" /> Add Pillar
+            </button>
+            <button onClick={close} className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Add button when list is empty */}
+      {pillars.length === 0 && editing === null && (
+        <button
+          onClick={openNew}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 py-8 text-sm font-medium text-gray-500 dark:text-gray-400 hover:border-[#E8B84B] hover:text-[#E8B84B] transition"
+        >
+          <Plus className="h-4 w-4" /> Add your first teaching pillar
+        </button>
+      )}
+    </div>
+  )
+}
+
+function PillarForm({
+  draft,
+  onChange,
+}: {
+  draft: Omit<Pillar, 'id'>
+  onChange: (d: Omit<Pillar, 'id'>) => void
+}) {
+  const selectedGradient = GRADIENT_MAP[draft.gradient] ?? GRADIENT_MAP.green
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        {/* Icon */}
+        <div>
+          <label className={LABEL}>Icon (emoji)</label>
+          <input
+            className={INP}
+            value={draft.icon}
+            onChange={e => onChange({ ...draft, icon: e.target.value })}
+            placeholder="🌱"
+            style={{ fontSize: 20 }}
+          />
+          <p className="mt-1 text-[10px] text-gray-400">Paste or type any emoji — shown large on the card.</p>
+        </div>
+        {/* Title */}
+        <div>
+          <label className={LABEL}>Title *</label>
+          <input
+            className={INP}
+            value={draft.title}
+            onChange={e => onChange({ ...draft, title: e.target.value })}
+            placeholder="e.g. Holistic Development"
+          />
+        </div>
+      </div>
+
+      {/* Description */}
+      <div>
+        <label className={LABEL}>Description</label>
+        <textarea
+          rows={3}
+          className={`${INP} resize-none`}
+          value={draft.desc}
+          onChange={e => onChange({ ...draft, desc: e.target.value })}
+          placeholder="Describe what this pillar means for learners at Alber School…"
+        />
+      </div>
+
+      {/* Gradient colour picker */}
+      <div>
+        <label className={LABEL}>Card Gradient Colour</label>
+        <div className="flex flex-wrap gap-2 mt-1">
+          {Object.entries(GRADIENT_MAP).map(([key, g]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => onChange({ ...draft, gradient: key })}
+              title={g.label}
+              className={`flex items-center gap-1.5 rounded-lg border-2 px-3 py-1.5 text-xs font-semibold transition ${
+                draft.gradient === key
+                  ? 'border-gray-800 dark:border-white scale-105 shadow-sm'
+                  : 'border-transparent hover:border-gray-300 dark:hover:border-gray-500'
+              }`}
+            >
+              <span
+                className="h-3.5 w-3.5 rounded-full ring-1 ring-black/10"
+                style={{ backgroundColor: g.preview }}
+              />
+              {g.label}
+            </button>
+          ))}
+        </div>
+        {/* Live preview */}
+        <div className={`mt-3 flex items-start gap-4 rounded-2xl border bg-gradient-to-br p-5 ${selectedGradient.color} ${selectedGradient.border}`}>
+          <span className="text-3xl">{draft.icon || '📌'}</span>
+          <div>
+            <p className="font-bold text-gray-900 dark:text-white">{draft.title || 'Pillar Title'}</p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{draft.desc || 'Pillar description will appear here.'}</p>
+          </div>
+        </div>
       </div>
     </div>
   )

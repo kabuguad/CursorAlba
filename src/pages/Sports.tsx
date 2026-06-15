@@ -42,6 +42,7 @@ export function Sports() {
     queryKey: ['public-sports-fixtures'],
     queryFn: () => contentService.listSportFixtures().then(unwrap),
   })
+  return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
         <h1 className="mb-4 text-5xl font-bold md:text-7xl">Sports & Athletics</h1>

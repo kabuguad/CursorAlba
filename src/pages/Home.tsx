@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
 import type { PublicEvent, PublicProgramLevel } from '../services/db'
+import { useCmsBlocks } from '../hooks/useCmsData'
 
 const HERO_IMAGES = [
   'https://picsum.photos/seed/alber-campus/1200/800',
@@ -91,6 +92,8 @@ const PROGRAM_ICONS: Record<string, string> = {
 export function Home() {
   const [slide, setSlide] = useState(0)
   const [testimonial, setTestimonial] = useState(0)
+  const { data: homeBlocks = [] } = useCmsBlocks('pg-home')
+  const get = (key: string, fallback: string) => homeBlocks.find((b) => b.key === key)?.value || fallback
 
   const { data: events = [], isLoading: eventsLoading } = useQuery({
     queryKey: ['public-events'],
@@ -185,15 +188,15 @@ export function Home() {
                   <div className="absolute -bottom-1 -left-1 h-4 w-4 border-b border-l border-gold md:h-5 md:w-5" />
                   <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b border-r border-gold md:h-5 md:w-5" />
 
-                  <p className="text-sm font-extrabold uppercase tracking-wide text-white md:text-lg">Mr. Albert Njeru</p>
+                  <p className="text-sm font-extrabold uppercase tracking-wide text-white md:text-lg">{get('director.name', 'Mr. Albert Njeru')}</p>
                   <div className="my-1.5 flex items-center justify-center gap-2">
                     <div className="h-px w-4 bg-gold md:w-6" />
-                    <p className="text-[9px] font-semibold uppercase tracking-widest text-gold md:text-[11px]">Founder & Director</p>
+                    <p className="text-[9px] font-semibold uppercase tracking-widest text-gold md:text-[11px]">{get('director.title', 'Founder & Director')}</p>
                     <div className="h-px w-4 bg-gold md:w-6" />
                   </div>
                   <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
                   <p className="mt-2 text-[10px] italic leading-relaxed text-white/70 md:mt-3 md:text-sm">
-                    "Every child in Kirinyaga deserves an education that changes the trajectory of a family."
+                    "{get('director.quote', 'Every child in Kirinyaga deserves an education that changes the trajectory of a family.')}"
                   </p>
                 </div>
 
@@ -230,9 +233,9 @@ export function Home() {
 
             {/* Headline */}
             <h1 className="mb-4 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.2rem, 8vw, 3.4rem)' }}>
-              Where Excellence
+              {get('hero.tagline', 'Where Excellence')}
               <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
-                Meets Tomorrow
+                {get('hero.taglineGold', 'Meets Tomorrow')}
               </span>
             </h1>
 
@@ -245,7 +248,7 @@ export function Home() {
 
             {/* Tagline */}
             <p className="mb-7 text-base leading-relaxed text-white/70">
-              Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.
+              {get('hero.subtitle', "Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.")}
             </p>
 
             {/* CTAs */}
@@ -266,19 +269,22 @@ export function Home() {
           {/* Stats bar — mobile */}
           <div className="border-t border-white/10 bg-black/90">
             <div className="grid grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
-              {[
-                { end: 2000, suffix: '+', label: 'Students Enrolled' },
-                { end: 120, suffix: '+', label: 'Expert Educators' },
-                { end: 8, suffix: '', label: 'School Buses' },
-                { end: 6, suffix: '', label: 'Sports Disciplines' },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center py-4 px-2 text-center">
-                  <span className="text-2xl font-extrabold text-gold">
-                    <AnimatedCounter end={stat.end} suffix={stat.suffix} />
-                  </span>
-                  <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">{stat.label}</span>
-                </div>
-              ))}
+              <div className="flex flex-col items-center py-4 px-2 text-center">
+                <span className="text-2xl font-extrabold text-gold">{get('stats.students', '2,000+')}</span>
+                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">Students Enrolled</span>
+              </div>
+              <div className="flex flex-col items-center py-4 px-2 text-center">
+                <span className="text-2xl font-extrabold text-gold">{get('stats.teachers', '120+')}</span>
+                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">Expert Educators</span>
+              </div>
+              <div className="flex flex-col items-center py-4 px-2 text-center">
+                <span className="text-2xl font-extrabold text-gold"><AnimatedCounter end={8} suffix="" /></span>
+                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">School Buses</span>
+              </div>
+              <div className="flex flex-col items-center py-4 px-2 text-center">
+                <span className="text-2xl font-extrabold text-gold"><AnimatedCounter end={6} suffix="" /></span>
+                <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">Sports Disciplines</span>
+              </div>
             </div>
           </div>
         </div>
@@ -330,9 +336,9 @@ export function Home() {
               </div>
 
               <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}>
-                Where Excellence
+                {get('hero.tagline', 'Where Excellence')}
                 <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
-                  Meets Tomorrow
+                  {get('hero.taglineGold', 'Meets Tomorrow')}
                 </span>
               </h1>
 
@@ -343,7 +349,7 @@ export function Home() {
               </div>
 
               <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
-                Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.
+                {get('hero.subtitle', "Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.")}
               </p>
 
               <div className="flex flex-wrap gap-4">
@@ -382,10 +388,10 @@ export function Home() {
 
                   <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 backdrop-blur-xl">
                     <div className="flex flex-col items-center pt-12 pb-5 px-6 bg-gradient-to-b from-white/5 to-transparent">
-                      <p className="text-base font-extrabold uppercase tracking-wide text-white">Mr. Albert Njeru</p>
+                      <p className="text-base font-extrabold uppercase tracking-wide text-white">{get('director.name', 'Mr. Albert Njeru')}</p>
                       <div className="mt-1.5 flex items-center gap-2">
                         <div className="h-px w-6 bg-gold" />
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">Founder & Director</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">{get('director.title', 'Founder & Director')}</p>
                         <div className="h-px w-6 bg-gold" />
                       </div>
                     </div>
@@ -395,10 +401,10 @@ export function Home() {
                     <div className="relative px-6 pt-5 pb-6">
                       <span className="absolute top-1 left-4 font-serif text-7xl leading-none text-gold/20 select-none">"</span>
                       <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
-                        Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.
+                        {get('director.quote', 'Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.')}
                       </p>
                       <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-                        <span className="font-serif text-lg italic text-gold/80">Albert Njeru</span>
+                        <span className="font-serif text-lg italic text-gold/80">{get('director.name', 'Albert Njeru').split(' ').slice(-1)[0]}</span>
                         <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
                       </div>
                     </div>
@@ -419,19 +425,22 @@ export function Home() {
           {/* Stats bar — desktop */}
           <div className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
             <div className="mx-auto grid max-w-7xl grid-cols-4 divide-x divide-white/10">
-              {[
-                { end: 2000, suffix: '+', label: 'Students Enrolled' },
-                { end: 120, suffix: '+', label: 'Expert Educators' },
-                { end: 8, suffix: '', label: 'School Buses' },
-                { end: 6, suffix: '', label: 'Sports Disciplines' },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
-                  <span className="text-3xl font-extrabold text-gold">
-                    <AnimatedCounter end={stat.end} suffix={stat.suffix} />
-                  </span>
-                  <span className="mt-1 text-xs uppercase tracking-widest text-white/60">{stat.label}</span>
-                </div>
-              ))}
+              <div className="flex flex-col items-center py-5 px-4 text-center">
+                <span className="text-3xl font-extrabold text-gold">{get('stats.students', '2,000+')}</span>
+                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">Students Enrolled</span>
+              </div>
+              <div className="flex flex-col items-center py-5 px-4 text-center">
+                <span className="text-3xl font-extrabold text-gold">{get('stats.teachers', '120+')}</span>
+                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">Expert Educators</span>
+              </div>
+              <div className="flex flex-col items-center py-5 px-4 text-center">
+                <span className="text-3xl font-extrabold text-gold"><AnimatedCounter end={8} suffix="" /></span>
+                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">School Buses</span>
+              </div>
+              <div className="flex flex-col items-center py-5 px-4 text-center">
+                <span className="text-3xl font-extrabold text-gold"><AnimatedCounter end={6} suffix="" /></span>
+                <span className="mt-1 text-xs uppercase tracking-widest text-white/60">Sports Disciplines</span>
+              </div>
             </div>
           </div>
         </div>

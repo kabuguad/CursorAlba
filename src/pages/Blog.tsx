@@ -6,8 +6,15 @@ import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
+import { useCmsBlocks } from '../hooks/useCmsData'
+
+function useCms() {
+  const { data: blocks = [] } = useCmsBlocks('pg-blog')
+  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
+}
 
 export function Blog() {
+  const get = useCms()
   const [query, setQuery] = useState('')
 
   const { data: posts = [], isLoading } = useQuery({
@@ -30,7 +37,8 @@ export function Blog() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal>
-        <h1 className="text-5xl font-bold md:text-7xl">Blog</h1>
+        <h1 className="text-5xl font-bold md:text-7xl">{get('hero.headline', 'Blog')}</h1>
+        <p className="mt-3 max-w-2xl text-muted">{get('hero.subheadline', 'News, stories, and insights from the Alber School community.')}</p>
         <div className="relative mt-6 max-w-md">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 opacity-50" />
           <input

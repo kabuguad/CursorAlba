@@ -92,9 +92,6 @@ const PROGRAM_ICONS: Record<string, string> = {
 export function Home() {
   const [slide, setSlide] = useState(0)
   const [testimonial, setTestimonial] = useState(0)
-  const { data: homeBlocks = [] } = useCmsBlocks('pg-home')
-  const get = (key: string, fallback: string) => homeBlocks.find((b) => b.key === key)?.value || fallback
-
   const get = useCmsVal('pg-home')
 
   const { data: events = [], isLoading: eventsLoading } = useQuery({

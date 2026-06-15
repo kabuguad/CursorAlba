@@ -9,7 +9,6 @@ import { cn } from '../lib/utils'
 import { ChevronDown } from 'lucide-react'
 
 const STEPS = ['Child Info', 'Parent Info', 'Documents', 'Payment']
-
 export function Admissions() {
   const { showToast } = useToast()
   const [step, setStep] = useState(0)

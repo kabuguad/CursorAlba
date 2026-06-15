@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen, Globe, Users, Baby, FlaskConical, GraduationCap, Sprout } from 'lucide-react'
+import { ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen, Globe, Users, Baby, FlaskConical, GraduationCap, Sprout, Loader2 } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { AnimatedCounter } from '../components/ui/AnimatedCounter'
-import { events } from '../data/events'
-import { programLevels } from '../data/programs'
+import { useQuery } from '@tanstack/react-query'
+import { unwrap } from '../services/mockApi'
+import { contentService } from '../services/contentService'
+import type { PublicEvent, PublicProgramLevel } from '../services/db'
 
 const HERO_IMAGES = [
   'https://picsum.photos/seed/alber-campus/1200/800',
@@ -90,6 +92,21 @@ export function Home() {
   const [slide, setSlide] = useState(0)
   const [testimonial, setTestimonial] = useState(0)
 
+  const { data: events = [], isLoading: eventsLoading } = useQuery({
+    queryKey: ['public-events'],
+    queryFn: () => contentService.listEvents().then(unwrap),
+  })
+
+  const { data: programLevels = [], isLoading: programsLoading } = useQuery({
+    queryKey: ['public-programs'],
+    queryFn: () => contentService.listProgramLevels().then(unwrap),
+  })
+
+  const { data: galleryImages = [], isLoading: galleryLoading } = useQuery({
+    queryKey: ['public-gallery'],
+    queryFn: () => contentService.listGalleryImages().then(unwrap).then(imgs => imgs.filter(img => img.isPublic).slice(0, 9)),
+  })
+
   useEffect(() => {
     const t = setInterval(() => setSlide((s) => (s + 1) % HERO_IMAGES.length), 5000)
     return () => clearInterval(t)
@@ -99,6 +116,9 @@ export function Home() {
     const t = setInterval(() => setTestimonial((s) => (s + 1) % TESTIMONIALS.length), 6000)
     return () => clearInterval(t)
   }, [])
+
+  const upcomingEvents = events.filter((e) => !e.isPast).slice(0, 6)
+  const displayPrograms = programLevels.length > 0 ? programLevels : []
 
   return (
     <>
@@ -466,33 +486,43 @@ export function Home() {
             </p>
           </ScrollReveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {programLevels.map((prog, i) => (
-              <ScrollReveal key={prog.id} delay={i * 0.08}>
-                <Link to="/academics" className="group block h-full">
-                  <GlassCard className="overflow-hidden p-0 h-full transition-all group-hover:ring-2 group-hover:ring-gold/60">
-                    <div className="relative h-44 overflow-hidden">
-                      <img
-                        src={prog.image}
-                        alt={prog.name}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <span className="absolute bottom-3 left-3 text-3xl">{PROGRAM_ICONS[prog.id]}</span>
-                      <span className="absolute top-3 right-3 rounded-full bg-gold/90 px-2 py-0.5 text-xs font-bold text-black">
-                        {prog.ages}
-                      </span>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-bold text-foreground">{prog.name}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-muted">{prog.description}</p>
-                      <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary dark:text-gold group-hover:gap-2 transition-all">
-                        Learn more <ArrowRight className="h-3 w-3" />
-                      </span>
-                    </div>
-                  </GlassCard>
-                </Link>
-              </ScrollReveal>
-            ))}
+            {programsLoading ? (
+              <p className="col-span-full text-center text-muted py-8">Loading programs…</p>
+            ) : displayPrograms.length === 0 ? (
+              <p className="col-span-full text-center text-muted py-8">No programs configured yet.</p>
+            ) : (
+              displayPrograms.map((prog, i) => {
+                const icon = PROGRAM_ICONS[prog.slug] ?? '📖'
+                const imgSrc = prog.imageUrl || `https://picsum.photos/seed/${prog.slug}/800/600`
+                return (
+                  <ScrollReveal key={prog.id} delay={i * 0.08}>
+                    <Link to="/academics" className="group block h-full">
+                      <GlassCard className="overflow-hidden p-0 h-full transition-all group-hover:ring-2 group-hover:ring-gold/60">
+                        <div className="relative h-44 overflow-hidden">
+                          <img
+                            src={imgSrc}
+                            alt={prog.name}
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                          <span className="absolute bottom-3 left-3 text-3xl">{icon}</span>
+                          <span className="absolute top-3 right-3 rounded-full bg-gold/90 px-2 py-0.5 text-xs font-bold text-black">
+                            {prog.ages}
+                          </span>
+                        </div>
+                        <div className="p-5">
+                          <h3 className="font-bold text-foreground">{prog.name}</h3>
+                          <p className="mt-1 text-sm leading-relaxed text-muted">{prog.description}</p>
+                          <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary dark:text-gold group-hover:gap-2 transition-all">
+                            Learn more <ArrowRight className="h-3 w-3" />
+                          </span>
+                        </div>
+                      </GlassCard>
+                    </Link>
+                  </ScrollReveal>
+                )
+              })
+            )}
           </div>
           <ScrollReveal className="mt-10 text-center">
             <Link to="/academics">
@@ -590,17 +620,23 @@ export function Home() {
             </Link>
           </ScrollReveal>
           <div className="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-3">
-            {GALLERY.map((url, i) => (
-              <ScrollReveal key={url} delay={i * 0.04}>
-                <div className="aspect-square overflow-hidden rounded-2xl">
-                  <img
-                    src={url}
-                    alt={`Campus life ${i + 1}`}
-                    className="h-full w-full object-cover transition duration-500 hover:scale-110"
-                  />
-                </div>
-              </ScrollReveal>
-            ))}
+            {galleryLoading ? (
+              <p className="col-span-full text-center text-muted py-8">Loading gallery…</p>
+            ) : galleryImages.length === 0 ? (
+              <p className="col-span-full text-center text-muted py-8">No gallery images yet.</p>
+            ) : (
+              galleryImages.map((img, i) => (
+                <ScrollReveal key={img.id} delay={i * 0.04}>
+                  <div className="aspect-square overflow-hidden rounded-2xl">
+                    <img
+                      src={img.url}
+                      alt={img.caption ?? `Campus life ${i + 1}`}
+                      className="h-full w-full object-cover transition duration-500 hover:scale-110"
+                    />
+                  </div>
+                </ScrollReveal>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -615,18 +651,24 @@ export function Home() {
             </Link>
           </ScrollReveal>
           <div className="relative border-l-2 border-gold pl-8">
-            {events.filter((e) => !e.isPast).slice(0, 6).map((e, i) => (
-              <ScrollReveal key={e.id} delay={i * 0.08}>
-                <div className="relative mb-10">
-                  <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-gold ring-4 ring-gold/20" />
-                  <GlassCard className="p-6">
-                    <span className="text-xs font-semibold text-gold">{e.date}</span>
-                    <h3 className="mt-1 text-xl font-bold">{e.title}</h3>
-                    <p className="text-sm text-muted">{e.location} · {e.description}</p>
-                  </GlassCard>
-                </div>
-              </ScrollReveal>
-            ))}
+            {eventsLoading ? (
+              <p className="text-center text-muted py-8">Loading events…</p>
+            ) : upcomingEvents.length === 0 ? (
+              <p className="text-center text-muted py-8">No upcoming events.</p>
+            ) : (
+              upcomingEvents.map((e, i) => (
+                <ScrollReveal key={e.id} delay={i * 0.08}>
+                  <div className="relative mb-10">
+                    <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-gold ring-4 ring-gold/20" />
+                    <GlassCard className="p-6">
+                      <span className="text-xs font-semibold text-gold">{e.startDate.slice(0, 10)}</span>
+                      <h3 className="mt-1 text-xl font-bold">{e.title}</h3>
+                      <p className="text-sm text-muted">{e.location ?? ''} {e.location && e.description ? '·' : ''} {e.description ?? ''}</p>
+                    </GlassCard>
+                  </div>
+                </ScrollReveal>
+              ))
+            )}
           </div>
         </div>
       </section>

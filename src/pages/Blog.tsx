@@ -1,23 +1,31 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Search } from 'lucide-react'
-import { blogPosts } from '../data/blog'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
+import { useQuery } from '@tanstack/react-query'
+import { unwrap } from '../services/mockApi'
+import { contentService } from '../services/contentService'
 
 export function Blog() {
   const [query, setQuery] = useState('')
 
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['public-blog'],
+    queryFn: () => contentService.listBlogPosts().then(r => unwrap(r).filter(p => p.isPublished)),
+    refetchInterval: 30000,
+  })
+
   const filtered = useMemo(() => {
     const q = query.toLowerCase()
-    return blogPosts.filter(
+    return posts.filter(
       (p) =>
         !q ||
         p.title.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.excerpt.toLowerCase().includes(q),
+        (p.category ?? '').toLowerCase().includes(q) ||
+        (p.excerpt ?? '').toLowerCase().includes(q),
     )
-  }, [query])
+  }, [query, posts])
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
@@ -34,22 +42,31 @@ export function Blog() {
         </div>
       </ScrollReveal>
 
-      <div className="mt-12 columns-1 gap-6 sm:columns-2 lg:columns-3">
-        {filtered.map((post, i) => (
-          <ScrollReveal key={post.id} delay={i * 0.05}>
-            <Link to={`/blog/${post.id}`}>
-              <GlassCard className="mb-6 break-inside-avoid overflow-hidden p-0">
-                <img src={post.image} alt={post.title} className="w-full object-cover" />
-                <div className="p-5">
-                  <span className="text-xs font-semibold text-gold">{post.category}</span>
-                  <h2 className="mt-1 text-lg font-bold">{post.title}</h2>
-                  <p className="mt-2 text-sm text-muted line-clamp-3">{post.excerpt}</p>
-                </div>
-              </GlassCard>
-            </Link>
-          </ScrollReveal>
-        ))}
-      </div>
+      {isLoading ? (
+        <p className="text-center text-muted py-16">Loading articles…</p>
+      ) : (
+        <div className="mt-12 columns-1 gap-6 sm:columns-2 lg:columns-3">
+          {filtered.map((post, i) => (
+            <ScrollReveal key={post.id} delay={i * 0.05}>
+              <Link to={`/blog/${post.id}`}>
+                <GlassCard className="mb-6 break-inside-avoid overflow-hidden p-0">
+                  {post.coverImageUrl && (
+                    <img src={post.coverImageUrl} alt={post.title} className="w-full object-cover" />
+                  )}
+                  <div className="p-5">
+                    <span className="text-xs font-semibold text-gold">{post.category ?? ''}</span>
+                    <h2 className="mt-1 text-lg font-bold">{post.title}</h2>
+                    <p className="mt-2 text-sm text-muted line-clamp-3">{post.excerpt ?? ''}</p>
+                  </div>
+                </GlassCard>
+              </Link>
+            </ScrollReveal>
+          ))}
+          {filtered.length === 0 && (
+            <p className="text-center text-muted py-12 col-span-full">No articles found.</p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

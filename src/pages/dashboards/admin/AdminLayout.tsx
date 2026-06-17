@@ -16,54 +16,57 @@ const NAV = [
   {
     group: 'Overview',
     items: [
-      { label: 'Dashboard',     icon: LayoutDashboard, path: '/dashboard/admin'                  },
-      { label: 'Reports',       icon: BarChart2,        path: '/dashboard/admin/reports'          },
+      { label: 'Dashboard',           icon: LayoutDashboard, path: '/dashboard/admin'                },
+      { label: 'Reports',             icon: BarChart2,        path: '/dashboard/admin/reports'        },
     ],
   },
   {
-    group: 'Content & Media',
+    // All items here control what visitors see on the public website
+    group: 'Website Content',
     items: [
-      { label: 'Pages & Text',  icon: Globe,            path: '/dashboard/admin/pages'            },
-      { label: 'Why Choose Us', icon: ThumbsUp,         path: '/dashboard/admin/why-choose-us'   },
-      { label: 'Programs',      icon: GraduationCap,    path: '/dashboard/admin/programs'         },
-      { label: 'Staff Directory',icon: Users,           path: '/dashboard/admin/public-staff'     },
-      { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
-      { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },
-      { label: 'Gallery',       icon: ImageIcon,        path: '/dashboard/admin/gallery'          },
+      { label: 'Page Builder',        icon: Globe,            path: '/dashboard/admin/pages'          },
+      { label: 'Why Choose Us',       icon: ThumbsUp,         path: '/dashboard/admin/why-choose-us'  },
+      { label: 'Academic Programmes', icon: GraduationCap,    path: '/dashboard/admin/programs'       },
+      { label: 'Public Staff Profiles',icon: Users,           path: '/dashboard/admin/public-staff'   },
+      { label: 'Blog Posts',          icon: BookOpen,         path: '/dashboard/admin/blog'           },
+      { label: 'Events',              icon: CalendarDays,     path: '/dashboard/admin/events'         },
+      { label: 'Gallery',             icon: ImageIcon,        path: '/dashboard/admin/gallery'        },
     ],
   },
   {
-    group: 'Co-Curricular',
+    // Public website content for the Activities section (renamed from Co-Curricular to plain English)
+    group: 'Activities & Sports',
     items: [
-      { label: 'Activities',    icon: Activity,         path: '/dashboard/admin/co-curricular'    },
-      { label: 'Sports',        icon: Trophy,           path: '/dashboard/admin/sports'           },
-      { label: 'Music Academy', icon: Music,            path: '/dashboard/admin/music'            },
-      { label: 'Drama & Dance', icon: Star,             path: '/dashboard/admin/drama'            },
+      { label: 'Activities Hub',      icon: Activity,         path: '/dashboard/admin/co-curricular'  },
+      { label: 'Sports',              icon: Trophy,           path: '/dashboard/admin/sports'         },
+      { label: 'Music Academy',       icon: Music,            path: '/dashboard/admin/music'          },
+      { label: 'Drama & Dance',       icon: Star,             path: '/dashboard/admin/drama'          },
     ],
   },
   {
+    // Internal school operations — not public-facing
     group: 'School Management',
     items: [
-      { label: 'Admissions',    icon: ClipboardList,    path: '/dashboard/admin/admissions'       },
-      { label: 'Students',      icon: Users,            path: '/dashboard/admin/students'         },
-      { label: 'Staff',         icon: UserCheck,        path: '/dashboard/admin/staff'            },
-      { label: 'Academics',     icon: GraduationCap,    path: '/dashboard/admin/academics'        },
-      { label: 'Timetable',     icon: Clock,            path: '/dashboard/admin/timetable'        },
-      { label: 'Announcements', icon: Megaphone,        path: '/dashboard/admin/announcements'    },
+      { label: 'Admissions',          icon: ClipboardList,    path: '/dashboard/admin/admissions'     },
+      { label: 'Students',            icon: Users,            path: '/dashboard/admin/students'       },
+      { label: 'Staff & Teachers',    icon: UserCheck,        path: '/dashboard/admin/staff'          },
+      { label: 'Curriculum & Grades', icon: GraduationCap,    path: '/dashboard/admin/academics'      },
+      { label: 'Timetable',           icon: Clock,            path: '/dashboard/admin/timetable'      },
+      { label: 'Announcements',       icon: Megaphone,        path: '/dashboard/admin/announcements'  },
     ],
   },
   {
     group: 'Finance',
     items: [
-      { label: 'Payments',      icon: CreditCard,       path: '/dashboard/admin/payments'         },
-      { label: 'Fee Structure', icon: Banknote,         path: '/dashboard/admin/fees'             },
+      { label: 'Payments',            icon: CreditCard,       path: '/dashboard/admin/payments'       },
+      { label: 'Fee Structure',       icon: Banknote,         path: '/dashboard/admin/fees'           },
     ],
   },
   {
     group: 'System',
     items: [
-      { label: 'Accounts',      icon: UserCog,          path: '/dashboard/admin/accounts'          },
-      { label: 'Site Settings', icon: Settings,         path: '/dashboard/admin/settings'         },
+      { label: 'Accounts',            icon: UserCog,          path: '/dashboard/admin/accounts'       },
+      { label: 'Site Settings',       icon: Settings,         path: '/dashboard/admin/settings'       },
     ],
   },
 ]

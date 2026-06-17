@@ -19,9 +19,9 @@ const CO_CURRICULAR_LINKS = [
 const NAV_LEFT = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
-  { to: '/academics', label: 'Programs & Academics' },
+  { to: '/academics', label: 'Academics' },
   { to: '/facilities', label: 'Facilities' },
-  { to: '/why-choose-us', label: 'Why Choose Us' },
+  { to: '/why-choose-us', label: 'Why Us' },
 ]
 
 const NAV_RIGHT = [
@@ -32,7 +32,7 @@ const NAV_RIGHT = [
 
 const ALL_NAV = [
   ...NAV_LEFT,
-  { to: '/co-curricular', label: 'Co-Curricular' },
+  { to: '/co-curricular', label: 'Activities' },
   ...NAV_RIGHT,
 ]
 
@@ -96,7 +96,7 @@ export function Navbar() {
                     : 'text-muted hover:text-primary dark:hover:text-gold',
                 )}
               >
-                Co-Curricular
+                Activities
                 <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', dropdownOpen && 'rotate-180')} />
               </button>
 

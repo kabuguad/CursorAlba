@@ -86,6 +86,8 @@ import { SportsManager }       from './pages/dashboards/admin/SportsManager'
 import { MusicManager }        from './pages/dashboards/admin/MusicManager'
 import { DramaDanceManager }   from './pages/dashboards/admin/DramaDanceManager'
 import { WhyChooseUsManager }  from './pages/dashboards/admin/WhyChooseUsManager'
+import { ProgramsManager }     from './pages/dashboards/admin/ProgramsManager'
+import { PublicStaffManager }  from './pages/dashboards/admin/PublicStaffManager'
 
 function App() {
   return (
@@ -187,6 +189,8 @@ function App() {
                 <Route path="music"         element={<MusicManager />} />
                 <Route path="drama"         element={<DramaDanceManager />} />
                 <Route path="why-choose-us" element={<WhyChooseUsManager />} />
+                <Route path="programs"      element={<ProgramsManager />} />
+                <Route path="public-staff"  element={<PublicStaffManager />} />
                 <Route path="admissions"    element={<AdmissionsManager />} />
                 <Route path="students"      element={<StudentsManager />} />
                 <Route path="staff"         element={<StaffManager />} />

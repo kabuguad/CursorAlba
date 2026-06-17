@@ -25,6 +25,8 @@ const NAV = [
     items: [
       { label: 'Pages & Text',  icon: Globe,            path: '/dashboard/admin/pages'            },
       { label: 'Why Choose Us', icon: ThumbsUp,         path: '/dashboard/admin/why-choose-us'   },
+      { label: 'Programs',      icon: GraduationCap,    path: '/dashboard/admin/programs'         },
+      { label: 'Staff Directory',icon: Users,           path: '/dashboard/admin/public-staff'     },
       { label: 'Blog Posts',    icon: BookOpen,         path: '/dashboard/admin/blog'             },
       { label: 'Events',        icon: CalendarDays,     path: '/dashboard/admin/events'           },
       { label: 'Gallery',       icon: ImageIcon,        path: '/dashboard/admin/gallery'          },

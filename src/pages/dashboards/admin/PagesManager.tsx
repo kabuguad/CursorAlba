@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2, Edit2, Check, ChevronUp, ChevronDown, Layers } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { contentService } from '../../../services/contentService'
-import type { CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel } from '../../../services/contentService'
+import type { CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, PublicFeeRow } from '../../../services/contentService'
 import { unwrap } from '../../../services/mockApi'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Button } from '../../../components/ui/Button'
@@ -1208,6 +1208,145 @@ function TeachingPillarsPanel() {
   )
 }
 
+// ── Public Fee Rows Panel ──────────────────────────────────────────────────
+type FeeRowDraft = { level: string; tuition: number; transport: number; activities: number; sortOrder: number }
+const BLANK_FEE: FeeRowDraft = { level: '', tuition: 0, transport: 0, activities: 0, sortOrder: 1 }
+
+function FeeRowsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
+  const { showToast } = useToast()
+  const [editing, setEditing] = useState<string | 'new' | null>(null)
+  const [draft, setDraft] = useState<FeeRowDraft>(BLANK_FEE)
+
+  const { data: rows = [] } = useQuery({
+    queryKey: ['admin-fee-rows'],
+    queryFn: () => contentService.listPublicFeeRows().then(unwrap),
+    staleTime: 30_000,
+  })
+
+  const createMut = useMutation({
+    mutationFn: (dto: FeeRowDraft) => contentService.createPublicFeeRow(dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-fee-rows'] }); showToast('Fee row added ✓'); setEditing(null) },
+  })
+
+  const updateMut = useMutation({
+    mutationFn: ({ id, dto }: { id: string; dto: Partial<FeeRowDraft> }) => contentService.updatePublicFeeRow(id, dto).then(unwrap),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-fee-rows'] }); showToast('Fee row updated ✓'); setEditing(null) },
+  })
+
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => contentService.deletePublicFeeRow(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-fee-rows'] }); showToast('Fee row deleted'); setEditing(null) },
+  })
+
+  const openNew = () => { setDraft({ ...BLANK_FEE, sortOrder: rows.length + 1 }); setEditing('new') }
+  const openEdit = (r: PublicFeeRow) => { setDraft({ level: r.level, tuition: r.tuition, transport: r.transport, activities: r.activities, sortOrder: r.sortOrder }); setEditing(r.id) }
+  const close = () => setEditing(null)
+  const save = () => {
+    if (!draft.level.trim()) return showToast('Level name is required')
+    if (editing === 'new') createMut.mutate(draft)
+    else if (editing) updateMut.mutate({ id: editing, dto: draft })
+  }
+
+  const fmt = (n: number) => `KSh ${n.toLocaleString()}`
+
+  function FeeForm() {
+    return (
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="col-span-2">
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Level Name <span className="text-gold">*</span></label>
+            <input className={FIELD} value={draft.level} onChange={e => setDraft(d => ({ ...d, level: e.target.value }))} placeholder="e.g. Primary School" autoFocus />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Tuition (KSh / year)</label>
+            <input type="number" min={0} className={FIELD} value={draft.tuition} onChange={e => setDraft(d => ({ ...d, tuition: Number(e.target.value) }))} />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Transport (KSh / year)</label>
+            <input type="number" min={0} className={FIELD} value={draft.transport} onChange={e => setDraft(d => ({ ...d, transport: Number(e.target.value) }))} />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Activities (KSh / year)</label>
+            <input type="number" min={0} className={FIELD} value={draft.activities} onChange={e => setDraft(d => ({ ...d, activities: Number(e.target.value) }))} />
+          </div>
+          <div>
+            <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Total (auto-calculated)</label>
+            <div className="flex h-9 items-center rounded-lg border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900 px-3 text-sm font-semibold text-gold">
+              {fmt(draft.tuition + draft.transport + draft.activities)}
+            </div>
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-[10px] font-semibold uppercase text-muted tracking-wider">Sort Order</label>
+          <input type="number" min={1} className={FIELD} value={draft.sortOrder} onChange={e => setDraft(d => ({ ...d, sortOrder: Number(e.target.value) }))} />
+        </div>
+        <div className="flex gap-2 pt-1">
+          <button onClick={save} disabled={!draft.level.trim()} className={BTN_GOLD}><Check className="h-3.5 w-3.5" /> Save</button>
+          <button onClick={close} className={BTN_GHOST}><X className="h-3.5 w-3.5" /></button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-8 max-w-3xl space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted flex items-center gap-2">
+            💰 Fee Structure Table
+          </h2>
+          <p className="text-xs text-muted mt-0.5">Annual fee rows displayed in the Fee Structure section of the Admissions page.</p>
+        </div>
+        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-3.5 w-3.5" /> Add Fee Row</button>
+      </div>
+
+      {editing === 'new' && (
+        <GlassCard className="p-5 border-gold/40">
+          <p className="text-xs font-semibold text-gold uppercase tracking-wider mb-3">New Fee Row</p>
+          <FeeForm />
+        </GlassCard>
+      )}
+
+      <div className="space-y-2">
+        {[...rows].sort((a, b) => a.sortOrder - b.sortOrder).map(r => (
+          <div key={r.id} className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            {editing === r.id ? (
+              <div className="p-5"><FeeForm /></div>
+            ) : (
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold">{r.level}</p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-0.5">
+                    <span className="text-xs text-muted">Tuition: <span className="font-medium text-foreground">{fmt(r.tuition)}</span></span>
+                    <span className="text-xs text-muted">Transport: <span className="font-medium text-foreground">{fmt(r.transport)}</span></span>
+                    <span className="text-xs text-muted">Activities: <span className="font-medium text-foreground">{fmt(r.activities)}</span></span>
+                    <span className="text-xs font-semibold text-gold">Total: {fmt(r.total)}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button onClick={() => openEdit(r)} className="rounded-lg p-1.5 text-muted hover:bg-tint/60 dark:hover:bg-dark-card transition" title="Edit">
+                    <Edit2 className="h-3.5 w-3.5" />
+                  </button>
+                  <button onClick={() => deleteMut.mutate(r.id)} className="rounded-lg p-1.5 text-muted hover:bg-red-500/10 hover:text-red-500 transition" title="Delete">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {rows.length === 0 && editing === null && (
+        <button onClick={openNew}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-theme py-8 text-sm text-muted transition hover:border-gold/50 hover:text-gold">
+          <Plus className="h-4 w-4" /> Add your first fee row
+        </button>
+      )}
+    </div>
+  )
+}
+
 export function PagesManager() {
   const { showToast } = useToast()
   const queryClient = useQueryClient()
@@ -1593,6 +1732,32 @@ export function PagesManager() {
                         <TeachingPillarsPanel />
                         <div className="pb-8" />
                       </>
+                    )}
+
+                    {/* Admissions — fee structure panel + redirect to applications */}
+                    {selectedPageId === 'pg-admissions' && (
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <ManagerRedirectCard
+                          icon="📋"
+                          title="Admissions Applications"
+                          description="Review, process, approve, or reject student applications from the dedicated Admissions Applications manager."
+                          to="/dashboard/admin/admissions"
+                        />
+                        <hr className="my-2 border-theme" />
+                        <FeeRowsPanel qc={queryClient} />
+                        <div className="pb-8" />
+                      </>
+                    )}
+
+                    {/* Staff Directory — redirect to dedicated manager */}
+                    {selectedPageId === 'pg-staff' && (
+                      <ManagerRedirectCard
+                        icon="👩‍🏫"
+                        title="Staff Directory"
+                        description="Add, edit, and manage public staff profiles shown on the Staff Directory page from the dedicated Staff Directory manager."
+                        to="/dashboard/admin/public-staff"
+                      />
                     )}
                   </div>
                 )}

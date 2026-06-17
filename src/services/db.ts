@@ -1352,6 +1352,7 @@ function createSeed(): DB {
     { id: 'pg-blog',        slug: 'blog',          parentId: null,          title: 'Blog',          icon: '📰', path: '/blog',         isPublished: true, sortOrder: 6 },
     { id: 'pg-contact',     slug: 'contact',       parentId: null,          title: 'Contact',       icon: '📞', path: '/contact',      isPublished: true, sortOrder: 7 },
     { id: 'pg-facilities',  slug: 'facilities',    parentId: null,          title: 'Facilities',    icon: '🏗️', path: '/facilities',   isPublished: true, sortOrder: 8 },
+    { id: 'pg-staff',       slug: 'staff',         parentId: null,          title: 'Staff Directory',icon: '👩‍🏫', path: '/staff',        isPublished: true, sortOrder: 9 },
   ]
 
   function blk(id: string, pageId: string, key: string, label: string, type: CmsBlockType, value: string, helpText: string, sortOrder: number): CmsBlock {
@@ -1434,6 +1435,12 @@ function createSeed(): DB {
     blk('cb-fa-02','pg-facilities','hero.subheadline','Page Subheadline',         'textarea','World-class infrastructure designed for modern learning — click any facility to explore.','Shown below the main heading', 2),
     blk('cb-fa-03','pg-facilities','cta.headline',    'CTA Box Headline',         'text',    'Experience It In Person',     'Heading in the call-to-action box at the bottom of the page', 3),
     blk('cb-fa-04','pg-facilities','cta.subtext',     'CTA Box Subtext',          'textarea','Book a campus tour and see our facilities first-hand. Adjacent to the Governor\'s Offices, Kutus.','Body text in the call-to-action box', 4),
+
+    // ── Staff Directory ───────────────────────────────────────────────────
+    blk('cb-st-01','pg-staff','hero.headline',    'Page Headline',                'text',    'Our Faculty & Staff',         'Main heading at the top of the Staff page', 1),
+    blk('cb-st-02','pg-staff','hero.subheadline', 'Page Subheadline',             'textarea','Meet the exceptional educators and support team who guide every learner at Alber School.','Shown below the main heading', 2),
+    blk('cb-st-03','pg-staff','cta.headline',     'CTA Box Headline',             'text',    'Join Our Team',               'Heading in the call-to-action box at the bottom of the Staff page', 3),
+    blk('cb-st-04','pg-staff','cta.subtext',      'CTA Box Subtext',              'textarea','We are always looking for passionate, innovative educators. Send your CV and cover letter to careers@alberschool.ke.','Body text in the CTA box', 4),
   ]
 
   const academicsCompetencies: AcademicsCompetency[] = [
@@ -1730,7 +1737,7 @@ function createSeed(): DB {
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v11'
+const STORAGE_KEY = 'alber_db_v12'
 
 function loadStore(): DB {
   try {

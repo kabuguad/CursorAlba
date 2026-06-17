@@ -65,7 +65,6 @@ import { ParentSettings }       from './pages/dashboards/parent/ParentSettings'
 
 import { AdminLayout }          from './pages/dashboards/admin/AdminLayout'
 import { Overview }             from './pages/dashboards/admin/Overview'
-import { ContentManager }       from './pages/dashboards/admin/ContentManager'
 import { BlogManager }          from './pages/dashboards/admin/BlogManager'
 import { EventsManager }        from './pages/dashboards/admin/EventsManager'
 import { GalleryManager }       from './pages/dashboards/admin/GalleryManager'
@@ -81,13 +80,9 @@ import { TimetableManager }     from './pages/dashboards/admin/TimetableManager'
 import { PaymentsManager }      from './pages/dashboards/admin/PaymentsManager'
 import { AccountsManager }      from './pages/dashboards/admin/AccountsManager'
 import { PagesManager }         from './pages/dashboards/admin/PagesManager'
-import { CoCurrManager }       from './pages/dashboards/admin/CoCurrManager'
-import { SportsManager }       from './pages/dashboards/admin/SportsManager'
-import { MusicManager }        from './pages/dashboards/admin/MusicManager'
-import { DramaDanceManager }   from './pages/dashboards/admin/DramaDanceManager'
-import { WhyChooseUsManager }  from './pages/dashboards/admin/WhyChooseUsManager'
-import { ProgramsManager }     from './pages/dashboards/admin/ProgramsManager'
 import { PublicStaffManager }  from './pages/dashboards/admin/PublicStaffManager'
+import { SiteContentManager }  from './pages/dashboards/admin/SiteContentManager'
+import { ActivitiesManager }   from './pages/dashboards/admin/ActivitiesManager'
 
 function App() {
   return (
@@ -180,29 +175,40 @@ function App() {
                 element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}
               >
                 <Route index                element={<Overview />} />
-                <Route path="content"       element={<ContentManager />} />
+                {/* Content & Media — new unified routes */}
+                <Route path="site-content"  element={<SiteContentManager />} />
+                <Route path="activities"    element={<ActivitiesManager />} />
                 <Route path="blog"          element={<BlogManager />} />
                 <Route path="events"        element={<EventsManager />} />
                 <Route path="gallery"       element={<GalleryManager />} />
-                <Route path="co-curricular" element={<CoCurrManager />} />
-                <Route path="sports"        element={<SportsManager />} />
-                <Route path="music"         element={<MusicManager />} />
-                <Route path="drama"         element={<DramaDanceManager />} />
-                <Route path="why-choose-us" element={<WhyChooseUsManager />} />
-                <Route path="programs"      element={<ProgramsManager />} />
                 <Route path="public-staff"  element={<PublicStaffManager />} />
+
+                {/* Legacy redirects — old routes forwarded to new unified pages */}
+                <Route path="pages"         element={<Navigate to="/dashboard/admin/site-content" replace />} />
+                <Route path="content"       element={<Navigate to="/dashboard/admin/site-content" replace />} />
+                <Route path="why-choose-us" element={<Navigate to="/dashboard/admin/site-content" replace />} />
+                <Route path="programs"      element={<Navigate to="/dashboard/admin/site-content" replace />} />
+                <Route path="co-curricular" element={<Navigate to="/dashboard/admin/activities" replace />} />
+                <Route path="sports"        element={<Navigate to="/dashboard/admin/activities" replace />} />
+                <Route path="music"         element={<Navigate to="/dashboard/admin/activities" replace />} />
+                <Route path="drama"         element={<Navigate to="/dashboard/admin/activities" replace />} />
+
+                {/* School Management */}
                 <Route path="admissions"    element={<AdmissionsManager />} />
                 <Route path="students"      element={<StudentsManager />} />
                 <Route path="staff"         element={<StaffManager />} />
                 <Route path="academics"     element={<AcademicsManager />} />
                 <Route path="timetable"     element={<TimetableManager />} />
+                <Route path="announcements" element={<AnnouncementsManager />} />
+
+                {/* Finance */}
                 <Route path="payments"      element={<PaymentsManager />} />
                 <Route path="fees"          element={<FeesManager />} />
-                <Route path="announcements" element={<AnnouncementsManager />} />
+
+                {/* System */}
                 <Route path="reports"       element={<ReportsManager />} />
                 <Route path="accounts"      element={<AccountsManager />} />
                 <Route path="settings"      element={<SettingsManager />} />
-                <Route path="pages"         element={<PagesManager />} />
               </Route>
 
               <Route path="dashboard" element={<Navigate to="/login" replace />} />

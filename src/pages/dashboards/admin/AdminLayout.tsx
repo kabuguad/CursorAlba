@@ -21,26 +21,14 @@ const NAV = [
     ],
   },
   {
-    // All items here control what visitors see on the public website
-    group: 'Website Content',
+    group: 'Content & Media',
     items: [
-      { label: 'Page Builder',        icon: Globe,            path: '/dashboard/admin/pages'          },
-      { label: 'Why Choose Us',       icon: ThumbsUp,         path: '/dashboard/admin/why-choose-us'  },
-      { label: 'Academic Programmes', icon: GraduationCap,    path: '/dashboard/admin/programs'       },
-      { label: 'Public Staff Profiles',icon: Users,           path: '/dashboard/admin/public-staff'   },
-      { label: 'Blog Posts',          icon: BookOpen,         path: '/dashboard/admin/blog'           },
+      { label: 'Site Content',        icon: Globe,            path: '/dashboard/admin/site-content'   },
+      { label: 'Blog & News',         icon: BookOpen,         path: '/dashboard/admin/blog'           },
       { label: 'Events',              icon: CalendarDays,     path: '/dashboard/admin/events'         },
       { label: 'Gallery',             icon: ImageIcon,        path: '/dashboard/admin/gallery'        },
-    ],
-  },
-  {
-    // Public website content for the Activities section (renamed from Co-Curricular to plain English)
-    group: 'Activities & Sports',
-    items: [
-      { label: 'Activities Hub',      icon: Activity,         path: '/dashboard/admin/co-curricular'  },
-      { label: 'Sports',              icon: Trophy,           path: '/dashboard/admin/sports'         },
-      { label: 'Music Academy',       icon: Music,            path: '/dashboard/admin/music'          },
-      { label: 'Drama & Dance',       icon: Star,             path: '/dashboard/admin/drama'          },
+      { label: 'People & Staff',      icon: Users,            path: '/dashboard/admin/public-staff'   },
+      { label: 'Activities & Sports', icon: Activity,         path: '/dashboard/admin/activities'     },
     ],
   },
   {

@@ -54,7 +54,7 @@ export function Navbar() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-surface-elevated/70 backdrop-blur-xl shadow-sm shadow-black/10 px-4 py-2">
-        <nav className="glass glass-border relative mx-auto flex max-w-7xl items-center justify-between rounded-2xl bg-surface-elevated/60 px-4 py-3 text-foreground lg:px-8">
+        <nav className="glass glass-border relative flex w-full items-center justify-between rounded-2xl bg-surface-elevated/60 px-4 py-3 text-foreground lg:px-8">
           <Link to="/" className="flex items-center gap-2 transition hover:scale-105">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-gold font-bold text-lg">
               A
@@ -72,7 +72,7 @@ export function Navbar() {
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    'rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
+                    'whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
                     isActive
                       ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold'
                       : 'text-muted hover:text-primary dark:hover:text-gold',
@@ -90,7 +90,7 @@ export function Navbar() {
             >
               <button
                 className={cn(
-                  'flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
+                  'whitespace-nowrap flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
                   dropdownOpen
                     ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold'
                     : 'text-muted hover:text-primary dark:hover:text-gold',
@@ -132,7 +132,7 @@ export function Navbar() {
                 to={item.to}
                 className={({ isActive }) =>
                   cn(
-                    'rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
+                    'whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
                     isActive
                       ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold'
                       : 'text-muted hover:text-primary dark:hover:text-gold',

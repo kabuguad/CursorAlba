@@ -1429,144 +1429,175 @@ export function PagesManager() {
     showToast(`Block "${block.label}" deleted`)
   }
 
-  function toggleExpand(id: string) {
-    setExpandedIds((prev) => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
-  }
-
-  function PageTreeItem({ page, depth = 0 }: { page: CmsPage; depth?: number }) {
-    const isSelected = selectedPageId === page.id
-    const expanded = expandedIds.has(page.id)
-    const kids = children(page.id)
-    const hasSubs = hasChildren(page.id)
-    const pub = page.isPublished
-
+  // ── Page Card (replaces the old sidebar tree item) ──────────────────────
+  function PageCard({ page }: { page: CmsPage }) {
+    const subs = children(page.id)
     return (
-      <div>
-        <div
-          className={cn(
-            'flex items-center gap-2 rounded-xl px-3 py-2 transition cursor-pointer select-none',
-            isSelected
-              ? 'bg-primary/15 dark:bg-gold/15 text-primary dark:text-gold font-semibold'
-              : 'hover:bg-tint/60 dark:hover:bg-dark-card/80',
-            depth > 0 && 'ml-5 border-l border-theme/40 pl-3',
-          )}
-          onClick={() => {
-            setSelectedPageId(page.id)
-            if (hasSubs) toggleExpand(page.id)
-          }}
-        >
-          <span className="text-base">{page.icon}</span>
-          <span className="flex-1 text-sm">{page.title}</span>
-          {!pub && <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">DRAFT</span>}
-          {hasSubs && (
-            <ChevronRight className={cn('h-3.5 w-3.5 transition-transform text-muted', expanded && 'rotate-90')} />
-          )}
+      <div
+        onClick={() => setSelectedPageId(page.id)}
+        className="group flex cursor-pointer flex-col rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm transition-all hover:border-[#E8B84B]/60 hover:shadow-md dark:hover:border-[#E8B84B]/40"
+      >
+        {/* Icon + publish badge */}
+        <div className="mb-4 flex items-start justify-between gap-2">
+          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-gray-100 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-2xl">
+            {page.icon}
+          </div>
+          <span className={cn(
+            'mt-0.5 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold flex-shrink-0',
+            page.isPublished
+              ? 'bg-green-50 text-green-700 dark:bg-green-900/25 dark:text-green-400'
+              : 'bg-amber-50 text-amber-700 dark:bg-amber-900/25 dark:text-amber-400',
+          )}>
+            <span className={cn('h-1.5 w-1.5 rounded-full', page.isPublished ? 'bg-green-500' : 'bg-amber-500')} />
+            {page.isPublished ? 'Published' : 'Draft'}
+          </span>
         </div>
-        {hasSubs && expanded && (
-          <div className="mt-0.5 space-y-0.5">
-            {kids.map((child) => (
-              <PageTreeItem key={child.id} page={child} depth={depth + 1} />
+
+        {/* Title + URL */}
+        <h3 className="text-sm font-bold leading-tight">{page.title}</h3>
+        <p className="mt-0.5 font-mono text-[11px] text-muted">{page.path}</p>
+
+        {/* Sub-page chips */}
+        {subs.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {subs.map((sub) => (
+              <button
+                key={sub.id}
+                onClick={(e) => { e.stopPropagation(); setSelectedPageId(sub.id) }}
+                className="inline-flex items-center gap-1 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-2 py-1 text-[11px] font-medium text-muted transition hover:border-[#E8B84B]/50 hover:text-foreground"
+              >
+                <span>{sub.icon}</span>
+                <span>{sub.title}</span>
+              </button>
             ))}
           </div>
         )}
+
+        {/* Footer: preview + hover cue */}
+        <div className="mt-auto flex items-center justify-between pt-4">
+          <Link
+            to={page.path}
+            target="_blank"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1 text-[11px] text-muted transition hover:text-foreground"
+          >
+            <ExternalLink className="h-3 w-3" />
+            Preview
+          </Link>
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#c49830] opacity-0 transition-opacity group-hover:opacity-100">
+            Edit content <ChevronRight className="h-3 w-3" />
+          </span>
+        </div>
       </div>
     )
   }
 
   return (
     <>
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
-        {/* ── Sidebar: Page Tree ── */}
-        <aside className="hidden w-64 flex-shrink-0 flex-col overflow-y-auto border-r border-theme bg-white dark:bg-gray-900 md:flex">
-          <div className="border-b border-theme bg-[#E8B84B]/8 dark:bg-[#E8B84B]/5 px-4 py-4">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E8B84B]/20">
-                <Globe className="h-3.5 w-3.5 text-[#c49830]" />
+      {!selectedPage ? (
+        /* ── Card Grid View ── */
+        <div className="min-h-full overflow-y-auto bg-gray-50 dark:bg-gray-950 p-6 lg:p-8">
+          {/* Header */}
+          <div className="mb-8 flex items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#E8B84B]/15 dark:bg-[#E8B84B]/10">
+                  <Globe className="h-4.5 w-4.5 text-[#c49830]" />
+                </div>
+                <h1 className="text-xl font-bold tracking-tight">Page Builder</h1>
               </div>
-              <span className="font-bold text-sm tracking-tight">Site Pages</span>
+              <p className="mt-2 text-sm text-muted max-w-md">
+                Click any page card to edit its hero copy, CTA text, and structured content blocks.
+                Sub-pages appear as chips inside each card.
+              </p>
             </div>
-            <p className="mt-1.5 text-xs text-muted leading-relaxed">Select a page to edit its content blocks.</p>
+            <div className="hidden sm:flex items-center gap-2 text-xs text-muted bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2">
+              <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-green-500" /> Published</span>
+              <span className="mx-1 text-gray-300 dark:text-gray-600">·</span>
+              <span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-amber-500" /> Draft</span>
+            </div>
           </div>
-          <nav className="flex-1 overflow-y-auto p-2 space-y-0.5">
-            {topLevel.map((page) => (
-              <PageTreeItem key={page.id} page={page} />
-            ))}
-          </nav>
-        </aside>
 
-        {/* ── Main: Block Editor ── */}
-        <main className="flex flex-1 flex-col overflow-hidden">
-          {!selectedPage ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-5 p-8 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#E8B84B]/10 dark:bg-[#E8B84B]/8 ring-1 ring-[#E8B84B]/20">
-                <Globe className="h-8 w-8 text-[#c49830] opacity-70" />
-              </div>
-              <div>
-                <p className="text-base font-bold">Choose a page</p>
-                <p className="mt-1 text-sm text-muted max-w-xs">Pick any page from the left panel to edit its text blocks, hero copy, CTAs, and structured data.</p>
+          {/* Cards */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {topLevel.map((page) => (
+              <PageCard key={page.id} page={page} />
+            ))}
+          </div>
+
+          {topLevel.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <Globe className="mb-4 h-10 w-10 text-muted opacity-30" />
+              <p className="text-sm text-muted">No pages yet. Pages appear here once seeded.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        /* ── Block Editor View ── */
+        <div className="flex h-[calc(100vh-56px)] flex-col overflow-hidden">
+          {/* Header with breadcrumb */}
+          <div className="flex items-center justify-between gap-4 border-b border-theme px-5 py-3 bg-white dark:bg-gray-900">
+            <div className="flex items-center gap-2 min-w-0">
+              <button
+                onClick={() => setSelectedPageId(null)}
+                className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-muted transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-foreground flex-shrink-0"
+              >
+                <ChevronRight className="h-3.5 w-3.5 rotate-180" />
+                All Pages
+              </button>
+              <span className="text-gray-300 dark:text-gray-600 flex-shrink-0">/</span>
+              <span className="text-base flex-shrink-0">{selectedPage.icon}</span>
+              <div className="min-w-0">
+                <h1 className="text-sm font-bold truncate">{selectedPage.title}</h1>
+                <p className="text-[11px] text-muted font-mono truncate leading-none">{selectedPage.path}</p>
               </div>
             </div>
-          ) : (
-            <>
-              {/* Header */}
-              <div className="flex items-center justify-between gap-4 border-b border-theme px-6 py-3.5 bg-white dark:bg-gray-900">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xl flex-shrink-0">{selectedPage.icon}</span>
-                  <div className="min-w-0">
-                    <h1 className="text-sm font-bold truncate">{selectedPage.title}</h1>
-                    <p className="text-[11px] text-muted font-mono truncate">{selectedPage.path}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button
-                    onClick={() => togglePublish.mutate({ id: selectedPage.id, isPublished: !selectedPage.isPublished })}
-                    className={cn(
-                      'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition',
-                      selectedPage.isPublished
-                        ? 'bg-green-500/15 text-green-700 dark:text-green-400 hover:bg-green-500/25'
-                        : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25',
-                    )}
-                  >
-                    {selectedPage.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-                    {selectedPage.isPublished ? 'Published' : 'Draft'}
-                  </button>
-                  <Link
-                    to={selectedPage.path}
-                    target="_blank"
-                    className="flex items-center gap-1.5 rounded-xl border border-theme px-3 py-1.5 text-xs font-semibold transition hover:border-gold/50"
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    Preview
-                  </Link>
-                  {canAddBlocks && (
-                    <button
-                      onClick={() => setShowAddModal(true)}
-                      className="flex items-center gap-1.5 rounded-xl border border-theme px-3 py-1.5 text-xs font-semibold transition hover:border-primary/50 hover:bg-primary/5 dark:hover:border-gold/50 dark:hover:bg-gold/5"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                      Add Block
-                    </button>
-                  )}
-                  {canAddBlocks && (
-                    <Button
-                      variant={isDirty ? 'primary' : 'outline'}
-                      onClick={saveAll}
-                      disabled={saveBlock.isPending}
-                      className="flex items-center gap-1.5 text-xs px-4 py-1.5"
-                    >
-                      <Save className="h-3.5 w-3.5" />
-                      {saveBlock.isPending ? 'Saving…' : 'Save Changes'}
-                    </Button>
-                  )}
-                </div>
-              </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={() => togglePublish.mutate({ id: selectedPage.id, isPublished: !selectedPage.isPublished })}
+                className={cn(
+                  'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition',
+                  selectedPage.isPublished
+                    ? 'bg-green-500/15 text-green-700 dark:text-green-400 hover:bg-green-500/25'
+                    : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25',
+                )}
+              >
+                {selectedPage.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                {selectedPage.isPublished ? 'Published' : 'Draft'}
+              </button>
+              <Link
+                to={selectedPage.path}
+                target="_blank"
+                className="flex items-center gap-1.5 rounded-xl border border-theme px-3 py-1.5 text-xs font-semibold transition hover:border-gold/50"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                Preview
+              </Link>
+              {canAddBlocks && (
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="flex items-center gap-1.5 rounded-xl border border-theme px-3 py-1.5 text-xs font-semibold transition hover:border-primary/50 hover:bg-primary/5 dark:hover:border-gold/50 dark:hover:bg-gold/5"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Block
+                </button>
+              )}
+              {canAddBlocks && (
+                <Button
+                  variant={isDirty ? 'primary' : 'outline'}
+                  onClick={saveAll}
+                  disabled={saveBlock.isPending}
+                  className="flex items-center gap-1.5 text-xs px-4 py-1.5"
+                >
+                  <Save className="h-3.5 w-3.5" />
+                  {saveBlock.isPending ? 'Saving…' : 'Save Changes'}
+                </Button>
+              )}
+            </div>
+          </div>
 
-              {/* Block list */}
-              <div className="flex-1 overflow-y-auto p-6">
+          {/* Block list */}
+          <div className="flex-1 overflow-y-auto p-6">
                 {blocksLoading ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
@@ -1788,10 +1819,8 @@ export function PagesManager() {
                   </div>
                 )}
               </div>
-            </>
+            </div>
           )}
-        </main>
-      </div>
 
       {/* ── Add Block Modal ── */}
       {showAddModal && selectedPage && (

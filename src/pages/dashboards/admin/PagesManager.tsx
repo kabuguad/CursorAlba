@@ -1409,6 +1409,11 @@ export function PagesManager() {
   const isDirty = blocks.some((b) => b.id in drafts && drafts[b.id] !== b.value)
   const maxSortOrder = blocks.reduce((m, b) => Math.max(m, b.sortOrder), 0)
 
+  // Pages whose content is 100% managed in a dedicated sidebar manager —
+  // no CMS blocks to add, so hide the "Add Block" controls entirely.
+  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff'])
+  const canAddBlocks = selectedPageId ? !PURE_REDIRECT_PAGES.has(selectedPageId) : false
+
   const saveAll = async () => {
     const changed = blocks.filter((b) => b.id in drafts && drafts[b.id] !== b.value)
     if (changed.length === 0) { showToast('No changes to save'); return }
@@ -1476,15 +1481,17 @@ export function PagesManager() {
     <>
       <div className="flex h-[calc(100vh-64px)] overflow-hidden">
         {/* ── Sidebar: Page Tree ── */}
-        <aside className="hidden w-64 flex-shrink-0 flex-col overflow-y-auto border-r border-theme bg-surface md:flex">
-          <div className="border-b border-theme px-4 py-4">
-            <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4 text-gold" />
-              <span className="font-bold text-sm">Site Pages</span>
+        <aside className="hidden w-64 flex-shrink-0 flex-col overflow-y-auto border-r border-theme bg-white dark:bg-gray-900 md:flex">
+          <div className="border-b border-theme bg-[#E8B84B]/8 dark:bg-[#E8B84B]/5 px-4 py-4">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#E8B84B]/20">
+                <Globe className="h-3.5 w-3.5 text-[#c49830]" />
+              </div>
+              <span className="font-bold text-sm tracking-tight">Site Pages</span>
             </div>
-            <p className="mt-1 text-xs text-muted">Select a page to edit its content</p>
+            <p className="mt-1.5 text-xs text-muted leading-relaxed">Select a page to edit its content blocks.</p>
           </div>
-          <nav className="flex-1 overflow-y-auto p-3 space-y-0.5">
+          <nav className="flex-1 overflow-y-auto p-2 space-y-0.5">
             {topLevel.map((page) => (
               <PageTreeItem key={page.id} page={page} />
             ))}
@@ -1494,25 +1501,27 @@ export function PagesManager() {
         {/* ── Main: Block Editor ── */}
         <main className="flex flex-1 flex-col overflow-hidden">
           {!selectedPage ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-              <Globe className="h-12 w-12 text-muted opacity-40" />
+            <div className="flex flex-1 flex-col items-center justify-center gap-5 p-8 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#E8B84B]/10 dark:bg-[#E8B84B]/8 ring-1 ring-[#E8B84B]/20">
+                <Globe className="h-8 w-8 text-[#c49830] opacity-70" />
+              </div>
               <div>
-                <p className="text-lg font-semibold">Select a page</p>
-                <p className="text-sm text-muted">Choose a page from the left panel to edit its content blocks.</p>
+                <p className="text-base font-bold">Choose a page</p>
+                <p className="mt-1 text-sm text-muted max-w-xs">Pick any page from the left panel to edit its text blocks, hero copy, CTAs, and structured data.</p>
               </div>
             </div>
           ) : (
             <>
               {/* Header */}
-              <div className="flex items-center justify-between gap-4 border-b border-theme px-6 py-4 bg-surface">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{selectedPage.icon}</span>
-                  <div>
-                    <h1 className="text-base font-bold">{selectedPage.title}</h1>
-                    <p className="text-xs text-muted font-mono">{selectedPage.path}</p>
+              <div className="flex items-center justify-between gap-4 border-b border-theme px-6 py-3.5 bg-white dark:bg-gray-900">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-xl flex-shrink-0">{selectedPage.icon}</span>
+                  <div className="min-w-0">
+                    <h1 className="text-sm font-bold truncate">{selectedPage.title}</h1>
+                    <p className="text-[11px] text-muted font-mono truncate">{selectedPage.path}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => togglePublish.mutate({ id: selectedPage.id, isPublished: !selectedPage.isPublished })}
                     className={cn(
@@ -1533,22 +1542,26 @@ export function PagesManager() {
                     <ExternalLink className="h-3.5 w-3.5" />
                     Preview
                   </Link>
-                  <button
-                    onClick={() => setShowAddModal(true)}
-                    className="flex items-center gap-1.5 rounded-xl border border-theme px-3 py-1.5 text-xs font-semibold transition hover:border-primary/50 hover:bg-primary/5 dark:hover:border-gold/50 dark:hover:bg-gold/5"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    Add Block
-                  </button>
-                  <Button
-                    variant={isDirty ? 'primary' : 'outline'}
-                    onClick={saveAll}
-                    disabled={saveBlock.isPending}
-                    className="flex items-center gap-1.5 text-xs px-4 py-1.5"
-                  >
-                    <Save className="h-3.5 w-3.5" />
-                    {saveBlock.isPending ? 'Saving…' : 'Save Changes'}
-                  </Button>
+                  {canAddBlocks && (
+                    <button
+                      onClick={() => setShowAddModal(true)}
+                      className="flex items-center gap-1.5 rounded-xl border border-theme px-3 py-1.5 text-xs font-semibold transition hover:border-primary/50 hover:bg-primary/5 dark:hover:border-gold/50 dark:hover:bg-gold/5"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      Add Block
+                    </button>
+                  )}
+                  {canAddBlocks && (
+                    <Button
+                      variant={isDirty ? 'primary' : 'outline'}
+                      onClick={saveAll}
+                      disabled={saveBlock.isPending}
+                      className="flex items-center gap-1.5 text-xs px-4 py-1.5"
+                    >
+                      <Save className="h-3.5 w-3.5" />
+                      {saveBlock.isPending ? 'Saving…' : 'Save Changes'}
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -1588,12 +1601,6 @@ export function PagesManager() {
                                 <CheckCircle className="h-3 w-3" /> Saved
                               </span>
                             )}
-                            <span className="rounded bg-tint/60 dark:bg-dark-card px-2 py-0.5 font-mono text-[10px] text-muted">
-                              {block.type}
-                            </span>
-                            <span className="rounded bg-tint/60 dark:bg-dark-card px-2 py-0.5 font-mono text-[10px] text-muted">
-                              {block.key}
-                            </span>
                             <button
                               className="ml-auto rounded-lg p-1 text-muted transition hover:bg-red-500/10 hover:text-red-500"
                               title="Delete block"
@@ -1652,14 +1659,16 @@ export function PagesManager() {
                       )
                     })}
 
-                    {/* Always show Add Block at the bottom */}
-                    <button
-                      onClick={() => setShowAddModal(true)}
-                      className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-theme py-5 text-sm text-muted transition hover:border-primary/40 hover:text-primary dark:hover:border-gold/40 dark:hover:text-gold"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add new content block
-                    </button>
+                    {/* Add Block — hidden for pages managed in dedicated managers */}
+                    {canAddBlocks && (
+                      <button
+                        onClick={() => setShowAddModal(true)}
+                        className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-theme py-5 text-sm text-muted transition hover:border-primary/40 hover:text-primary dark:hover:border-gold/40 dark:hover:text-gold"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Add new content block
+                      </button>
+                    )}
 
                     {/* About-specific structured data panels */}
                     {selectedPageId === 'pg-about' && (
@@ -1670,6 +1679,16 @@ export function PagesManager() {
                         <HistoryItemsPanel qc={queryClient} />
                         <div className="pb-8" />
                       </>
+                    )}
+
+                    {/* Blog — show redirect to Blog Posts manager */}
+                    {selectedPageId === 'pg-blog' && (
+                      <ManagerRedirectCard
+                        icon="📝"
+                        title="Blog Posts"
+                        description="Write, publish, and manage individual blog posts — titles, content, cover images, and publish status — from the dedicated Blog Posts manager."
+                        to="/dashboard/admin/blog"
+                      />
                     )}
 
                     {/* Co-Curricular — managed in dedicated manager */}
@@ -1724,6 +1743,13 @@ export function PagesManager() {
                     {/* Academics-specific structured data panels */}
                     {selectedPageId === 'pg-academics' && (
                       <>
+                        <hr className="my-2 border-theme" />
+                        <ManagerRedirectCard
+                          icon="🎓"
+                          title="Academic Programmes"
+                          description="Add, edit, and manage the public programme level cards (Baby Class, PP1, Grades 1–9, Senior School) displayed on this page from the dedicated Academic Programmes manager."
+                          to="/dashboard/admin/programs"
+                        />
                         <hr className="my-2 border-theme" />
                         <SchoolLevelsPanel qc={queryClient} />
                         <hr className="my-2 border-theme" />

@@ -1411,7 +1411,7 @@ export function PagesManager() {
 
   // Pages whose content is 100% managed in a dedicated sidebar manager —
   // no CMS blocks to add, so hide the "Add Block" controls entirely.
-  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff'])
+  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff', 'pg-why'])
   const canAddBlocks = selectedPageId ? !PURE_REDIRECT_PAGES.has(selectedPageId) : false
 
   const saveAll = async () => {
@@ -1811,9 +1811,19 @@ export function PagesManager() {
                     {selectedPageId === 'pg-staff' && (
                       <ManagerRedirectCard
                         icon="👩‍🏫"
-                        title="Staff Directory"
-                        description="Add, edit, and manage public staff profiles shown on the Staff Directory page from the dedicated Staff Directory manager."
+                        title="Public Staff Profiles"
+                        description="Add, edit, and manage public staff profiles shown on the Staff Directory page from the dedicated manager."
                         to="/dashboard/admin/public-staff"
+                      />
+                    )}
+
+                    {/* Why Choose Us — redirect to dedicated manager */}
+                    {selectedPageId === 'pg-why' && (
+                      <ManagerRedirectCard
+                        icon="⭐"
+                        title="Why Choose Us — Reasons"
+                        description="Add, edit, reorder, and publish the individual reason cards shown on the Why Choose Us page from the dedicated manager."
+                        to="/dashboard/admin/why-choose-us"
                       />
                     )}
                   </div>

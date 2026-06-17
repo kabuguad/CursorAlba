@@ -1353,6 +1353,7 @@ function createSeed(): DB {
     { id: 'pg-contact',     slug: 'contact',       parentId: null,          title: 'Contact',       icon: '📞', path: '/contact',      isPublished: true, sortOrder: 7 },
     { id: 'pg-facilities',  slug: 'facilities',    parentId: null,          title: 'Facilities',    icon: '🏗️', path: '/facilities',   isPublished: true, sortOrder: 8 },
     { id: 'pg-staff',       slug: 'staff',         parentId: null,          title: 'Staff Directory',icon: '👩‍🏫', path: '/staff',        isPublished: true, sortOrder: 9 },
+    { id: 'pg-why',         slug: 'why-choose-us', parentId: null,          title: 'Why Choose Us',  icon: '⭐', path: '/why-choose-us', isPublished: true, sortOrder: 10 },
   ]
 
   function blk(id: string, pageId: string, key: string, label: string, type: CmsBlockType, value: string, helpText: string, sortOrder: number): CmsBlock {
@@ -1441,6 +1442,17 @@ function createSeed(): DB {
     blk('cb-st-02','pg-staff','hero.subheadline', 'Page Subheadline',             'textarea','Meet the exceptional educators and support team who guide every learner at Alber School.','Shown below the main heading', 2),
     blk('cb-st-03','pg-staff','cta.headline',     'CTA Box Headline',             'text',    'Join Our Team',               'Heading in the call-to-action box at the bottom of the Staff page', 3),
     blk('cb-st-04','pg-staff','cta.subtext',      'CTA Box Subtext',              'textarea','We are always looking for passionate, innovative educators. Send your CV and cover letter to careers@alberschool.ke.','Body text in the CTA box', 4),
+
+    // ── Why Choose Us ─────────────────────────────────────────────────────
+    blk('cb-wh-01','pg-why','hero.tagline',      'Section Label',                 'text',    'The Alber Difference',        'Small pill label shown above the main headline', 1),
+    blk('cb-wh-02','pg-why','hero.headline',     'Page Headline',                 'text',    'Why Choose Us?',              'Main heading at the top of the Why Choose Us page', 2),
+    blk('cb-wh-03','pg-why','hero.subheadline',  'Page Subheadline',              'textarea','Adjacent to the Governor\'s Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here\'s what makes us different.','Paragraph shown below the main heading', 3),
+    blk('cb-wh-04','pg-why','stats.students',    'Stats — Students Enrolled',     'text',    '2,000+',                      'Shown on the stats bar', 4),
+    blk('cb-wh-05','pg-why','stats.educators',   'Stats — Qualified Educators',   'text',    '120+',                        'Shown on the stats bar', 5),
+    blk('cb-wh-06','pg-why','stats.passRate',    'Stats — KCSE Pass Rate',        'text',    '97%',                         'Shown on the stats bar', 6),
+    blk('cb-wh-07','pg-why','stats.activities',  'Stats — Co-Curricular Activities','text',  '30+',                         'Shown on the stats bar', 7),
+    blk('cb-wh-08','pg-why','cta.headline',      'CTA Box Headline',              'text',    'Ready to Experience It?',     'Heading in the call-to-action box at the bottom of the page', 8),
+    blk('cb-wh-09','pg-why','cta.subtext',       'CTA Box Subtext',               'textarea','Book a campus tour and see the Alber difference first-hand. Adjacent to the Governor\'s Offices, Kutus, Kirinyaga County.','Body text in the call-to-action box', 9),
   ]
 
   const academicsCompetencies: AcademicsCompetency[] = [
@@ -1737,7 +1749,7 @@ function createSeed(): DB {
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v12'
+const STORAGE_KEY = 'alber_db_v13'
 
 function loadStore(): DB {
   try {

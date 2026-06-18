@@ -1,6 +1,11 @@
 import { apiClient } from './apiClient'
 import { mutateDB } from './db'
 import type { UserRole } from './db'
+import {
+  MOCK_CHILDREN, MOCK_CHILD_PROFILE, MOCK_GRADES_HISTORY,
+  MOCK_ATTENDANCE, MOCK_TIMETABLE, MOCK_FEES,
+  MOCK_HOMEWORK, MOCK_ANNOUNCEMENTS,
+} from './mockPortalData'
 
 export type ApiResponse<T> = { data: T; error: null } | { data: null; error: string }
 
@@ -13,6 +18,21 @@ function fail(err: unknown): ApiResponse<never> {
     ?? (err as Error)?.message
     ?? 'Unknown error'
   return { data: null, error: msg }
+}
+
+/** True when the backend is simply unreachable (dev / demo mode).
+ *  Covers: raw network error (no proxy), Vite proxy 502/504, and nginx 503. */
+function isOffline(e: unknown): boolean {
+  const msg = (e as Error)?.message ?? ''
+  const status = (e as { response?: { status?: number } })?.response?.status
+  return (
+    msg.includes('Network Error') ||
+    msg.includes('ECONNREFUSED') ||
+    msg.includes('ERR_CONNECTION_REFUSED') ||
+    status === 502 ||
+    status === 503 ||
+    status === 504
+  )
 }
 
 interface GradeResponseDto {
@@ -210,7 +230,7 @@ export const portalService = {
   },
 
   getAnnouncements: async (_role: UserRole): Promise<ApiResponse<unknown[]>> => {
-    return ok([])
+    return ok(MOCK_ANNOUNCEMENTS)
   },
 
   getTeacherClasses: async (_staffId: string): Promise<ApiResponse<unknown>> => {
@@ -312,7 +332,10 @@ export const portalService = {
     try {
       const res = await apiClient.get<ChildDto[]>('/parent/children')
       return ok(res.data)
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_CHILDREN as unknown as ChildDto[])
+      return fail(e)
+    }
   },
 
   getParentChildProfile: async (childId: string): Promise<ApiResponse<unknown>> => {
@@ -331,41 +354,59 @@ export const portalService = {
         classInfo: { id: child.classId.toString(), name: child.className, grade: child.className, stream: '' },
         term: null, invoice: null,
       })
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_CHILD_PROFILE)
+      return fail(e)
+    }
   },
 
   getParentChildGrades: async (childId: string): Promise<ApiResponse<unknown>> => {
     try {
       const res = await apiClient.get<GradeResponseDto[]>(`/parent/children/${childId}/grades`)
       return ok(groupGradesByYearTerm(res.data))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_GRADES_HISTORY)
+      return fail(e)
+    }
   },
 
   getParentChildAttendance: async (childId: string): Promise<ApiResponse<unknown>> => {
     try {
       const res = await apiClient.get<AttendanceRecordDto[]>(`/parent/children/${childId}/attendance`)
       return ok(calcAttendanceStats(res.data))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_ATTENDANCE)
+      return fail(e)
+    }
   },
 
   getParentChildTimetable: async (childId: string): Promise<ApiResponse<unknown>> => {
     try {
       const res = await apiClient.get<TimetableEntryDto[]>(`/parent/children/${childId}/timetable`)
       return ok(groupTimetable(res.data))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_TIMETABLE)
+      return fail(e)
+    }
   },
 
   getParentChildFees: async (childId: string): Promise<ApiResponse<unknown>> => {
     try {
       const res = await apiClient.get<InvoiceDto>(`/parent/children/${childId}/fees`)
       return ok(res.data)
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_FEES)
+      return fail(e)
+    }
   },
 
   getParentChildAssignments: async (childId: string): Promise<ApiResponse<unknown>> => {
     try {
       const res = await apiClient.get<AssignmentDto[]>(`/parent/children/${childId}/assignments`)
       return ok(mapAssignments(res.data))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_HOMEWORK)
+      return fail(e)
+    }
   },
 }

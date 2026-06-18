@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Shield, GraduationCap, Users, BookOpen, UserCircle, ArrowRight, Eye, EyeOff, ChevronDown, Check } from 'lucide-react'
+import { Shield, GraduationCap, Users, BookOpen, ArrowRight, Eye, EyeOff, ChevronDown, Check } from 'lucide-react'
 import { useAuth, type UserRole } from '../contexts/AuthContext'
 import { Button } from '../components/ui/Button'
 
@@ -42,27 +42,15 @@ const DEMOS: {
   },
   {
     role: 'parent',
-    label: 'Parent',
+    label: 'Parent / Guardian',
     icon: Users,
     email: 'parent@alberschool.ke',
-    desc: 'Progress & fees',
+    desc: 'Progress, fees & child info',
     color: 'text-blue-600 dark:text-blue-400',
     iconBg: 'bg-blue-100 dark:bg-blue-900/50',
     bg: 'bg-blue-50 border-blue-200',
     darkBg: 'dark:bg-blue-950/40 dark:border-blue-700/50',
     accent: '#2563eb',
-  },
-  {
-    role: 'student',
-    label: 'Student',
-    icon: UserCircle,
-    email: 'student@alberschool.ke',
-    desc: 'Via parent portal',
-    color: 'text-amber-600 dark:text-amber-400',
-    iconBg: 'bg-amber-100 dark:bg-amber-900/50',
-    bg: 'bg-amber-50 border-amber-200',
-    darkBg: 'dark:bg-amber-950/40 dark:border-amber-700/50',
-    accent: '#d97706',
   },
 ]
 
@@ -128,7 +116,7 @@ export function Login() {
             <span className="text-gold">one portal.</span>
           </h2>
           <p className="text-white/70 text-lg leading-relaxed max-w-sm">
-            Admins, teachers, parents, and students — everything you need, exactly where you need it.
+            Admins, teachers, and parents — everything you need, exactly where you need it.
           </p>
           <div className="mt-10 grid grid-cols-3 gap-4">
             {[
@@ -252,7 +240,7 @@ export function Login() {
           </div>
 
           {/* ── Desktop / tablet card grid (≥ sm) ── */}
-          <div className="hidden sm:grid sm:grid-cols-4 gap-2.5 mb-6">
+          <div className="hidden sm:grid sm:grid-cols-3 gap-2.5 mb-6">
             {DEMOS.map((d) => {
               const isSelected = selectedRole === d.role
               const Icon = d.icon

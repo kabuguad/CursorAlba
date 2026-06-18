@@ -22,15 +22,6 @@ import { Blog } from './pages/Blog'
 import { BlogPost } from './pages/BlogPost'
 import { WhyChooseUs } from './pages/WhyChooseUs'
 
-import { StudentPortalLayout }  from './pages/dashboards/student/StudentPortalLayout'
-import { StudentOverview }      from './pages/dashboards/student/StudentOverview'
-import { StudentGrades }        from './pages/dashboards/student/StudentGrades'
-import { StudentReportCard }    from './pages/dashboards/student/StudentReportCard'
-import { StudentAttendance }    from './pages/dashboards/student/StudentAttendance'
-import { StudentHomework }      from './pages/dashboards/student/StudentHomework'
-import { StudentTimetable }     from './pages/dashboards/student/StudentTimetable'
-import { StudentNotices }       from './pages/dashboards/student/StudentNotices'
-
 import { TeacherPortalLayout }  from './pages/dashboards/teacher/TeacherPortalLayout'
 import { TeacherOverview }      from './pages/dashboards/teacher/TeacherOverview'
 import { TeacherGrades }        from './pages/dashboards/teacher/TeacherGrades'
@@ -112,20 +103,6 @@ function App() {
                 <Route path="blog/:id"      element={<BlogPost />} />
                 <Route path="why-choose-us" element={<WhyChooseUs />} />
                 <Route path="login"         element={<Login />} />
-              </Route>
-
-              {/* ── Student Portal ── */}
-              <Route
-                path="dashboard/student"
-                element={<ProtectedRoute role="student"><StudentPortalLayout /></ProtectedRoute>}
-              >
-                <Route index                element={<StudentOverview />} />
-                <Route path="grades"        element={<StudentGrades />} />
-                <Route path="report-card"   element={<StudentReportCard />} />
-                <Route path="attendance"    element={<StudentAttendance />} />
-                <Route path="homework"      element={<StudentHomework />} />
-                <Route path="timetable"     element={<StudentTimetable />} />
-                <Route path="notices"       element={<StudentNotices />} />
               </Route>
 
               {/* ── Teacher Portal ── */}

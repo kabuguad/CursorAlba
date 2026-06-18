@@ -59,6 +59,7 @@ const NAV: NavEntry[] = [
     group: 'Parents & Students',
     items: [
       { label: 'Admissions',          icon: ClipboardList,    path: '/dashboard/admin/admissions'    },
+      { label: 'Parents & Guardians', icon: Users,            path: '/dashboard/admin/parents'       },
       { label: 'Students',            icon: GraduationCap,    path: '/dashboard/admin/students'      },
       { label: 'Payments',            icon: CreditCard,       path: '/dashboard/admin/payments'      },
       { label: 'Fee Structure',       icon: Banknote,         path: '/dashboard/admin/fees'          },

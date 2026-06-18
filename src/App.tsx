@@ -83,6 +83,7 @@ import { PagesManager }         from './pages/dashboards/admin/PagesManager'
 import { PublicStaffManager }  from './pages/dashboards/admin/PublicStaffManager'
 import { SiteContentManager }  from './pages/dashboards/admin/SiteContentManager'
 import { ActivitiesManager }   from './pages/dashboards/admin/ActivitiesManager'
+import { ParentsManager }      from './pages/dashboards/admin/ParentsManager'
 
 function App() {
   return (
@@ -195,6 +196,7 @@ function App() {
 
                 {/* School Management */}
                 <Route path="admissions"    element={<AdmissionsManager />} />
+                <Route path="parents"       element={<ParentsManager />} />
                 <Route path="students"      element={<StudentsManager />} />
                 <Route path="staff"         element={<StaffManager />} />
                 <Route path="academics"     element={<AcademicsManager />} />

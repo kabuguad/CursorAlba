@@ -129,7 +129,7 @@ export function CoCurricular() {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {current.activities.map((act, i) => (
+          {currentActivities.map((act, i) => (
             <ScrollReveal key={act.name} delay={i * 0.05}>
               <GlassCard className="h-full p-5">
                 <span className="mb-3 block text-4xl">{act.icon}</span>

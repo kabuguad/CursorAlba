@@ -5,59 +5,95 @@ import {
   Users, UserCheck, GraduationCap, Banknote, Megaphone,
   Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight, ChevronDown,
   Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
-  Moon, Sun, UserCog, Globe, Trophy, Music, Star, Activity, ThumbsUp,
+  Moon, Sun, UserCog, Globe, Activity, Monitor, Users2,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
 import { useTheme } from '../../../contexts/ThemeContext'
 import { cn } from '../../../lib/utils'
 
-const NAV = [
+// ── Nav type definitions ────────────────────────────────────────────────────
+type NavItem = { label: string; icon: React.ElementType; path: string }
+type NavGroup = { kind: 'group'; group: string; items: NavItem[] }
+type NavDivider = { kind: 'divider'; label: string; sublabel: string }
+type NavEntry = NavGroup | NavDivider
+
+// ── Navigation definition ────────────────────────────────────────────────────
+const NAV: NavEntry[] = [
   {
+    kind: 'group',
     group: 'Overview',
     items: [
-      { label: 'Dashboard',           icon: LayoutDashboard, path: '/dashboard/admin'                },
-      { label: 'Reports',             icon: BarChart2,        path: '/dashboard/admin/reports'        },
+      { label: 'Dashboard',           icon: LayoutDashboard, path: '/dashboard/admin'           },
+      { label: 'Reports',             icon: BarChart2,        path: '/dashboard/admin/reports'   },
     ],
   },
+
+  // ── CMS boundary ────────────────────────────────────────────────────────────
   {
+    kind: 'divider',
+    label: 'CMS',
+    sublabel: 'Public Website',
+  },
+  {
+    kind: 'group',
     group: 'Content & Media',
     items: [
-      { label: 'Site Content',        icon: Globe,            path: '/dashboard/admin/site-content'   },
-      { label: 'Blog & News',         icon: BookOpen,         path: '/dashboard/admin/blog'           },
-      { label: 'Events',              icon: CalendarDays,     path: '/dashboard/admin/events'         },
-      { label: 'Gallery',             icon: ImageIcon,        path: '/dashboard/admin/gallery'        },
-      { label: 'People & Staff',      icon: Users,            path: '/dashboard/admin/public-staff'   },
-      { label: 'Activities & Sports', icon: Activity,         path: '/dashboard/admin/activities'     },
+      { label: 'Site Content',        icon: Globe,            path: '/dashboard/admin/site-content'  },
+      { label: 'Blog & News',         icon: BookOpen,         path: '/dashboard/admin/blog'          },
+      { label: 'Events',              icon: CalendarDays,     path: '/dashboard/admin/events'        },
+      { label: 'Gallery',             icon: ImageIcon,        path: '/dashboard/admin/gallery'       },
+      { label: 'People & Staff',      icon: Users,            path: '/dashboard/admin/public-staff'  },
+      { label: 'Activities & Sports', icon: Activity,         path: '/dashboard/admin/activities'    },
     ],
   },
+
+  // ── Portal API boundary ──────────────────────────────────────────────────────
   {
-    // Internal school operations — not public-facing
-    group: 'School Management',
+    kind: 'divider',
+    label: 'Portal',
+    sublabel: 'School Operations',
+  },
+  {
+    kind: 'group',
+    group: 'Parents & Students',
     items: [
-      { label: 'Admissions',          icon: ClipboardList,    path: '/dashboard/admin/admissions'     },
-      { label: 'Students',            icon: Users,            path: '/dashboard/admin/students'       },
-      { label: 'Staff & Teachers',    icon: UserCheck,        path: '/dashboard/admin/staff'          },
-      { label: 'Curriculum & Grades', icon: GraduationCap,    path: '/dashboard/admin/academics'      },
-      { label: 'Timetable',           icon: Clock,            path: '/dashboard/admin/timetable'      },
-      { label: 'Announcements',       icon: Megaphone,        path: '/dashboard/admin/announcements'  },
+      { label: 'Admissions',          icon: ClipboardList,    path: '/dashboard/admin/admissions'    },
+      { label: 'Students',            icon: GraduationCap,    path: '/dashboard/admin/students'      },
+      { label: 'Payments',            icon: CreditCard,       path: '/dashboard/admin/payments'      },
+      { label: 'Fee Structure',       icon: Banknote,         path: '/dashboard/admin/fees'          },
     ],
   },
   {
-    group: 'Finance',
+    kind: 'group',
+    group: 'Teachers & Staff',
     items: [
-      { label: 'Payments',            icon: CreditCard,       path: '/dashboard/admin/payments'       },
-      { label: 'Fee Structure',       icon: Banknote,         path: '/dashboard/admin/fees'           },
+      { label: 'Staff & Teachers',    icon: UserCheck,        path: '/dashboard/admin/staff'         },
+      { label: 'Curriculum & Grades', icon: Users2,           path: '/dashboard/admin/academics'     },
+      { label: 'Timetable',           icon: Clock,            path: '/dashboard/admin/timetable'     },
     ],
   },
   {
+    kind: 'group',
+    group: 'Communications',
+    items: [
+      { label: 'Announcements',       icon: Megaphone,        path: '/dashboard/admin/announcements' },
+    ],
+  },
+
+  // ── System ──────────────────────────────────────────────────────────────────
+  {
+    kind: 'group',
     group: 'System',
     items: [
-      { label: 'Accounts',            icon: UserCog,          path: '/dashboard/admin/accounts'       },
-      { label: 'Site Settings',       icon: Settings,         path: '/dashboard/admin/settings'       },
+      { label: 'Accounts',            icon: UserCog,          path: '/dashboard/admin/accounts'      },
+      { label: 'Site Settings',       icon: Settings,         path: '/dashboard/admin/settings'      },
     ],
   },
 ]
+
+// Helper — only the group entries (dividers excluded)
+const NAV_GROUPS = NAV.filter((e): e is NavGroup => e.kind === 'group')
 
 export function AdminLayout() {
   const { user, logout } = useAuth()
@@ -77,15 +113,15 @@ export function AdminLayout() {
   }
 
   const activeGroup = useMemo(() =>
-    NAV.find(g => g.items.some(i =>
+    NAV_GROUPS.find(g => g.items.some(i =>
       i.path === '/dashboard/admin'
         ? location.pathname === i.path
-        : location.pathname.startsWith(i.path)
+        : location.pathname.startsWith(i.path),
     ))?.group ?? 'Overview'
   , [location.pathname])
 
   const [openGroups, setOpenGroups] = useState<Set<string>>(
-    () => new Set(NAV.map(g => g.group))
+    () => new Set(NAV_GROUPS.map(g => g.group)),
   )
 
   const toggleGroup = (group: string) => {
@@ -97,6 +133,32 @@ export function AdminLayout() {
   }
 
   const isGroupOpen = (group: string) => openGroups.has(group) || activeGroup === group
+
+  // ── Sidebar divider chip ──────────────────────────────────────────────────
+  function SectionDivider({ entry }: { entry: NavDivider }) {
+    if (collapsed) {
+      return (
+        <div className="my-2 mx-3">
+          <div className="h-px bg-gray-200 dark:bg-white/10" />
+        </div>
+      )
+    }
+    return (
+      <div className="mx-3 my-2 flex items-center gap-2">
+        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+        <span className="flex items-center gap-1 rounded-full border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-0.5">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400 dark:text-white/35">
+            {entry.label}
+          </span>
+          <span className="text-[9px] text-gray-300 dark:text-white/20">·</span>
+          <span className="text-[9px] uppercase tracking-wider text-gray-400 dark:text-white/25">
+            {entry.sublabel}
+          </span>
+        </span>
+        <div className="h-px flex-1 bg-gray-200 dark:bg-white/10" />
+      </div>
+    )
+  }
 
   const SidebarContent = () => (
     <>
@@ -125,14 +187,20 @@ export function AdminLayout() {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-2 py-3">
-        {NAV.map(group => {
-          const open = isGroupOpen(group.group)
-          const isActive = activeGroup === group.group
+        {NAV.map((entry, idx) => {
+          if (entry.kind === 'divider') {
+            return <SectionDivider key={`div-${idx}`} entry={entry} />
+          }
+
+          const { group, items } = entry
+          const open = isGroupOpen(group)
+          const isActive = activeGroup === group
+
           return (
-            <div key={group.group} className="mb-1">
+            <div key={group} className="mb-1">
               {!collapsed && (
                 <button
-                  onClick={() => toggleGroup(group.group)}
+                  onClick={() => toggleGroup(group)}
                   className={cn(
                     'flex w-full items-center justify-between rounded-lg px-3 py-1.5 mb-0.5 transition-colors',
                     isActive
@@ -141,7 +209,7 @@ export function AdminLayout() {
                   )}
                 >
                   <span className="text-[9px] font-bold uppercase tracking-widest">
-                    {group.group}
+                    {group}
                   </span>
                   <ChevronDown className={cn(
                     'h-3 w-3 transition-transform duration-200',
@@ -151,7 +219,7 @@ export function AdminLayout() {
               )}
               {(open || collapsed) && (
                 <div className="space-y-0.5">
-                  {group.items.map(item => (
+                  {items.map(item => (
                     <NavLink
                       key={item.path}
                       to={item.path}
@@ -257,6 +325,9 @@ export function AdminLayout() {
 
           <div className="flex-1" />
 
+          {/* Section context badge in topbar */}
+          <SectionContextBadge pathname={location.pathname} />
+
           <Link
             to="/"
             className="hidden sm:flex items-center gap-1.5 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
@@ -293,5 +364,47 @@ export function AdminLayout() {
         </main>
       </div>
     </div>
+  )
+}
+
+// ── Topbar context badge ────────────────────────────────────────────────────
+// Shows "CMS" or "Portal" pill so the admin always knows which domain they're in.
+const CMS_PATHS = [
+  '/dashboard/admin/site-content',
+  '/dashboard/admin/blog',
+  '/dashboard/admin/events',
+  '/dashboard/admin/gallery',
+  '/dashboard/admin/public-staff',
+  '/dashboard/admin/activities',
+]
+const PORTAL_PATHS = [
+  '/dashboard/admin/admissions',
+  '/dashboard/admin/students',
+  '/dashboard/admin/payments',
+  '/dashboard/admin/fees',
+  '/dashboard/admin/staff',
+  '/dashboard/admin/academics',
+  '/dashboard/admin/timetable',
+  '/dashboard/admin/announcements',
+]
+
+function SectionContextBadge({ pathname }: { pathname: string }) {
+  const isCms    = CMS_PATHS.some(p => pathname.startsWith(p))
+  const isPortal = PORTAL_PATHS.some(p => pathname.startsWith(p))
+
+  if (!isCms && !isPortal) return null
+
+  return (
+    <span className={cn(
+      'hidden sm:inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest',
+      isCms
+        ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20'
+        : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20',
+    )}>
+      {isCms
+        ? <><Monitor className="h-3 w-3" /> CMS</>
+        : <><Users2 className="h-3 w-3" /> Portal</>
+      }
+    </span>
   )
 }

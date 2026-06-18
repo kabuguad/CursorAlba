@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { portalService } from '../services/portalService'
 import { useAuth } from '../contexts/AuthContext'
+import { useSelectedChild } from '../contexts/SelectedChildContext'
 
 function unwrap<T>(res: { data: T | null; error: string | null }): T {
   if (res.error) throw new Error(res.error)
   return res.data as T
 }
 
+// ── Children list ──────────────────────────────────────────────────────────
 export function useParentChildren() {
   const { user } = useAuth()
   return useQuery({
@@ -16,9 +18,11 @@ export function useParentChildren() {
   })
 }
 
+// ── Per-child hooks — all auto-resolve childId from SelectedChildContext ──
 export function useParentStudentProfile(childId?: string) {
   const { user } = useAuth()
-  const cid = childId ?? ''
+  const { selectedChildId } = useSelectedChild()
+  const cid = childId ?? selectedChildId ?? ''
   return useQuery({
     queryKey: ['portal:parent:profile', user?.id, cid],
     queryFn: () => portalService.getParentChildProfile(cid).then(unwrap),
@@ -27,7 +31,8 @@ export function useParentStudentProfile(childId?: string) {
 }
 
 export function useParentGradesHistory(childId?: string) {
-  const cid = childId ?? ''
+  const { selectedChildId } = useSelectedChild()
+  const cid = childId ?? selectedChildId ?? ''
   return useQuery({
     queryKey: ['portal:grades', cid],
     queryFn: () => portalService.getParentChildGrades(cid).then(unwrap),
@@ -36,7 +41,8 @@ export function useParentGradesHistory(childId?: string) {
 }
 
 export function useParentAttendance(childId?: string) {
-  const cid = childId ?? ''
+  const { selectedChildId } = useSelectedChild()
+  const cid = childId ?? selectedChildId ?? ''
   return useQuery({
     queryKey: ['portal:attendance', cid],
     queryFn: () => portalService.getParentChildAttendance(cid).then(unwrap),
@@ -45,7 +51,8 @@ export function useParentAttendance(childId?: string) {
 }
 
 export function useParentTimetable(childId?: string) {
-  const cid = childId ?? ''
+  const { selectedChildId } = useSelectedChild()
+  const cid = childId ?? selectedChildId ?? ''
   return useQuery({
     queryKey: ['portal:timetable', cid],
     queryFn: () => portalService.getParentChildTimetable(cid).then(unwrap),
@@ -54,7 +61,8 @@ export function useParentTimetable(childId?: string) {
 }
 
 export function useParentHomework(childId?: string) {
-  const cid = childId ?? ''
+  const { selectedChildId } = useSelectedChild()
+  const cid = childId ?? selectedChildId ?? ''
   return useQuery({
     queryKey: ['portal:homework', cid],
     queryFn: () => portalService.getParentChildAssignments(cid).then(unwrap),
@@ -63,7 +71,8 @@ export function useParentHomework(childId?: string) {
 }
 
 export function useParentInvoice(childId?: string) {
-  const cid = childId ?? ''
+  const { selectedChildId } = useSelectedChild()
+  const cid = childId ?? selectedChildId ?? ''
   return useQuery({
     queryKey: ['portal:invoice', cid],
     queryFn: () => portalService.getParentChildFees(cid).then(unwrap),

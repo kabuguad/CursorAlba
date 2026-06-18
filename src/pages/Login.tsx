@@ -57,7 +57,7 @@ const DEMOS: {
     label: 'Student',
     icon: UserCircle,
     email: 'student@alberschool.ke',
-    desc: 'Classes & homework',
+    desc: 'Via parent portal',
     color: 'text-amber-600 dark:text-amber-400',
     iconBg: 'bg-amber-100 dark:bg-amber-900/50',
     bg: 'bg-amber-50 border-amber-200',

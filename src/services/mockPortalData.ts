@@ -415,3 +415,339 @@ export const MOCK_ANNOUNCEMENTS = [
 
 // ── Subject list (for reference) ───────────────────────────────────────────
 export { subjects as MOCK_SUBJECTS }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TEACHER PORTAL MOCK DATA
+// Teacher: Mr. James Ochieng — Sciences (Biology, Chemistry, Physics)
+// Classes: Grade 7 Jasmine (cls-7j) · Grade 7 Rose (cls-7r)
+// Grade components are percentages 0–100; total = round(cat1*0.2 + cat2*0.2 + endterm*0.6)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Teacher profile ───────────────────────────────────────────────────────
+
+export const MOCK_TEACHER_PROFILE = {
+  id: 'stf-001',
+  userId: 'demo-t1',
+  firstName: 'James',
+  lastName: 'Ochieng',
+  email: 'teacher@alberschool.ke',
+  qualification: 'B.Ed Science, University of Nairobi',
+  specialization: 'Biology, Chemistry & Physics',
+  department: 'Sciences',
+  staffNo: 'TSC-1001',
+  classIds: ['cls-7j', 'cls-7r'],
+  subjects: ['sub-005', 'sub-006', 'sub-007'],
+}
+
+// ── Teacher classes ───────────────────────────────────────────────────────
+
+export const MOCK_TEACHER_CLASSES = [
+  { id: 'cls-7j', name: 'Grade 7 Jasmine', grade: 'Grade 7', stream: 'Jasmine', studentCount: 12 },
+  { id: 'cls-7r', name: 'Grade 7 Rose',    grade: 'Grade 7', stream: 'Rose',    studentCount: 10 },
+]
+
+// ── Class students ────────────────────────────────────────────────────────
+// Fields used by TeacherClass: fullName, admNo, gender, dob, medicalNotes, emergencyContact.phone
+// Fields used by TeacherGradebook/Attendance: id, fullName, admNo
+
+function mkStudent(
+  id: string, admNo: string, fullName: string, gender: 'Male' | 'Female',
+  dob: string, classId: string,
+  medicalNotes?: string, phone?: string,
+) {
+  return {
+    id, userId: `u-${id}`,
+    fullName, firstName: fullName.split(' ')[0], lastName: fullName.split(' ').slice(1).join(' '),
+    gender, dob, admNo, classId,
+    medicalNotes: medicalNotes ?? null,
+    emergencyContact: { phone: phone ?? '0700-000-000' },
+  }
+}
+
+export const MOCK_TEACHER_STUDENTS: Record<string, ReturnType<typeof mkStudent>[]> = {
+  'cls-7j': [
+    mkStudent('ts-j01','ADM/2023/042','Amani Kariuki',    'Male',   '2013-03-15','cls-7j', undefined,                              '0712-042-042'),
+    mkStudent('ts-j02','ADM/2023/018','Brenda Wanjiku',   'Female', '2013-07-22','cls-7j', undefined,                              '0722-018-018'),
+    mkStudent('ts-j03','ADM/2023/031','Charles Mutua',    'Male',   '2013-01-08','cls-7j', undefined,                              '0733-031-031'),
+    mkStudent('ts-j04','ADM/2023/005','Diana Akinyi',     'Female', '2013-11-30','cls-7j', undefined,                              '0744-005-005'),
+    mkStudent('ts-j05','ADM/2023/027','Emmanuel Otieno',  'Male',   '2013-05-19','cls-7j', undefined,                              '0755-027-027'),
+    mkStudent('ts-j06','ADM/2023/009','Faith Njeri',      'Female', '2013-09-04','cls-7j', undefined,                              '0766-009-009'),
+    mkStudent('ts-j07','ADM/2023/033','George Kamau',     'Male',   '2013-04-12','cls-7j', undefined,                              '0777-033-033'),
+    mkStudent('ts-j08','ADM/2023/016','Hannah Chebet',    'Female', '2013-08-25','cls-7j', undefined,                              '0788-016-016'),
+    mkStudent('ts-j09','ADM/2023/044','Ibrahim Hassan',   'Male',   '2012-12-01','cls-7j', 'Asthma — keep inhaler accessible.',   '0799-044-044'),
+    mkStudent('ts-j10','ADM/2023/022','Jane Muthoni',     'Female', '2013-02-14','cls-7j', undefined,                              '0711-022-022'),
+    mkStudent('ts-j11','ADM/2023/038','Kevin Mwangi',     'Male',   '2013-06-07','cls-7j', 'Referred to school counsellor.',      '0721-038-038'),
+    mkStudent('ts-j12','ADM/2023/003','Linda Waweru',     'Female', '2013-10-18','cls-7j', undefined,                              '0731-003-003'),
+  ],
+  'cls-7r': [
+    mkStudent('ts-r01','ADM/2023/051','Moses Ochieng',    'Male',   '2013-05-10','cls-7r', undefined,                              '0712-051-051'),
+    mkStudent('ts-r02','ADM/2023/055','Nancy Kimani',     'Female', '2013-01-28','cls-7r', undefined,                              '0722-055-055'),
+    mkStudent('ts-r03','ADM/2023/067','Oscar Weke',       'Male',   '2013-09-14','cls-7r', undefined,                              '0733-067-067'),
+    mkStudent('ts-r04','ADM/2023/058','Priscilla Gatheru','Female', '2013-03-02','cls-7r', undefined,                              '0744-058-058'),
+    mkStudent('ts-r05','ADM/2023/073','Quinton Otieno',   'Male',   '2013-07-07','cls-7r', undefined,                              '0755-073-073'),
+    mkStudent('ts-r06','ADM/2023/052','Rachel Karanja',   'Female', '2013-11-15','cls-7r', undefined,                              '0766-052-052'),
+    mkStudent('ts-r07','ADM/2023/062','Samuel Njoroge',   'Male',   '2013-04-22','cls-7r', undefined,                              '0777-062-062'),
+    mkStudent('ts-r08','ADM/2023/056','Tabitha Mugo',     'Female', '2013-08-09','cls-7r', undefined,                              '0788-056-056'),
+    mkStudent('ts-r09','ADM/2023/069','Usha Patel',       'Female', '2013-02-17','cls-7r', 'Vegetarian — note for school meals.',  '0799-069-069'),
+    mkStudent('ts-r10','ADM/2023/078','Victor Omondi',    'Male',   '2013-06-30','cls-7r', undefined,                              '0711-078-078'),
+  ],
+}
+
+// ── Class grades — Term 2 2026 (current) ─────────────────────────────────
+// sub-005 = Biology · sub-006 = Chemistry · sub-007 = Physics
+// cat1/cat2/endterm are percentage scores (0–100); null = exam not yet sat
+
+type TeacherGrade = {
+  id: string; studentId: string; subjectId: string; subjectName: string
+  classId: string; termId: string
+  cat1: number | null; cat2: number | null; endterm: number | null
+  total: number | null; grade: string; isLocked: boolean
+}
+
+function mkTG(
+  classId: string, studentId: string, idx: number,
+  subId: string, subName: string,
+  cat1: number | null, cat2: number | null, endterm: number | null,
+): TeacherGrade {
+  const total = (cat1 !== null && cat2 !== null && endterm !== null)
+    ? Math.round(cat1 * 0.2 + cat2 * 0.2 + endterm * 0.6)
+    : null
+  return {
+    id: `tg-${classId}-${studentId}-${idx}`,
+    studentId, subjectId: subId, subjectName: subName,
+    classId, termId: '2026-T2',
+    cat1, cat2, endterm, total,
+    grade: total !== null ? gradeLabel(total) : '',
+    isLocked: false,
+  }
+}
+
+const BIO = ['sub-005', 'Biology']   as const
+const CHE = ['sub-006', 'Chemistry'] as const
+const PHY = ['sub-007', 'Physics']   as const
+
+// Jasmine grades — Amani's endterm pending (a few others also pending to show variety)
+const jGrades: TeacherGrade[] = [
+  // ts-j01 Amani Kariuki — endterm pending
+  mkTG('cls-7j','ts-j01',1,...BIO, 78, 75, null),
+  mkTG('cls-7j','ts-j01',2,...CHE, 65, 62, null),
+  mkTG('cls-7j','ts-j01',3,...PHY, 72, 70, null),
+  // ts-j02 Brenda Wanjiku
+  mkTG('cls-7j','ts-j02',1,...BIO, 85, 88, 91),
+  mkTG('cls-7j','ts-j02',2,...CHE, 72, 75, 78),
+  mkTG('cls-7j','ts-j02',3,...PHY, 68, 70, 74),
+  // ts-j03 Charles Mutua
+  mkTG('cls-7j','ts-j03',1,...BIO, 60, 65, 68),
+  mkTG('cls-7j','ts-j03',2,...CHE, 55, 58, 62),
+  mkTG('cls-7j','ts-j03',3,...PHY, 58, 60, 65),
+  // ts-j04 Diana Akinyi
+  mkTG('cls-7j','ts-j04',1,...BIO, 90, 92, 95),
+  mkTG('cls-7j','ts-j04',2,...CHE, 85, 88, 90),
+  mkTG('cls-7j','ts-j04',3,...PHY, 88, 90, 93),
+  // ts-j05 Emmanuel Otieno
+  mkTG('cls-7j','ts-j05',1,...BIO, 70, 72, 75),
+  mkTG('cls-7j','ts-j05',2,...CHE, 65, 68, 72),
+  mkTG('cls-7j','ts-j05',3,...PHY, 68, 70, 73),
+  // ts-j06 Faith Njeri
+  mkTG('cls-7j','ts-j06',1,...BIO, 88, 85, 87),
+  mkTG('cls-7j','ts-j06',2,...CHE, 80, 82, 84),
+  mkTG('cls-7j','ts-j06',3,...PHY, 78, 76, 80),
+  // ts-j07 George Kamau
+  mkTG('cls-7j','ts-j07',1,...BIO, 65, 68, 70),
+  mkTG('cls-7j','ts-j07',2,...CHE, 60, 62, 65),
+  mkTG('cls-7j','ts-j07',3,...PHY, 63, 65, 68),
+  // ts-j08 Hannah Chebet
+  mkTG('cls-7j','ts-j08',1,...BIO, 82, 84, 86),
+  mkTG('cls-7j','ts-j08',2,...CHE, 75, 78, 80),
+  mkTG('cls-7j','ts-j08',3,...PHY, 70, 72, 75),
+  // ts-j09 Ibrahim Hassan — at risk
+  mkTG('cls-7j','ts-j09',1,...BIO, 45, 48, 50),
+  mkTG('cls-7j','ts-j09',2,...CHE, 40, 43, 46),
+  mkTG('cls-7j','ts-j09',3,...PHY, 48, 50, 53),
+  // ts-j10 Jane Muthoni
+  mkTG('cls-7j','ts-j10',1,...BIO, 78, 80, 82),
+  mkTG('cls-7j','ts-j10',2,...CHE, 72, 74, 76),
+  mkTG('cls-7j','ts-j10',3,...PHY, 75, 77, 80),
+  // ts-j11 Kevin Mwangi — failing (at risk)
+  mkTG('cls-7j','ts-j11',1,...BIO, 30, 33, 35),
+  mkTG('cls-7j','ts-j11',2,...CHE, 28, 30, 33),
+  mkTG('cls-7j','ts-j11',3,...PHY, 35, 37, 40),
+  // ts-j12 Linda Waweru — top student
+  mkTG('cls-7j','ts-j12',1,...BIO, 92, 94, 96),
+  mkTG('cls-7j','ts-j12',2,...CHE, 88, 90, 92),
+  mkTG('cls-7j','ts-j12',3,...PHY, 85, 87, 90),
+]
+
+const rGrades: TeacherGrade[] = [
+  mkTG('cls-7r','ts-r01',1,...BIO, 75, 78, 80),
+  mkTG('cls-7r','ts-r01',2,...CHE, 70, 72, 75),
+  mkTG('cls-7r','ts-r01',3,...PHY, 68, 70, 73),
+  mkTG('cls-7r','ts-r02',1,...BIO, 88, 90, 92),
+  mkTG('cls-7r','ts-r02',2,...CHE, 82, 84, 87),
+  mkTG('cls-7r','ts-r02',3,...PHY, 80, 82, 85),
+  mkTG('cls-7r','ts-r03',1,...BIO, 55, 58, 62),
+  mkTG('cls-7r','ts-r03',2,...CHE, 50, 52, 56),
+  mkTG('cls-7r','ts-r03',3,...PHY, 55, 58, 62),
+  mkTG('cls-7r','ts-r04',1,...BIO, 82, 84, 87),
+  mkTG('cls-7r','ts-r04',2,...CHE, 78, 80, 83),
+  mkTG('cls-7r','ts-r04',3,...PHY, 75, 78, 80),
+  mkTG('cls-7r','ts-r05',1,...BIO, 62, 65, 68),
+  mkTG('cls-7r','ts-r05',2,...CHE, 60, 62, 65),
+  mkTG('cls-7r','ts-r05',3,...PHY, 58, 60, 63),
+  mkTG('cls-7r','ts-r06',1,...BIO, 90, 92, 94),
+  mkTG('cls-7r','ts-r06',2,...CHE, 85, 88, 90),
+  mkTG('cls-7r','ts-r06',3,...PHY, 87, 89, 92),
+  mkTG('cls-7r','ts-r07',1,...BIO, 72, 74, 76),
+  mkTG('cls-7r','ts-r07',2,...CHE, 68, 70, 73),
+  mkTG('cls-7r','ts-r07',3,...PHY, 70, 72, 75),
+  mkTG('cls-7r','ts-r08',1,...BIO, 80, 82, 85),
+  mkTG('cls-7r','ts-r08',2,...CHE, 75, 77, 80),
+  mkTG('cls-7r','ts-r08',3,...PHY, 72, 74, 77),
+  mkTG('cls-7r','ts-r09',1,...BIO, 68, 70, 73),
+  mkTG('cls-7r','ts-r09',2,...CHE, 65, 67, 70),
+  mkTG('cls-7r','ts-r09',3,...PHY, 62, 64, 67),
+  mkTG('cls-7r','ts-r10',1,...BIO, 52, 55, 58),
+  mkTG('cls-7r','ts-r10',2,...CHE, 48, 50, 54),
+  mkTG('cls-7r','ts-r10',3,...PHY, 50, 52, 55),
+]
+
+export const MOCK_TEACHER_GRADES: Record<string, TeacherGrade[]> = {
+  'cls-7j': jGrades,
+  'cls-7r': rGrades,
+}
+
+// ── Class attendance summary — Term 2 2026 ───────────────────────────────
+// Shape expected by TeacherAttendance / TeacherClass:
+// { studentId, todayStatus, totalPresent, totalDays }
+
+type AttSummaryRow = {
+  studentId: string
+  todayStatus: 'present' | 'absent' | 'late' | 'excused' | null
+  totalPresent: number
+  totalDays: number
+}
+
+const TOTAL_TERM_DAYS = 38
+
+function mkAtt(
+  studentId: string,
+  todayStatus: AttSummaryRow['todayStatus'],
+  totalPresent: number,
+): AttSummaryRow {
+  return { studentId, todayStatus, totalPresent, totalDays: TOTAL_TERM_DAYS }
+}
+
+export const MOCK_TEACHER_ATTENDANCE: Record<string, AttSummaryRow[]> = {
+  'cls-7j': [
+    mkAtt('ts-j01', 'present', 36),
+    mkAtt('ts-j02', 'present', 37),
+    mkAtt('ts-j03', 'present', 35),
+    mkAtt('ts-j04', 'present', 38),
+    mkAtt('ts-j05', 'present', 36),
+    mkAtt('ts-j06', 'present', 37),
+    mkAtt('ts-j07', 'late',    34),
+    mkAtt('ts-j08', 'present', 36),
+    mkAtt('ts-j09', 'absent',  26),  // poor attendance — at risk
+    mkAtt('ts-j10', 'present', 37),
+    mkAtt('ts-j11', 'absent',  29),  // poor attendance — at risk
+    mkAtt('ts-j12', 'present', 38),
+  ],
+  'cls-7r': [
+    mkAtt('ts-r01', 'present', 36),
+    mkAtt('ts-r02', 'present', 38),
+    mkAtt('ts-r03', 'present', 34),
+    mkAtt('ts-r04', 'present', 37),
+    mkAtt('ts-r05', 'present', 35),
+    mkAtt('ts-r06', 'present', 38),
+    mkAtt('ts-r07', 'present', 36),
+    mkAtt('ts-r08', 'present', 37),
+    mkAtt('ts-r09', 'late',    35),
+    mkAtt('ts-r10', 'late',    31),  // low attendance
+  ],
+}
+
+// ── Teacher timetable (own schedule, grouped by day) ─────────────────────
+// Shape: { id, classId, subjectId, subjectName, day, startTime, endTime, termId, className, room }
+
+type TeacherSlot = {
+  id: string; classId: string; subjectId: string; subjectName: string
+  staffId: string; teacherName: string; day: string
+  startTime: string; endTime: string; termId: string
+  className: string; room: string
+}
+
+function tSlot(
+  id: string, day: string,
+  start: string, end: string,
+  subId: string, subName: string,
+  className: string, classId: string, room: string,
+): TeacherSlot {
+  return {
+    id, classId, subjectId: subId, subjectName: subName,
+    staffId: 'stf-001', teacherName: 'Mr. James Ochieng',
+    day, startTime: start, endTime: end,
+    termId: '2026-T2', className, room,
+  }
+}
+
+export const MOCK_TEACHER_TIMETABLE: Record<string, TeacherSlot[]> = {
+  Monday: [
+    tSlot('tt-t-m1','Monday','07:30','08:30',...BIO,'Grade 7 Jasmine','cls-7j','Lab 1'),
+    tSlot('tt-t-m2','Monday','10:00','11:00',...CHE,'Grade 7 Jasmine','cls-7j','Lab 1'),
+  ],
+  Tuesday: [
+    tSlot('tt-t-t1','Tuesday','08:30','09:30',...PHY,'Grade 7 Jasmine','cls-7j','Lab 1'),
+    tSlot('tt-t-t2','Tuesday','11:00','12:00',...BIO,'Grade 7 Rose',   'cls-7r','Lab 2'),
+  ],
+  Wednesday: [
+    tSlot('tt-t-w1','Wednesday','07:30','08:30',...CHE,'Grade 7 Rose',   'cls-7r','Lab 2'),
+    tSlot('tt-t-w2','Wednesday','10:00','11:00',...BIO,'Grade 7 Jasmine','cls-7j','Lab 1'),
+  ],
+  Thursday: [
+    tSlot('tt-t-th1','Thursday','07:30','08:30',...PHY,'Grade 7 Rose',   'cls-7r','Lab 2'),
+    tSlot('tt-t-th2','Thursday','11:00','12:00',...CHE,'Grade 7 Jasmine','cls-7j','Lab 1'),
+  ],
+  Friday: [
+    tSlot('tt-t-f1','Friday','09:30','10:30',...BIO,'Grade 7 Rose',   'cls-7r','Lab 2'),
+    tSlot('tt-t-f2','Friday','11:00','12:00',...PHY,'Grade 7 Jasmine','cls-7j','Lab 1'),
+  ],
+  Saturday: [],
+  Sunday:   [],
+}
+
+// ── Teacher announcements (staff-facing) ──────────────────────────────────
+
+export const MOCK_TEACHER_ANNOUNCEMENTS = [
+  {
+    id: 'ta-1',
+    title: 'Grade Submission Deadline — Friday 20 June 2026',
+    body: 'All teachers are reminded that Term 2 end-term examination scores must be entered into the school portal by 5:00 PM on Friday 20 June 2026. Scores submitted after this deadline will require the Head Teacher\'s written approval. Please contact the Examinations Office if you encounter any system issues.',
+    priority: 'urgent' as const,
+    publishAt: '2026-06-12',
+    targetRoles: ['teacher'],
+  },
+  {
+    id: 'ta-2',
+    title: 'End-Term Exam Supervision Roster — 23–27 June 2026',
+    body: 'The end-term examination supervision timetable has been released. Please check the noticeboard or the portal for your assigned venues and times. Invigilators must arrive 15 minutes before each session. Phones are to be left in the staffroom during invigilation.',
+    priority: 'high' as const,
+    publishAt: '2026-06-10',
+    targetRoles: ['teacher'],
+  },
+  {
+    id: 'ta-3',
+    title: 'Staff Meeting — Thursday 19 June 2026, 4:00 PM',
+    body: 'There will be a mandatory staff meeting on Thursday 19 June at 4:00 PM in the Main Staffroom. Agenda: (1) End-term exam logistics, (2) Term 3 timetable preview, (3) CBC progress review, (4) Sports Day volunteer sign-up, (5) AOB. All staff must attend. Apologies to the Deputy Head Teacher by noon.',
+    priority: 'high' as const,
+    publishAt: '2026-06-08',
+    targetRoles: ['teacher'],
+  },
+  {
+    id: 'ta-4',
+    title: 'CPD Workshop — Digital Assessment in CBC Classrooms',
+    body: 'A free Continuing Professional Development workshop on "Digital Assessment Tools for CBC Instruction" will be held on Saturday 5 July 2026 from 9 AM to 1 PM in the ICT Lab. Facilitated by KICD trainers. CPD certificates will be issued. Seats are limited — RSVP to the HOD Sciences by 25 June.',
+    priority: 'normal' as const,
+    publishAt: '2026-06-01',
+    targetRoles: ['teacher'],
+  },
+]

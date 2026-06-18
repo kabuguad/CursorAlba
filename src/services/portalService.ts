@@ -5,6 +5,10 @@ import {
   MOCK_CHILDREN, MOCK_CHILD_PROFILE, MOCK_GRADES_HISTORY,
   MOCK_ATTENDANCE, MOCK_TIMETABLE, MOCK_FEES,
   MOCK_HOMEWORK, MOCK_ANNOUNCEMENTS,
+  MOCK_TEACHER_PROFILE, MOCK_TEACHER_CLASSES,
+  MOCK_TEACHER_STUDENTS, MOCK_TEACHER_GRADES,
+  MOCK_TEACHER_ATTENDANCE, MOCK_TEACHER_TIMETABLE,
+  MOCK_TEACHER_ANNOUNCEMENTS,
 } from './mockPortalData'
 
 export type ApiResponse<T> = { data: T; error: null } | { data: null; error: string }
@@ -21,7 +25,7 @@ function fail(err: unknown): ApiResponse<never> {
 }
 
 /** True when the backend is simply unreachable (dev / demo mode).
- *  Covers: raw network error (no proxy), Vite proxy 502/504, and nginx 503. */
+ *  Covers: raw network error (no proxy), Vite proxy 500, nginx 502/503/504. */
 function isOffline(e: unknown): boolean {
   const msg = (e as Error)?.message ?? ''
   const status = (e as { response?: { status?: number } })?.response?.status
@@ -29,6 +33,8 @@ function isOffline(e: unknown): boolean {
     msg.includes('Network Error') ||
     msg.includes('ECONNREFUSED') ||
     msg.includes('ERR_CONNECTION_REFUSED') ||
+    msg.includes('proxy') ||
+    status === 500 ||
     status === 502 ||
     status === 503 ||
     status === 504
@@ -191,7 +197,10 @@ export const portalService = {
         email: t.email, qualification: t.qualification, specialization: t.specialization,
         classIds: [], subjects: [],
       })
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_TEACHER_PROFILE)
+      return fail(e)
+    }
   },
 
   getStudentGradesHistory: async (_studentId: string): Promise<ApiResponse<unknown>> => {
@@ -229,8 +238,8 @@ export const portalService = {
     } catch (e) { return fail(e) }
   },
 
-  getAnnouncements: async (_role: UserRole): Promise<ApiResponse<unknown[]>> => {
-    return ok(MOCK_ANNOUNCEMENTS)
+  getAnnouncements: async (role: UserRole): Promise<ApiResponse<unknown[]>> => {
+    return ok(role === 'teacher' ? MOCK_TEACHER_ANNOUNCEMENTS : MOCK_ANNOUNCEMENTS)
   },
 
   getTeacherClasses: async (_staffId: string): Promise<ApiResponse<unknown>> => {
@@ -240,7 +249,10 @@ export const portalService = {
         id: c.id.toString(), name: c.fullName, grade: c.name, stream: c.section ?? '',
         studentCount: c.studentCount,
       })))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_TEACHER_CLASSES)
+      return fail(e)
+    }
   },
 
   getClassStudents: async (classId: string): Promise<ApiResponse<unknown>> => {
@@ -252,7 +264,13 @@ export const portalService = {
         lastName: s.fullName.split(' ').slice(1).join(' '),
         gender: s.gender, classId,
       })))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) {
+        const students = MOCK_TEACHER_STUDENTS[classId] ?? MOCK_TEACHER_STUDENTS['cls-7j']
+        return ok(students)
+      }
+      return fail(e)
+    }
   },
 
   getClassGrades: async (classId: string, _termId?: string): Promise<ApiResponse<unknown>> => {
@@ -265,7 +283,13 @@ export const portalService = {
         total: g.percentage, ca: g.score, exam: null,
         remarks: g.remarks ?? '', assessmentType: g.assessmentType,
       })))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) {
+        const grades = MOCK_TEACHER_GRADES[classId] ?? MOCK_TEACHER_GRADES['cls-7j']
+        return ok(grades)
+      }
+      return fail(e)
+    }
   },
 
   getClassAttendance: async (classId: string, _termId?: string): Promise<ApiResponse<unknown>> => {
@@ -277,7 +301,13 @@ export const portalService = {
         status: r.status?.toLowerCase() ?? 'present',
         termId: 'current', classId, remarks: r.remarks ?? '',
       })))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) {
+        const att = MOCK_TEACHER_ATTENDANCE[classId] ?? MOCK_TEACHER_ATTENDANCE['cls-7j']
+        return ok(att)
+      }
+      return fail(e)
+    }
   },
 
   saveGrades: async (grades: unknown[]): Promise<ApiResponse<unknown>> => {
@@ -317,7 +347,10 @@ export const portalService = {
     try {
       const res = await apiClient.get<TimetableEntryDto[]>('/teacher/timetable')
       return ok(groupTimetable(res.data))
-    } catch (e) { return fail(e) }
+    } catch (e) {
+      if (isOffline(e)) return ok(MOCK_TEACHER_TIMETABLE)
+      return fail(e)
+    }
   },
 
   getLeaveRequests: async (_staffId: string): Promise<ApiResponse<unknown[]>> => {

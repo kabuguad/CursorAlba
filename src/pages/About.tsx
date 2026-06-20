@@ -1,15 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { HistoryStepper } from '../components/about/HistoryStepper'
-import { useCmsBlocks } from '../hooks/useCmsData'
-import { useQuery } from '@tanstack/react-query'
-import { unwrap } from '../services/mockApi'
-import { contentService } from '../services/contentService'
-
-function useCms() {
-  const { data: blocks = [] } = useCmsBlocks('pg-about')
-  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
-}
+import { aboutApi } from '../services/aboutApi'
 
 const LEADERSHIP = [
   {
@@ -39,60 +32,77 @@ const LEADERSHIP = [
 ]
 
 export function About() {
-  const get = useCms()
+  const { data: pageContents = [] } = useQuery({
+    queryKey: ['about-page-content'],
+    queryFn: () => aboutApi.getPageContent(),
+    staleTime: 60_000,
+  })
 
   const { data: coreValues = [] } = useQuery({
-    queryKey: ['about-core-values'],
-    queryFn: () => contentService.listCoreValues().then(unwrap),
-    staleTime: 30_000,
+    queryKey: ['core-values'],
+    queryFn: () => aboutApi.getCoreValues(),
+    staleTime: 60_000,
   })
 
-  const { data: historyItems = [] } = useQuery({
-    queryKey: ['about-history'],
-    queryFn: () => contentService.listHistoryItems().then(unwrap),
-    staleTime: 30_000,
+  const { data: milestones = [] } = useQuery({
+    queryKey: ['history-milestones'],
+    queryFn: () => aboutApi.getHistoryMilestones(),
+    staleTime: 60_000,
   })
+
+  const page = pageContents[0]
+
+  const headline    = page?.headline    ?? 'About Us'
+  const subheadline = page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005."
+  const mission     = page?.mission     ?? "To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence. We nurture every learner's genius — academically, artistically, and athletically."
+  const vision      = page?.vision      ?? "To be East Africa's most sought-after private institution — where every learner discovers their genius in world-class facilities, guided by expert educators who inspire curiosity and ambition in equal measure."
+  const historyIntro = page?.historyIntro ?? "Two decades of excellence — from a single campus in Kutus to Kirinyaga's premier educational institution."
+
+  const sortedValues = [...coreValues].sort((a, b) => a.sortOrder - b.sortOrder)
+
+  const historySteps = [...milestones]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((m) => ({ year: m.year, title: m.title, desc: m.description }))
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
+      {/* Hero */}
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold text-primary dark:text-gold md:text-7xl">{get('hero.headline', 'About Us')}</h1>
-        <p className="mx-auto max-w-2xl text-lg text-muted">
-          {get('hero.subheadline', "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005.")}
-        </p>
+        <h1 className="mb-4 text-5xl font-bold text-primary dark:text-gold md:text-7xl">
+          {headline}
+        </h1>
+        <p className="mx-auto max-w-2xl text-lg text-muted">{subheadline}</p>
       </ScrollReveal>
 
+      {/* Mission & Vision */}
       <div className="relative mb-24 grid gap-8 lg:grid-cols-2">
         <ScrollReveal>
           <GlassCard className="relative z-10 -rotate-1 p-8 lg:mt-12">
             <h2 className="mb-4 text-3xl font-bold text-primary dark:text-gold">Our Mission</h2>
-            <p className="leading-relaxed text-muted">
-              {get('mission', "To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence. We nurture every learner's genius — academically, artistically, and athletically.")}
-            </p>
+            <p className="leading-relaxed text-muted">{mission}</p>
           </GlassCard>
         </ScrollReveal>
         <ScrollReveal delay={0.15}>
           <GlassCard className="relative z-20 rotate-1 p-8 lg:-mt-8 lg:ml-12">
             <h2 className="mb-4 text-3xl font-bold text-primary dark:text-gold">Our Vision</h2>
-            <p className="leading-relaxed text-muted">
-              {get('vision', "To be East Africa's most sought-after private institution — where every learner discovers their genius in world-class facilities, guided by expert educators who inspire curiosity and ambition in equal measure.")}
-            </p>
+            <p className="leading-relaxed text-muted">{vision}</p>
           </GlassCard>
         </ScrollReveal>
       </div>
 
-      {coreValues.length > 0 && (
+      {/* Core Values */}
+      {sortedValues.length > 0 && (
         <>
           <ScrollReveal className="text-center">
             <h2 className="mb-8 text-4xl font-bold">Core Values</h2>
           </ScrollReveal>
           <div className="mb-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[...coreValues].sort((a, b) => a.sortOrder - b.sortOrder).map((v, i) => (
+            {sortedValues.map((v, i) => (
               <ScrollReveal key={v.id} delay={i * 0.08}>
                 <GlassCard className="p-6">
                   <span className="mb-3 block text-4xl">{v.icon}</span>
                   <h3 className="mb-2 text-lg font-bold text-primary dark:text-gold">{v.title}</h3>
-                  <p className="text-sm text-muted">{v.desc}</p>
+                  <p className="text-sm text-muted">{v.description}</p>
                 </GlassCard>
               </ScrollReveal>
             ))}
@@ -100,6 +110,7 @@ export function About() {
         </>
       )}
 
+      {/* Leadership Team — static */}
       <ScrollReveal className="text-center">
         <h2 className="mb-8 text-4xl font-bold">Leadership Team</h2>
       </ScrollReveal>
@@ -118,16 +129,15 @@ export function About() {
         ))}
       </div>
 
-      {historyItems.length > 0 && (
+      {/* History Milestones */}
+      {historySteps.length > 0 && (
         <>
           <ScrollReveal className="text-center">
             <h2 className="mb-8 text-4xl font-bold">Our History</h2>
-            <p className="mx-auto mb-10 max-w-xl text-muted">
-              {get('history.intro', "Two decades of excellence — from a single campus in Kutus to Kirinyaga's premier educational institution.")}
-            </p>
+            <p className="mx-auto mb-10 max-w-xl text-muted">{historyIntro}</p>
           </ScrollReveal>
           <ScrollReveal delay={0.1} className="flex justify-center">
-            <HistoryStepper steps={[...historyItems].sort((a, b) => a.sortOrder - b.sortOrder)} />
+            <HistoryStepper steps={historySteps} />
           </ScrollReveal>
         </>
       )}

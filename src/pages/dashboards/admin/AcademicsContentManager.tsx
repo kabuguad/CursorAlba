@@ -192,7 +192,7 @@ function PageContentTab() {
             <input type="number" min={1} className={INP} value={draft.sortOrder} onChange={e => set('sortOrder', Number(e.target.value))} />
           </div>
           <div className="flex gap-2 pt-1">
-            <button onClick={handleSave} disabled={isPending || !draft.heroHeadline.trim()} className={BTN_GOLD}>
+            <button onClick={handleSave} disabled={isPending || !(draft.heroHeadline ?? '').trim()} className={BTN_GOLD}>
               <Check className="h-3.5 w-3.5" />{isPending ? 'Saving…' : editing ? 'Save Changes' : 'Create'}
             </button>
             <button onClick={closeModal} className={BTN_GHOST}><X className="h-3.5 w-3.5" /> Cancel</button>

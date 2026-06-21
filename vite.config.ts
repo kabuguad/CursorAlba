@@ -6,6 +6,9 @@ const API_URL = process.env.API_URL ?? 'https://yoko-unresourceful-coretta.ngrok
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
   server: {
     host: '0.0.0.0',
     port: 5000,

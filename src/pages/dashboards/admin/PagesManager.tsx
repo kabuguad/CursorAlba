@@ -1169,7 +1169,8 @@ export function PagesManager() {
   // Pages whose content is 100% managed in a dedicated sidebar manager —
   // no CMS blocks to add, so hide the "Add Block" controls entirely.
   const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff', 'pg-why'])
-  const canAddBlocks = selectedPageId ? !PURE_REDIRECT_PAGES.has(selectedPageId) : false
+  const API_MANAGED_PAGES = new Set(['pg-about'])
+  const canAddBlocks = selectedPageId ? !PURE_REDIRECT_PAGES.has(selectedPageId) && !API_MANAGED_PAGES.has(selectedPageId) : false
 
   const saveAll = async () => {
     const changed = blocks.filter((b) => b.id in drafts && drafts[b.id] !== b.value)
@@ -1355,7 +1356,7 @@ export function PagesManager() {
 
           {/* Block list */}
           <div className="flex-1 overflow-y-auto p-6">
-                {blocksLoading ? (
+                {blocksLoading && !(selectedPageId && API_MANAGED_PAGES.has(selectedPageId)) ? (
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
                       <div key={i} className="h-20 animate-pulse rounded-2xl bg-tint/60 dark:bg-dark-card" />
@@ -1363,14 +1364,14 @@ export function PagesManager() {
                   </div>
                 ) : (
                   <div className="space-y-4 max-w-3xl">
-                    {blocks.length === 0 && (
+                    {!API_MANAGED_PAGES.has(selectedPageId ?? '') && blocks.length === 0 && (
                       <GlassCard className="p-10 text-center">
                         <p className="text-muted">No content blocks yet.</p>
                         <p className="mt-1 text-xs text-muted">Click <strong>Add Block</strong> above to create the first one.</p>
                       </GlassCard>
                     )}
 
-                    {blocks.map((block) => {
+                    {!API_MANAGED_PAGES.has(selectedPageId ?? '') && blocks.map((block) => {
                       const val = getDraft(block)
                       const changed = block.id in drafts && drafts[block.id] !== block.value
                       const saved = savedIds.has(block.id)
@@ -1446,6 +1447,7 @@ export function PagesManager() {
                         </GlassCard>
                       )
                     })}
+
 
                     {/* Add Block — hidden for pages managed in dedicated managers */}
                     {canAddBlocks && (

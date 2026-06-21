@@ -1372,13 +1372,6 @@ function createSeed(): DB {
     blk('cb-h-08','pg-home','director.title',    'Director Title',                'text',    'School Director',            'Title shown below the director\'s name', 8),
     blk('cb-h-09','pg-home','director.quote',    'Director Quote',                'textarea','At Alber School, we believe every child is born with unique genius waiting to be unlocked. Our duty — as educators, parents and community — is to create the conditions for that genius to flourish. We do this through world-class curriculum, exceptional faculty, and a culture that celebrates every learner.','The director\'s message paragraph shown on the homepage', 9),
 
-    // ── About ─────────────────────────────────────────────────────────────
-    blk('cb-a-01','pg-about','hero.headline',    'Page Headline',                 'text',    'About Us',                   'Main heading at the top of the About page', 1),
-    blk('cb-a-02','pg-about','hero.subheadline', 'Page Subheadline',              'textarea','Adjacent to the Governor\'s Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005.','Shown below the main heading', 2),
-    blk('cb-a-03','pg-about','mission',          'Mission Statement',             'textarea','To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence. We nurture every learner\'s genius — academically, artistically, and athletically.','Displayed in the Mission card', 3),
-    blk('cb-a-04','pg-about','vision',           'Vision Statement',              'textarea','To be East Africa\'s most sought-after private institution — where every learner discovers their genius in world-class facilities, guided by expert educators who inspire curiosity and ambition in equal measure.','Displayed in the Vision card', 4),
-    blk('cb-a-05','pg-about','history.intro',    'Our History — Intro Text',      'textarea','Two decades of excellence — from a single campus in Kutus to Kirinyaga\'s premier educational institution.','Paragraph shown above the history timeline', 5),
-
     // ── Academics ─────────────────────────────────────────────────────────
     blk('cb-ac-01','pg-academics','hero.headline',   'Page Headline',             'text',    'Programs & Academics',        'Main heading at the top of the Academics page', 1),
     blk('cb-ac-02','pg-academics','hero.subheadline','Page Subheadline',          'textarea','From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.','Shown below the main heading', 2),
@@ -1749,7 +1742,7 @@ function createSeed(): DB {
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v13'
+const STORAGE_KEY = 'alber_db_v14'
 
 function loadStore(): DB {
   try {

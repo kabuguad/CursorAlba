@@ -4,18 +4,12 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
-import { useCmsBlocks } from '../hooks/useCmsData'
 import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
+import { academicsApi } from '../services/academicsApi'
 import { LEVEL_COLOR_MAP } from '../lib/academicsColors'
-import { usePillars } from '../contexts/PillarsContext'
-import { GRADIENT_MAP } from '../data/pillars'
-
-function useCms() {
-  const { data: blocks = [] } = useCmsBlocks('pg-academics')
-  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
-}
+import { GRADIENT_MAP, DEFAULT_PILLARS } from '../data/pillars'
 
 const VALUES = [
   { value: 'Responsibility', icon: '⚖️' },
@@ -39,48 +33,71 @@ const GRADING = [
 ]
 
 const CALENDAR = [
-  { term: 'Term 1', start: '8 January 2026',  end: '28 March 2026',    exams: '16–27 March 2026',       holiday: '28 March – 26 April 2026' },
-  { term: 'Term 2', start: '27 April 2026',   end: '3 July 2026',      exams: '22 June – 3 July 2026',  holiday: '4 July – 2 August 2026' },
+  { term: 'Term 1', start: '8 January 2026',  end: '28 March 2026',    exams: '16–27 March 2026',         holiday: '28 March – 26 April 2026' },
+  { term: 'Term 2', start: '27 April 2026',   end: '3 July 2026',      exams: '22 June – 3 July 2026',    holiday: '4 July – 2 August 2026' },
   { term: 'Term 3', start: '3 August 2026',   end: '6 November 2026',  exams: '19 Oct – 6 November 2026', holiday: 'December – January' },
 ]
 
 const KEY_ASSESSMENTS = [
-  { level: 'PP1 & PP2',    exam: 'Continuous Portfolio Assessment',                    body: 'Internal',       note: 'Play-based formative assessment each term' },
-  { level: 'Grades 1 – 6', exam: 'Continuous Assessment Tests (CATs)',                 body: 'Internal / KNEC', note: '3 CATs per term + end-of-year school exams' },
-  { level: 'Grade 9',      exam: 'Kenya Junior School Education Assessment (KJSEA)',    body: 'KNEC',            note: 'National exam — gateway to Senior School' },
-  { level: 'Grade 12',     exam: 'Kenya Certificate of Secondary Education (KCSE)',     body: 'KNEC',            note: 'National final examination — university entry' },
+  { level: 'PP1 & PP2',    exam: 'Continuous Portfolio Assessment',                 body: 'Internal',        note: 'Play-based formative assessment each term' },
+  { level: 'Grades 1 – 6', exam: 'Continuous Assessment Tests (CATs)',              body: 'Internal / KNEC', note: '3 CATs per term + end-of-year school exams' },
+  { level: 'Grade 9',      exam: 'Kenya Junior School Education Assessment (KJSEA)', body: 'KNEC',            note: 'National exam — gateway to Senior School' },
+  { level: 'Grade 12',     exam: 'Kenya Certificate of Secondary Education (KCSE)',  body: 'KNEC',            note: 'National final examination — university entry' },
 ]
 
 export function Academics() {
-  const get = useCms()
-  const { pillars } = usePillars()
+  // ── Page content (hero + CTA) from API ──────────────────────────────────
+  const { data: pageContentList = [] } = useQuery({
+    queryKey: ['academics-page-content'],
+    queryFn: () => academicsApi.getPageContent(),
+    staleTime: 60_000,
+  })
+  const pageContent = pageContentList[0]
 
+  // ── School levels (mock — not yet migrated) ──────────────────────────────
   const { data: schoolLevels = [] } = useQuery({
     queryKey: ['academics-school-levels'],
     queryFn: () => contentService.listSchoolLevels().then(unwrap),
     staleTime: 30_000,
   })
 
-  const { data: competencies = [] } = useQuery({
-    queryKey: ['academics-competencies'],
-    queryFn: () => contentService.listCompetencies().then(unwrap),
-    staleTime: 30_000,
+  // ── CBC Competencies from real API ("/api/cbc-competencies") ─────────────
+  const { data: apiCompetencies = [] } = useQuery({
+    queryKey: ['cbc-competencies'],
+    queryFn: () => academicsApi.getCompetencies(),
+    staleTime: 60_000,
   })
+
+  // ── Teaching Pillars from real API ("/api/teaching-pillars") ────────────
+  const { data: apiPillars = [] } = useQuery({
+    queryKey: ['teaching-pillars'],
+    queryFn: () => academicsApi.getPillars(),
+    staleTime: 60_000,
+  })
+
+  // Fall back to default pillars when API hasn't returned data yet
+  const pillars = apiPillars.length > 0 ? apiPillars : DEFAULT_PILLARS
 
   const sorted = [...schoolLevels].sort((a, b) => a.sortOrder - b.sortOrder)
   const [activeSlug, setActiveSlug] = useState<string>('')
   const activeId = activeSlug || sorted[0]?.slug || ''
   const current = sorted.find((l) => l.slug === activeId) ?? sorted[0]
 
+  const heroHeadline    = pageContent?.heroHeadline    ?? 'Programs & Academics'
+  const heroSubheadline = pageContent?.heroSubheadline ?? 'From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.'
+  const ctaHeadline     = pageContent?.ctaHeadline     ?? 'Ready to Enrol?'
+  const ctaSubtext      = pageContent?.ctaSubtext      ?? 'Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.'
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
+
+      {/* ── Hero ── */}
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Programs & Academics')}</h1>
-        <p className="mx-auto max-w-2xl text-muted">
-          {get('hero.subheadline', 'From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.')}
-        </p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{heroHeadline}</h1>
+        <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
       </ScrollReveal>
 
+      {/* ── School Structure tabs ── */}
       {sorted.length > 0 && (
         <>
           <ScrollReveal className="mb-16">
@@ -109,7 +126,7 @@ export function Academics() {
 
           {current && (() => {
             const colors = LEVEL_COLOR_MAP[current.colorKey] ?? LEVEL_COLOR_MAP['blue']
-            const highlights = current.highlights.split('\n').map(h => h.trim()).filter(Boolean)
+            const highlights = current.highlights.split('\n').map((h) => h.trim()).filter(Boolean)
             return (
               <ScrollReveal key={current.slug} delay={0.05} className="mb-16">
                 <div className={cn('rounded-3xl border bg-gradient-to-br p-8', colors.color, colors.border)}>
@@ -142,7 +159,8 @@ export function Academics() {
         </>
       )}
 
-      {competencies.length > 0 && (
+      {/* ── Our Approach — CBC Competencies from /api/cbc-competencies ── */}
+      {apiCompetencies.length > 0 && (
         <ScrollReveal className="mb-16">
           <div className="mb-10 text-center">
             <p className="mb-2 text-sm font-bold uppercase tracking-widest text-gold">Our Approach</p>
@@ -152,21 +170,25 @@ export function Academics() {
             </p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {competencies.filter(c => !c.isFeatured).map((c, i) => (
+            {apiCompetencies.filter((c) => !c.isFeatured).map((c, i) => (
               <ScrollReveal key={c.id} delay={i * 0.07}>
                 <GlassCard className="flex h-full flex-col gap-3 p-6">
                   <span className="text-4xl">{c.icon}</span>
                   <h3 className="font-bold leading-snug">{c.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted">{c.desc}</p>
+                  <p className="text-sm leading-relaxed text-muted">{c.description}</p>
                 </GlassCard>
               </ScrollReveal>
             ))}
-            {competencies.filter(c => c.isFeatured).map((c, i) => (
-              <ScrollReveal key={c.id} delay={(competencies.filter(x => !x.isFeatured).length + i) * 0.07} className="sm:col-span-2 lg:col-span-1 xl:col-span-2">
+            {apiCompetencies.filter((c) => c.isFeatured).map((c, i) => (
+              <ScrollReveal
+                key={c.id}
+                delay={(apiCompetencies.filter((x) => !x.isFeatured).length + i) * 0.07}
+                className="sm:col-span-2 lg:col-span-1 xl:col-span-2"
+              >
                 <GlassCard className="flex h-full flex-col gap-3 bg-gradient-to-br from-primary/10 to-gold/10 p-6">
                   <span className="text-4xl">{c.icon}</span>
                   <h3 className="font-bold leading-snug">{c.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted">{c.desc}</p>
+                  <p className="text-sm leading-relaxed text-muted">{c.description}</p>
                 </GlassCard>
               </ScrollReveal>
             ))}
@@ -174,6 +196,7 @@ export function Academics() {
         </ScrollReveal>
       )}
 
+      {/* ── How We Teach — Teaching Pillars from /api/teaching-pillars ── */}
       <ScrollReveal className="mb-16">
         <div className="mb-8 text-center">
           <p className="mb-2 text-sm font-bold uppercase tracking-widest text-gold">How We Teach</p>
@@ -187,7 +210,7 @@ export function Academics() {
                 <div className={cn('h-full rounded-3xl border bg-gradient-to-br p-7', g.color, g.border)}>
                   <span className="mb-4 block text-4xl">{p.icon}</span>
                   <h3 className="mb-2 text-xl font-bold">{p.title}</h3>
-                  <p className="leading-relaxed text-muted">{p.desc}</p>
+                  <p className="leading-relaxed text-muted">{p.description ?? (p as any).desc}</p>
                 </div>
               </ScrollReveal>
             )
@@ -195,6 +218,7 @@ export function Academics() {
         </div>
       </ScrollReveal>
 
+      {/* ── Values ── */}
       <ScrollReveal className="mb-16">
         <div className="mb-8 text-center">
           <p className="mb-2 text-sm font-bold uppercase tracking-widest text-gold">Character Formation</p>
@@ -215,6 +239,7 @@ export function Academics() {
         </div>
       </ScrollReveal>
 
+      {/* ── Key Assessments ── */}
       <ScrollReveal className="mb-16">
         <h2 className="mb-6 text-center text-3xl font-bold">Key National Assessments</h2>
         <GlassCard className="overflow-x-auto p-0">
@@ -243,6 +268,7 @@ export function Academics() {
         </GlassCard>
       </ScrollReveal>
 
+      {/* ── Grading ── */}
       <ScrollReveal className="mb-16">
         <h2 className="mb-6 text-center text-3xl font-bold">Grading System</h2>
         <GlassCard className="overflow-x-auto p-0">
@@ -267,6 +293,7 @@ export function Academics() {
         </GlassCard>
       </ScrollReveal>
 
+      {/* ── Academic Calendar ── */}
       <ScrollReveal className="mb-16">
         <h2 className="mb-6 text-center text-3xl font-bold">Academic Calendar 2026</h2>
         <div className="grid gap-6 md:grid-cols-3">
@@ -298,18 +325,18 @@ export function Academics() {
         </div>
       </ScrollReveal>
 
+      {/* ── CTA ── */}
       <ScrollReveal>
         <GlassCard className="p-8 text-center">
-          <h2 className="mb-4 text-3xl font-bold">{get('cta.headline', 'Ready to Enrol?')}</h2>
-          <p className="mb-8 max-w-xl mx-auto text-muted">
-            {get('cta.subtext', 'Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.')}
-          </p>
+          <h2 className="mb-4 text-3xl font-bold">{ctaHeadline}</h2>
+          <p className="mb-8 max-w-xl mx-auto text-muted">{ctaSubtext}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/admissions"><Button variant="primary">Apply Now</Button></Link>
             <Link to="/contact"><Button variant="outline">Speak to an Advisor</Button></Link>
           </div>
         </GlassCard>
       </ScrollReveal>
+
     </div>
   )
 }

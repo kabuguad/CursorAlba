@@ -1,31 +1,12 @@
 import axios, { type AxiosError } from 'axios'
 
-const BASE = 'https://yoko-unresourceful-coretta.ngrok-free.dev/api'
-
 const client = axios.create({
-  baseURL: BASE,
+  baseURL: '/api',
   timeout: 15_000,
   headers: {
     'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 'true',
   },
 })
-
-// ── Debug interceptors ───────────────────────────────────────────────────────
-client.interceptors.request.use((config) => {
-  console.log(`[aboutApi] ▶ ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, config.data ?? '')
-  return config
-})
-client.interceptors.response.use(
-  (res) => {
-    console.log(`[aboutApi] ✅ ${res.config.method?.toUpperCase()} ${res.config.url} → ${res.status}`, res.data)
-    return res
-  },
-  (err: AxiosError) => {
-    console.error(`[aboutApi] ❌ ${err.config?.method?.toUpperCase()} ${err.config?.url} → ${err.response?.status}`, err.response?.data ?? err.message)
-    return Promise.reject(err)
-  },
-)
 
 // ── Interfaces ───────────────────────────────────────────────────────────────
 export interface AboutPageContent {

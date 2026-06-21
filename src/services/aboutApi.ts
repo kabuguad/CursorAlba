@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosError } from 'axios'
 
 const BASE = 'https://yoko-unresourceful-coretta.ngrok-free.dev/api'
 
@@ -10,6 +10,32 @@ const client = axios.create({
     'ngrok-skip-browser-warning': 'true',
   },
 })
+
+// ── Debug interceptors — log every request + response to the console ─────────
+client.interceptors.request.use((config) => {
+  console.log(
+    `[aboutApi] ▶ ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,
+    config.data ?? '',
+  )
+  return config
+})
+
+client.interceptors.response.use(
+  (res) => {
+    console.log(
+      `[aboutApi] ✅ ${res.config.method?.toUpperCase()} ${res.config.url} → ${res.status}`,
+      res.data,
+    )
+    return res
+  },
+  (err: AxiosError) => {
+    console.error(
+      `[aboutApi] ❌ ${err.config?.method?.toUpperCase()} ${err.config?.url} → ${err.response?.status}`,
+      err.response?.data ?? err.message,
+    )
+    return Promise.reject(err)
+  },
+)
 
 export interface AboutPageContent {
   id: number
@@ -53,6 +79,21 @@ function toItem<T>(raw: unknown): T {
     if ('data' in obj && obj.data && typeof obj.data === 'object') return obj.data as T
   }
   return raw as T
+}
+
+/** Extracts a human-readable message from an axios error */
+export function apiErrorMessage(err: unknown): string {
+  const e = err as AxiosError<{ message?: string; title?: string; errors?: Record<string, string[]> }>
+  if (e.response?.data) {
+    const d = e.response.data
+    if (d.errors) {
+      return Object.values(d.errors).flat().join('; ')
+    }
+    if (d.message) return d.message
+    if (d.title) return d.title
+    if (typeof d === 'string') return d
+  }
+  return e.message ?? 'Unknown error'
 }
 
 // ── About Page Content ──────────────────────────────────────────────────────

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Edit2, Trash2, X, Check, ExternalLink, FileText } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { aboutApi } from '../../../services/aboutApi'
+import { aboutApi, apiErrorMessage } from '../../../services/aboutApi'
 import type { AboutPageContent, AboutPageContentCreateDto } from '../../../services/aboutApi'
 import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
@@ -59,7 +59,7 @@ export function AboutContentManager() {
       showToast('About page content created ✓')
       closeModal()
     },
-    onError: () => showToast('Failed to create — check your API connection'),
+    onError: (err) => showToast(`Create failed: ${apiErrorMessage(err)}`),
   })
 
   const updateMut = useMutation({
@@ -70,7 +70,7 @@ export function AboutContentManager() {
       showToast('Updated ✓')
       closeModal()
     },
-    onError: () => showToast('Failed to update'),
+    onError: (err) => showToast(`Update failed: ${apiErrorMessage(err)}`),
   })
 
   const deleteMut = useMutation({
@@ -80,7 +80,7 @@ export function AboutContentManager() {
       showToast('Deleted')
       setDelConfirm(null)
     },
-    onError: () => showToast('Failed to delete'),
+    onError: (err) => showToast(`Delete failed: ${apiErrorMessage(err)}`),
   })
 
   const [modalOpen, setModalOpen] = useState(false)

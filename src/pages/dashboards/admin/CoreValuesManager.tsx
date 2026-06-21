@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Edit2, Trash2, X, Check, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { aboutApi } from '../../../services/aboutApi'
+import { aboutApi, apiErrorMessage } from '../../../services/aboutApi'
 import type { CoreValue, CoreValueCreateDto } from '../../../services/aboutApi'
 import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
@@ -49,19 +49,19 @@ export function CoreValuesManager() {
   const createMut = useMutation({
     mutationFn: (dto: CoreValueCreateDto) => aboutApi.createCoreValue(dto),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['core-values'] }); showToast('Core value added ✓'); closeModal() },
-    onError: () => showToast('Failed to create — check API connection'),
+    onError: (err) => showToast(`Create failed: ${apiErrorMessage(err)}`),
   })
 
   const updateMut = useMutation({
     mutationFn: ({ id, dto }: { id: number; dto: CoreValueCreateDto }) => aboutApi.updateCoreValue(id, dto),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['core-values'] }); showToast('Core value updated ✓'); closeModal() },
-    onError: () => showToast('Failed to update'),
+    onError: (err) => showToast(`Update failed: ${apiErrorMessage(err)}`),
   })
 
   const deleteMut = useMutation({
     mutationFn: (id: number) => aboutApi.deleteCoreValue(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['core-values'] }); showToast('Deleted'); setDelConfirm(null) },
-    onError: () => showToast('Failed to delete'),
+    onError: (err) => showToast(`Delete failed: ${apiErrorMessage(err)}`),
   })
 
   const [modalOpen, setModalOpen] = useState(false)

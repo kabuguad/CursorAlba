@@ -3,20 +3,12 @@ import { cn } from '../../../lib/utils'
 import { PagesManager } from './PagesManager'
 import { WhyChooseUsManager } from './WhyChooseUsManager'
 import { ProgramsManager } from './ProgramsManager'
-import { AboutContentManager } from './AboutContentManager'
-import { CoreValuesManager } from './CoreValuesManager'
-import { HistoryMilestonesManager } from './HistoryMilestonesManager'
-import { AboutApiDiagnostic } from './AboutApiDiagnostic'
-import { Globe, ThumbsUp, GraduationCap, Info, Star, Clock, FlaskConical } from 'lucide-react'
+import { Globe, ThumbsUp, GraduationCap } from 'lucide-react'
 
 const TABS = [
   { id: 'blocks',      label: 'Page Blocks',          icon: Globe,          desc: 'Edit text, images and lists across public pages' },
   { id: 'why-us',     label: 'Why Choose Us',         icon: ThumbsUp,       desc: 'Manage the Alber Difference cards shown on the website' },
   { id: 'programmes', label: 'Academic Programmes',   icon: GraduationCap,  desc: 'Manage school programme levels and descriptions' },
-  { id: 'about',      label: 'About Content',         icon: Info,           desc: 'Headline, mission, vision and history intro for the About page' },
-  { id: 'values',     label: 'Core Values',           icon: Star,           desc: 'Manage core values shown on the About page' },
-  { id: 'history',    label: 'History Milestones',    icon: Clock,          desc: 'Manage the school history timeline on the About page' },
-  { id: 'diagnostic', label: 'API Diagnostics',       icon: FlaskConical,   desc: 'Test read and write operations against the About API' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -56,10 +48,6 @@ export function SiteContentManager() {
         {tab === 'blocks'      && <PagesManager />}
         {tab === 'why-us'      && <WhyChooseUsManager />}
         {tab === 'programmes'  && <ProgramsManager />}
-        {tab === 'about'       && <AboutContentManager />}
-        {tab === 'values'      && <CoreValuesManager />}
-        {tab === 'history'     && <HistoryMilestonesManager />}
-        {tab === 'diagnostic'  && <AboutApiDiagnostic />}
       </div>
     </div>
   )

@@ -3,7 +3,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2, Edit2, Check, ChevronUp, ChevronDown, Layers } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { contentService } from '../../../services/contentService'
-import type { CmsPage, CmsBlock, CmsBlockType, AboutCoreValue, AboutHistoryItem, AcademicsSchoolLevel, PublicFeeRow } from '../../../services/contentService'
+import type { CmsPage, CmsBlock, CmsBlockType, AcademicsSchoolLevel, PublicFeeRow } from '../../../services/contentService'
+import { AboutContentManager } from './AboutContentManager'
+import { CoreValuesManager } from './CoreValuesManager'
+import { HistoryMilestonesManager } from './HistoryMilestonesManager'
 import { unwrap } from '../../../services/mockApi'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Button } from '../../../components/ui/Button'
@@ -1701,13 +1704,15 @@ export function PagesManager() {
                       </button>
                     )}
 
-                    {/* About-specific structured data panels */}
+                    {/* About — managed entirely via real API */}
                     {selectedPageId === 'pg-about' && (
                       <>
                         <hr className="my-2 border-theme" />
-                        <CoreValuesPanel qc={queryClient} />
+                        <AboutContentManager />
                         <hr className="my-2 border-theme" />
-                        <HistoryItemsPanel qc={queryClient} />
+                        <CoreValuesManager />
+                        <hr className="my-2 border-theme" />
+                        <HistoryMilestonesManager />
                         <div className="pb-8" />
                       </>
                     )}

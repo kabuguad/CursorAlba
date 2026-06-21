@@ -6,7 +6,8 @@ import { ProgramsManager } from './ProgramsManager'
 import { AboutContentManager } from './AboutContentManager'
 import { CoreValuesManager } from './CoreValuesManager'
 import { HistoryMilestonesManager } from './HistoryMilestonesManager'
-import { Globe, ThumbsUp, GraduationCap, Info, Star, Clock } from 'lucide-react'
+import { AboutApiDiagnostic } from './AboutApiDiagnostic'
+import { Globe, ThumbsUp, GraduationCap, Info, Star, Clock, FlaskConical } from 'lucide-react'
 
 const TABS = [
   { id: 'blocks',      label: 'Page Blocks',          icon: Globe,          desc: 'Edit text, images and lists across public pages' },
@@ -15,6 +16,7 @@ const TABS = [
   { id: 'about',      label: 'About Content',         icon: Info,           desc: 'Headline, mission, vision and history intro for the About page' },
   { id: 'values',     label: 'Core Values',           icon: Star,           desc: 'Manage core values shown on the About page' },
   { id: 'history',    label: 'History Milestones',    icon: Clock,          desc: 'Manage the school history timeline on the About page' },
+  { id: 'diagnostic', label: 'API Diagnostics',       icon: FlaskConical,   desc: 'Test read and write operations against the About API' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -57,6 +59,7 @@ export function SiteContentManager() {
         {tab === 'about'       && <AboutContentManager />}
         {tab === 'values'      && <CoreValuesManager />}
         {tab === 'history'     && <HistoryMilestonesManager />}
+        {tab === 'diagnostic'  && <AboutApiDiagnostic />}
       </div>
     </div>
   )

@@ -3,12 +3,14 @@ import { cn } from '../../../lib/utils'
 import { PagesManager } from './PagesManager'
 import { WhyChooseUsManager } from './WhyChooseUsManager'
 import { ProgramsManager } from './ProgramsManager'
-import { Globe, ThumbsUp, GraduationCap } from 'lucide-react'
+import { AcademicsContentManager } from './AcademicsContentManager'
+import { Globe, ThumbsUp, GraduationCap, BookOpen } from 'lucide-react'
 
 const TABS = [
   { id: 'blocks',      label: 'Page Blocks',          icon: Globe,          desc: 'Edit text, images and lists across public pages' },
   { id: 'why-us',     label: 'Why Choose Us',         icon: ThumbsUp,       desc: 'Manage the Alber Difference cards shown on the website' },
   { id: 'programmes', label: 'Academic Programmes',   icon: GraduationCap,  desc: 'Manage school programme levels and descriptions' },
+  { id: 'academics',  label: 'Academics',             icon: BookOpen,       desc: 'Manage page content, CBC competencies and teaching pillars' },
 ] as const
 
 type TabId = typeof TABS[number]['id']
@@ -48,6 +50,7 @@ export function SiteContentManager() {
         {tab === 'blocks'      && <PagesManager />}
         {tab === 'why-us'      && <WhyChooseUsManager />}
         {tab === 'programmes'  && <ProgramsManager />}
+        {tab === 'academics'   && <AcademicsContentManager />}
       </div>
     </div>
   )

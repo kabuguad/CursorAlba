@@ -7,6 +7,8 @@ import type { CmsPage, CmsBlock, CmsBlockType, AcademicsSchoolLevel, PublicFeeRo
 import { AboutContentManager } from './AboutContentManager'
 import { CoreValuesManager } from './CoreValuesManager'
 import { HistoryMilestonesManager } from './HistoryMilestonesManager'
+import { WhyChooseUsManager } from './WhyChooseUsManager'
+import { AcademicsContentManager } from './AcademicsContentManager'
 import { unwrap } from '../../../services/mockApi'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Button } from '../../../components/ui/Button'
@@ -1168,8 +1170,8 @@ export function PagesManager() {
 
   // Pages whose content is 100% managed in a dedicated sidebar manager —
   // no CMS blocks to add, so hide the "Add Block" controls entirely.
-  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff', 'pg-why'])
-  const API_MANAGED_PAGES = new Set(['pg-about'])
+  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff'])
+  const API_MANAGED_PAGES = new Set(['pg-about', 'pg-why', 'pg-academics'])
   const canAddBlocks = selectedPageId ? !PURE_REDIRECT_PAGES.has(selectedPageId) && !API_MANAGED_PAGES.has(selectedPageId) : false
 
   const saveAll = async () => {
@@ -1532,22 +1534,11 @@ export function PagesManager() {
                       </>
                     )}
 
-                    {/* Academics-specific structured data panels */}
+                    {/* Academics — inline manager */}
                     {selectedPageId === 'pg-academics' && (
                       <>
                         <hr className="my-2 border-theme" />
-                        <ManagerRedirectCard
-                          icon="🎓"
-                          title="Academic Programmes"
-                          description="Add, edit, and manage the public programme level cards (Baby Class, PP1, Grades 1–9, Senior School) displayed on this page from the dedicated Academic Programmes manager."
-                          to="/dashboard/admin/programs"
-                        />
-                        <hr className="my-2 border-theme" />
-                        <SchoolLevelsPanel qc={queryClient} />
-                        <hr className="my-2 border-theme" />
-                        <CompetenciesPanel qc={queryClient} />
-                        <hr className="my-2 border-theme" />
-                        <TeachingPillarsPanel />
+                        <AcademicsContentManager />
                         <div className="pb-8" />
                       </>
                     )}
@@ -1578,14 +1569,13 @@ export function PagesManager() {
                       />
                     )}
 
-                    {/* Why Choose Us — redirect to dedicated manager */}
+                    {/* Why Choose Us — inline manager */}
                     {selectedPageId === 'pg-why' && (
-                      <ManagerRedirectCard
-                        icon="⭐"
-                        title="Why Choose Us — Reasons"
-                        description="Add, edit, reorder, and publish the individual reason cards shown on the Why Choose Us page from the dedicated manager."
-                        to="/dashboard/admin/why-choose-us"
-                      />
+                      <>
+                        <hr className="my-2 border-theme" />
+                        <WhyChooseUsManager />
+                        <div className="pb-8" />
+                      </>
                     )}
                   </div>
                 )}

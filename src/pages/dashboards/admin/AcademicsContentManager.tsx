@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Edit2, Trash2, X, Check, ExternalLink, FileText, Star, Layers } from 'lucide-react'
+import { Plus, Edit2, Trash2, X, Check, ExternalLink, FileText, Star, Layers, BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
   academicsApi,
@@ -12,8 +12,11 @@ import {
   type CbcCompetencyCreateDto,
   type TeachingPillar,
   type TeachingPillarCreateDto,
+  type SchoolLevel,
+  type SchoolLevelCreateDto,
 } from '../../../services/academicsApi'
 import { GRADIENT_MAP } from '../../../data/pillars'
+import { LEVEL_COLOR_MAP } from '../../../lib/academicsColors'
 import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
 
@@ -23,9 +26,10 @@ const BTN_GOLD  = 'flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-3 py-2 t
 const BTN_GHOST = 'flex items-center gap-1.5 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition'
 
 const INNER_TABS = [
-  { id: 'content',       label: 'Page Content',      icon: FileText },
-  { id: 'competencies',  label: 'CBC Competencies',   icon: Star     },
-  { id: 'pillars',       label: 'Teaching Pillars',   icon: Layers   },
+  { id: 'content',       label: 'Page Content',      icon: FileText  },
+  { id: 'competencies',  label: 'CBC Competencies',   icon: Star      },
+  { id: 'pillars',       label: 'Teaching Pillars',   icon: Layers    },
+  { id: 'levels',        label: 'School Levels',      icon: BookOpen  },
 ] as const
 type InnerTab = typeof INNER_TABS[number]['id']
 
@@ -537,6 +541,210 @@ function PillarsTab() {
   )
 }
 
+// ── 4. School Levels tab ──────────────────────────────────────────────────────
+
+const COLOR_KEYS = ['pink','green','blue','violet','amber','teal','rose','indigo'] as const
+
+const BLANK_LEVEL: SchoolLevelCreateDto = {
+  slug: '',
+  name: '',
+  ages: '',
+  icon: '🎓',
+  colorKey: 'blue',
+  desc: '',
+  highlights: '',
+  sortOrder: 1,
+}
+
+function SchoolLevelsTab() {
+  const qc = useQueryClient()
+  const { showToast } = useToast()
+
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ['school-levels'],
+    queryFn: () => academicsApi.getSchoolLevels(),
+    staleTime: 30_000,
+  })
+
+  const createMut = useMutation({
+    mutationFn: (dto: SchoolLevelCreateDto) => academicsApi.createSchoolLevel(dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['school-levels'] }); showToast('School level added ✓'); closeModal() },
+    onError: (err) => showToast(`Failed: ${apiErrorMessage(err)}`),
+  })
+  const updateMut = useMutation({
+    mutationFn: ({ id, dto }: { id: number; dto: SchoolLevelCreateDto }) => academicsApi.updateSchoolLevel(id, dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['school-levels'] }); showToast('Updated ✓'); closeModal() },
+    onError: (err) => showToast(`Update failed: ${apiErrorMessage(err)}`),
+  })
+  const deleteMut = useMutation({
+    mutationFn: (id: number) => academicsApi.deleteSchoolLevel(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['school-levels'] }); showToast('Deleted') },
+    onError: (err) => showToast(`Delete failed: ${apiErrorMessage(err)}`),
+  })
+
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editing, setEditing]     = useState<SchoolLevel | null>(null)
+  const [draft, setDraft]         = useState<SchoolLevelCreateDto>(BLANK_LEVEL)
+  const [delConfirm, setDelConfirm] = useState<number | null>(null)
+
+  const set = <K extends keyof SchoolLevelCreateDto>(k: K, v: SchoolLevelCreateDto[K]) =>
+    setDraft(d => ({ ...d, [k]: v }))
+
+  const openNew  = () => { setDraft({ ...BLANK_LEVEL, sortOrder: items.length + 1 }); setEditing(null); setModalOpen(true) }
+  const openEdit = (item: SchoolLevel) => {
+    setDraft({ slug: item.slug, name: item.name, ages: item.ages, icon: item.icon, colorKey: item.colorKey, desc: item.desc, highlights: item.highlights, sortOrder: item.sortOrder })
+    setEditing(item); setModalOpen(true)
+  }
+  const closeModal = () => { setModalOpen(false); setEditing(null) }
+
+  const handleSave = () => {
+    if (!draft.name.trim()) return showToast('Name is required')
+    if (!draft.slug.trim()) return showToast('Slug is required')
+    if (editing) updateMut.mutate({ id: editing.id, dto: draft })
+    else createMut.mutate(draft)
+  }
+
+  const isPending = createMut.isPending || updateMut.isPending
+  const sorted = [...items].sort((a, b) => a.sortOrder - b.sortOrder)
+  const previewColors = LEVEL_COLOR_MAP[draft.colorKey] ?? LEVEL_COLOR_MAP.blue
+
+  return (
+    <div className="p-6">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">School Levels</h2>
+          <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">The tab cards shown in the "School Structure" section on the public Academics page.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link to="/academics" target="_blank" className={BTN_GHOST}><ExternalLink className="h-3.5 w-3.5" /> View Page</Link>
+          <button onClick={openNew} className={BTN_GOLD}><Plus className="h-4 w-4" /> Add Level</button>
+        </div>
+      </div>
+
+      {isLoading && <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-16 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}</div>}
+
+      {!isLoading && items.length === 0 && (
+        <button onClick={openNew} className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16 text-sm text-gray-400 hover:border-[#E8B84B]/50 hover:text-[#E8B84B] transition">
+          <Plus className="h-5 w-5" /> Add your first school level
+        </button>
+      )}
+
+      {!isLoading && items.length > 0 && (
+        <div className="space-y-3">
+          {sorted.map(item => {
+            const colors = LEVEL_COLOR_MAP[item.colorKey] ?? LEVEL_COLOR_MAP.blue
+            return (
+              <div key={item.id} className={cn('rounded-2xl border bg-gradient-to-br p-4', colors.color, colors.border)}>
+                <div className="flex items-center gap-4">
+                  <span className="text-3xl w-10 text-center flex-shrink-0">{item.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-semibold text-gray-900 dark:text-white">{item.name}</p>
+                      <span className="rounded-full bg-white/60 dark:bg-black/20 px-2 py-0.5 text-[10px] font-mono text-gray-600 dark:text-gray-300">{item.slug}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">{item.ages}</span>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">{item.desc}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-gray-500 hover:bg-white/50 dark:hover:bg-black/20 transition" title="Edit"><Edit2 className="h-3.5 w-3.5" /></button>
+                    {delConfirm === item.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => deleteMut.mutate(item.id)} disabled={deleteMut.isPending} className="rounded-lg bg-red-500 px-2.5 py-1 text-xs font-bold text-white hover:bg-red-600 transition disabled:opacity-60">{deleteMut.isPending ? '…' : 'Delete'}</button>
+                        <button onClick={() => setDelConfirm(null)} className="rounded-lg px-2 py-1 text-xs text-gray-500 hover:bg-white/50 transition">Cancel</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDelConfirm(item.id)} className="rounded-lg p-1.5 text-gray-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition" title="Delete"><Trash2 className="h-3.5 w-3.5" /></button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <Modal open={modalOpen} onClose={closeModal} title={editing ? `Edit: ${editing.name}` : 'New School Level'}>
+        <div className="space-y-4">
+          {/* Row 1: icon + name */}
+          <div className="grid grid-cols-[80px_1fr] gap-3">
+            <div>
+              <label className={LABEL}>Icon</label>
+              <input className={INP} value={draft.icon} onChange={e => set('icon', e.target.value)} placeholder="🎓" style={{ fontSize: 20 }} />
+            </div>
+            <div>
+              <label className={LABEL}>Name <span className="text-[#E8B84B]">*</span></label>
+              <input className={INP} value={draft.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Junior School" autoFocus />
+            </div>
+          </div>
+
+          {/* Row 2: slug + ages */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={LABEL}>Slug <span className="text-[#E8B84B]">*</span></label>
+              <input className={INP} value={draft.slug} onChange={e => set('slug', e.target.value.toLowerCase().replace(/\s+/g,'-'))} placeholder="junior-school" />
+            </div>
+            <div>
+              <label className={LABEL}>Age Range</label>
+              <input className={INP} value={draft.ages} onChange={e => set('ages', e.target.value)} placeholder="Ages 6–10" />
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className={LABEL}>Description</label>
+            <textarea rows={3} className={cn(INP,'resize-none')} value={draft.desc} onChange={e => set('desc', e.target.value)} placeholder="What learners experience at this level…" />
+          </div>
+
+          {/* Highlights */}
+          <div>
+            <label className={LABEL}>Learning Areas <span className="font-normal text-gray-400">(one per line — shown as tags)</span></label>
+            <textarea rows={4} className={cn(INP,'resize-none font-mono text-xs')} value={draft.highlights} onChange={e => set('highlights', e.target.value)} placeholder={'Mathematics\nEnglish\nKiswahili\nScience & Technology'} />
+          </div>
+
+          {/* Colour key */}
+          <div>
+            <label className={LABEL}>Card Colour</label>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {COLOR_KEYS.map(key => {
+                const c = LEVEL_COLOR_MAP[key]
+                return (
+                  <button key={key} type="button" onClick={() => set('colorKey', key)}
+                    className={cn('rounded-lg border-2 px-3 py-1.5 text-xs font-semibold capitalize transition',
+                      draft.colorKey === key ? 'border-gray-800 dark:border-white scale-105 shadow-sm' : 'border-transparent hover:border-gray-300 dark:hover:border-gray-500')}>
+                    <span className={cn('mr-1.5 inline-block h-3 w-3 rounded-full bg-gradient-to-br', c.color)} />
+                    {key}
+                  </button>
+                )
+              })}
+            </div>
+            {/* Live preview */}
+            <div className={cn('mt-3 flex items-center gap-4 rounded-2xl border bg-gradient-to-br p-4', previewColors.color, previewColors.border)}>
+              <span className="text-3xl">{draft.icon || '🎓'}</span>
+              <div>
+                <p className="font-bold text-gray-900 dark:text-white">{draft.name || 'Level Name'}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{draft.ages || 'Age range'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sort order */}
+          <div>
+            <label className={LABEL}>Sort Order</label>
+            <input type="number" min={1} className={INP} value={draft.sortOrder} onChange={e => set('sortOrder', Number(e.target.value))} />
+          </div>
+
+          <div className="flex gap-2 pt-1">
+            <button onClick={handleSave} disabled={isPending || !draft.name.trim() || !draft.slug.trim()} className={BTN_GOLD}>
+              <Check className="h-3.5 w-3.5" />{isPending ? 'Saving…' : editing ? 'Save Changes' : 'Create'}
+            </button>
+            <button onClick={closeModal} className={BTN_GHOST}><X className="h-3.5 w-3.5" /> Cancel</button>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  )
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export function AcademicsContentManager() {
@@ -572,6 +780,7 @@ export function AcademicsContentManager() {
         {tab === 'content'      && <PageContentTab />}
         {tab === 'competencies' && <CompetenciesTab />}
         {tab === 'pillars'      && <PillarsTab />}
+        {tab === 'levels'       && <SchoolLevelsTab />}
       </div>
     </div>
   )

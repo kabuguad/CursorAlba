@@ -76,6 +76,18 @@ export interface TeachingPillar {
   sortOrder: number
 }
 
+export interface SchoolLevel {
+  id: number
+  slug: string
+  name: string
+  ages: string
+  icon: string
+  colorKey: string
+  desc: string
+  highlights: string
+  sortOrder: number
+}
+
 // ── DTOs ─────────────────────────────────────────────────────────────────────
 
 export type AcademicsPageContentCreateDto = Omit<AcademicsPageContent, 'id'>
@@ -86,6 +98,9 @@ export type CbcCompetencyUpdateDto = Partial<CbcCompetencyCreateDto>
 
 export type TeachingPillarCreateDto = Omit<TeachingPillar, 'id'>
 export type TeachingPillarUpdateDto = Partial<TeachingPillarCreateDto>
+
+export type SchoolLevelCreateDto = Omit<SchoolLevel, 'id'>
+export type SchoolLevelUpdateDto = Partial<SchoolLevelCreateDto>
 
 // ── API ───────────────────────────────────────────────────────────────────────
 
@@ -141,4 +156,21 @@ export const academicsApi = {
 
   deletePillar: (id: number): Promise<void> =>
     client.delete(`/teaching-pillars/${id}`).then(() => undefined),
+
+  // ── School Levels — "School Structure" section ─────────────────────────────
+
+  getSchoolLevels: (): Promise<SchoolLevel[]> =>
+    client.get('/academics-page-content/school-levels').then((r) =>
+      toList<SchoolLevel>(r.data, 'schoolLevelId')),
+
+  createSchoolLevel: (dto: SchoolLevelCreateDto): Promise<SchoolLevel> =>
+    client.post('/academics-page-content/school-levels', dto).then((r) =>
+      toOne<SchoolLevel>(r.data, 'schoolLevelId')),
+
+  updateSchoolLevel: (id: number, dto: SchoolLevelUpdateDto): Promise<SchoolLevel> =>
+    client.put(`/academics-page-content/school-levels/${id}`, dto).then((r) =>
+      toOne<SchoolLevel>(r.data, 'schoolLevelId')),
+
+  deleteSchoolLevel: (id: number): Promise<void> =>
+    client.delete(`/academics-page-content/school-levels/${id}`).then(() => undefined),
 }

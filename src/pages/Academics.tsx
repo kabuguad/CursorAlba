@@ -5,8 +5,6 @@ import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
 import { useQuery } from '@tanstack/react-query'
-import { unwrap } from '../services/mockApi'
-import { contentService } from '../services/contentService'
 import { academicsApi } from '../services/academicsApi'
 import { LEVEL_COLOR_MAP } from '../lib/academicsColors'
 import { GRADIENT_MAP, DEFAULT_PILLARS } from '../data/pillars'
@@ -54,11 +52,11 @@ export function Academics() {
   })
   const pageContent = pageContentList[0]
 
-  // ── School levels (mock — not yet migrated) ──────────────────────────────
+  // ── School levels from real API ──────────────────────────────────────────
   const { data: schoolLevels = [] } = useQuery({
-    queryKey: ['academics-school-levels'],
-    queryFn: () => contentService.listSchoolLevels().then(unwrap),
-    staleTime: 30_000,
+    queryKey: ['school-levels'],
+    queryFn: () => academicsApi.getSchoolLevels(),
+    staleTime: 60_000,
   })
 
   // ── CBC Competencies from real API ("/api/cbc-competencies") ─────────────

@@ -81,10 +81,10 @@ export function Academics() {
   const activeId = activeSlug || sorted[0]?.slug || ''
   const current = sorted.find((l) => l.slug === activeId) ?? sorted[0]
 
-  const heroHeadline    = pageContent?.heroHeadline    ?? 'Programs & Academics'
-  const heroSubheadline = pageContent?.heroSubheadline ?? 'From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.'
-  const ctaHeadline     = pageContent?.ctaHeadline     ?? 'Ready to Enrol?'
-  const ctaSubtext      = pageContent?.ctaSubtext      ?? 'Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.'
+  const heroHeadline    = pageContent?.headline    ?? 'Programs & Academics'
+  const heroSubheadline = pageContent?.subheadline ?? 'From Playgroup through Senior School — a seamless CBC journey that develops the whole learner across six structured levels.'
+  const ctaHeadline     = pageContent?.ctaHeadline ?? 'Ready to Enrol?'
+  const ctaSubtext      = pageContent?.ctaSubtext  ?? 'Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.'
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">

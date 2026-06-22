@@ -51,11 +51,10 @@ export function apiErrorMessage(err: unknown): string {
 
 export interface AcademicsPageContent {
   id: number
-  heroHeadline: string
-  heroSubheadline: string
+  headline: string
+  subheadline: string
   ctaHeadline: string
   ctaSubtext: string
-  sortOrder: number
 }
 
 export interface CbcCompetency {

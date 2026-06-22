@@ -61,11 +61,10 @@ function Modal({ open, onClose, title, children }: {
 // ── 1. Page Content tab ───────────────────────────────────────────────────────
 
 const BLANK_CONTENT: AcademicsPageContentCreateDto = {
-  heroHeadline: '',
-  heroSubheadline: '',
+  headline: '',
+  subheadline: '',
   ctaHeadline: '',
   ctaSubtext: '',
-  sortOrder: 1,
 }
 
 function PageContentTab() {
@@ -104,13 +103,13 @@ function PageContentTab() {
 
   const openNew  = () => { setDraft(BLANK_CONTENT); setEditing(null); setModalOpen(true) }
   const openEdit = (item: AcademicsPageContent) => {
-    setDraft({ heroHeadline: item.heroHeadline, heroSubheadline: item.heroSubheadline, ctaHeadline: item.ctaHeadline, ctaSubtext: item.ctaSubtext, sortOrder: item.sortOrder })
+    setDraft({ headline: item.headline ?? '', subheadline: item.subheadline ?? '', ctaHeadline: item.ctaHeadline ?? '', ctaSubtext: item.ctaSubtext ?? '' })
     setEditing(item); setModalOpen(true)
   }
   const closeModal = () => { setModalOpen(false); setEditing(null) }
 
   const handleSave = () => {
-    if (!draft.heroHeadline.trim()) return showToast('Hero headline is required')
+    if (!draft.headline.trim()) return showToast('Headline is required')
     if (editing) updateMut.mutate({ id: editing.id, dto: draft })
     else createMut.mutate(draft)
   }
@@ -148,8 +147,8 @@ function PageContentTab() {
                     <FileText className="h-4 w-4 text-[#E8B84B]" />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 dark:text-white truncate">{item.heroHeadline || '(No headline)'}</p>
-                    <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{item.heroSubheadline || '—'}</p>
+                    <p className="font-semibold text-gray-900 dark:text-white truncate">{item.headline || '(No headline)'}</p>
+                    <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400 line-clamp-1">{item.subheadline || '—'}</p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {item.ctaHeadline && <span className="rounded-full bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 text-[10px] font-semibold text-blue-600 dark:text-blue-400">CTA Headline ✓</span>}
                       {item.ctaSubtext  && <span className="rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">CTA Subtext ✓</span>}
@@ -176,12 +175,12 @@ function PageContentTab() {
       <Modal open={modalOpen} onClose={closeModal} title={editing ? 'Edit Page Content' : 'New Page Content'}>
         <div className="space-y-4">
           <div>
-            <label className={LABEL}>Hero Headline <span className="text-[#E8B84B]">*</span></label>
-            <input className={INP} value={draft.heroHeadline} onChange={e => set('heroHeadline', e.target.value)} placeholder="Programs & Academics" autoFocus />
+            <label className={LABEL}>Headline <span className="text-[#E8B84B]">*</span></label>
+            <input className={INP} value={draft.headline} onChange={e => set('headline', e.target.value)} placeholder="Programs & Academics" autoFocus />
           </div>
           <div>
-            <label className={LABEL}>Hero Subheadline</label>
-            <textarea rows={2} className={cn(INP,'resize-none')} value={draft.heroSubheadline} onChange={e => set('heroSubheadline', e.target.value)} placeholder="From Playgroup through Senior School…" />
+            <label className={LABEL}>Subheadline</label>
+            <textarea rows={2} className={cn(INP,'resize-none')} value={draft.subheadline} onChange={e => set('subheadline', e.target.value)} placeholder="From Playgroup through Senior School…" />
           </div>
           <div>
             <label className={LABEL}>CTA Headline</label>
@@ -191,12 +190,8 @@ function PageContentTab() {
             <label className={LABEL}>CTA Subtext</label>
             <textarea rows={2} className={cn(INP,'resize-none')} value={draft.ctaSubtext} onChange={e => set('ctaSubtext', e.target.value)} placeholder="Applications are open for the 2026 intake…" />
           </div>
-          <div>
-            <label className={LABEL}>Sort Order</label>
-            <input type="number" min={1} className={INP} value={draft.sortOrder} onChange={e => set('sortOrder', Number(e.target.value))} />
-          </div>
           <div className="flex gap-2 pt-1">
-            <button onClick={handleSave} disabled={isPending || !(draft.heroHeadline ?? '').trim()} className={BTN_GOLD}>
+            <button onClick={handleSave} disabled={isPending || !draft.headline.trim()} className={BTN_GOLD}>
               <Check className="h-3.5 w-3.5" />{isPending ? 'Saving…' : editing ? 'Save Changes' : 'Create'}
             </button>
             <button onClick={closeModal} className={BTN_GHOST}><X className="h-3.5 w-3.5" /> Cancel</button>

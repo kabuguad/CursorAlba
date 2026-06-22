@@ -386,10 +386,24 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════════
-          CORE VALUES
+          CORE VALUES — fixed parallax background
       ══════════════════════════════════════════ */}
-      <section className="py-24 bg-tint/30 dark:bg-dark-card/30">
-        <div className="mx-auto max-w-7xl px-4">
+      <section
+        className="relative py-28 overflow-hidden"
+        style={{
+          backgroundImage: `url('https://picsum.photos/seed/alber-campus-wide/1600/900')`,
+          backgroundAttachment: 'fixed',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/75 backdrop-brightness-75" />
+        {/* Subtle gold vignette edges */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/40 to-transparent" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4">
           <motion.div
             className="mb-16 text-center"
             initial={{ opacity: 0, y: 24 }}
@@ -397,9 +411,12 @@ export function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <SectionLabel>Core Values</SectionLabel>
-            <h2 className="mt-2 text-4xl font-bold md:text-5xl">The Alber Character</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted">
+            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
+              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+              Core Values
+            </span>
+            <h2 className="mt-2 text-4xl font-bold text-white md:text-5xl">The Alber Character</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-white/60">
               Six pillars that shape the Alber graduate — a whole person ready to lead, serve, and flourish.
             </p>
           </motion.div>
@@ -408,19 +425,23 @@ export function Home() {
             {CORE_VALUES.map((v, i) => (
               <motion.div
                 key={v.label}
-                initial={{ opacity: 0, y: 28 }}
+                initial={{ opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.07 }}
               >
-                <div className={`group relative h-full overflow-hidden rounded-2xl border bg-gradient-to-br p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${v.color} ${v.ring} ring-1`}>
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${v.text} bg-current/10 ring-1 ring-current/20`}>
-                      <v.icon className="h-5 w-5" />
+                <div className="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md p-6 transition-all duration-300 hover:scale-[1.03] hover:border-white/25 hover:bg-black/60 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
+                  {/* Coloured glow on hover */}
+                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl bg-gradient-to-br ${v.color}`} />
+                  <div className="relative z-10">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${v.text} bg-white/10 ring-1 ring-white/20 group-hover:ring-white/30 transition-all`}>
+                        <v.icon className="h-5 w-5" />
+                      </div>
+                      <h3 className={`text-lg font-bold ${v.text}`}>{v.label}</h3>
                     </div>
-                    <h3 className={`text-lg font-bold ${v.text}`}>{v.label}</h3>
+                    <p className="text-sm leading-relaxed text-white/65 group-hover:text-white/80 transition-colors">{v.desc}</p>
                   </div>
-                  <p className="text-sm leading-relaxed text-muted">{v.desc}</p>
                 </div>
               </motion.div>
             ))}

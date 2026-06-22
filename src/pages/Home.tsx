@@ -111,7 +111,7 @@ export function Home() {
       {/* ══════════════════════════════════════════
           HERO — Full-bleed cinematic
       ══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden" style={{ minHeight: 'min(100svh, 900px)' }}>
+      <section className="relative overflow-hidden" style={{ minHeight: '100svh' }}>
         {/* Background slideshow — Ken Burns zoom-in per slide */}
         {HERO_IMAGES.map((img, i) => (
           <motion.img
@@ -192,9 +192,34 @@ export function Home() {
                 </button>
               </Link>
             </div>
+
+            {/* Mobile director card — visible only on small screens */}
+            <div className="lg:hidden mt-6">
+              <div className="flex items-center gap-4 rounded-2xl border border-gold/25 bg-black/65 backdrop-blur-xl p-4">
+                <div className="relative shrink-0">
+                  <div className="h-16 w-16 overflow-hidden rounded-xl border-2 border-gold/60 shadow-[0_0_20px_4px_rgba(232,184,75,0.25)]">
+                    <img
+                      src="https://picsum.photos/seed/director-alber/400/400"
+                      alt={get('director.name', 'Dr. Alice Mwangi')}
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[9px] font-black text-black border border-black/40">✓</div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <div className="h-px w-4 bg-gold/60" />
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-gold/80">A Message from our Director</span>
+                  </div>
+                  <p className="text-sm font-extrabold uppercase tracking-wide text-white leading-tight">{get('director.name', 'Dr. Alice Mwangi')}</p>
+                  <p className="text-[10px] text-gold mb-1.5">{get('director.title', 'School Director')} · M.Ed., UoN</p>
+                  <p className="text-xs italic text-white/65 line-clamp-2">"{get('director.quote', 'Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep.')}"</p>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
-          {/* RIGHT: Director card — redesigned */}
+          {/* RIGHT: Director card — desktop only */}
           <motion.div
             className="hidden lg:block lg:w-80 xl:w-96 shrink-0"
             initial={{ opacity: 0, y: 40 }}
@@ -311,87 +336,79 @@ export function Home() {
       {/* ══════════════════════════════════════════
           MISSION · VISION · MOTTO
       ══════════════════════════════════════════ */}
-      <section className="py-24 bg-gradient-to-b from-white via-white to-gray-50 dark:from-[#0a0a0a] dark:via-[#0a0a0a] dark:to-[#0d0d0d]">
-        <div className="mx-auto max-w-7xl px-4">
+      <section className="py-14 bg-gradient-to-b from-white via-white to-gray-50 dark:from-[#0a0a0a] dark:via-[#0a0a0a] dark:to-[#0d0d0d]">
+        <div className="mx-auto max-w-6xl px-4">
           <motion.div
-            className="mb-16 text-center"
+            className="mb-8 text-center"
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
             <SectionLabel>Our Foundation</SectionLabel>
-            <h2 className="mt-2 text-4xl font-bold md:text-5xl">What We Stand For</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted">
-              The beliefs and ambitions that guide every decision, every lesson, and every life shaped at Alber School.
-            </p>
+            <h2 className="mt-2 text-3xl font-bold md:text-4xl">What We Stand For</h2>
           </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Mission */}
-            <motion.div
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-            >
-              <div className="relative h-full overflow-hidden rounded-3xl border border-blue-400/20 bg-gradient-to-br from-blue-500/10 to-blue-500/3 p-8 dark:from-blue-500/15 dark:to-blue-500/5">
-                <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-blue-400/10 blur-2xl -translate-y-8 translate-x-8" />
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/15 text-blue-500 dark:text-blue-400 ring-1 ring-blue-400/30">
-                  <Target className="h-7 w-7" />
-                </div>
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400">Our Mission</p>
-                <h3 className="mb-4 text-2xl font-bold">To Nurture Genius</h3>
-                <p className="leading-relaxed text-muted">
-                  To provide a world-class, holistic education that identifies and develops the unique genius in every child — equipping learners with the knowledge, skills, and values needed to thrive in a rapidly changing world.
-                </p>
-              </div>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <div className="overflow-hidden rounded-3xl border border-gray-100 dark:border-white/10 bg-white dark:bg-[#111] shadow-xl">
+              <div className="grid divide-y divide-gray-100 dark:divide-white/8 lg:grid-cols-3 lg:divide-y-0 lg:divide-x">
 
-            {/* Motto — center, elevated */}
-            <motion.div
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-            >
-              <div className="relative h-full overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-[#E8B84B]/15 to-[#E8B84B]/3 p-8 dark:from-[#E8B84B]/20 dark:to-[#E8B84B]/5 shadow-[0_8px_40px_-8px_rgba(232,184,75,0.25)]">
-                <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-gold/10 blur-3xl -translate-y-10 translate-x-10" />
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gold/20 text-gold ring-1 ring-gold/40">
-                  <Star className="h-7 w-7" />
+                {/* Mission */}
+                <div className="flex items-start gap-4 p-6 hover:bg-blue-50/50 dark:hover:bg-blue-500/5 transition-colors">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 dark:text-blue-400 ring-1 ring-blue-400/20 mt-0.5">
+                    <Target className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-0.5">Our Mission</p>
+                    <h3 className="font-bold text-base text-foreground mb-1.5">To Nurture Genius</h3>
+                    <p className="text-sm leading-relaxed text-muted">
+                      World-class, holistic education that unlocks the unique genius in every child — equipping learners with knowledge, skills, and values to thrive globally.
+                    </p>
+                  </div>
                 </div>
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gold">Our Motto</p>
-                <h3 className="mb-4 text-2xl font-bold">Excellence in All</h3>
-                <div className="mb-5 h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-                <p className="font-serif text-3xl italic font-semibold text-gold leading-snug">
-                  "Unlocking Every Child's Genius"
-                </p>
-                <p className="mt-4 leading-relaxed text-muted">
-                  Not just academic excellence — but excellence in character, creativity, sport, and service. Every Alber learner is known, valued, and challenged to be their very best.
-                </p>
-              </div>
-            </motion.div>
 
-            {/* Vision */}
-            <motion.div
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-            >
-              <div className="relative h-full overflow-hidden rounded-3xl border border-green-400/20 bg-gradient-to-br from-green-500/10 to-green-500/3 p-8 dark:from-green-500/15 dark:to-green-500/5">
-                <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-green-400/10 blur-2xl -translate-y-8 translate-x-8" />
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-500/15 text-green-500 dark:text-green-400 ring-1 ring-green-400/30">
-                  <Globe className="h-7 w-7" />
+                {/* Motto — centre highlight */}
+                <div className="relative flex items-start gap-4 p-6 bg-gradient-to-br from-[#E8B84B]/8 to-[#E8B84B]/3 dark:from-[#E8B84B]/12 dark:to-[#E8B84B]/4">
+                  <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-gold/60 to-transparent lg:hidden" />
+                  <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-transparent via-gold/60 to-transparent hidden lg:block" />
+                  <div className="absolute top-0 bottom-0 right-0 w-0.5 bg-gradient-to-b from-transparent via-gold/60 to-transparent hidden lg:block" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold ring-1 ring-gold/30 mt-0.5">
+                    <Star className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-0.5">Our Motto</p>
+                    <h3 className="font-bold text-base text-foreground mb-1.5">Excellence in All</h3>
+                    <p className="font-serif text-base italic font-semibold text-gold leading-snug">
+                      "Unlocking Every Child's Genius"
+                    </p>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted">
+                      Academic, character, creativity, sport, and service — every learner known, valued, and challenged.
+                    </p>
+                  </div>
                 </div>
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-green-500 dark:text-green-400">Our Vision</p>
-                <h3 className="mb-4 text-2xl font-bold">Leaders for Tomorrow</h3>
-                <p className="leading-relaxed text-muted">
-                  To be the leading centre of learning excellence in East Africa — producing confident, compassionate, globally competitive graduates who transform their communities and lead with integrity.
-                </p>
+
+                {/* Vision */}
+                <div className="flex items-start gap-4 p-6 hover:bg-green-50/50 dark:hover:bg-green-500/5 transition-colors">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-green-500/10 text-green-500 dark:text-green-400 ring-1 ring-green-400/20 mt-0.5">
+                    <Globe className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-green-500 dark:text-green-400 mb-0.5">Our Vision</p>
+                    <h3 className="font-bold text-base text-foreground mb-1.5">Leaders for Tomorrow</h3>
+                    <p className="text-sm leading-relaxed text-muted">
+                      East Africa's leading centre of excellence — producing confident, compassionate, globally competitive graduates who lead with integrity.
+                    </p>
+                  </div>
+                </div>
+
               </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -399,7 +416,7 @@ export function Home() {
           CORE VALUES — fixed parallax background
       ══════════════════════════════════════════ */}
       <section
-        className="relative py-28 overflow-hidden"
+        className="relative py-28"
         style={{
           backgroundImage: `url('https://picsum.photos/seed/alber-campus-wide/1600/900')`,
           backgroundAttachment: 'fixed',

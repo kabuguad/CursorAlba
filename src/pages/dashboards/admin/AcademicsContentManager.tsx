@@ -546,7 +546,7 @@ const BLANK_LEVEL: SchoolLevelCreateDto = {
   ages: '',
   icon: '🎓',
   colorKey: 'blue',
-  desc: '',
+  description: '',
   highlights: '',
   sortOrder: 1,
 }
@@ -587,7 +587,7 @@ function SchoolLevelsTab() {
 
   const openNew  = () => { setDraft({ ...BLANK_LEVEL, sortOrder: items.length + 1 }); setEditing(null); setModalOpen(true) }
   const openEdit = (item: SchoolLevel) => {
-    setDraft({ slug: item.slug, name: item.name, ages: item.ages, icon: item.icon, colorKey: item.colorKey, desc: item.desc, highlights: item.highlights, sortOrder: item.sortOrder })
+    setDraft({ slug: item.slug, name: item.name, ages: item.ages, icon: item.icon, colorKey: item.colorKey, description: item.description, highlights: item.highlights, sortOrder: item.sortOrder })
     setEditing(item); setModalOpen(true)
   }
   const closeModal = () => { setModalOpen(false); setEditing(null) }
@@ -638,7 +638,7 @@ function SchoolLevelsTab() {
                       <span className="rounded-full bg-white/60 dark:bg-black/20 px-2 py-0.5 text-[10px] font-mono text-gray-600 dark:text-gray-300">{item.slug}</span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">{item.ages}</span>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">{item.desc}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-0.5">{item.description}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
                     <button onClick={() => openEdit(item)} className="rounded-lg p-1.5 text-gray-500 hover:bg-white/50 dark:hover:bg-black/20 transition" title="Edit"><Edit2 className="h-3.5 w-3.5" /></button>
@@ -687,7 +687,7 @@ function SchoolLevelsTab() {
           {/* Description */}
           <div>
             <label className={LABEL}>Description</label>
-            <textarea rows={3} className={cn(INP,'resize-none')} value={draft.desc} onChange={e => set('desc', e.target.value)} placeholder="What learners experience at this level…" />
+            <textarea rows={3} className={cn(INP,'resize-none')} value={draft.description} onChange={e => set('description', e.target.value)} placeholder="What learners experience at this level…" />
           </div>
 
           {/* Highlights */}

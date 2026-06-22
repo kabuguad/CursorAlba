@@ -82,7 +82,7 @@ export interface SchoolLevel {
   ages: string
   icon: string
   colorKey: string
-  desc: string
+  description: string
   highlights: string
   sortOrder: number
 }

@@ -137,7 +137,7 @@ export function Academics() {
                           <p className="text-sm text-muted">{current.ages}</p>
                         </div>
                       </div>
-                      <p className="mt-4 max-w-xl text-muted leading-relaxed">{current.desc}</p>
+                      <p className="mt-4 max-w-xl text-muted leading-relaxed">{current.description}</p>
                     </div>
                     <div className="md:w-80">
                       <p className="mb-3 text-sm font-bold uppercase tracking-wider">Learning Areas</p>

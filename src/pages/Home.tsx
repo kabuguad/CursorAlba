@@ -415,22 +415,28 @@ export function Home() {
       {/* ══════════════════════════════════════════
           CORE VALUES — fixed parallax background
       ══════════════════════════════════════════ */}
-      <section
-        className="relative py-28"
-        style={{
-          backgroundImage: `url('https://picsum.photos/seed/alber-campus-wide/1600/900')`,
-          backgroundAttachment: 'fixed',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/75 backdrop-brightness-75" />
-        {/* Subtle gold vignette edges */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40 pointer-events-none" />
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/40 to-transparent" />
+      <section className="relative">
+        {/* ── Sticky pinned background ─────────────────────────────────────────
+            absolute wrapper clips the sticky element to the section's bounds.
+            As the user scrolls through the section the background freezes while
+            the content slides over it.  Works on all browsers incl. iOS Safari.
+        ─────────────────────────────────────────────────────────────────────── */}
+        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+          <div
+            className="sticky top-0 h-screen w-full"
+            style={{
+              backgroundImage: `url('https://picsum.photos/seed/alber-campus-wide/1600/900')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="absolute inset-0 bg-black/75" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/40 pointer-events-none" />
+            <div className="absolute left-0 inset-y-0 w-1 bg-gradient-to-b from-gold via-gold/40 to-transparent" />
+          </div>
+        </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4">
+        <div className="relative z-10 py-28 mx-auto max-w-7xl px-4">
           <motion.div
             className="mb-16 text-center"
             initial={{ opacity: 0, y: 24 }}

@@ -12,8 +12,8 @@ const CO_CURRICULAR_LINKS = [
   { to: '/sports', label: '🏆 Sports & Athletics', sub: 'Fixtures, results, trophy cabinet' },
   { to: '/music', label: '🎵 Music Academy', sub: 'Instruments, faculty, trial lessons' },
   { to: '/drama-dance', label: '🎭 Drama & Dance', sub: 'Styles, plays, choreographers' },
-  { to: '/co-curricular#community', label: '🤝 Social & Community', sub: 'CSL, festivals, student council' },
-  { to: '/co-curricular#cts', label: '⚙️ Career & Technical', sub: 'Vocational options, Grades 10–12' },
+  { to: '/co-curricular#social-&-community', label: '🤝 Social & Community', sub: 'CSL, festivals, student council' },
+  { to: '/co-curricular#career-&-technical', label: '⚙️ Career & Technical', sub: 'Vocational options, Grades 10–12' },
 ]
 
 const NAV_LEFT = [

@@ -54,24 +54,25 @@ export function About() {
 
       {/* ── Hero Banner ── */}
       <section
-        className="relative flex min-h-[55vh] items-center justify-center overflow-hidden"
+        className="relative flex min-h-[68vh] items-end justify-center overflow-hidden"
         style={{
-          backgroundImage: `url('https://picsum.photos/seed/alber-about/1600/900')`,
+          backgroundImage: `url('https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1920&q=80')`,
           backgroundAttachment: 'fixed',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)',
         }}
       >
-        <div className="absolute inset-0 bg-black/70" />
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/50 to-transparent" />
-        <div className="relative z-10 mx-auto max-w-4xl px-6 py-20 text-center">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/92 via-black/60 to-black/20" />
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+        <div className="relative z-10 mx-auto max-w-4xl px-6 pb-20 pt-40 text-center">
           <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-black/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
               Est. 2005 · Kutus, Kirinyaga
             </span>
-            <h1 className="mt-4 text-5xl font-extrabold text-white md:text-7xl">{headline}</h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70">{subheadline}</p>
+            <h1 className="mt-4 text-5xl font-extrabold leading-tight text-white md:text-7xl [text-shadow:_0_4px_32px_rgba(0,0,0,0.6)]">{headline}</h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">{subheadline}</p>
           </motion.div>
         </div>
       </section>

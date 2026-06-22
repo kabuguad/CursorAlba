@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { GlassCard } from '../components/ui/GlassCard'
+import { PageHero } from '../components/layout/PageHero'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
@@ -87,13 +88,16 @@ export function Academics() {
   const ctaSubtext      = pageContent?.ctaSubtext  ?? 'Applications are open for the 2026 intake across all levels — from Playgroup to Grade 12. Limited spaces remain.'
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-
-      {/* ── Hero ── */}
-      <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{heroHeadline}</h1>
-        <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
-      </ScrollReveal>
+    <div className="overflow-hidden">
+      <PageHero
+        title={heroHeadline}
+        subtitle={heroSubheadline}
+        badge="CBC · Cambridge IGCSE"
+        image="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&q=80"
+        variant="cinematic"
+        overlay="dark"
+      />
+      <div className="mx-auto max-w-7xl px-4 py-12">
 
       {/* ── School Structure tabs ── */}
       {sorted.length > 0 && (
@@ -335,6 +339,7 @@ export function Academics() {
         </GlassCard>
       </ScrollReveal>
 
+      </div>
     </div>
   )
 }

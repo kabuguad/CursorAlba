@@ -68,23 +68,33 @@ export function DramaDance() {
   const [form, setForm] = useState({ name: '', email: '', interest: DANCE_STYLES[0].name })
 
   return (
-    <div className="relative">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="pointer-events-none fixed inset-0 -z-10 h-full w-full object-cover opacity-10"
-        poster="https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=1600"
+    <div className="overflow-hidden">
+      <section
+        className="relative flex min-h-[65vh] items-end overflow-hidden"
+        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}
       >
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-dancer-doing-pirouettes-in-a-dance-studio-429-large.mp4" type="video/mp4" />
-      </video>
-
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          poster="https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=1600"
+        >
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-dancer-doing-pirouettes-in-a-dance-studio-429-large.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-t from-rose-950/92 via-rose-900/65 to-rose-800/10" />
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-8 pb-24">
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-black/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />
+            Dance · Drama · Performance
+          </span>
+          <h1 className="mt-3 text-5xl font-extrabold leading-tight text-white md:text-7xl [text-shadow:_0_4px_32px_rgba(0,0,0,0.7)]">{heroHeadline}</h1>
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/80">{heroSubheadline}</p>
+        </div>
+      </section>
       <div className="mx-auto max-w-7xl px-4 py-12">
-        <ScrollReveal className="mb-16 text-center">
-          <h1 className="mb-4 text-5xl font-bold md:text-7xl">{heroHeadline}</h1>
-          <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
-        </ScrollReveal>
 
         {/* Creative Arts programmes from the API */}
         {(isLoading || activities.length > 0) && (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { GlassCard } from '../components/ui/GlassCard'
+import { PageHero } from '../components/layout/PageHero'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Button } from '../components/ui/Button'
 import { cn } from '../lib/utils'
@@ -74,11 +75,16 @@ export function CoCurricular() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{headline}</h1>
-        <p className="mx-auto max-w-2xl text-muted">{subheadline}</p>
-      </ScrollReveal>
+    <div className="overflow-hidden">
+      <PageHero
+        title={headline}
+        subtitle={subheadline}
+        badge="Beyond the Classroom"
+        image="https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=1920&q=80"
+        variant="cinematic"
+        overlay="teal"
+      />
+      <div className="mx-auto max-w-7xl px-4 py-12">
 
       <ScrollReveal>
         <div className="mb-10 flex overflow-x-auto pb-2 scrollbar-hide justify-start md:justify-center gap-3">
@@ -143,6 +149,7 @@ export function CoCurricular() {
           </div>
         </GlassCard>
       </ScrollReveal>
+      </div>
     </div>
   )
 }

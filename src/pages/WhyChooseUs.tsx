@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { ArrowRight, CheckCircle2, Loader2, AlertTriangle } from 'lucide-react'
+import { ArrowRight, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { PageHero } from '../components/layout/PageHero'
 import { motion } from 'framer-motion'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
@@ -51,28 +52,16 @@ export function WhyChooseUs() {
   ]
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-
-      {/* Hero */}
-      <ScrollReveal className="mb-6 text-center">
-        {pageLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-gold" />
-          </div>
-        ) : (
-          <>
-            <p className="mb-3 inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
-              {page?.tagline ?? 'The Alber Difference'}
-            </p>
-            <h1 className="mb-5 text-5xl font-bold text-primary dark:text-gold md:text-7xl">
-              {page?.headline ?? 'Why Choose Us?'}
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-muted leading-relaxed">
-              {page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here's what makes us different."}
-            </p>
-          </>
-        )}
-      </ScrollReveal>
+    <div className="overflow-hidden">
+      <PageHero
+        title={page?.headline ?? 'Why Choose Us?'}
+        subtitle={page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here's what makes us different."}
+        badge={page?.tagline ?? 'The Alber Difference'}
+        image="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1920&q=80"
+        variant="cinematic"
+        overlay="green"
+      />
+      <div className="mx-auto max-w-7xl px-4 py-12">
 
       {/* Stats bar */}
       <div className="mb-20 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -206,6 +195,7 @@ export function WhyChooseUs() {
           </div>
         </div>
       </ScrollReveal>
+      </div>
     </div>
   )
 }

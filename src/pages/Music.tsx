@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GlassCard } from '../components/ui/GlassCard'
+import { PageHero } from '../components/layout/PageHero'
 import { Button } from '../components/ui/Button'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { useToast } from '../contexts/ToastContext'
@@ -54,16 +55,16 @@ export function Music() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', instrument: INSTRUMENTS[0].name, level: 'Beginner' })
 
   return (
-    <div className="relative">
-      <div
-        className="absolute inset-0 h-64 bg-cover bg-center opacity-20"
-        style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=1600)' }}
+    <div className="overflow-hidden">
+      <PageHero
+        title={heroHeadline}
+        subtitle={heroSubheadline}
+        badge="Music Academy"
+        image="https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=1920&q=80"
+        variant="cinematic"
+        overlay="purple"
       />
-      <div className="relative mx-auto max-w-7xl px-4 py-12">
-        <ScrollReveal className="mb-16 text-center">
-          <h1 className="mb-4 text-5xl font-bold md:text-7xl">{heroHeadline}</h1>
-          <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
-        </ScrollReveal>
+      <div className="mx-auto max-w-7xl px-4 py-12">
 
         {/* Creative Arts programmes from the API */}
         {(isLoading || activities.length > 0) && (

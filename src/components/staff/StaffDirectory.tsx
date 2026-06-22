@@ -33,16 +33,7 @@ export function StaffDirectory() {
   const visible = filtered.slice(start, start + PAGE_SIZE)
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal className="mb-8 text-center">
-        <h1 className="mb-2 text-5xl font-bold text-primary dark:text-gold md:text-6xl">
-          Our Faculty
-        </h1>
-        <p className="mx-auto max-w-2xl text-muted">
-          {teachers.length}+ world-class educators across every department.
-        </p>
-      </ScrollReveal>
-
+    <section className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8 flex flex-col gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary/50" />

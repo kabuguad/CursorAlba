@@ -1,4 +1,5 @@
 import { GlassCard } from '../components/ui/GlassCard'
+import { PageHero } from '../components/layout/PageHero'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { cn } from '../lib/utils'
 import { useQuery } from '@tanstack/react-query'
@@ -37,11 +38,16 @@ export function Sports() {
   })
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-      <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{heroHeadline}</h1>
-        <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
-      </ScrollReveal>
+    <div className="overflow-hidden">
+      <PageHero
+        title={heroHeadline}
+        subtitle={heroSubheadline}
+        badge="Sports & Athletics"
+        image="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1920&q=80"
+        variant="cinematic"
+        overlay="amber"
+      />
+      <div className="mx-auto max-w-7xl px-4 py-12">
 
       <ScrollReveal className="mt-16">
         <h2 className="mb-8 text-center text-3xl font-bold">Sports Offered</h2>
@@ -138,6 +144,7 @@ export function Sports() {
           </div>
         )}
       </ScrollReveal>
+      </div>
     </div>
   )
 }

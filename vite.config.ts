@@ -2,6 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+const API_BASE =
+  process.env.VITE_API_BASE ||
+  'https://yoko-unresourceful-coretta.ngrok-free.dev'
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
@@ -13,9 +17,12 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:5100',
+        target: API_BASE,
         changeOrigin: true,
-        secure: false,
+        secure: true,
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+        },
       },
     },
   },

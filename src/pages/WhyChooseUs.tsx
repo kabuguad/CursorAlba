@@ -4,8 +4,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
-import { contentService } from '../services/contentService'
-import { unwrap } from '../services/mockApi'
+import { whyChooseUsApi } from '../services/whyChooseUsApi'
 
 const COLOR_MAP: Record<string, { bg: string; text: string; stat: string; border: string }> = {
   gold:   { bg: 'bg-yellow-500/10',  text: 'text-yellow-600 dark:text-yellow-400',  stat: 'text-yellow-500 dark:text-yellow-300',  border: 'border-yellow-400/30' },
@@ -17,21 +16,23 @@ const COLOR_MAP: Record<string, { bg: string; text: string; stat: string; border
   amber:  { bg: 'bg-amber-500/10',   text: 'text-amber-600 dark:text-amber-400',    stat: 'text-amber-500 dark:text-amber-300',    border: 'border-amber-400/30' },
 }
 
-const STATS = [
-  { value: '2,000+', label: 'Students Enrolled' },
-  { value: '120+',   label: 'Qualified Educators' },
-  { value: '97%',    label: 'KCSE Pass Rate' },
-  { value: '30+',    label: 'Co-Curricular Activities' },
-]
-
 export function WhyChooseUs() {
-  const { data: items = [] } = useQuery({
-    queryKey: ['why-choose-us'],
-    queryFn: () => contentService.listWhyChooseUsItems().then(unwrap),
-    staleTime: 30_000,
+  const { data: page } = useQuery({
+    queryKey: ['wcu-page-content'],
+    queryFn: () => whyChooseUsApi.getPageContent(),
+    staleTime: 60_000,
   })
 
-  const published = items.filter(i => i.isPublished)
+  const published = (page?.items ?? [])
+    .filter(i => i.isPublished)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+
+  const stats = [
+    { value: page?.statStudents  ?? '2,000+', label: 'Students Enrolled' },
+    { value: page?.statEducators ?? '120+',   label: 'Qualified Educators' },
+    { value: page?.statPassRate  ?? '97%',    label: 'KCSE Pass Rate' },
+    { value: page?.statActivities ?? '30+',   label: 'Co-Curricular Activities' },
+  ]
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
@@ -39,21 +40,20 @@ export function WhyChooseUs() {
       {/* Hero */}
       <ScrollReveal className="mb-6 text-center">
         <p className="mb-3 inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
-          The Alber Difference
+          {page?.tagline ?? 'The Alber Difference'}
         </p>
         <h1 className="mb-5 text-5xl font-bold text-primary dark:text-gold md:text-7xl">
-          Why Choose Us?
+          {page?.headline ?? 'Why Choose Us?'}
         </h1>
         <p className="mx-auto max-w-2xl text-lg text-muted leading-relaxed">
-          Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been
-          redefining private education in Kenya since 2005. Here's what makes us different.
+          {page?.subheadline ?? 'Adjacent to the Governor\'s Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here\'s what makes us different.'}
         </p>
       </ScrollReveal>
 
       {/* Stats bar */}
       <ScrollReveal delay={0.1} className="mb-20">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {STATS.map((s, i) => (
+          {stats.map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 20 }}
@@ -96,7 +96,7 @@ export function WhyChooseUs() {
                       {item.subtitle}
                     </p>
                     <h2 className="mb-4 text-2xl font-bold md:text-3xl">{item.title}</h2>
-                    <p className="leading-relaxed text-muted">{item.desc}</p>
+                    <p className="leading-relaxed text-muted">{item.description}</p>
                   </GlassCard>
                 </div>
               </ScrollReveal>
@@ -144,11 +144,10 @@ export function WhyChooseUs() {
       <ScrollReveal delay={0.1}>
         <div className="rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-10 text-center text-white dark:from-[#0d1b0d] dark:to-[#0d1b0d]/60">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Ready to Give Your Child the <span className="text-gold">Alber Advantage</span>?
+            {page?.ctaHeadline ?? 'Ready to Give Your Child the Alber Advantage?'}
           </h2>
           <p className="mx-auto mb-8 max-w-xl text-white/80">
-            Applications for the 2027 academic year are now open. Spaces fill fast —
-            secure your child's place at Kirinyaga's premier school today.
+            {page?.ctaSubtext ?? 'Applications for the 2027 academic year are now open. Spaces fill fast — secure your child\'s place at Kirinyaga\'s premier school today.'}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link

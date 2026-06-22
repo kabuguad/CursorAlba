@@ -415,10 +415,10 @@ export function Home() {
       {/* ══════════════════════════════════════════
           CORE VALUES — fixed parallax background
       ══════════════════════════════════════════ */}
-      <section className="relative">
+      <section className="relative" style={{ clipPath: 'inset(0)' }}>
         {/* Background: direct sticky child — no overflow:hidden ancestor (that kills sticky).
-            -mb-[100vh] pulls the content div up so it starts at the section top
-            and slides over the pinned background as the user scrolls.            */}
+            clipPath:'inset(0)' on the section clips the sticky bg to section bounds
+            without creating a scroll container (which would break sticky).        */}
         <div
           aria-hidden="true"
           className="sticky top-0 h-screen w-full"

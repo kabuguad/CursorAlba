@@ -4,8 +4,10 @@ import { Plus, Edit2, Trash2, X, Check, Trophy, Search } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../../../contexts/ToastContext'
 import { contentService } from '../../../services/contentService'
-import type { SportFixture, SportOffered, SportTrophy } from '../../../services/contentService'
+import type { SportFixture, SportTrophy } from '../../../services/contentService'
 import { unwrap } from '../../../services/mockApi'
+import { coCurrApi, coCurrApiError } from '../../../services/coCurrApi'
+import type { CoCurrActivity, CoCurrActivityDto } from '../../../services/coCurrApi'
 import { cn } from '../../../lib/utils'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
@@ -195,43 +197,61 @@ function FixturesPanel() {
   )
 }
 
-// ── Sports Offered Panel ──────────────────────────────────────────────────────
-type OfferedDraft = Omit<SportOffered, 'id'>
-const BLANK_OFFERED: OfferedDraft = { name: '', icon: '⚽', desc: '', sortOrder: 1 }
+// ── Sports Offered Panel (real API) ───────────────────────────────────────────
 
 function SportsOfferedPanel() {
   const { showToast } = useToast()
   const qc = useQueryClient()
-  const [editing, setEditing] = useState<SportOffered | null>(null)
+  const [editing, setEditing] = useState<CoCurrActivity | null>(null)
   const [isNew, setIsNew] = useState(false)
-  const [draft, setDraft] = useState<OfferedDraft>(BLANK_OFFERED)
-  const [delConfirm, setDelConfirm] = useState<string | null>(null)
+  const [draft, setDraft] = useState<CoCurrActivityDto>({ icon: '⚽', name: '', description: '', sortOrder: 1, cocurrCategoryId: 0 })
+  const [delConfirm, setDelConfirm] = useState<number | null>(null)
 
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ['admin-sports-offered'],
-    queryFn: () => contentService.listSportsOffered().then(unwrap),
+  const { data: categories = [] } = useQuery({
+    queryKey: ['cocurr-categories'],
+    queryFn: () => coCurrApi.getCategories(),
+    staleTime: 60_000,
+  })
+  const sportsCategory = categories.find(c => c.title.toLowerCase().includes('sport') || c.heading.toLowerCase().includes('sport'))
+
+  const { data: allActivities = [], isLoading } = useQuery({
+    queryKey: ['cocurr-activities'],
+    queryFn: () => coCurrApi.getActivities(),
     staleTime: 30_000,
   })
+  const items = sportsCategory
+    ? [...allActivities].filter(a => a.cocurrCategoryId === sportsCategory.id).sort((a, b) => a.sortOrder - b.sortOrder)
+    : []
 
   const createMut = useMutation({
-    mutationFn: (dto: OfferedDraft) => contentService.createSportOffered(dto).then(unwrap),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-sports-offered'] }); qc.invalidateQueries({ queryKey: ['sports-offered'] }); showToast('Sport added ✓'); closeForm() },
+    mutationFn: (dto: CoCurrActivityDto) => coCurrApi.createActivity(dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Sport added ✓'); closeForm() },
+    onError: (err) => showToast(`Failed: ${coCurrApiError(err)}`),
   })
   const updateMut = useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: Partial<OfferedDraft> }) => contentService.updateSportOffered(id, dto).then(unwrap),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-sports-offered'] }); qc.invalidateQueries({ queryKey: ['sports-offered'] }); showToast('Sport updated ✓'); closeForm() },
+    mutationFn: ({ id, dto }: { id: number; dto: Partial<CoCurrActivityDto> }) => coCurrApi.updateActivity(id, dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Sport updated ✓'); closeForm() },
+    onError: (err) => showToast(`Failed: ${coCurrApiError(err)}`),
   })
   const deleteMut = useMutation({
-    mutationFn: (id: string) => contentService.deleteSportOffered(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-sports-offered'] }); qc.invalidateQueries({ queryKey: ['sports-offered'] }); showToast('Sport deleted'); setDelConfirm(null) },
+    mutationFn: (id: number) => coCurrApi.deleteActivity(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Sport deleted'); setDelConfirm(null) },
+    onError: (err) => showToast(`Delete failed: ${coCurrApiError(err)}`),
   })
 
-  const openNew = () => { setDraft({ ...BLANK_OFFERED, sortOrder: items.length + 1 }); setIsNew(true); setEditing(null) }
-  const openEdit = (s: SportOffered) => { setDraft({ name: s.name, icon: s.icon, desc: s.desc, sortOrder: s.sortOrder }); setEditing(s); setIsNew(false) }
+  const openNew = () => {
+    setDraft({ icon: '⚽', name: '', description: '', sortOrder: items.length + 1, cocurrCategoryId: sportsCategory?.id ?? 0 })
+    setIsNew(true); setEditing(null)
+  }
+  const openEdit = (s: CoCurrActivity) => {
+    setDraft({ icon: s.icon, name: s.name, description: s.description, sortOrder: s.sortOrder, cocurrCategoryId: s.cocurrCategoryId })
+    setEditing(s); setIsNew(false)
+  }
   const closeForm = () => { setEditing(null); setIsNew(false) }
   const handleSave = () => {
     if (!draft.name.trim()) return
-    if (isNew) createMut.mutate(draft)
+    if (!sportsCategory) return showToast('Sports category not found in API. Add it via Co-Curricular manager first.')
+    if (isNew) createMut.mutate({ ...draft, cocurrCategoryId: sportsCategory.id })
     else if (editing) updateMut.mutate({ id: editing.id, dto: draft })
   }
 
@@ -239,8 +259,13 @@ function SportsOfferedPanel() {
     <>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">Sports shown on the Sports page as feature cards.</p>
-        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-4 w-4" /> Add Sport</button>
+        <button onClick={openNew} disabled={!sportsCategory} className={BTN_GOLD}><Plus className="h-4 w-4" /> Add Sport</button>
       </div>
+      {!sportsCategory && !isLoading && (
+        <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400">
+          No "Sports" category found. Create one in the Co-Curricular manager first, then come back here to add sports.
+        </div>
+      )}
       <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-sm text-gray-400">Loading…</div>
@@ -260,7 +285,7 @@ function SportsOfferedPanel() {
                 <tr key={s.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors">
                   <td className="pl-4 py-3 text-2xl w-10">{s.icon}</td>
                   <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white whitespace-nowrap">{s.name}</td>
-                  <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 max-w-xs"><p className="line-clamp-2">{s.desc}</p></td>
+                  <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400 max-w-xs"><p className="line-clamp-2">{s.description}</p></td>
                   <td className="px-4 py-3 text-center text-xs text-gray-400">{s.sortOrder}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
@@ -296,7 +321,7 @@ function SportsOfferedPanel() {
           </div>
           <div>
             <label className={LABEL}>Description</label>
-            <textarea rows={3} className={INP + ' resize-none'} value={draft.desc} onChange={e => setDraft(d => ({ ...d, desc: e.target.value }))} placeholder="Facilities, coaching, competition level…" />
+            <textarea rows={3} className={INP + ' resize-none'} value={draft.description} onChange={e => setDraft(d => ({ ...d, description: e.target.value }))} placeholder="Facilities, coaching, competition level…" />
           </div>
           <div>
             <label className={LABEL}>Sort Order</label>

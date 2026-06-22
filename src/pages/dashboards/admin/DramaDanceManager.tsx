@@ -4,8 +4,10 @@ import { Plus, Edit2, Trash2, X, Check, Star } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../../../contexts/ToastContext'
 import { contentService } from '../../../services/contentService'
-import type { DanceStyle, DramaPlay, DramaFaculty, DramaScheduleSlot } from '../../../services/contentService'
+import type { DramaPlay, DramaFaculty, DramaScheduleSlot } from '../../../services/contentService'
 import { unwrap } from '../../../services/mockApi'
+import { coCurrApi, coCurrApiError } from '../../../services/coCurrApi'
+import type { CoCurrActivity, CoCurrActivityDto } from '../../../services/coCurrApi'
 import { cn } from '../../../lib/utils'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
@@ -36,42 +38,64 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
   )
 }
 
-// ── Dance Styles Panel ────────────────────────────────────────────────────────
-type StyleDraft = Omit<DanceStyle, 'id'>
+// ── Dance Styles Panel (real API) ─────────────────────────────────────────────
 
 function DanceStylesPanel() {
   const { showToast } = useToast()
   const qc = useQueryClient()
-  const [editing, setEditing] = useState<DanceStyle | null>(null)
+  const [editing, setEditing] = useState<CoCurrActivity | null>(null)
   const [isNew, setIsNew] = useState(false)
-  const [draft, setDraft] = useState<StyleDraft>({ style: '', icon: '💃', desc: '', sortOrder: 1 })
-  const [delConfirm, setDelConfirm] = useState<string | null>(null)
+  const [draft, setDraft] = useState<CoCurrActivityDto>({ icon: '💃', name: '', description: '', sortOrder: 1, cocurrCategoryId: 0 })
+  const [delConfirm, setDelConfirm] = useState<number | null>(null)
 
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ['admin-dance-styles'],
-    queryFn: () => contentService.listDanceStyles().then(unwrap),
+  const { data: categories = [] } = useQuery({
+    queryKey: ['cocurr-categories'],
+    queryFn: () => coCurrApi.getCategories(),
+    staleTime: 60_000,
+  })
+  const dramaCategory = categories.find(c =>
+    c.title.toLowerCase().includes('drama') || c.heading.toLowerCase().includes('drama') ||
+    c.title.toLowerCase().includes('dance') || c.heading.toLowerCase().includes('dance'),
+  )
+
+  const { data: allActivities = [], isLoading } = useQuery({
+    queryKey: ['cocurr-activities'],
+    queryFn: () => coCurrApi.getActivities(),
     staleTime: 30_000,
   })
+  const items = dramaCategory
+    ? [...allActivities].filter(a => a.cocurrCategoryId === dramaCategory.id).sort((a, b) => a.sortOrder - b.sortOrder)
+    : []
 
   const createMut = useMutation({
-    mutationFn: (dto: StyleDraft) => contentService.createDanceStyle(dto).then(unwrap),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-dance-styles'] }); qc.invalidateQueries({ queryKey: ['dance-styles'] }); showToast('Dance style added ✓'); closeForm() },
+    mutationFn: (dto: CoCurrActivityDto) => coCurrApi.createActivity(dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Dance style added ✓'); closeForm() },
+    onError: (err) => showToast(`Failed: ${coCurrApiError(err)}`),
   })
   const updateMut = useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: Partial<StyleDraft> }) => contentService.updateDanceStyle(id, dto).then(unwrap),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-dance-styles'] }); qc.invalidateQueries({ queryKey: ['dance-styles'] }); showToast('Dance style updated ✓'); closeForm() },
+    mutationFn: ({ id, dto }: { id: number; dto: Partial<CoCurrActivityDto> }) => coCurrApi.updateActivity(id, dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Dance style updated ✓'); closeForm() },
+    onError: (err) => showToast(`Failed: ${coCurrApiError(err)}`),
   })
   const deleteMut = useMutation({
-    mutationFn: (id: string) => contentService.deleteDanceStyle(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-dance-styles'] }); qc.invalidateQueries({ queryKey: ['dance-styles'] }); showToast('Dance style deleted'); setDelConfirm(null) },
+    mutationFn: (id: number) => coCurrApi.deleteActivity(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Dance style deleted'); setDelConfirm(null) },
+    onError: (err) => showToast(`Delete failed: ${coCurrApiError(err)}`),
   })
 
-  const openNew = () => { setDraft({ style: '', icon: '💃', desc: '', sortOrder: items.length + 1 }); setIsNew(true); setEditing(null) }
-  const openEdit = (d: DanceStyle) => { setDraft({ style: d.style, icon: d.icon, desc: d.desc, sortOrder: d.sortOrder }); setEditing(d); setIsNew(false) }
+  const openNew = () => {
+    setDraft({ icon: '💃', name: '', description: '', sortOrder: items.length + 1, cocurrCategoryId: dramaCategory?.id ?? 0 })
+    setIsNew(true); setEditing(null)
+  }
+  const openEdit = (d: CoCurrActivity) => {
+    setDraft({ icon: d.icon, name: d.name, description: d.description, sortOrder: d.sortOrder, cocurrCategoryId: d.cocurrCategoryId })
+    setEditing(d); setIsNew(false)
+  }
   const closeForm = () => { setEditing(null); setIsNew(false) }
   const handleSave = () => {
-    if (!draft.style.trim()) return
-    if (isNew) createMut.mutate(draft)
+    if (!draft.name.trim()) return
+    if (!dramaCategory) return showToast('Drama & Dance category not found in API. Add it via Co-Curricular manager first.')
+    if (isNew) createMut.mutate({ ...draft, cocurrCategoryId: dramaCategory.id })
     else if (editing) updateMut.mutate({ id: editing.id, dto: draft })
   }
 
@@ -79,8 +103,13 @@ function DanceStylesPanel() {
     <>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">Dance styles shown as feature cards on the Drama & Dance page.</p>
-        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-4 w-4" /> Add Style</button>
+        <button onClick={openNew} disabled={!dramaCategory} className={BTN_GOLD}><Plus className="h-4 w-4" /> Add Style</button>
       </div>
+      {!dramaCategory && !isLoading && (
+        <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400">
+          No "Drama & Dance" category found. Create one in the Co-Curricular manager first, then come back here to add styles.
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-36 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)
@@ -93,8 +122,8 @@ function DanceStylesPanel() {
             : items.map(d => (
               <div key={d.id} className="relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 text-center">
                 <span className="mb-3 block text-5xl">{d.icon}</span>
-                <p className="font-bold text-gray-900 dark:text-white">{d.style}</p>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-3">{d.desc}</p>
+                <p className="font-bold text-gray-900 dark:text-white">{d.name}</p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-3">{d.description}</p>
                 <div className="absolute top-3 right-3 flex gap-1">
                   <button onClick={() => openEdit(d)} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white transition"><Edit2 className="h-3.5 w-3.5" /></button>
                   {delConfirm === d.id ? (
@@ -120,16 +149,16 @@ function DanceStylesPanel() {
             </div>
             <div>
               <label className={LABEL}>Style Name <span className="text-[#E8B84B]">*</span></label>
-              <input className={INP} value={draft.style} onChange={e => setDraft(d => ({ ...d, style: e.target.value }))} placeholder="e.g. Salsa" autoFocus />
+              <input className={INP} value={draft.name} onChange={e => setDraft(d => ({ ...d, name: e.target.value }))} placeholder="e.g. Salsa" autoFocus />
             </div>
           </div>
           <div>
             <label className={LABEL}>Description</label>
-            <textarea rows={3} className={INP + ' resize-none'} value={draft.desc} onChange={e => setDraft(d => ({ ...d, desc: e.target.value }))} placeholder="Brief description of the style…" />
+            <textarea rows={3} className={INP + ' resize-none'} value={draft.description} onChange={e => setDraft(d => ({ ...d, description: e.target.value }))} placeholder="Brief description of the style…" />
           </div>
           <div className="flex justify-end gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
             <button onClick={closeForm} className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition">Cancel</button>
-            <button onClick={handleSave} disabled={!draft.style.trim() || createMut.isPending || updateMut.isPending} className="flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-4 py-2 text-sm font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition disabled:opacity-60">
+            <button onClick={handleSave} disabled={!draft.name.trim() || createMut.isPending || updateMut.isPending} className="flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-4 py-2 text-sm font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition disabled:opacity-60">
               <Check className="h-4 w-4" />{createMut.isPending || updateMut.isPending ? 'Saving…' : isNew ? 'Add Style' : 'Save Changes'}
             </button>
           </div>

@@ -3,21 +3,7 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { Button } from '../components/ui/Button'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { useToast } from '../contexts/ToastContext'
-import { useCmsBlocks } from '../hooks/useCmsData'
-
-function useCms() {
-  const { data: blocks = [] } = useCmsBlocks('pg-music')
-  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
-}
-
-const INSTRUMENTS = [
-  { name: 'Piano', icon: '🎹', desc: 'Steinway-ready studios. Lessons from beginner to Grade 8 ABRSM.' },
-  { name: 'Violin', icon: '🎻', desc: 'Classical strings with ensemble and solo performance training.' },
-  { name: 'Guitar', icon: '🎸', desc: 'Acoustic, classical and electric — across all skill levels.' },
-  { name: 'Brass', icon: '🎺', desc: 'Trumpet, trombone, French horn — full brass section ensemble.' },
-  { name: 'Woodwind', icon: '🎷', desc: 'Flute, clarinet, saxophone — individual and band sessions.' },
-  { name: 'Drums & Percussion', icon: '🥁', desc: 'Full kit, djembe, marimba and orchestral percussion.' },
-]
+import { useCoCurrSection } from '../hooks/useCoCurrSection'
 
 const TEACHERS = [
   {
@@ -49,15 +35,17 @@ const SCHEDULE = [
 ]
 
 export function Music() {
-  const get = useCms()
+  const { category, activities, isLoading } = useCoCurrSection('music')
   const { showToast } = useToast()
-  const [form, setForm] = useState({ name: '', email: '', phone: '', instrument: 'Piano', level: 'Beginner' })
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault()
-    showToast(`Trial lesson request for ${form.instrument} submitted! We will contact you shortly.`)
-    setForm({ name: '', email: '', phone: '', instrument: 'Piano', level: 'Beginner' })
-  }
+  const heroHeadline    = category?.heading ?? 'Music Academy'
+  const heroSubheadline = category?.intro   ?? 'Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.'
+
+  const instrumentNames = activities.length > 0
+    ? activities.map(a => a.name)
+    : ['Piano', 'Violin', 'Guitar', 'Brass', 'Woodwind', 'Drums & Percussion']
+
+  const [form, setForm] = useState({ name: '', email: '', phone: '', instrument: instrumentNames[0] ?? 'Piano', level: 'Beginner' })
 
   return (
     <div className="relative">
@@ -67,23 +55,31 @@ export function Music() {
       />
       <div className="relative mx-auto max-w-7xl px-4 py-12">
         <ScrollReveal className="mb-16 text-center">
-          <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Music Academy')}</h1>
-          <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.')}</p>
+          <h1 className="mb-4 text-5xl font-bold md:text-7xl">{heroHeadline}</h1>
+          <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
         </ScrollReveal>
 
         <ScrollReveal className="mt-16">
           <h2 className="mb-8 text-center text-3xl font-bold">Instruments Offered</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {INSTRUMENTS.map((inst, i) => (
-              <ScrollReveal key={inst.name} delay={i * 0.07}>
-                <GlassCard className="p-6">
-                  <span className="mb-3 block text-5xl">{inst.icon}</span>
-                  <h3 className="text-lg font-bold text-primary dark:text-gold">{inst.name}</h3>
-                  <p className="mt-1 text-sm text-muted">{inst.desc}</p>
-                </GlassCard>
-              </ScrollReveal>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[1,2,3,4,5,6].map(i => <div key={i} className="h-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}
+            </div>
+          ) : activities.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {activities.map((inst, i) => (
+                <ScrollReveal key={inst.id} delay={i * 0.07}>
+                  <GlassCard className="p-6">
+                    <span className="mb-3 block text-5xl">{inst.icon}</span>
+                    <h3 className="text-lg font-bold text-primary dark:text-gold">{inst.name}</h3>
+                    <p className="mt-1 text-sm text-muted">{inst.description}</p>
+                  </GlassCard>
+                </ScrollReveal>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted py-8">No instruments listed yet.</p>
+          )}
         </ScrollReveal>
 
         <ScrollReveal className="mt-20">
@@ -128,7 +124,14 @@ export function Music() {
               <h2 className="mb-4 text-3xl font-bold">Book a Trial Lesson</h2>
               <p className="mb-6 text-muted">Try any instrument with one of our specialist teachers — no commitment required.</p>
               <GlassCard className="p-8">
-                <form onSubmit={submit} className="space-y-4">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    showToast(`Trial lesson request for ${form.instrument} submitted! We will contact you shortly.`)
+                    setForm({ name: '', email: '', phone: '', instrument: instrumentNames[0] ?? 'Piano', level: 'Beginner' })
+                  }}
+                  className="space-y-4"
+                >
                   <input
                     required
                     placeholder="Parent / Student Name"
@@ -155,7 +158,7 @@ export function Music() {
                     onChange={(e) => setForm({ ...form, instrument: e.target.value })}
                     className="field"
                   >
-                    {INSTRUMENTS.map((i) => <option key={i.name}>{i.name}</option>)}
+                    {instrumentNames.map((name) => <option key={name}>{name}</option>)}
                   </select>
                   <select
                     value={form.level}

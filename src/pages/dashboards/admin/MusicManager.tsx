@@ -4,8 +4,10 @@ import { Plus, Edit2, Trash2, X, Check, Music } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../../../contexts/ToastContext'
 import { contentService } from '../../../services/contentService'
-import type { MusicInstrument, MusicTeacher, MusicScheduleSlot } from '../../../services/contentService'
+import type { MusicTeacher, MusicScheduleSlot } from '../../../services/contentService'
 import { unwrap } from '../../../services/mockApi'
+import { coCurrApi, coCurrApiError } from '../../../services/coCurrApi'
+import type { CoCurrActivity, CoCurrActivityDto } from '../../../services/coCurrApi'
 import { cn } from '../../../lib/utils'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
@@ -35,42 +37,61 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
   )
 }
 
-// ── Instruments Panel ─────────────────────────────────────────────────────────
-type InstDraft = Omit<MusicInstrument, 'id'>
+// ── Instruments Panel (real API) ──────────────────────────────────────────────
 
 function InstrumentsPanel() {
   const { showToast } = useToast()
   const qc = useQueryClient()
-  const [editing, setEditing] = useState<MusicInstrument | null>(null)
+  const [editing, setEditing] = useState<CoCurrActivity | null>(null)
   const [isNew, setIsNew] = useState(false)
-  const [draft, setDraft] = useState<InstDraft>({ name: '', icon: '🎵', desc: '', sortOrder: 1 })
-  const [delConfirm, setDelConfirm] = useState<string | null>(null)
+  const [draft, setDraft] = useState<CoCurrActivityDto>({ icon: '🎵', name: '', description: '', sortOrder: 1, cocurrCategoryId: 0 })
+  const [delConfirm, setDelConfirm] = useState<number | null>(null)
 
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ['admin-music-instruments'],
-    queryFn: () => contentService.listMusicInstruments().then(unwrap),
+  const { data: categories = [] } = useQuery({
+    queryKey: ['cocurr-categories'],
+    queryFn: () => coCurrApi.getCategories(),
+    staleTime: 60_000,
+  })
+  const musicCategory = categories.find(c => c.title.toLowerCase().includes('music') || c.heading.toLowerCase().includes('music'))
+
+  const { data: allActivities = [], isLoading } = useQuery({
+    queryKey: ['cocurr-activities'],
+    queryFn: () => coCurrApi.getActivities(),
     staleTime: 30_000,
   })
+  const items = musicCategory
+    ? [...allActivities].filter(a => a.cocurrCategoryId === musicCategory.id).sort((a, b) => a.sortOrder - b.sortOrder)
+    : []
 
   const createMut = useMutation({
-    mutationFn: (dto: InstDraft) => contentService.createMusicInstrument(dto).then(unwrap),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-music-instruments'] }); qc.invalidateQueries({ queryKey: ['music-instruments'] }); showToast('Instrument added ✓'); closeForm() },
+    mutationFn: (dto: CoCurrActivityDto) => coCurrApi.createActivity(dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Instrument added ✓'); closeForm() },
+    onError: (err) => showToast(`Failed: ${coCurrApiError(err)}`),
   })
   const updateMut = useMutation({
-    mutationFn: ({ id, dto }: { id: string; dto: Partial<InstDraft> }) => contentService.updateMusicInstrument(id, dto).then(unwrap),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-music-instruments'] }); qc.invalidateQueries({ queryKey: ['music-instruments'] }); showToast('Instrument updated ✓'); closeForm() },
+    mutationFn: ({ id, dto }: { id: number; dto: Partial<CoCurrActivityDto> }) => coCurrApi.updateActivity(id, dto),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Instrument updated ✓'); closeForm() },
+    onError: (err) => showToast(`Failed: ${coCurrApiError(err)}`),
   })
   const deleteMut = useMutation({
-    mutationFn: (id: string) => contentService.deleteMusicInstrument(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-music-instruments'] }); qc.invalidateQueries({ queryKey: ['music-instruments'] }); showToast('Instrument deleted'); setDelConfirm(null) },
+    mutationFn: (id: number) => coCurrApi.deleteActivity(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['cocurr-activities'] }); showToast('Instrument deleted'); setDelConfirm(null) },
+    onError: (err) => showToast(`Delete failed: ${coCurrApiError(err)}`),
   })
 
-  const openNew = () => { setDraft({ name: '', icon: '🎵', desc: '', sortOrder: items.length + 1 }); setIsNew(true); setEditing(null) }
-  const openEdit = (m: MusicInstrument) => { setDraft({ name: m.name, icon: m.icon, desc: m.desc, sortOrder: m.sortOrder }); setEditing(m); setIsNew(false) }
+  const openNew = () => {
+    setDraft({ icon: '🎵', name: '', description: '', sortOrder: items.length + 1, cocurrCategoryId: musicCategory?.id ?? 0 })
+    setIsNew(true); setEditing(null)
+  }
+  const openEdit = (m: CoCurrActivity) => {
+    setDraft({ icon: m.icon, name: m.name, description: m.description, sortOrder: m.sortOrder, cocurrCategoryId: m.cocurrCategoryId })
+    setEditing(m); setIsNew(false)
+  }
   const closeForm = () => { setEditing(null); setIsNew(false) }
   const handleSave = () => {
     if (!draft.name.trim()) return
-    if (isNew) createMut.mutate(draft)
+    if (!musicCategory) return showToast('Music category not found in API. Add it via Co-Curricular manager first.')
+    if (isNew) createMut.mutate({ ...draft, cocurrCategoryId: musicCategory.id })
     else if (editing) updateMut.mutate({ id: editing.id, dto: draft })
   }
 
@@ -78,20 +99,25 @@ function InstrumentsPanel() {
     <>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">Instruments shown as feature cards on the Music Academy page.</p>
-        <button onClick={openNew} className={BTN_GOLD}><Plus className="h-4 w-4" /> Add Instrument</button>
+        <button onClick={openNew} disabled={!musicCategory} className={BTN_GOLD}><Plus className="h-4 w-4" /> Add Instrument</button>
       </div>
+      {!musicCategory && !isLoading && (
+        <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400">
+          No "Music" category found. Create one in the Co-Curricular manager first, then come back here to add instruments.
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {isLoading ? (
           Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-36 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)
         ) : items.length === 0 ? (
           <div className="col-span-3 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 p-10 text-center text-sm text-gray-400">
-            No instruments yet. <button onClick={openNew} className="font-semibold text-[#E8B84B] hover:underline">Add one →</button>
+            No instruments yet. <button onClick={openNew} disabled={!musicCategory} className="font-semibold text-[#E8B84B] hover:underline">Add one →</button>
           </div>
         ) : items.map(m => (
           <div key={m.id} className="relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 hover:shadow-md transition-shadow">
             <span className="mb-3 block text-4xl">{m.icon}</span>
             <p className="font-bold text-gray-900 dark:text-white">{m.name}</p>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-3">{m.desc}</p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-3">{m.description}</p>
             <div className="absolute top-3 right-3 flex gap-1">
               <button onClick={() => openEdit(m)} className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-white transition"><Edit2 className="h-3.5 w-3.5" /></button>
               {delConfirm === m.id ? (
@@ -121,7 +147,7 @@ function InstrumentsPanel() {
           </div>
           <div>
             <label className={LABEL}>Description</label>
-            <textarea rows={3} className={INP + ' resize-none'} value={draft.desc} onChange={e => setDraft(d => ({ ...d, desc: e.target.value }))} placeholder="What's offered — level, exam boards, ensemble opportunities…" />
+            <textarea rows={3} className={INP + ' resize-none'} value={draft.description} onChange={e => setDraft(d => ({ ...d, description: e.target.value }))} placeholder="What's offered — level, exam boards, ensemble opportunities…" />
           </div>
           <div>
             <label className={LABEL}>Sort Order</label>

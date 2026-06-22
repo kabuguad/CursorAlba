@@ -4,36 +4,13 @@ import { cn } from '../lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
-import { useCmsBlocks } from '../hooks/useCmsData'
-
-function useCms() {
-  const { data: blocks = [] } = useCmsBlocks('pg-sports')
-  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
-}
+import { useCoCurrSection } from '../hooks/useCoCurrSection'
 
 const statusStyles = {
   upcoming: 'bg-primary/20 text-primary dark:text-gold',
   live: 'bg-gold/30 text-dark animate-pulse',
   completed: 'bg-tint text-primary dark:bg-dark-card dark:text-gold',
 }
-
-const SPORTS_OFFERED = [
-  { name: 'Football', icon: '⚽', desc: 'Two pitches, inter-house and inter-school leagues, dedicated coaching staff.' },
-  { name: 'Basketball', icon: '🏀', desc: 'Full-size courts. Boys and girls teams competing regionally.' },
-  { name: 'Volleyball', icon: '🏐', desc: 'Indoor and outdoor courts for both competitive and recreational play.' },
-  { name: 'Athletics', icon: '🏃', desc: '400m track, field events, relay squads — training five days a week.' },
-  { name: 'Swimming', icon: '🏊', desc: '25m heated pool with certified coaches and county-level competition.' },
-  { name: 'Tennis', icon: '🎾', desc: 'Two courts for individual and doubles coaching from juniors upward.' },
-]
-
-const TROPHIES = [
-  { year: '2025', title: 'Kirinyaga County Football Champions', category: 'Football' },
-  { year: '2025', title: 'Regional Athletics — Gold (4×100m Relay)', category: 'Athletics' },
-  { year: '2024', title: 'Inter-School Basketball — Boys Division', category: 'Basketball' },
-  { year: '2024', title: 'Swimming Championships — 3 Gold Medals', category: 'Swimming' },
-  { year: '2023', title: 'National Volleyball — Semi-finalists', category: 'Volleyball' },
-  { year: '2023', title: 'County Cross Country Champions', category: 'Athletics' },
-]
 
 const PLAYER_OF_MONTH = {
   name: 'Brian Mutua',
@@ -44,31 +21,49 @@ const PLAYER_OF_MONTH = {
 }
 
 export function Sports() {
-  const get = useCms()
-  const { data: fixtures = [], isLoading } = useQuery({
+  const { category, activities, isLoading: activitiesLoading } = useCoCurrSection('sport')
+
+  const heroHeadline    = category?.heading    ?? 'Sports & Athletics'
+  const heroSubheadline = category?.intro      ?? 'Premium facilities · Professional coaching · County, regional and national competition.'
+
+  const { data: fixtures = [], isLoading: fixturesLoading } = useQuery({
     queryKey: ['public-sports-fixtures'],
     queryFn: () => contentService.listSportFixtures().then(unwrap),
   })
+
+  const { data: trophies = [] } = useQuery({
+    queryKey: ['sport-trophies'],
+    queryFn: () => contentService.listSportTrophies().then(unwrap),
+  })
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Sports & Athletics')}</h1>
-        <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'Premium facilities · Professional coaching · County, regional and national competition.')}</p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{heroHeadline}</h1>
+        <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
       </ScrollReveal>
 
       <ScrollReveal className="mt-16">
         <h2 className="mb-8 text-center text-3xl font-bold">Sports Offered</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SPORTS_OFFERED.map((s, i) => (
-            <ScrollReveal key={s.name} delay={i * 0.07}>
-              <GlassCard className="p-6">
-                <span className="mb-3 block text-4xl">{s.icon}</span>
-                <h3 className="text-lg font-bold text-primary dark:text-gold">{s.name}</h3>
-                <p className="mt-1 text-sm text-muted">{s.desc}</p>
-              </GlassCard>
-            </ScrollReveal>
-          ))}
-        </div>
+        {activitiesLoading ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[1,2,3,4,5,6].map(i => <div key={i} className="h-36 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}
+          </div>
+        ) : activities.length > 0 ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {activities.map((s, i) => (
+              <ScrollReveal key={s.id} delay={i * 0.07}>
+                <GlassCard className="p-6">
+                  <span className="mb-3 block text-4xl">{s.icon}</span>
+                  <h3 className="text-lg font-bold text-primary dark:text-gold">{s.name}</h3>
+                  <p className="mt-1 text-sm text-muted">{s.description}</p>
+                </GlassCard>
+              </ScrollReveal>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-muted py-8">No sports listed yet.</p>
+        )}
       </ScrollReveal>
 
       <ScrollReveal className="mt-16">
@@ -85,7 +80,7 @@ export function Sports() {
 
       <ScrollReveal className="mt-16">
         <h2 className="mb-6 text-center text-2xl font-bold">Fixtures & Results</h2>
-        {isLoading ? (
+        {fixturesLoading ? (
           <p className="text-center text-muted py-8">Loading fixtures…</p>
         ) : fixtures.length === 0 ? (
           <p className="text-center text-muted py-8">No fixtures yet.</p>
@@ -125,19 +120,23 @@ export function Sports() {
 
       <ScrollReveal className="mt-16">
         <h2 className="mb-8 text-3xl font-bold">Trophy Cabinet</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {TROPHIES.map((t, i) => (
-            <ScrollReveal key={t.title} delay={i * 0.07}>
-              <GlassCard className="flex items-start gap-4 p-5">
-                <span className="text-3xl">🏆</span>
-                <div>
-                  <p className="font-bold text-primary dark:text-gold">{t.title}</p>
-                  <p className="text-xs text-muted">{t.category} · {t.year}</p>
-                </div>
-              </GlassCard>
-            </ScrollReveal>
-          ))}
-        </div>
+        {trophies.length === 0 ? (
+          <p className="text-center text-muted py-8">No trophies yet.</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {trophies.map((t, i) => (
+              <ScrollReveal key={t.id} delay={i * 0.07}>
+                <GlassCard className="flex items-start gap-4 p-5">
+                  <span className="text-3xl">🏆</span>
+                  <div>
+                    <p className="font-bold text-primary dark:text-gold">{t.title}</p>
+                    <p className="text-xs text-muted">{t.category} · {t.year}</p>
+                  </div>
+                </GlassCard>
+              </ScrollReveal>
+            ))}
+          </div>
+        )}
       </ScrollReveal>
     </div>
   )

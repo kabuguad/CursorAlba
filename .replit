@@ -47,3 +47,6 @@ timeoutMs = 60000
 
 [userenv.shared]
 API_URL = "https://yoko-unresourceful-coretta.ngrok-free.dev"
+
+[userenv.development]
+VITE_API_BASE = "https://yoko-unresourceful-coretta.ngrok-free.dev"

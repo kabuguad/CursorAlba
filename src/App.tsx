@@ -72,8 +72,9 @@ import { PaymentsManager }      from './pages/dashboards/admin/PaymentsManager'
 import { AccountsManager }      from './pages/dashboards/admin/AccountsManager'
 import { PagesManager }         from './pages/dashboards/admin/PagesManager'
 import { PublicStaffManager }  from './pages/dashboards/admin/PublicStaffManager'
-import { SiteContentManager }  from './pages/dashboards/admin/SiteContentManager'
-import { ActivitiesManager }   from './pages/dashboards/admin/ActivitiesManager'
+import { SiteContentManager }    from './pages/dashboards/admin/SiteContentManager'
+import { ActivitiesManager }     from './pages/dashboards/admin/ActivitiesManager'
+import { CoCurrPageBuilder }     from './pages/dashboards/admin/CoCurrPageBuilder'
 import { ParentsManager }      from './pages/dashboards/admin/ParentsManager'
 
 function App() {
@@ -154,8 +155,9 @@ function App() {
               >
                 <Route index                element={<Overview />} />
                 {/* Content & Media — new unified routes */}
-                <Route path="site-content"  element={<SiteContentManager />} />
-                <Route path="activities"    element={<ActivitiesManager />} />
+                <Route path="site-content"              element={<SiteContentManager />} />
+                <Route path="site-content/co-curricular" element={<CoCurrPageBuilder />} />
+                <Route path="activities"                element={<ActivitiesManager />} />
                 <Route path="blog"          element={<BlogManager />} />
                 <Route path="events"        element={<EventsManager />} />
                 <Route path="gallery"       element={<GalleryManager />} />
@@ -166,7 +168,7 @@ function App() {
                 <Route path="content"       element={<Navigate to="/dashboard/admin/site-content" replace />} />
                 <Route path="why-choose-us" element={<Navigate to="/dashboard/admin/site-content" replace />} />
                 <Route path="programs"      element={<Navigate to="/dashboard/admin/site-content" replace />} />
-                <Route path="co-curricular" element={<Navigate to="/dashboard/admin/activities" replace />} />
+                <Route path="co-curricular" element={<Navigate to="/dashboard/admin/site-content/co-curricular" replace />} />
                 <Route path="sports"        element={<Navigate to="/dashboard/admin/activities" replace />} />
                 <Route path="music"         element={<Navigate to="/dashboard/admin/activities" replace />} />
                 <Route path="drama"         element={<Navigate to="/dashboard/admin/activities" replace />} />

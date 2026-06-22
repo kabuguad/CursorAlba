@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2, Edit2, Check, ChevronUp, ChevronDown, Layers } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { contentService } from '../../../services/contentService'
 import type { CmsPage, CmsBlock, CmsBlockType, PublicFeeRow } from '../../../services/contentService'
 import { AboutContentManager } from './AboutContentManager'
@@ -442,6 +442,7 @@ function FeeRowsPanel({ qc }: { qc: ReturnType<typeof useQueryClient> }) {
 export function PagesManager() {
   const { showToast } = useToast()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null)
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(['pg-cocurr']))
@@ -522,12 +523,20 @@ export function PagesManager() {
     showToast(`Block "${block.label}" deleted`)
   }
 
+  // Direct-navigate pages — clicking the card goes straight to their sub-route
+  const DIRECT_NAV: Record<string, string> = {
+    'pg-cocurr': '/dashboard/admin/site-content/co-curricular',
+  }
+
   // ── Page Card (replaces the old sidebar tree item) ──────────────────────
   function PageCard({ page }: { page: CmsPage }) {
     const subs = children(page.id)
     return (
       <div
-        onClick={() => setSelectedPageId(page.id)}
+        onClick={() => {
+          if (DIRECT_NAV[page.id]) { navigate(DIRECT_NAV[page.id]); return }
+          setSelectedPageId(page.id)
+        }}
         className="group flex cursor-pointer flex-col rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-sm transition-all hover:border-[#E8B84B]/60 hover:shadow-md dark:hover:border-[#E8B84B]/40"
       >
         {/* Icon + publish badge */}
@@ -818,13 +827,13 @@ export function PagesManager() {
                       />
                     )}
 
-                    {/* Co-Curricular — managed in dedicated manager */}
+                    {/* Co-Curricular — managed in dedicated page-builder sub-route */}
                     {selectedPageId === 'pg-cocurr' && (
                       <ManagerRedirectCard
                         icon="🤸"
                         title="Co-Curricular Activities"
-                        description="Add, edit, and organise all co-curricular activities (Sports, Arts, Community, Career & Technical) from the dedicated manager in the sidebar."
-                        to="/dashboard/admin/co-curricular"
+                        description="Edit the page hero, add categories and manage activities — all in one place."
+                        to="/dashboard/admin/site-content/co-curricular"
                       />
                     )}
 

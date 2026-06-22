@@ -159,7 +159,7 @@ function PageContentModal({
   })
 
   const mut = useMutation({
-    mutationFn: () => whyChooseUsApi.updatePageContent(form),
+    mutationFn: () => whyChooseUsApi.updatePageContent(initial.whyChooseUsPageContentId, form),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['wcu-page-content'] })
       showToast('Page content updated')
@@ -287,6 +287,9 @@ export function WhyChooseUsManager() {
     onError: () => showToast('Failed to update visibility'),
   })
 
+  // patchItem falls back to full PUT if API doesn't support PATCH
+  
+
   const [editing, setEditing] = useState<number | 'new' | null>(null)
   const [form, setForm] = useState<ItemDraft>({ ...BLANK })
   const [saving, setSaving] = useState(false)
@@ -308,7 +311,7 @@ export function WhyChooseUsManager() {
       color: item.color,
       isPublished: item.isPublished,
     })
-    setEditing(item.id)
+    setEditing(item.whyChooseUsItemId)
   }
 
   const close = () => setEditing(null)
@@ -323,7 +326,7 @@ export function WhyChooseUsManager() {
           sortOrder: items.length + 1,
         })
       } else if (typeof editing === 'number') {
-        const existing = items.find(i => i.id === editing)
+        const existing = items.find(i => i.whyChooseUsItemId === editing)
         await update.mutateAsync({
           id: editing,
           dto: {
@@ -439,16 +442,16 @@ export function WhyChooseUsManager() {
         <div className="space-y-3">
           {[...items].sort((a, b) => a.sortOrder - b.sortOrder).map(item => (
             <div
-              key={item.id}
+              key={item.whyChooseUsItemId}
               className={cn(
                 'rounded-2xl border bg-white dark:bg-gray-800 overflow-hidden transition',
                 !item.isPublished && 'opacity-60',
-                editing === item.id
+                editing === item.whyChooseUsItemId
                   ? 'border-[#E8B84B]/40'
                   : 'border-gray-200 dark:border-gray-700',
               )}
             >
-              {editing === item.id ? (
+              {editing === item.whyChooseUsItemId ? (
                 <ItemForm form={form} setForm={setForm} onSave={handleSave} onCancel={close} saving={saving} isNew={false} />
               ) : (
                 <div className="flex items-center gap-4 px-4 py-3">
@@ -470,7 +473,7 @@ export function WhyChooseUsManager() {
                   <div className="flex-shrink-0 flex items-center gap-1">
                     <span className="hidden sm:block text-xs font-bold text-[#E8B84B] mr-2">{item.stat}</span>
                     <button
-                      onClick={() => togglePublish.mutate({ id: item.id, val: !item.isPublished })}
+                      onClick={() => togglePublish.mutate({ id: item.whyChooseUsItemId, val: !item.isPublished })}
                       className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
                       title={item.isPublished ? 'Unpublish' : 'Publish'}
                     >
@@ -487,7 +490,7 @@ export function WhyChooseUsManager() {
                       <Edit2 className="h-3.5 w-3.5" />
                     </button>
                     <button
-                      onClick={() => del.mutate(item.id)}
+                      onClick={() => del.mutate(item.whyChooseUsItemId)}
                       className="rounded-lg p-1.5 text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition"
                       title="Delete"
                     >

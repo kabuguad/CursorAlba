@@ -23,15 +23,21 @@ export function WhyChooseUs() {
     staleTime: 60_000,
   })
 
-  const published = (page?.items ?? [])
+  const { data: allItems = [] } = useQuery({
+    queryKey: ['wcu-items'],
+    queryFn: () => whyChooseUsApi.getItems(),
+    staleTime: 60_000,
+  })
+
+  const published = allItems
     .filter(i => i.isPublished)
     .sort((a, b) => a.sortOrder - b.sortOrder)
 
   const stats = [
-    { value: page?.statStudents  ?? '2,000+', label: 'Students Enrolled' },
-    { value: page?.statEducators ?? '120+',   label: 'Qualified Educators' },
-    { value: page?.statPassRate  ?? '97%',    label: 'KCSE Pass Rate' },
-    { value: page?.statActivities ?? '30+',   label: 'Co-Curricular Activities' },
+    { value: page?.statStudents   ?? '2,000+', label: 'Students Enrolled' },
+    { value: page?.statEducators  ?? '120+',   label: 'Qualified Educators' },
+    { value: page?.statPassRate   ?? '97%',    label: 'KCSE Pass Rate' },
+    { value: page?.statActivities ?? '30+',    label: 'Co-Curricular Activities' },
   ]
 
   return (
@@ -46,7 +52,7 @@ export function WhyChooseUs() {
           {page?.headline ?? 'Why Choose Us?'}
         </h1>
         <p className="mx-auto max-w-2xl text-lg text-muted leading-relaxed">
-          {page?.subheadline ?? 'Adjacent to the Governor\'s Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here\'s what makes us different.'}
+          {page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here's what makes us different."}
         </p>
       </ScrollReveal>
 
@@ -77,7 +83,7 @@ export function WhyChooseUs() {
             const c = COLOR_MAP[item.color] ?? COLOR_MAP.gold
             const isEven = i % 2 === 0
             return (
-              <ScrollReveal key={item.id} delay={0.05}>
+              <ScrollReveal key={item.whyChooseUsItemId} delay={0.05}>
                 <div className={`flex flex-col gap-6 lg:flex-row lg:items-center ${!isEven ? 'lg:flex-row-reverse' : ''}`}>
                   {/* Icon / stat side */}
                   <div className="flex-shrink-0 lg:w-64">
@@ -124,16 +130,16 @@ export function WhyChooseUs() {
           </div>
           <div className="grid gap-px bg-gray-200 dark:bg-white/10 sm:grid-cols-3">
             {[
-              { icon: '✅', text: 'TSC-Registered Teachers' },
-              { icon: '✅', text: 'KNEC & Cambridge Examinations' },
-              { icon: '✅', text: 'CBC-Aligned Curriculum' },
-              { icon: '✅', text: 'M-Pesa Fee Payments' },
-              { icon: '✅', text: 'GPS-Tracked School Buses' },
-              { icon: '✅', text: 'On-Campus ABRSM Music Exams' },
-            ].map((p) => (
-              <div key={p.text} className="flex items-center gap-2.5 bg-surface px-5 py-4">
+              'TSC-Registered Teachers',
+              'KNEC & Cambridge Examinations',
+              'CBC-Aligned Curriculum',
+              'M-Pesa Fee Payments',
+              'GPS-Tracked School Buses',
+              'On-Campus ABRSM Music Exams',
+            ].map((text) => (
+              <div key={text} className="flex items-center gap-2.5 bg-surface px-5 py-4">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
-                <span className="text-sm font-medium">{p.text}</span>
+                <span className="text-sm font-medium">{text}</span>
               </div>
             ))}
           </div>
@@ -147,7 +153,7 @@ export function WhyChooseUs() {
             {page?.ctaHeadline ?? 'Ready to Give Your Child the Alber Advantage?'}
           </h2>
           <p className="mx-auto mb-8 max-w-xl text-white/80">
-            {page?.ctaSubtext ?? 'Applications for the 2027 academic year are now open. Spaces fill fast — secure your child\'s place at Kirinyaga\'s premier school today.'}
+            {page?.ctaSubtext ?? "Applications for the 2027 academic year are now open. Spaces fill fast — secure your child's place at Kirinyaga's premier school today."}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link

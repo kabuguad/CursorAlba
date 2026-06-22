@@ -3,7 +3,7 @@ import axios from 'axios'
 const http = axios.create({ baseURL: '/api' })
 
 export interface WcuPageContent {
-  id: number
+  whyChooseUsPageContentId: number
   tagline: string
   headline: string
   subheadline: string
@@ -13,12 +13,12 @@ export interface WcuPageContent {
   statActivities: string
   ctaHeadline: string
   ctaSubtext: string
+  createdAt: string
   updatedAt: string
-  items: WcuItemDto[]
 }
 
 export interface WcuItemDto {
-  id: number
+  whyChooseUsItemId: number
   icon: string
   title: string
   subtitle: string
@@ -28,8 +28,7 @@ export interface WcuItemDto {
   color: string
   sortOrder: number
   isPublished: boolean
-  createdAt: string
-  updatedAt: string
+  whyChooseUsPageContentId: number
 }
 
 export type UpdateWcuPageContentDto = Pick<
@@ -76,11 +75,16 @@ function unwrap<T>(res: { data: ApiWrap<T> }) {
 }
 
 export const whyChooseUsApi = {
+  // Page content is a singleton — API returns it as an array; we take index 0
   getPageContent: () =>
-    http.get<ApiWrap<WcuPageContent>>('/why-choose-us-page-content').then(unwrap),
+    http
+      .get<ApiWrap<WcuPageContent[]>>('/why-choose-us-page-content')
+      .then(r => r.data.data[0]),
 
-  updatePageContent: (dto: UpdateWcuPageContentDto) =>
-    http.put<ApiWrap<WcuPageContent>>('/why-choose-us-page-content', dto).then(unwrap),
+  updatePageContent: (id: number, dto: UpdateWcuPageContentDto) =>
+    http
+      .put<ApiWrap<WcuPageContent>>(`/why-choose-us-page-content/${id}`, dto)
+      .then(unwrap),
 
   getItems: () =>
     http.get<ApiWrap<WcuItemDto[]>>('/why-choose-us-items').then(unwrap),

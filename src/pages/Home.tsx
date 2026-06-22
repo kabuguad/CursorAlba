@@ -112,13 +112,23 @@ export function Home() {
           HERO — Full-bleed cinematic
       ══════════════════════════════════════════ */}
       <section className="relative overflow-hidden" style={{ minHeight: 'min(100svh, 900px)' }}>
-        {/* Background slideshow */}
+        {/* Background slideshow — Ken Burns zoom-in per slide */}
         {HERO_IMAGES.map((img, i) => (
-          <img
+          <motion.img
             key={img}
             src={img}
             alt="Alber School Campus"
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ transformOrigin: 'center center' }}
+            initial={{ opacity: i === 0 ? 1 : 0, scale: 1.0 }}
+            animate={{
+              opacity: i === slide ? 1 : 0,
+              scale:   i === slide ? 1.1 : 1.0,
+            }}
+            transition={{
+              opacity: { duration: 1.0, ease: 'easeInOut' },
+              scale:   { duration: i === slide ? 12 : 0.01, ease: 'easeOut' },
+            }}
           />
         ))}
 

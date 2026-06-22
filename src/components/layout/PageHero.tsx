@@ -54,15 +54,13 @@ export function PageHero({
   /* ── PARALLAX (fixed bg attachment) ─────────────────────────────────── */
   if (variant === 'parallax') {
     return (
-      <section
-        className={`relative flex ${htClass} items-center justify-center overflow-hidden`}
-        style={{
-          backgroundImage: `url('${image}')`,
-          backgroundAttachment: 'fixed',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
+      <section className={`relative flex ${htClass} items-center justify-center overflow-hidden`}>
+        <img
+          src={image}
+          alt=""
+          aria-hidden
+          className="ken-burns absolute inset-0 h-full w-full object-cover"
+        />
         <div className={`absolute inset-0 bg-gradient-to-t ${ovClass}`} />
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/50 to-transparent" />
         <div className={`relative z-10 mx-auto max-w-4xl px-6 py-20 ${centered ? 'text-center' : ''}`}>
@@ -116,12 +114,12 @@ export function PageHero({
             {children && <div className="mt-8">{children}</div>}
           </motion.div>
         </div>
-        <div className="relative min-h-[300px]">
+        <div className="relative min-h-[300px] overflow-hidden">
           <img
             src={image}
             alt=""
             aria-hidden
-            className="absolute inset-0 h-full w-full object-cover"
+            className="ken-burns absolute inset-0 h-full w-full object-cover"
           />
           <div className={`absolute inset-0 bg-gradient-to-r ${ovClass} from-transparent`} />
         </div>
@@ -139,7 +137,7 @@ export function PageHero({
         src={image}
         alt=""
         aria-hidden
-        className="absolute inset-0 h-full w-full object-cover"
+        className="ken-burns absolute inset-0 h-full w-full object-cover"
       />
       <div className={`absolute inset-0 bg-gradient-to-t ${ovClass}`} />
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-gold via-gold/60 to-transparent" />

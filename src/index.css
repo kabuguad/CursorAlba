@@ -231,6 +231,18 @@ body.dark {
   100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0;   }
 }
 
+/* ── Ken Burns — slow cinematic push-in on hero images ───────────────── */
+@keyframes kenBurns {
+  from { transform: scale(1.0); }
+  to   { transform: scale(1.1); }
+}
+
+.ken-burns {
+  animation: kenBurns 12s ease-out both;
+  will-change: transform;
+  transform-origin: center center;
+}
+
 /* Gold circle button with arrow */
 .pano-hs-circle {
   width: 40px;

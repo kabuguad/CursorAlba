@@ -55,14 +55,14 @@ export function About() {
       {/* ── Hero Banner ── */}
       <section
         className="relative flex min-h-[68vh] items-end justify-center overflow-hidden"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1920&q=80')`,
-          backgroundAttachment: 'fixed',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)',
-        }}
+        style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}
       >
+        <img
+          src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1920&q=80"
+          alt=""
+          aria-hidden
+          className="ken-burns absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/92 via-black/60 to-black/20" />
         <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
         <div className="relative z-10 mx-auto max-w-4xl px-6 pb-20 pt-40 text-center">

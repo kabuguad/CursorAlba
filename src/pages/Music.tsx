@@ -5,6 +5,15 @@ import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { useToast } from '../contexts/ToastContext'
 import { useCoCurrSection } from '../hooks/useCoCurrSection'
 
+const INSTRUMENTS = [
+  { icon: '🎹', name: 'Piano', desc: 'Classical & contemporary. Individual lessons and ensemble playing.' },
+  { icon: '🎻', name: 'Violin', desc: 'Strings programme. ABRSM examination pathways available.' },
+  { icon: '🎸', name: 'Guitar', desc: 'Classical, acoustic and electric guitar for all levels.' },
+  { icon: '🎺', name: 'Brass', desc: 'Trumpet, trombone and French horn — full orchestra integration.' },
+  { icon: '🪗', name: 'Woodwind', desc: 'Flute, clarinet and saxophone. Grade examinations supported.' },
+  { icon: '🥁', name: 'Drums & Percussion', desc: 'Kit drumming, marimba and full percussion ensemble.' },
+]
+
 const TEACHERS = [
   {
     name: 'Ms. Ruth Kamau',
@@ -35,17 +44,14 @@ const SCHEDULE = [
 ]
 
 export function Music() {
-  const { category, activities, isLoading } = useCoCurrSection('music')
+  // 'performing' matches "Creative & Performing Arts" — the API category that covers Music, Dance & Drama
+  const { category, activities, isLoading } = useCoCurrSection('performing')
   const { showToast } = useToast()
 
   const heroHeadline    = category?.heading ?? 'Music Academy'
   const heroSubheadline = category?.intro   ?? 'Piano studios · Recording suites · Full orchestra ensemble · ABRSM examination centre.'
 
-  const instrumentNames = activities.length > 0
-    ? activities.map(a => a.name)
-    : ['Piano', 'Violin', 'Guitar', 'Brass', 'Woodwind', 'Drums & Percussion']
-
-  const [form, setForm] = useState({ name: '', email: '', phone: '', instrument: instrumentNames[0] ?? 'Piano', level: 'Beginner' })
+  const [form, setForm] = useState({ name: '', email: '', phone: '', instrument: INSTRUMENTS[0].name, level: 'Beginner' })
 
   return (
     <div className="relative">
@@ -59,27 +65,45 @@ export function Music() {
           <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
         </ScrollReveal>
 
+        {/* Creative Arts programmes from the API */}
+        {(isLoading || activities.length > 0) && (
+          <ScrollReveal className="mt-4">
+            <h2 className="mb-6 text-center text-2xl font-bold">Creative Arts Programmes</h2>
+            {isLoading ? (
+              <div className="flex gap-4 justify-center">
+                {[1, 2, 3].map(i => <div key={i} className="h-24 w-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}
+              </div>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-4">
+                {activities.map((a, i) => (
+                  <ScrollReveal key={a.id} delay={i * 0.08}>
+                    <GlassCard className="flex items-center gap-3 px-5 py-3">
+                      <span className="text-2xl">{a.icon}</span>
+                      <div>
+                        <p className="font-bold text-primary dark:text-gold">{a.name}</p>
+                        <p className="text-xs text-muted max-w-[200px]">{a.description}</p>
+                      </div>
+                    </GlassCard>
+                  </ScrollReveal>
+                ))}
+              </div>
+            )}
+          </ScrollReveal>
+        )}
+
         <ScrollReveal className="mt-16">
           <h2 className="mb-8 text-center text-3xl font-bold">Instruments Offered</h2>
-          {isLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {[1,2,3,4,5,6].map(i => <div key={i} className="h-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}
-            </div>
-          ) : activities.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {activities.map((inst, i) => (
-                <ScrollReveal key={inst.id} delay={i * 0.07}>
-                  <GlassCard className="p-6">
-                    <span className="mb-3 block text-5xl">{inst.icon}</span>
-                    <h3 className="text-lg font-bold text-primary dark:text-gold">{inst.name}</h3>
-                    <p className="mt-1 text-sm text-muted">{inst.description}</p>
-                  </GlassCard>
-                </ScrollReveal>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted py-8">No instruments listed yet.</p>
-          )}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {INSTRUMENTS.map((inst, i) => (
+              <ScrollReveal key={inst.name} delay={i * 0.07}>
+                <GlassCard className="p-6">
+                  <span className="mb-3 block text-5xl">{inst.icon}</span>
+                  <h3 className="text-lg font-bold text-primary dark:text-gold">{inst.name}</h3>
+                  <p className="mt-1 text-sm text-muted">{inst.desc}</p>
+                </GlassCard>
+              </ScrollReveal>
+            ))}
+          </div>
         </ScrollReveal>
 
         <ScrollReveal className="mt-20">
@@ -128,7 +152,7 @@ export function Music() {
                   onSubmit={(e) => {
                     e.preventDefault()
                     showToast(`Trial lesson request for ${form.instrument} submitted! We will contact you shortly.`)
-                    setForm({ name: '', email: '', phone: '', instrument: instrumentNames[0] ?? 'Piano', level: 'Beginner' })
+                    setForm({ name: '', email: '', phone: '', instrument: INSTRUMENTS[0].name, level: 'Beginner' })
                   }}
                   className="space-y-4"
                 >
@@ -158,7 +182,7 @@ export function Music() {
                     onChange={(e) => setForm({ ...form, instrument: e.target.value })}
                     className="field"
                   >
-                    {instrumentNames.map((name) => <option key={name}>{name}</option>)}
+                    {INSTRUMENTS.map((inst) => <option key={inst.name}>{inst.name}</option>)}
                   </select>
                   <select
                     value={form.level}

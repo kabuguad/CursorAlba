@@ -5,6 +5,14 @@ import { useToast } from '../contexts/ToastContext'
 import { useState } from 'react'
 import { useCoCurrSection } from '../hooks/useCoCurrSection'
 
+const DANCE_STYLES = [
+  { icon: '🩰', name: 'Ballet', desc: 'Classical technique, barre work and performance choreography.' },
+  { icon: '💫', name: 'Contemporary', desc: 'Modern movement, improvisation and creative expression.' },
+  { icon: '🌍', name: 'African Dance', desc: "Rooted in Kenya's rich cultural traditions and heritage." },
+  { icon: '🎤', name: 'Hip-Hop', desc: 'Street dance, breaking and urban choreography.' },
+  { icon: '🎭', name: 'Drama', desc: 'Script, stagecraft, voice and movement for theatre performance.' },
+]
+
 const PAST_PLAYS = [
   {
     year: '2024',
@@ -50,17 +58,14 @@ const SCHEDULE = [
 ]
 
 export function DramaDance() {
-  const { category, activities, isLoading } = useCoCurrSection('drama')
+  // 'performing' matches "Creative & Performing Arts" — the API category covering Music, Dance & Drama
+  const { category, activities, isLoading } = useCoCurrSection('performing')
   const { showToast } = useToast()
 
   const heroHeadline    = category?.heading ?? 'Drama & Dance'
   const heroSubheadline = category?.intro   ?? 'Mirror-walled studios · Professional lighting · Sprung floors · 4K capture for portfolio development.'
 
-  const styleNames = activities.length > 0
-    ? activities.map(a => a.name)
-    : ['Drama', 'Ballet', 'Contemporary', 'African Dance', 'Hip-Hop']
-
-  const [form, setForm] = useState({ name: '', email: '', interest: styleNames[0] ?? 'Drama' })
+  const [form, setForm] = useState({ name: '', email: '', interest: DANCE_STYLES[0].name })
 
   return (
     <div className="relative">
@@ -81,27 +86,45 @@ export function DramaDance() {
           <p className="mx-auto max-w-2xl text-muted">{heroSubheadline}</p>
         </ScrollReveal>
 
+        {/* Creative Arts programmes from the API */}
+        {(isLoading || activities.length > 0) && (
+          <ScrollReveal className="mt-4">
+            <h2 className="mb-6 text-center text-2xl font-bold">Creative Arts Programmes</h2>
+            {isLoading ? (
+              <div className="flex gap-4 justify-center">
+                {[1, 2, 3].map(i => <div key={i} className="h-24 w-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}
+              </div>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-4">
+                {activities.map((a, i) => (
+                  <ScrollReveal key={a.id} delay={i * 0.08}>
+                    <GlassCard className="flex items-center gap-3 px-5 py-3">
+                      <span className="text-2xl">{a.icon}</span>
+                      <div>
+                        <p className="font-bold text-primary dark:text-gold">{a.name}</p>
+                        <p className="text-xs text-muted max-w-[200px]">{a.description}</p>
+                      </div>
+                    </GlassCard>
+                  </ScrollReveal>
+                ))}
+              </div>
+            )}
+          </ScrollReveal>
+        )}
+
         <ScrollReveal className="mt-16">
           <h2 className="mb-8 text-center text-3xl font-bold">Dance Styles Offered</h2>
-          {isLoading ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[1,2,3,4].map(i => <div key={i} className="h-36 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)}
-            </div>
-          ) : activities.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {activities.map((d, i) => (
-                <ScrollReveal key={d.id} delay={i * 0.08}>
-                  <GlassCard className="p-6 text-center">
-                    <span className="mb-3 block text-5xl">{d.icon}</span>
-                    <h3 className="text-lg font-bold text-primary dark:text-gold">{d.name}</h3>
-                    <p className="mt-2 text-sm text-muted">{d.description}</p>
-                  </GlassCard>
-                </ScrollReveal>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-muted py-8">No dance styles listed yet.</p>
-          )}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {DANCE_STYLES.map((d, i) => (
+              <ScrollReveal key={d.name} delay={i * 0.08}>
+                <GlassCard className="p-6 text-center">
+                  <span className="mb-3 block text-5xl">{d.icon}</span>
+                  <h3 className="text-lg font-bold text-primary dark:text-gold">{d.name}</h3>
+                  <p className="mt-2 text-sm text-muted">{d.desc}</p>
+                </GlassCard>
+              </ScrollReveal>
+            ))}
+          </div>
         </ScrollReveal>
 
         <ScrollReveal className="mt-20">
@@ -164,7 +187,7 @@ export function DramaDance() {
               onSubmit={(e) => {
                 e.preventDefault()
                 showToast(`Trial booking for ${form.interest} submitted! We will be in touch.`)
-                setForm({ name: '', email: '', interest: styleNames[0] ?? 'Drama' })
+                setForm({ name: '', email: '', interest: DANCE_STYLES[0].name })
               }}
               className="space-y-3"
             >
@@ -188,7 +211,7 @@ export function DramaDance() {
                 onChange={(e) => setForm({ ...form, interest: e.target.value })}
                 className="field"
               >
-                {styleNames.map(name => <option key={name}>{name}</option>)}
+                {DANCE_STYLES.map(d => <option key={d.name}>{d.name}</option>)}
               </select>
               <Button type="submit" variant="primary" className="w-full">Book Free Trial</Button>
             </form>

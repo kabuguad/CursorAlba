@@ -37,6 +37,19 @@ function slugify(s: string) {
   return s.toLowerCase().trim().replace(/\s+/g, '.').replace(/[^a-z0-9.]/g, '')
 }
 
+function ManagerRedirectCard({ icon, title, description, to }: { icon: string; title: string; description: string; to: string }) {
+  return (
+    <div className="mx-4 my-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-6 text-center">
+      <span className="text-4xl">{icon}</span>
+      <h3 className="mt-3 text-base font-bold text-gray-900 dark:text-white">{title}</h3>
+      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto">{description}</p>
+      <Link to={to} className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#E8B84B] px-4 py-2 text-sm font-semibold text-[#0d1b0d] hover:bg-[#d4a43a] transition">
+        Open Manager →
+      </Link>
+    </div>
+  )
+}
+
 function BlockField({
   block,
   value,

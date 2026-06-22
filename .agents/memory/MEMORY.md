@@ -1,3 +1,4 @@
 - [Portal service pattern](portal-service-pattern.md) — TypeScript interfaces from db.ts are type-only; use `import type { ... }` to avoid runtime "module does not provide export" errors in Vite.
 - [DB storage key versioning](db-storage-key.md) — bump `STORAGE_KEY` constant in db.ts whenever the DB schema or seed data changes to force fresh seed in sessionStorage.
 - [Portal data architecture](portal-data-architecture.md) — all portal data flows through `portalService.ts` → `mockGet`/`mockPost` → `useStudentData`/`useTeacherData`/`useParentData` hooks with TanStack Query; parent hooks resolve student via `user.linkedId`.
+- [Real API service pattern](real-api-pattern.md) — each domain has its own axios client in src/services/; field name mismatches between API and frontend are common (e.g. `desc` vs `description`, `heroHeadline` vs `headline`); always verify with a live curl before wiring.

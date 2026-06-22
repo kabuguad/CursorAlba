@@ -525,7 +525,8 @@ export function PagesManager() {
 
   // Direct-navigate pages — clicking the card goes straight to their sub-route
   const DIRECT_NAV: Record<string, string> = {
-    'pg-cocurr': '/dashboard/admin/site-content/co-curricular',
+    'pg-cocurr':      '/dashboard/admin/site-content/co-curricular',
+    'pg-facilities':  '/dashboard/admin/site-content/facilities',
   }
 
   // ── Page Card (replaces the old sidebar tree item) ──────────────────────
@@ -867,13 +868,14 @@ export function PagesManager() {
                       />
                     )}
 
-                    {/* Facilities-specific structured data panel */}
+                    {/* Facilities — managed in dedicated page-builder sub-route */}
                     {selectedPageId === 'pg-facilities' && (
-                      <>
-                        <hr className="my-2 border-theme" />
-                        <FacilitiesPanel qc={queryClient} />
-                        <div className="pb-8" />
-                      </>
+                      <ManagerRedirectCard
+                        icon="🏛"
+                        title="Facilities"
+                        description="Edit the page hero, add facilities, manage descriptions, highlights, images and publish status — all in one place."
+                        to="/dashboard/admin/site-content/facilities"
+                      />
                     )}
 
                     {/* Academics — inline manager */}

@@ -7,18 +7,11 @@ import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { Link } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
-import { useCmsBlocks } from '../hooks/useCmsData'
-import { contentService, type Facility } from '../services/contentService'
-import { unwrap } from '../services/mockApi'
-
-function useCms() {
-  const { data: blocks = [] } = useCmsBlocks('pg-facilities')
-  return (key: string, fallback: string) => blocks.find((b) => b.key === key)?.value || fallback
-}
+import { facilitiesApi, type FacilityDto } from '../services/facilitiesApi'
 
 interface FacilityModalProps {
   open: boolean
-  facility: Facility | null
+  facility: FacilityDto | null
   onClose: () => void
 }
 
@@ -108,23 +101,33 @@ function FacilityModal({ open, facility, onClose }: FacilityModalProps) {
 }
 
 export function Facilities() {
-  const get = useCms()
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
 
-  const { data: facilities = [], isLoading } = useQuery({
-    queryKey: ['facilities'],
-    queryFn: () => contentService.listFacilities().then(unwrap),
+  const { data: pageContent } = useQuery({
+    queryKey: ['facilities-page-content'],
+    queryFn: () => facilitiesApi.getPageContent(),
     staleTime: 60_000,
   })
 
-  const published = facilities.filter(f => f.isPublished)
-  const active = published.find((f) => f.id === selected) ?? null
+  const { data: facilities = [], isLoading } = useQuery({
+    queryKey: ['facilities'],
+    queryFn: () => facilitiesApi.getAll(),
+    staleTime: 60_000,
+  })
+
+  const published = facilities.filter(f => f.isPublished).sort((a, b) => a.sortOrder - b.sortOrder)
+  const active = published.find(f => f.facilityId === selectedId) ?? null
+
+  const headline   = pageContent?.headline    ?? 'Facilities'
+  const subheadline = pageContent?.subheadline ?? 'World-class infrastructure designed for modern learning — click any facility to explore.'
+  const ctaHeadline = pageContent?.ctaHeadline ?? 'Experience It In Person'
+  const ctaSubtext  = pageContent?.ctaSubtext  ?? "Book a campus tour and see our facilities first-hand. Adjacent to the Governor's Offices, Kutus."
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ScrollReveal className="mb-16 text-center">
-        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{get('hero.headline', 'Facilities')}</h1>
-        <p className="mx-auto max-w-2xl text-muted">{get('hero.subheadline', 'World-class infrastructure designed for modern learning — click any facility to explore.')}</p>
+        <h1 className="mb-4 text-5xl font-bold md:text-7xl">{headline}</h1>
+        <p className="mx-auto max-w-2xl text-muted">{subheadline}</p>
       </ScrollReveal>
 
       {isLoading ? (
@@ -134,9 +137,9 @@ export function Facilities() {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {published.map((f, i) => (
-            <ScrollReveal key={f.id} delay={i * 0.06}>
+            <ScrollReveal key={f.facilityId} delay={i * 0.06}>
               <button
-                onClick={() => setSelected(f.id)}
+                onClick={() => setSelectedId(f.facilityId)}
                 className="w-full text-left transition-all hover:scale-105"
               >
                 <GlassCard className="overflow-hidden p-0">
@@ -163,15 +166,15 @@ export function Facilities() {
       )}
 
       <FacilityModal
-        open={!!selected}
+        open={!!selectedId}
         facility={active}
-        onClose={() => setSelected(null)}
+        onClose={() => setSelectedId(null)}
       />
 
       <ScrollReveal className="mt-16 text-center">
         <GlassCard className="p-10">
-          <h2 className="mb-4 text-3xl font-bold">{get('cta.headline', 'Experience It In Person')}</h2>
-          <p className="mb-8 text-muted">{get('cta.subtext', "Book a campus tour and see our facilities first-hand. Adjacent to the Governor's Offices, Kutus.")}</p>
+          <h2 className="mb-4 text-3xl font-bold">{ctaHeadline}</h2>
+          <p className="mb-8 text-muted">{ctaSubtext}</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/contact">
               <Button variant="primary">Book a Campus Tour</Button>

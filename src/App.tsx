@@ -74,7 +74,8 @@ import { PagesManager }         from './pages/dashboards/admin/PagesManager'
 import { PublicStaffManager }  from './pages/dashboards/admin/PublicStaffManager'
 import { SiteContentManager }    from './pages/dashboards/admin/SiteContentManager'
 import { ActivitiesManager }     from './pages/dashboards/admin/ActivitiesManager'
-import { CoCurrPageBuilder }     from './pages/dashboards/admin/CoCurrPageBuilder'
+import { CoCurrPageBuilder }       from './pages/dashboards/admin/CoCurrPageBuilder'
+import { FacilitiesPageBuilder }   from './pages/dashboards/admin/FacilitiesPageBuilder'
 import { ParentsManager }      from './pages/dashboards/admin/ParentsManager'
 
 function App() {
@@ -157,6 +158,7 @@ function App() {
                 {/* Content & Media — new unified routes */}
                 <Route path="site-content"              element={<SiteContentManager />} />
                 <Route path="site-content/co-curricular" element={<CoCurrPageBuilder />} />
+                <Route path="site-content/facilities"   element={<FacilitiesPageBuilder />} />
                 <Route path="activities"                element={<ActivitiesManager />} />
                 <Route path="blog"          element={<BlogManager />} />
                 <Route path="events"        element={<EventsManager />} />

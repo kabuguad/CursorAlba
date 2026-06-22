@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { ArrowRight, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, CheckCircle2, Loader2, AlertTriangle } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { GlassCard } from '../components/ui/GlassCard'
 import { ScrollReveal } from '../components/ui/ScrollReveal'
@@ -17,16 +17,26 @@ const COLOR_MAP: Record<string, { bg: string; text: string; stat: string; border
 }
 
 export function WhyChooseUs() {
-  const { data: page } = useQuery({
+  const {
+    data: page,
+    isLoading: pageLoading,
+    isError: pageError,
+  } = useQuery({
     queryKey: ['wcu-page-content'],
     queryFn: () => whyChooseUsApi.getPageContent(),
     staleTime: 60_000,
+    retry: 2,
   })
 
-  const { data: allItems = [] } = useQuery({
+  const {
+    data: allItems = [],
+    isLoading: itemsLoading,
+    isError: itemsError,
+  } = useQuery({
     queryKey: ['wcu-items'],
     queryFn: () => whyChooseUsApi.getItems(),
     staleTime: 60_000,
+    retry: 2,
   })
 
   const published = allItems
@@ -45,45 +55,70 @@ export function WhyChooseUs() {
 
       {/* Hero */}
       <ScrollReveal className="mb-6 text-center">
-        <p className="mb-3 inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
-          {page?.tagline ?? 'The Alber Difference'}
-        </p>
-        <h1 className="mb-5 text-5xl font-bold text-primary dark:text-gold md:text-7xl">
-          {page?.headline ?? 'Why Choose Us?'}
-        </h1>
-        <p className="mx-auto max-w-2xl text-lg text-muted leading-relaxed">
-          {page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here's what makes us different."}
-        </p>
+        {pageLoading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-gold" />
+          </div>
+        ) : (
+          <>
+            <p className="mb-3 inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
+              {page?.tagline ?? 'The Alber Difference'}
+            </p>
+            <h1 className="mb-5 text-5xl font-bold text-primary dark:text-gold md:text-7xl">
+              {page?.headline ?? 'Why Choose Us?'}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-muted leading-relaxed">
+              {page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here's what makes us different."}
+            </p>
+          </>
+        )}
       </ScrollReveal>
 
       {/* Stats bar */}
-      <ScrollReveal delay={0.1} className="mb-20">
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {stats.map((s, i) => (
-            <motion.div
-              key={s.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.05 * i, duration: 0.5 }}
-            >
-              <GlassCard className="p-6 text-center" hover={false}>
-                <p className="text-3xl font-black text-primary dark:text-gold md:text-4xl">{s.value}</p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-muted">{s.label}</p>
-              </GlassCard>
-            </motion.div>
-          ))}
-        </div>
-      </ScrollReveal>
+      <div className="mb-20 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {stats.map((s, i) => (
+          <motion.div
+            key={s.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 + 0.08 * i, duration: 0.5 }}
+          >
+            <GlassCard className="p-6 text-center" hover={false}>
+              <p className="text-3xl font-black text-primary dark:text-gold md:text-4xl">{s.value}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-muted">{s.label}</p>
+            </GlassCard>
+          </motion.div>
+        ))}
+      </div>
 
       {/* Main difference cards */}
-      {published.length > 0 && (
+      {itemsLoading ? (
+        <div className="mb-20 space-y-4">
+          {[1, 2, 3].map(n => (
+            <div key={n} className="flex gap-6">
+              <div className="h-48 w-64 flex-shrink-0 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />
+              <div className="flex-1 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />
+            </div>
+          ))}
+        </div>
+      ) : itemsError ? (
+        <div className="mb-20 rounded-2xl border border-red-200 bg-red-50 dark:bg-red-500/10 dark:border-red-500/20 p-8 text-center">
+          <AlertTriangle className="mx-auto mb-3 h-8 w-8 text-red-500" />
+          <p className="font-semibold text-red-700 dark:text-red-400">Could not load reasons</p>
+          <p className="mt-1 text-sm text-red-600/80 dark:text-red-400/70">Please check your connection and try again.</p>
+        </div>
+      ) : published.length > 0 ? (
         <div className="mb-20 space-y-10">
           {published.map((item, i) => {
             const c = COLOR_MAP[item.color] ?? COLOR_MAP.gold
             const isEven = i % 2 === 0
             return (
-              <ScrollReveal key={item.whyChooseUsItemId} delay={0.05}>
+              <motion.div
+                key={item.whyChooseUsItemId}
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * i, duration: 0.5 }}
+              >
                 <div className={`flex flex-col gap-6 lg:flex-row lg:items-center ${!isEven ? 'lg:flex-row-reverse' : ''}`}>
                   {/* Icon / stat side */}
                   <div className="flex-shrink-0 lg:w-64">
@@ -105,11 +140,11 @@ export function WhyChooseUs() {
                     <p className="leading-relaxed text-muted">{item.description}</p>
                   </GlassCard>
                 </div>
-              </ScrollReveal>
+              </motion.div>
             )
           })}
         </div>
-      )}
+      ) : null}
 
       {/* Proof points / testimonial strip */}
       <ScrollReveal className="mb-20">

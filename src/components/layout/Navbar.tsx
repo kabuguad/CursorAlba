@@ -26,6 +26,7 @@ const NAV_LEFT = [
 
 const NAV_RIGHT = [
   { to: '/staff', label: 'Staff' },
+  { to: '/gallery', label: 'Gallery' },
   { to: '/admissions', label: 'Admissions' },
   { to: '/contact', label: 'Contact' },
 ]

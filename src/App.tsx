@@ -21,6 +21,7 @@ import { Login } from './pages/Login'
 import { Blog } from './pages/Blog'
 import { BlogPost } from './pages/BlogPost'
 import { WhyChooseUs } from './pages/WhyChooseUs'
+import { Gallery } from './pages/Gallery'
 
 import { TeacherPortalLayout }  from './pages/dashboards/teacher/TeacherPortalLayout'
 import { TeacherOverview }      from './pages/dashboards/teacher/TeacherOverview'
@@ -104,6 +105,7 @@ function App() {
                 <Route path="blog"          element={<Blog />} />
                 <Route path="blog/:id"      element={<BlogPost />} />
                 <Route path="why-choose-us" element={<WhyChooseUs />} />
+                <Route path="gallery"       element={<Gallery />} />
                 <Route path="login"         element={<Login />} />
               </Route>
 

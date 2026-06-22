@@ -1,92 +1,79 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen, Globe, Users, Baby, FlaskConical, GraduationCap, Sprout, Loader2 } from 'lucide-react'
+import {
+  ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen,
+  Globe, Baby, FlaskConical, GraduationCap, Loader2,
+  Star, Heart, Lightbulb, Users, Target, Zap,
+} from 'lucide-react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { Button } from '../components/ui/Button'
 import { GlassCard } from '../components/ui/GlassCard'
-import { ScrollReveal } from '../components/ui/ScrollReveal'
-import { AnimatedCounter } from '../components/ui/AnimatedCounter'
 import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
 import { useCmsVal } from '../hooks/useCmsData'
-import type { PublicEvent, PublicProgramLevel } from '../services/db'
 
 const HERO_IMAGES = [
-  'https://picsum.photos/seed/alber-campus/1200/800',
-  'https://picsum.photos/seed/alber-class/1200/800',
-  'https://picsum.photos/seed/alber-sports/1200/800',
-  'https://picsum.photos/seed/alber-arts/1200/800',
+  'https://picsum.photos/seed/alber-campus/1400/900',
+  'https://picsum.photos/seed/alber-class/1400/900',
+  'https://picsum.photos/seed/alber-sports/1400/900',
+  'https://picsum.photos/seed/alber-arts/1400/900',
 ]
 
 const TESTIMONIALS = [
-  { name: 'Grace Njeri', role: 'Parent · Grade 5', quote: 'Alber School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
-  { name: 'Brian Mutua', role: 'Student · Grade 9', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Alber.' },
-  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', quote: 'Both my children attend Alber. From Playgroup all the way to Senior School — the continuity and quality are simply unmatched in Kirinyaga.' },
-  { name: 'Amina Ochieng', role: 'Student · Music Academy', quote: 'I performed my first piano recital here in Grade 5. The music teachers are genuinely world-class professionals.' },
+  { name: 'Grace Njeri', role: 'Parent · Grade 5', initials: 'GN', quote: 'Alber School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
+  { name: 'Brian Mutua', role: 'Student · Grade 9', initials: 'BM', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Alber.' },
+  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', initials: 'SK', quote: 'Both my children attend Alber. From Playgroup all the way to Senior School — the continuity and quality are simply unmatched.' },
+  { name: 'Amina Ochieng', role: 'Student · Music Academy', initials: 'AO', quote: 'I performed my first piano recital here in Grade 5. The music teachers are genuinely world-class professionals.' },
 ]
 
-const GALLERY = [
-  'https://picsum.photos/seed/alber-g1/400/400',
-  'https://picsum.photos/seed/alber-g2/400/400',
-  'https://picsum.photos/seed/alber-g3/400/400',
-  'https://picsum.photos/seed/alber-g4/400/400',
-  'https://picsum.photos/seed/alber-g5/400/400',
-  'https://picsum.photos/seed/alber-g6/400/400',
-  'https://picsum.photos/seed/alber-g7/400/400',
-  'https://picsum.photos/seed/alber-g8/400/400',
-  'https://picsum.photos/seed/alber-g9/400/400',
+const CORE_VALUES = [
+  { icon: Star,       label: 'Excellence',   desc: 'We pursue the highest standards in everything — academic, co-curricular, and personal growth.',  color: 'from-yellow-500/20 to-yellow-500/5',  ring: 'ring-yellow-400/40',  text: 'text-yellow-500 dark:text-yellow-400' },
+  { icon: Heart,      label: 'Integrity',    desc: 'Honesty, accountability, and respect form the moral backbone of every Alber learner and staff member.', color: 'from-rose-500/20 to-rose-500/5',     ring: 'ring-rose-400/40',    text: 'text-rose-500 dark:text-rose-400' },
+  { icon: Lightbulb,  label: 'Innovation',   desc: 'Curiosity, creativity, and a growth mindset are nurtured so every learner becomes a lifelong problem-solver.', color: 'from-blue-500/20 to-blue-500/5',    ring: 'ring-blue-400/40',    text: 'text-blue-500 dark:text-blue-400' },
+  { icon: Users,      label: 'Community',    desc: 'We are a family — parents, teachers, and learners united by a shared vision for Kirinyaga\'s future.', color: 'from-green-500/20 to-green-500/5',  ring: 'ring-green-400/40',   text: 'text-green-500 dark:text-green-400' },
+  { icon: Target,     label: 'Purpose',      desc: 'Every programme, policy, and pedagogy is designed with a single aim: unlocking each child\'s unique genius.', color: 'from-purple-500/20 to-purple-500/5',ring: 'ring-purple-400/40',  text: 'text-purple-500 dark:text-purple-400' },
+  { icon: Zap,        label: 'Resilience',   desc: 'We build children who rise — emotionally strong, adaptable, and ready for whatever tomorrow brings.',  color: 'from-orange-500/20 to-orange-500/5',ring: 'ring-orange-400/40',  text: 'text-orange-500 dark:text-orange-400' },
 ]
 
 const WHY_ALBER = [
-  {
-    icon: Baby,
-    level: 'ECDE · PP1 & PP2',
-    title: 'Play-Based Early Years',
-    desc: 'Our trained ECD specialists guide children aged 2–5 through structured play, sensory discovery, and social development — laying a confident foundation before formal schooling begins.',
-    color: 'bg-pink-500/10 text-pink-500 dark:bg-pink-400/10 dark:text-pink-400',
-  },
-  {
-    icon: BookOpen,
-    level: 'Primary · Grades 1–6',
-    title: 'CBC Literacy & Numeracy Excellence',
-    desc: 'Learner-centred, project-based CBC teaching builds strong literacy, numeracy, and critical thinking. Continuous assessment replaces high-stakes exams — every child progresses at their own pace.',
-    color: 'bg-blue-500/10 text-blue-500 dark:bg-blue-400/10 dark:text-blue-400',
-  },
-  {
-    icon: FlaskConical,
-    level: 'Junior Secondary · Grades 7–9',
-    title: 'STEM, Careers & Community',
-    desc: "Kenya's CBC Junior Secondary curriculum with dedicated STEM labs, career pathway exploration, Community Service Learning (CSL), and Career & Technical Skills — preparing learners for a modern economy.",
-    color: 'bg-emerald-500/10 text-emerald-500 dark:bg-emerald-400/10 dark:text-emerald-400',
-  },
-  {
-    icon: GraduationCap,
-    level: 'Senior School · Grades 10–12',
-    title: 'KCSE & IGCSE University Pathways',
-    desc: 'Rigorous KCSE preparation alongside optional Cambridge IGCSE & A-Level tracks. Dedicated university counselling from Grade 10 — graduates placed in Kenyan and international universities.',
-    color: 'bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-400',
-  },
-  {
-    icon: Trophy,
-    level: 'All Levels',
-    title: 'Holistic Co-Curricular Life',
-    desc: 'Every learner — from PP1 to Grade 12 — participates in sports, music, drama, or dance. Our professional coaches and ABRSM-registered music teachers develop talent alongside academics.',
-    color: 'bg-gold/10 text-gold dark:bg-gold/10 dark:text-gold',
-  },
-  {
-    icon: ShieldCheck,
-    level: 'All Levels',
-    title: 'Safe, Certified & Fully Staffed',
-    desc: 'TSC-registered teachers, CCTV-monitored classrooms, a fully fenced campus, and a maximum of 30 learners per class — a structured, safe environment where every child is known by name.',
-    color: 'bg-primary/10 text-primary dark:bg-primary/10 dark:text-gold',
-  },
+  { icon: Baby,         level: 'ECDE · PP1 & PP2',           title: 'Play-Based Early Years',            desc: 'ECD specialists guide children through structured play, sensory discovery, and social development — laying a confident foundation.',     color: 'bg-pink-500/10 text-pink-500' },
+  { icon: BookOpen,     level: 'Primary · Grades 1–6',        title: 'CBC Literacy & Numeracy',           desc: 'Learner-centred, project-based CBC teaching builds strong literacy, numeracy, and critical thinking.',                                   color: 'bg-blue-500/10 text-blue-500' },
+  { icon: FlaskConical, level: 'Junior Secondary · Gr. 7–9',  title: 'STEM, Careers & Community',         desc: 'Dedicated STEM labs, career pathway exploration, Community Service Learning, and Career & Technical Skills.',                            color: 'bg-emerald-500/10 text-emerald-500' },
+  { icon: GraduationCap,level: 'Senior School · Gr. 10–12',   title: 'KCSE & IGCSE University Pathways',  desc: 'Rigorous KCSE preparation plus Cambridge IGCSE & A-Level tracks with dedicated university counselling from Grade 10.',                     color: 'bg-purple-500/10 text-purple-500' },
+  { icon: Trophy,       level: 'All Levels',                  title: 'Holistic Co-Curricular Life',       desc: 'Every learner from PP1 to Grade 12 participates in sports, music, drama, or dance guided by professional coaches.',                     color: 'bg-gold/10 text-gold' },
+  { icon: ShieldCheck,  level: 'All Levels',                  title: 'Safe, Certified & Fully Staffed',   desc: 'TSC-registered teachers, CCTV-monitored classrooms, a fully fenced campus, and max 30 learners per class.',                             color: 'bg-primary/10 text-primary dark:text-gold' },
 ]
 
 const PROGRAM_ICONS: Record<string, string> = {
-  daycare: '🌱',
-  primary: '📚',
-  junior: '🔬',
-  senior: '🎓',
+  daycare: '🌱', primary: '📚', junior: '🔬', senior: '🎓',
+}
+
+function AnimatedCounter({ end, suffix = '' }: { end: number; suffix?: string }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true })
+  useEffect(() => {
+    if (!inView) return
+    let start = 0
+    const step = Math.ceil(end / 60)
+    const t = setInterval(() => {
+      start = Math.min(start + step, end)
+      setCount(start)
+      if (start >= end) clearInterval(t)
+    }, 24)
+    return () => clearInterval(t)
+  }, [inView, end])
+  return <span ref={ref}>{count.toLocaleString()}{suffix}</span>
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-primary dark:text-gold">
+      <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+      {children}
+    </span>
+  )
 }
 
 export function Home() {
@@ -98,360 +85,377 @@ export function Home() {
     queryKey: ['public-events'],
     queryFn: () => contentService.listEvents().then(unwrap),
   })
-
   const { data: programLevels = [], isLoading: programsLoading } = useQuery({
     queryKey: ['public-programs'],
     queryFn: () => contentService.listProgramLevels().then(unwrap),
   })
-
   const { data: galleryImages = [], isLoading: galleryLoading } = useQuery({
     queryKey: ['public-gallery'],
     queryFn: () => contentService.listGalleryImages().then(unwrap).then(imgs => imgs.filter(img => img.isPublic).slice(0, 9)),
   })
 
   useEffect(() => {
-    const t = setInterval(() => setSlide((s) => (s + 1) % HERO_IMAGES.length), 5000)
+    const t = setInterval(() => setSlide(s => (s + 1) % HERO_IMAGES.length), 5000)
     return () => clearInterval(t)
   }, [])
-
   useEffect(() => {
-    const t = setInterval(() => setTestimonial((s) => (s + 1) % TESTIMONIALS.length), 6000)
+    const t = setInterval(() => setTestimonial(s => (s + 1) % TESTIMONIALS.length), 6000)
     return () => clearInterval(t)
   }, [])
 
-  const upcomingEvents = events.filter((e) => !e.isPast).slice(0, 6)
+  const upcomingEvents = events.filter(e => !e.isPast).slice(0, 4)
   const displayPrograms = programLevels.length > 0 ? programLevels : []
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="flex flex-col">
+      {/* ══════════════════════════════════════════
+          HERO — Full-bleed cinematic
+      ══════════════════════════════════════════ */}
+      <section className="relative overflow-hidden" style={{ minHeight: 'min(100svh, 900px)' }}>
+        {/* Background slideshow */}
+        {HERO_IMAGES.map((img, i) => (
+          <img
+            key={img}
+            src={img}
+            alt="Alber School Campus"
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
+          />
+        ))}
 
-        {/* ════════════════════════════════════════
-            MOBILE / TABLET  (< lg)
-            Image in a proper aspect-ratio box so
-            the full landscape photo is visible,
-            then content stacked below.
-        ════════════════════════════════════════ */}
-        <div className="lg:hidden flex flex-col">
+        {/* Layered overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
-          {/* Image carousel — 3:2 ratio matches the 1200×800 source images */}
-          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '3/2' }}>
+        {/* Gold left accent */}
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
 
-            {/* Left gold accent */}
-            <div className="absolute left-0 top-0 bottom-0 z-10 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+        {/* Slide dots — desktop right */}
+        <div className="absolute bottom-32 right-8 z-10 hidden lg:flex flex-col gap-2">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setSlide(i)}
+              className={`rounded-full transition-all ${i === slide ? 'h-8 w-2 bg-gold' : 'h-2 w-2 bg-white/30'}`}
+            />
+          ))}
+        </div>
 
-            {HERO_IMAGES.map((img, i) => (
-              <img
-                key={img}
-                src={img}
-                alt="Alber School Campus"
-                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
-              />
-            ))}
+        {/* Main content */}
+        <div className="relative z-10 mx-auto flex min-h-[inherit] max-w-7xl flex-col justify-center gap-10 px-6 py-24 lg:flex-row lg:items-center lg:px-16">
 
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/20" />
-
-            {/* School name badge — top left */}
-            <div className="absolute top-4 left-5 z-10 flex items-center gap-2">
-              <div className="h-px w-6 bg-gold" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold drop-shadow">
-                Kutus · Kirinyaga County
-              </span>
+          {/* LEFT: Headline */}
+          <motion.div
+            className="flex-1"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+          >
+            <div className="mb-6 flex items-center gap-3">
+              <div className="h-px w-10 bg-gold" />
+              <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">Kutus · Kirinyaga County · Est. 2005</span>
             </div>
 
-            {/* ── Director card — centered on small, right-aligned + larger on md ── */}
-            <div className="absolute inset-0 z-10 flex items-center justify-end pr-6 md:pr-10">
-              <div className="flex flex-col items-center gap-3 px-4 text-center">
-
-                {/* Circular photo */}
-                <div className="relative">
-                  <div className="absolute -inset-2 animate-pulse rounded-full border border-gold/30" />
-                  <div className="absolute -inset-0.5 animate-ping rounded-full border border-gold/20" style={{ animationDuration: '2.8s' }} />
-                  <div className="relative h-20 w-20 overflow-hidden rounded-full border-2 border-gold shadow-[0_0_20px_4px_rgba(232,184,75,0.4)] md:h-32 md:w-32 md:border-[3px] md:shadow-[0_0_32px_6px_rgba(232,184,75,0.4)]">
-                    <img
-                      src="https://picsum.photos/seed/director-alber/400/400"
-                      alt="Mr. Albert Njeru"
-                      className="h-full w-full object-cover object-top"
-                    />
-                  </div>
-                  <div className="absolute bottom-0.5 right-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-[9px] font-bold text-black md:h-7 md:w-7 md:text-[11px]">✓</div>
-                </div>
-
-                {/* Glass card: name + quote */}
-                <div className="relative max-w-[220px] overflow-hidden rounded-2xl border border-white/20 bg-black/50 px-4 py-3 backdrop-blur-md md:max-w-[320px] md:px-6 md:py-5">
-                  {/* Corner accents */}
-                  <div className="absolute -top-1 -left-1 h-4 w-4 border-t border-l border-gold md:h-5 md:w-5" />
-                  <div className="absolute -top-1 -right-1 h-4 w-4 border-t border-r border-gold md:h-5 md:w-5" />
-                  <div className="absolute -bottom-1 -left-1 h-4 w-4 border-b border-l border-gold md:h-5 md:w-5" />
-                  <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b border-r border-gold md:h-5 md:w-5" />
-
-                  <p className="text-sm font-extrabold uppercase tracking-wide text-white md:text-lg">{get('director.name', 'Mr. Albert Njeru')}</p>
-                  <div className="my-1.5 flex items-center justify-center gap-2">
-                    <div className="h-px w-4 bg-gold md:w-6" />
-                    <p className="text-[9px] font-semibold uppercase tracking-widest text-gold md:text-[11px]">{get('director.title', 'Founder & Director')}</p>
-                    <div className="h-px w-4 bg-gold md:w-6" />
-                  </div>
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-                  <p className="mt-2 text-[10px] italic leading-relaxed text-white/70 md:mt-3 md:text-sm">
-                    "{get('director.quote', 'Every child in Kirinyaga deserves an education that changes the trajectory of a family.')}"
-                  </p>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Horizontal slide dots — bottom centre */}
-            <div className="absolute bottom-4 left-0 right-0 z-10 flex items-center justify-center gap-2">
-              {HERO_IMAGES.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSlide(i)}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === slide ? 'w-6 h-2 bg-gold' : 'w-2 h-2 bg-white/50'
-                  }`}
-                />
-              ))}
-            </div>
-
-            {/* Slide counter — bottom right */}
-            <div className="absolute bottom-3.5 right-4 z-10 text-[10px] font-bold tabular-nums text-white/50">
-              {slide + 1} / {HERO_IMAGES.length}
-            </div>
-          </div>
-
-          {/* Content block */}
-          <div className="bg-[#0a0a0a] px-6 pt-8 pb-6 sm:px-10 sm:pt-10">
-
-            {/* Est. badge */}
-            <div className="mb-5 flex items-center gap-3">
-              <div className="h-px w-8 bg-gold" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold">Est. 2005</span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="mb-4 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.2rem, 8vw, 3.4rem)' }}>
+            <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}>
               {get('hero.tagline', 'Where Excellence')}
               <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
                 {get('hero.taglineGold', 'Meets Tomorrow')}
               </span>
             </h1>
 
-            {/* Divider */}
-            <div className="mb-5 flex items-center gap-3">
-              <div className="h-px w-14 bg-gold/60" />
-              <span className="text-[10px] uppercase tracking-widest text-white/40">Alber School</span>
-              <div className="h-px w-14 bg-gold/60" />
+            <div className="mb-8 flex items-center gap-4">
+              <div className="h-px w-20 bg-gold/60" />
+              <span className="text-xs uppercase tracking-widest text-white/50">Alber School</span>
+              <div className="h-px w-20 bg-gold/60" />
             </div>
 
-            {/* Tagline */}
-            <p className="mb-7 text-base leading-relaxed text-white/70">
-              {get('hero.subtitle', 'Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.')}
+            <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
+              {get('hero.subtitle', "Kenya's premier learning institution — where every learner discovers their genius in world-class facilities guided by expert educators.")}
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link to="/admissions" className="flex-1 sm:flex-none">
-                <Button variant="gold" className="w-full sm:w-auto">
-                  Apply Now <ArrowRight className="h-4 w-4" />
-                </Button>
+            <div className="flex flex-wrap gap-4">
+              <Link to="/admissions">
+                <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
               </Link>
-              <Link to="/academics" className="flex-1 sm:flex-none">
-                <button className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+              <Link to="/academics">
+                <button className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
                   Explore Programs <ArrowRight className="h-4 w-4" />
                 </button>
               </Link>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Stats bar — mobile */}
-          <div className="border-t border-white/10 bg-black/90">
-            <div className="grid grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
-              {[
-                { value: get('stats.students', '2,000+'), label: 'Students Enrolled' },
-                { value: get('stats.teachers', '120+'), label: 'Expert Educators' },
-                { value: get('stats.established', '2005'), label: 'Est.' },
-                { value: '6', label: 'Sports Disciplines' },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center py-4 px-2 text-center">
-                  <span className="text-2xl font-extrabold text-gold">{stat.value}</span>
-                  <span className="mt-0.5 text-[10px] uppercase tracking-widest text-white/50 leading-tight">{stat.label}</span>
+          {/* RIGHT: Director card — redesigned */}
+          <motion.div
+            className="hidden lg:block lg:w-80 xl:w-96 shrink-0"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: 'easeOut' }}
+          >
+            {/* Photo */}
+            <div className="relative mb-0 flex justify-center">
+              {/* Outer glow rings */}
+              <div className="absolute inset-0 flex items-end justify-center pb-6">
+                <div className="h-52 w-52 animate-pulse rounded-full border-2 border-gold/15" style={{ animationDuration: '3s' }} />
+              </div>
+              <div className="absolute inset-0 flex items-end justify-center pb-6">
+                <div className="h-44 w-44 animate-pulse rounded-full border border-gold/25" style={{ animationDuration: '2s' }} />
+              </div>
+
+              <div className="relative z-10">
+                {/* Gold arch label above */}
+                <div className="mb-2 flex items-center justify-center gap-2">
+                  <div className="h-px w-8 bg-gold/60" />
+                  <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-gold/80">School Director</span>
+                  <div className="h-px w-8 bg-gold/60" />
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
 
-        {/* ════════════════════════════════════════
-            DESKTOP  (lg+)
-            Original full-bleed magazine layout
-        ════════════════════════════════════════ */}
-        <div className="hidden lg:flex lg:min-h-screen lg:flex-col lg:overflow-hidden lg:relative">
+                {/* Photo frame */}
+                <div className="relative mx-auto w-fit">
+                  {/* Corner brackets */}
+                  <div className="absolute -top-2 -left-2 h-5 w-5 border-t-2 border-l-2 border-gold z-20" />
+                  <div className="absolute -top-2 -right-2 h-5 w-5 border-t-2 border-r-2 border-gold z-20" />
+                  <div className="absolute -bottom-2 -left-2 h-5 w-5 border-b-2 border-l-2 border-gold z-20" />
+                  <div className="absolute -bottom-2 -right-2 h-5 w-5 border-b-2 border-r-2 border-gold z-20" />
 
-          {/* Background slideshow */}
-          {HERO_IMAGES.map((img, i) => (
-            <img
-              key={img}
-              src={img}
-              alt="Alber School Campus"
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${i === slide ? 'opacity-100' : 'opacity-0'}`}
-            />
-          ))}
-
-          {/* Rich gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
-
-          {/* Gold accent bar — left edge */}
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
-
-          {/* Slide dots — bottom right, vertical */}
-          <div className="absolute bottom-28 right-8 z-10 flex flex-col gap-2">
-            {HERO_IMAGES.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setSlide(i)}
-                className={`rounded-full transition-all ${i === slide ? 'h-8 w-2 bg-gold' : 'h-2 w-2 bg-white/40'}`}
-              />
-            ))}
-          </div>
-
-          {/* Main content — two-column */}
-          <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 items-center gap-8 px-8 py-24 lg:px-16">
-
-            {/* Left: headline + CTAs */}
-            <div className="flex-1">
-              <div className="mb-8 flex items-center gap-3">
-                <div className="h-px w-10 bg-gold" />
-                <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">
-                  Kutus · Kirinyaga County · Est. 2005
-                </span>
-              </div>
-
-              <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)' }}>
-                {get('hero.tagline', 'Where Excellence')}
-                <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
-                  {get('hero.taglineGold', 'Meets Tomorrow')}
-                </span>
-              </h1>
-
-              <div className="mb-8 flex items-center gap-4">
-                <div className="h-px w-20 bg-gold/60" />
-                <span className="text-xs uppercase tracking-widest text-white/50">Alber School</span>
-                <div className="h-px w-20 bg-gold/60" />
-              </div>
-
-              <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
-                {get('hero.subtitle', 'Premium private education in the heart of Kirinyaga. 2,000+ learners, 120+ expert educators — academics, sports, music, and performing arts under one roof.')}
-              </p>
-
-              <div className="flex flex-wrap gap-4">
-                <Link to="/admissions">
-                  <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
-                </Link>
-                <Link to="/academics">
-                  <button className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
-                    Explore Programs <ArrowRight className="h-4 w-4" />
-                  </button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Right: Director's fancy card */}
-            <div className="hidden lg:flex lg:w-80 xl:w-96 shrink-0 flex-col">
-              <div className="relative pt-[108px]">
-                <div className="absolute top-0 left-1/2 z-20 -translate-x-1/2">
-                  <div className="absolute -inset-3 animate-pulse rounded-full border border-gold/20" />
-                  <div className="absolute -inset-1 animate-ping rounded-full border border-gold/30" style={{ animationDuration: '2.5s' }} />
-                  <div className="relative h-36 w-36 overflow-hidden rounded-full border-[3px] border-gold shadow-[0_0_32px_6px_rgba(232,184,75,0.35)]">
+                  <div className="relative h-44 w-44 overflow-hidden rounded-2xl border-2 border-gold/60 shadow-[0_0_40px_8px_rgba(232,184,75,0.3)]">
                     <img
                       src="https://picsum.photos/seed/director-alber/400/400"
-                      alt="Mr. Albert Njeru"
-                      className="h-full w-full object-cover object-top"
+                      alt={get('director.name', 'Dr. Alice Mwangi')}
+                      className="h-full w-full object-cover object-top scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   </div>
-                  <div className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-black/80 bg-gold text-black text-[10px] font-bold">✓</div>
+
+                  {/* Verified badge */}
+                  <div className="absolute -bottom-3 -right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full border-2 border-black/70 bg-gold text-black text-sm font-black shadow-lg">✓</div>
                 </div>
+              </div>
+            </div>
 
-                <div className="relative">
-                  <div className="absolute -top-2 -left-2 h-6 w-6 border-t-2 border-l-2 border-gold" />
-                  <div className="absolute -top-2 -right-2 h-6 w-6 border-t-2 border-r-2 border-gold" />
-                  <div className="absolute -bottom-2 -left-2 h-6 w-6 border-b-2 border-l-2 border-gold" />
-                  <div className="absolute -bottom-2 -right-2 h-6 w-6 border-b-2 border-r-2 border-gold" />
+            {/* Quote card */}
+            <div className="relative mt-6 overflow-hidden rounded-2xl border border-white/10 bg-black/65 backdrop-blur-xl">
+              {/* Top gold line */}
+              <div className="h-0.5 w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
 
-                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 backdrop-blur-xl">
-                    <div className="flex flex-col items-center pt-12 pb-5 px-6 bg-gradient-to-b from-white/5 to-transparent">
-                      <p className="text-base font-extrabold uppercase tracking-wide text-white">{get('director.name', 'Mr. Albert Njeru')}</p>
-                      <div className="mt-1.5 flex items-center gap-2">
-                        <div className="h-px w-6 bg-gold" />
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-gold">{get('director.title', 'Founder & Director')}</p>
-                        <div className="h-px w-6 bg-gold" />
-                      </div>
-                    </div>
+              <div className="px-6 pt-5 pb-2 text-center">
+                <p className="text-base font-extrabold uppercase tracking-wide text-white">{get('director.name', 'Dr. Alice Mwangi')}</p>
+                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-gold">{get('director.title', 'School Director')}</p>
+                <p className="mt-0.5 text-[10px] text-white/40">M.Ed., University of Nairobi</p>
+              </div>
 
-                    <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                    <div className="relative px-6 pt-5 pb-6">
-                      <span className="absolute top-1 left-4 font-serif text-7xl leading-none text-gold/20 select-none">"</span>
-                      <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
-                        {get('director.quote', 'Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.')}
-                      </p>
-                      <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-                        <span className="font-serif text-lg italic text-gold/80">{get('director.name', 'Albert Njeru')}</span>
-                        <span className="text-[10px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
-                      </div>
-                    </div>
-
-                    <div className="h-1 w-full bg-gradient-to-r from-gold/0 via-gold to-gold/0" />
-                  </div>
+              <div className="relative px-6 pt-4 pb-5">
+                <span className="absolute -top-1 left-3 font-serif text-7xl leading-none text-gold/15 select-none pointer-events-none">"</span>
+                <p className="relative z-10 text-sm italic leading-relaxed text-white/75">
+                  {get('director.quote', 'Every child in Kirinyaga deserves an education that changes the trajectory of a family for generations. That is the promise we keep, every single day.')}
+                </p>
+                <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
+                  <span className="font-serif text-base italic text-gold/80">{get('director.name', 'Alice Mwangi')}</span>
+                  <span className="text-[9px] uppercase tracking-widest text-white/30">M.Ed., UoN</span>
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center justify-center gap-2">
-                <div className="h-px flex-1 bg-white/10" />
-                <span className="text-[10px] uppercase tracking-[0.25em] text-white/30">A message from our Director</span>
-                <div className="h-px flex-1 bg-white/10" />
-              </div>
+              <div className="h-0.5 w-full bg-gradient-to-r from-gold/0 via-gold/50 to-gold/0" />
             </div>
-          </div>
 
-          {/* Stats bar — desktop */}
-          <div className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
-            <div className="mx-auto grid max-w-7xl grid-cols-4 divide-x divide-white/10">
-              {[
-                { value: get('stats.students', '2,000+'), label: 'Students Enrolled' },
-                { value: get('stats.teachers', '120+'), label: 'Expert Educators' },
-                { value: get('stats.established', '2005'), label: 'Est.' },
-                { value: '6', label: 'Sports Disciplines' },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
-                  <span className="text-3xl font-extrabold text-gold">{stat.value}</span>
-                  <span className="mt-1 text-xs uppercase tracking-widest text-white/60">{stat.label}</span>
-                </div>
-              ))}
+            <div className="mt-3 flex items-center justify-center gap-2">
+              <div className="h-px flex-1 bg-white/10" />
+              <span className="text-[9px] uppercase tracking-[0.25em] text-white/30">A message from our Director</span>
+              <div className="h-px flex-1 bg-white/10" />
             </div>
+          </motion.div>
+        </div>
+
+        {/* Stats bar */}
+        <div className="relative z-10 border-t border-white/10 bg-black/60 backdrop-blur-md">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
+            {[
+              { end: 2000, suffix: '+', label: 'Students Enrolled' },
+              { end: 120,  suffix: '+', label: 'Expert Educators' },
+              { end: 2005, suffix: '',  label: 'Est.' },
+              { end: 30,   suffix: '+', label: 'Co-Curricular Activities' },
+            ].map(stat => (
+              <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
+                <span className="text-2xl font-extrabold text-gold sm:text-3xl">
+                  <AnimatedCounter end={stat.end} suffix={stat.suffix} />
+                </span>
+                <span className="mt-1 text-[10px] uppercase tracking-widest text-white/50">{stat.label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
+        {/* Mobile slide dots */}
+        <div className="absolute bottom-20 left-0 right-0 z-10 flex items-center justify-center gap-2 lg:hidden">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setSlide(i)}
+              className={`rounded-full transition-all ${i === slide ? 'w-6 h-2 bg-gold' : 'w-2 h-2 bg-white/40'}`}
+            />
+          ))}
+        </div>
       </section>
 
-      {/* ── Why Alber ── */}
+      {/* ══════════════════════════════════════════
+          MISSION · VISION · MOTTO
+      ══════════════════════════════════════════ */}
+      <section className="py-24 bg-gradient-to-b from-white via-white to-gray-50 dark:from-[#0a0a0a] dark:via-[#0a0a0a] dark:to-[#0d0d0d]">
+        <div className="mx-auto max-w-7xl px-4">
+          <motion.div
+            className="mb-16 text-center"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectionLabel>Our Foundation</SectionLabel>
+            <h2 className="mt-2 text-4xl font-bold md:text-5xl">What We Stand For</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted">
+              The beliefs and ambitions that guide every decision, every lesson, and every life shaped at Alber School.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Mission */}
+            <motion.div
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.05 }}
+            >
+              <div className="relative h-full overflow-hidden rounded-3xl border border-blue-400/20 bg-gradient-to-br from-blue-500/10 to-blue-500/3 p-8 dark:from-blue-500/15 dark:to-blue-500/5">
+                <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-blue-400/10 blur-2xl -translate-y-8 translate-x-8" />
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/15 text-blue-500 dark:text-blue-400 ring-1 ring-blue-400/30">
+                  <Target className="h-7 w-7" />
+                </div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400">Our Mission</p>
+                <h3 className="mb-4 text-2xl font-bold">To Nurture Genius</h3>
+                <p className="leading-relaxed text-muted">
+                  To provide a world-class, holistic education that identifies and develops the unique genius in every child — equipping learners with the knowledge, skills, and values needed to thrive in a rapidly changing world.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Motto — center, elevated */}
+            <motion.div
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+            >
+              <div className="relative h-full overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-br from-[#E8B84B]/15 to-[#E8B84B]/3 p-8 dark:from-[#E8B84B]/20 dark:to-[#E8B84B]/5 shadow-[0_8px_40px_-8px_rgba(232,184,75,0.25)]">
+                <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-gold/10 blur-3xl -translate-y-10 translate-x-10" />
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gold/20 text-gold ring-1 ring-gold/40">
+                  <Star className="h-7 w-7" />
+                </div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-gold">Our Motto</p>
+                <h3 className="mb-4 text-2xl font-bold">Excellence in All</h3>
+                <div className="mb-5 h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
+                <p className="font-serif text-3xl italic font-semibold text-gold leading-snug">
+                  "Unlocking Every Child's Genius"
+                </p>
+                <p className="mt-4 leading-relaxed text-muted">
+                  Not just academic excellence — but excellence in character, creativity, sport, and service. Every Alber learner is known, valued, and challenged to be their very best.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Vision */}
+            <motion.div
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+            >
+              <div className="relative h-full overflow-hidden rounded-3xl border border-green-400/20 bg-gradient-to-br from-green-500/10 to-green-500/3 p-8 dark:from-green-500/15 dark:to-green-500/5">
+                <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-green-400/10 blur-2xl -translate-y-8 translate-x-8" />
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-green-500/15 text-green-500 dark:text-green-400 ring-1 ring-green-400/30">
+                  <Globe className="h-7 w-7" />
+                </div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-green-500 dark:text-green-400">Our Vision</p>
+                <h3 className="mb-4 text-2xl font-bold">Leaders for Tomorrow</h3>
+                <p className="leading-relaxed text-muted">
+                  To be the leading centre of learning excellence in East Africa — producing confident, compassionate, globally competitive graduates who transform their communities and lead with integrity.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          CORE VALUES
+      ══════════════════════════════════════════ */}
+      <section className="py-24 bg-tint/30 dark:bg-dark-card/30">
+        <div className="mx-auto max-w-7xl px-4">
+          <motion.div
+            className="mb-16 text-center"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectionLabel>Core Values</SectionLabel>
+            <h2 className="mt-2 text-4xl font-bold md:text-5xl">The Alber Character</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted">
+              Six pillars that shape the Alber graduate — a whole person ready to lead, serve, and flourish.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {CORE_VALUES.map((v, i) => (
+              <motion.div
+                key={v.label}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.07 }}
+              >
+                <div className={`group relative h-full overflow-hidden rounded-2xl border bg-gradient-to-br p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${v.color} ${v.ring} ring-1`}>
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${v.text} bg-current/10 ring-1 ring-current/20`}>
+                      <v.icon className="h-5 w-5" />
+                    </div>
+                    <h3 className={`text-lg font-bold ${v.text}`}>{v.label}</h3>
+                  </div>
+                  <p className="text-sm leading-relaxed text-muted">{v.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          WHY ALBER — programs by level
+      ══════════════════════════════════════════ */}
       <section className="py-24">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal className="mb-16 text-center">
-            <span className="mb-3 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
-              Why Choose Us
-            </span>
-            <h2 className="text-4xl font-bold md:text-5xl">The Alber Difference</h2>
+          <motion.div
+            className="mb-16 text-center"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectionLabel>Why Choose Us</SectionLabel>
+            <h2 className="mt-2 text-4xl font-bold md:text-5xl">The Alber Difference</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted">
-              What outstanding education looks like at every stage — from first steps to university.
+              Outstanding education at every stage — from first steps to university.
             </p>
-          </ScrollReveal>
+          </motion.div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {WHY_ALBER.map((item, i) => (
-              <ScrollReveal key={item.title} delay={i * 0.07}>
-                <GlassCard className="flex flex-col gap-4 p-6 h-full">
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.07 }}
+              >
+                <GlassCard className="flex flex-col gap-4 p-6 h-full hover:ring-2 hover:ring-gold/30 transition-all">
                   <div className="flex items-center gap-4">
                     <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${item.color}`}>
                       <item.icon className="h-6 w-6" />
@@ -465,27 +469,128 @@ export function Home() {
                     <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.desc}</p>
                   </div>
                 </GlassCard>
-              </ScrollReveal>
+              </motion.div>
             ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link to="/why-choose-us">
+              <Button variant="outline">See All Reasons <ArrowRight className="h-4 w-4" /></Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Programs Teaser ── */}
-      <section className="bg-tint/30 py-24 dark:bg-dark-card/30">
+      {/* ══════════════════════════════════════════
+          DIRECTOR'S MESSAGE — full section
+      ══════════════════════════════════════════ */}
+      <section className="py-24 bg-tint/30 dark:bg-dark-card/30 overflow-hidden">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal className="mb-16 text-center">
-            <span className="mb-3 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
-              Our Programs
-            </span>
-            <h2 className="text-4xl font-bold md:text-5xl">A School for Every Stage</h2>
+          <motion.div
+            className="mb-12 text-center"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectionLabel>Leadership</SectionLabel>
+            <h2 className="mt-2 text-4xl font-bold md:text-5xl">A Message From Our Director</h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <div className="relative overflow-hidden rounded-3xl border border-gold/20 bg-white dark:bg-[#111] shadow-2xl lg:flex">
+              {/* Left panel — photo + identity */}
+              <div className="relative flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-primary/90 to-primary/70 dark:from-[#0d1b0d] dark:to-[#0a120a] px-10 py-14 lg:w-80 shrink-0">
+                {/* Background pattern */}
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(232,184,75,0.3) 20px, rgba(232,184,75,0.3) 21px)' }} />
+
+                {/* Outer glow ring */}
+                <div className="relative z-10 mb-6">
+                  <div className="absolute -inset-4 rounded-full border-2 border-gold/20 animate-pulse" style={{ animationDuration: '3s' }} />
+                  <div className="absolute -inset-8 rounded-full border border-gold/10 animate-pulse" style={{ animationDuration: '4s' }} />
+
+                  {/* Photo */}
+                  <div className="relative h-48 w-48 overflow-hidden rounded-2xl border-4 border-gold/50 shadow-[0_0_50px_10px_rgba(232,184,75,0.3)]">
+                    <img
+                      src="https://picsum.photos/seed/director-alber/400/500"
+                      alt={get('director.name', 'Dr. Alice Mwangi')}
+                      className="h-full w-full object-cover object-top"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  </div>
+
+                  {/* Verified badge */}
+                  <div className="absolute -bottom-3 -right-3 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white/20 bg-gold text-black text-sm font-black shadow-xl">✓</div>
+                </div>
+
+                <div className="relative z-10 text-center">
+                  <p className="text-xl font-extrabold uppercase tracking-wide text-white">{get('director.name', 'Dr. Alice Mwangi')}</p>
+                  <div className="my-2 flex items-center justify-center gap-2">
+                    <div className="h-px w-6 bg-gold" />
+                    <p className="text-[11px] font-semibold uppercase tracking-widest text-gold">{get('director.title', 'School Director')}</p>
+                    <div className="h-px w-6 bg-gold" />
+                  </div>
+                  <p className="text-xs text-white/50">M.Ed., University of Nairobi</p>
+
+                  <div className="mt-6 flex flex-col gap-2">
+                    <Link to="/contact">
+                      <button className="w-full rounded-xl bg-gold px-5 py-2.5 text-xs font-bold text-black transition hover:bg-yellow-400">
+                        Book a Campus Tour
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right panel — full quote */}
+              <div className="relative flex flex-1 flex-col justify-center p-10 lg:p-14">
+                <Quote className="mb-6 h-12 w-12 text-gold opacity-40" />
+                <p className="text-lg leading-relaxed text-muted whitespace-pre-line">
+                  {get('director.quote', "When I founded Alber School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.\n\nToday, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Alber School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.\n\nWe warmly welcome you to come and see it for yourself.")}
+                </p>
+                <div className="mt-8 border-t border-gray-100 dark:border-white/10 pt-6 flex items-center justify-between flex-wrap gap-4">
+                  <div>
+                    <p className="font-serif text-xl italic text-gold">{get('director.name', 'Alice Mwangi')}</p>
+                    <p className="text-sm text-muted">{get('director.title', 'School Director')}, Alber School</p>
+                  </div>
+                  <Link to="/admissions">
+                    <Button variant="outline">Apply for 2026 <ArrowRight className="h-4 w-4" /></Button>
+                  </Link>
+                </div>
+
+                {/* Decorative corner accent */}
+                <div className="absolute bottom-0 right-0 h-32 w-32 rounded-tl-3xl bg-gold/5" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          PROGRAMS TEASER
+      ══════════════════════════════════════════ */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-4">
+          <motion.div
+            className="mb-16 text-center"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectionLabel>Our Programs</SectionLabel>
+            <h2 className="mt-2 text-4xl font-bold md:text-5xl">A School for Every Stage</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted">
               From first steps to university readiness — a single, nurturing institution your child can grow with for 16 years.
             </p>
-          </ScrollReveal>
+          </motion.div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {programsLoading ? (
-              <p className="col-span-full text-center text-muted py-8">Loading programs…</p>
+              [1,2,3,4].map(n => <div key={n} className="h-64 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)
             ) : displayPrograms.length === 0 ? (
               <p className="col-span-full text-center text-muted py-8">No programs configured yet.</p>
             ) : (
@@ -493,20 +598,20 @@ export function Home() {
                 const icon = PROGRAM_ICONS[prog.slug] ?? '📖'
                 const imgSrc = prog.imageUrl || `https://picsum.photos/seed/${prog.slug}/800/600`
                 return (
-                  <ScrollReveal key={prog.id} delay={i * 0.08}>
+                  <motion.div
+                    key={prog.id}
+                    initial={{ opacity: 0, y: 28 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.08 }}
+                  >
                     <Link to="/academics" className="group block h-full">
                       <GlassCard className="overflow-hidden p-0 h-full transition-all group-hover:ring-2 group-hover:ring-gold/60">
                         <div className="relative h-44 overflow-hidden">
-                          <img
-                            src={imgSrc}
-                            alt={prog.name}
-                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                          />
+                          <img src={imgSrc} alt={prog.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <span className="absolute bottom-3 left-3 text-3xl">{icon}</span>
-                          <span className="absolute top-3 right-3 rounded-full bg-gold/90 px-2 py-0.5 text-xs font-bold text-black">
-                            {prog.ages}
-                          </span>
+                          <span className="absolute top-3 right-3 rounded-full bg-gold/90 px-2 py-0.5 text-xs font-bold text-black">{prog.ages}</span>
                         </div>
                         <div className="p-5">
                           <h3 className="font-bold text-foreground">{prog.name}</h3>
@@ -517,77 +622,63 @@ export function Home() {
                         </div>
                       </GlassCard>
                     </Link>
-                  </ScrollReveal>
+                  </motion.div>
                 )
               })
             )}
           </div>
-          <ScrollReveal className="mt-10 text-center">
+          <div className="mt-10 text-center">
             <Link to="/academics">
               <Button variant="outline">View Full Curriculum <ArrowRight className="h-4 w-4" /></Button>
             </Link>
-          </ScrollReveal>
+          </div>
         </div>
       </section>
 
-      {/* ── Director's Welcome ── */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal className="mb-16 text-center">
-            <span className="mb-3 inline-block rounded-full border border-gold/50 bg-gold/10 px-4 py-1 text-xs font-semibold uppercase tracking-widest text-primary dark:text-gold">
-              A Message From Our Director
-            </span>
-          </ScrollReveal>
-          <ScrollReveal>
-            <GlassCard className="overflow-hidden lg:flex">
-              <div className="flex flex-col items-center justify-center bg-primary/5 p-10 lg:w-80 lg:shrink-0 dark:bg-gold/5">
-                <div className="h-36 w-36 overflow-hidden rounded-full border-4 border-gold/40">
-                  <img
-                    src="https://picsum.photos/seed/director-alber/400/400"
-                    alt="School Director"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <h3 className="mt-5 text-xl font-bold text-primary dark:text-gold">{get('director.name', 'Mr. Albert Njeru')}</h3>
-                <p className="mt-1 text-sm text-muted">{get('director.title', 'Founder & School Director')}</p>
-                <p className="mt-1 text-xs text-muted">M.Ed., University of Nairobi</p>
-                <div className="mt-4 h-1 w-12 rounded-full bg-gold/60" />
-              </div>
-              <div className="flex flex-1 flex-col justify-center p-10">
-                <Quote className="mb-6 h-10 w-10 text-gold opacity-50" />
-                <p className="text-lg leading-relaxed text-muted whitespace-pre-line">
-                  {get('director.quote', 'When I founded Alber School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.\n\nToday, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Alber School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.\n\nWe warmly welcome you to come and see it for yourself.')}
-                </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link to="/contact">
-                    <Button variant="primary">Book a Campus Tour</Button>
-                  </Link>
-                  <Link to="/admissions">
-                    <Button variant="outline">Apply for 2026 <ArrowRight className="h-4 w-4" /></Button>
-                  </Link>
-                </div>
-              </div>
-            </GlassCard>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* ── Testimonials ── */}
-      <section className="bg-tint/30 py-20 dark:bg-dark-card/30">
+      {/* ══════════════════════════════════════════
+          TESTIMONIALS
+      ══════════════════════════════════════════ */}
+      <section className="py-20 bg-tint/30 dark:bg-dark-card/30">
         <div className="mx-auto max-w-4xl px-4 text-center">
-          <ScrollReveal>
-            <h2 className="mb-12 text-4xl font-bold">What Our Community Says</h2>
-          </ScrollReveal>
-          <ScrollReveal delay={0.1}>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <SectionLabel>Testimonials</SectionLabel>
+            <h2 className="mt-2 mb-12 text-4xl font-bold">What Our Community Says</h2>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
             <GlassCard className="relative px-8 py-12">
               <Quote className="mx-auto mb-6 h-10 w-10 text-gold opacity-60" />
-              <p className="text-xl font-medium leading-relaxed text-foreground min-h-[80px] transition-all">
-                "{TESTIMONIALS[testimonial].quote}"
-              </p>
-              <div className="mt-8">
-                <p className="font-bold text-primary dark:text-gold">{TESTIMONIALS[testimonial].name}</p>
-                <p className="text-sm text-muted">{TESTIMONIALS[testimonial].role}</p>
-              </div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={testimonial}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <p className="text-xl font-medium leading-relaxed text-foreground min-h-[80px]">
+                    "{TESTIMONIALS[testimonial].quote}"
+                  </p>
+                  <div className="mt-8 flex items-center justify-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-xs font-black text-black">
+                      {TESTIMONIALS[testimonial].initials}
+                    </div>
+                    <div className="text-left">
+                      <p className="font-bold text-primary dark:text-gold">{TESTIMONIALS[testimonial].name}</p>
+                      <p className="text-sm text-muted">{TESTIMONIALS[testimonial].role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
               <div className="mt-6 flex justify-center gap-2">
                 {TESTIMONIALS.map((_, i) => (
                   <button
@@ -598,88 +689,133 @@ export function Home() {
                 ))}
               </div>
             </GlassCard>
-          </ScrollReveal>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── Gallery ── */}
+      {/* ══════════════════════════════════════════
+          GALLERY
+      ══════════════════════════════════════════ */}
       <section className="py-20">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal className="mb-8 flex items-end justify-between">
-            <h2 className="text-4xl font-bold">Life at Alber</h2>
+          <motion.div
+            className="mb-8 flex items-end justify-between"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div>
+              <SectionLabel>Campus Life</SectionLabel>
+              <h2 className="mt-2 text-4xl font-bold">Life at Alber</h2>
+            </div>
             <Link to="/gallery" className="text-sm font-semibold text-primary dark:text-gold hover:underline flex items-center gap-1">
               See all photos <ArrowRight className="h-4 w-4" />
             </Link>
-          </ScrollReveal>
-          <div className="grid grid-cols-3 gap-3 md:grid-cols-4 lg:grid-cols-3">
+          </motion.div>
+          <div className="grid grid-cols-3 gap-3 lg:grid-cols-3">
             {galleryLoading ? (
-              <p className="col-span-full text-center text-muted py-8">Loading gallery…</p>
+              [1,2,3,4,5,6].map(n => <div key={n} className="aspect-square animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)
             ) : galleryImages.length === 0 ? (
               <p className="col-span-full text-center text-muted py-8">No gallery images yet.</p>
             ) : (
               galleryImages.map((img, i) => (
-                <ScrollReveal key={img.id} delay={i * 0.04}>
-                  <div className="aspect-square overflow-hidden rounded-2xl">
-                    <img
-                      src={img.url}
-                      alt={img.caption ?? `Campus life ${i + 1}`}
-                      className="h-full w-full object-cover transition duration-500 hover:scale-110"
-                    />
-                  </div>
-                </ScrollReveal>
+                <motion.div
+                  key={img.id}
+                  className="aspect-square overflow-hidden rounded-2xl"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.04 }}
+                >
+                  <img
+                    src={img.url}
+                    alt={img.caption ?? `Campus life ${i + 1}`}
+                    className="h-full w-full object-cover transition duration-500 hover:scale-110"
+                  />
+                </motion.div>
               ))
             )}
           </div>
         </div>
       </section>
 
-      {/* ── Upcoming Events ── */}
+      {/* ══════════════════════════════════════════
+          UPCOMING EVENTS
+      ══════════════════════════════════════════ */}
       <section className="bg-tint/30 py-20 dark:bg-dark-card/30">
         <div className="mx-auto max-w-7xl px-4">
-          <ScrollReveal className="mb-12 flex items-end justify-between">
-            <h2 className="text-4xl font-bold">Upcoming Events</h2>
+          <motion.div
+            className="mb-12 flex items-end justify-between"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div>
+              <SectionLabel>Calendar</SectionLabel>
+              <h2 className="mt-2 text-4xl font-bold">Upcoming Events</h2>
+            </div>
             <Link to="/contact" className="text-sm font-semibold text-primary dark:text-gold hover:underline flex items-center gap-1">
               View calendar <ArrowRight className="h-4 w-4" />
             </Link>
-          </ScrollReveal>
+          </motion.div>
           <div className="relative border-l-2 border-gold pl-8">
             {eventsLoading ? (
-              <p className="text-center text-muted py-8">Loading events…</p>
+              [1,2,3].map(n => <div key={n} className="mb-6 h-20 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)
             ) : upcomingEvents.length === 0 ? (
               <p className="text-center text-muted py-8">No upcoming events.</p>
             ) : (
               upcomingEvents.map((e, i) => (
-                <ScrollReveal key={e.id} delay={i * 0.08}>
-                  <div className="relative mb-10">
-                    <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-gold ring-4 ring-gold/20" />
-                    <GlassCard className="p-6">
-                      <span className="text-xs font-semibold text-gold">{e.startDate.slice(0, 10)}</span>
-                      <h3 className="mt-1 text-xl font-bold">{e.title}</h3>
-                      <p className="text-sm text-muted">{e.location ?? ''} {e.location && e.description ? '·' : ''} {e.description ?? ''}</p>
-                    </GlassCard>
-                  </div>
-                </ScrollReveal>
+                <motion.div
+                  key={e.id}
+                  className="relative mb-8"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                >
+                  <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-gold ring-4 ring-gold/20" />
+                  <GlassCard className="p-6">
+                    <span className="text-xs font-semibold text-gold">{e.startDate.slice(0, 10)}</span>
+                    <h3 className="mt-1 text-xl font-bold">{e.title}</h3>
+                    <p className="text-sm text-muted">{e.location ?? ''} {e.location && e.description ? '·' : ''} {e.description ?? ''}</p>
+                  </GlassCard>
+                </motion.div>
               ))
             )}
           </div>
         </div>
       </section>
 
-      {/* ── Final CTA ── */}
-      <section className="bg-primary py-16 dark:bg-gold/20">
-        <div className="mx-auto max-w-3xl px-4 text-center">
-          <ScrollReveal>
-            <h2 className="mb-4 text-4xl font-bold text-white dark:text-gold">Ready to Join Alber School?</h2>
-            <p className="mb-8 text-white/80 dark:text-foreground">Applications are open for the 2026 intake. Limited spaces available.</p>
+      {/* ══════════════════════════════════════════
+          FINAL CTA
+      ══════════════════════════════════════════ */}
+      <section className="relative overflow-hidden bg-primary py-20 dark:bg-[#0d1b0d]">
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(232,184,75,0.5) 30px, rgba(232,184,75,0.5) 31px)' }} />
+        <div className="relative z-10 mx-auto max-w-3xl px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="mb-3 inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
+              Applications Open · 2026–2027
+            </p>
+            <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">Ready to Join Alber School?</h2>
+            <p className="mb-8 text-white/70">Applications are open for the 2026/2027 academic year. Limited spaces — secure your child's place today.</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/admissions">
                 <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
               </Link>
               <Link to="/contact">
-                <Button variant="outline" className="border-white text-white hover:bg-white/10 dark:border-gold dark:text-gold">Contact Us</Button>
+                <button className="flex items-center gap-2 rounded-xl border-2 border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                  Contact Us
+                </button>
               </Link>
             </div>
-          </ScrollReveal>
+          </motion.div>
         </div>
       </section>
     </>

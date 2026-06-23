@@ -504,7 +504,7 @@ export function PagesManager() {
 
   // Pages whose content is 100% managed in a dedicated sidebar manager —
   // no CMS blocks to add, so hide the "Add Block" controls entirely.
-  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama'])
+  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff'])
   const API_MANAGED_PAGES = new Set(['pg-about', 'pg-why', 'pg-academics'])
   const canAddBlocks = selectedPageId ? !PURE_REDIRECT_PAGES.has(selectedPageId) && !API_MANAGED_PAGES.has(selectedPageId) : false
 
@@ -875,6 +875,16 @@ export function PagesManager() {
                         title="Facilities"
                         description="Edit the page hero, add facilities, manage descriptions, highlights, images and publish status — all in one place."
                         to="/dashboard/admin/site-content/facilities"
+                      />
+                    )}
+
+                    {/* Staff Directory — redirect to real Staff & Teachers manager */}
+                    {selectedPageId === 'pg-staff' && (
+                      <ManagerRedirectCard
+                        icon="👩‍🏫"
+                        title="Staff & Teachers"
+                        description="Add, edit, and manage teachers and departments shown on the Staff Directory page from the dedicated Staff & Teachers manager."
+                        to="/dashboard/admin/staff"
                       />
                     )}
 

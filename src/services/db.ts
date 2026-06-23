@@ -1352,6 +1352,7 @@ function createSeed(): DB {
     { id: 'pg-blog',        slug: 'blog',          parentId: null,          title: 'Blog',          icon: '📰', path: '/blog',         isPublished: true, sortOrder: 6 },
     { id: 'pg-contact',     slug: 'contact',       parentId: null,          title: 'Contact',       icon: '📞', path: '/contact',      isPublished: true, sortOrder: 7 },
     { id: 'pg-facilities',  slug: 'facilities',    parentId: null,          title: 'Facilities',    icon: '🏗️', path: '/facilities',   isPublished: true, sortOrder: 8 },
+    { id: 'pg-staff',       slug: 'staff',         parentId: null,          title: 'Staff Directory', icon: '👩‍🏫', path: '/staff',        isPublished: true, sortOrder: 9 },
     { id: 'pg-why',         slug: 'why-choose-us', parentId: null,          title: 'Why Choose Us',  icon: '⭐', path: '/why-choose-us', isPublished: true, sortOrder: 10 },
   ]
 
@@ -1735,7 +1736,7 @@ function createSeed(): DB {
 
 // ── Singleton store ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'alber_db_v15'
+const STORAGE_KEY = 'alber_db_v16'
 
 function loadStore(): DB {
   try {

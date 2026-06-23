@@ -43,7 +43,6 @@ const NAV: NavEntry[] = [
       { label: 'Blog & News',         icon: BookOpen,         path: '/dashboard/admin/blog'          },
       { label: 'Events',              icon: CalendarDays,     path: '/dashboard/admin/events'        },
       { label: 'Gallery',             icon: ImageIcon,        path: '/dashboard/admin/gallery'       },
-      { label: 'People & Staff',      icon: Users,            path: '/dashboard/admin/public-staff'  },
       { label: 'Activities & Sports', icon: Activity,         path: '/dashboard/admin/activities'    },
     ],
   },
@@ -375,7 +374,6 @@ const CMS_PATHS = [
   '/dashboard/admin/blog',
   '/dashboard/admin/events',
   '/dashboard/admin/gallery',
-  '/dashboard/admin/public-staff',
   '/dashboard/admin/activities',
 ]
 const PORTAL_PATHS = [

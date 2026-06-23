@@ -71,7 +71,6 @@ import { ReportsManager }       from './pages/dashboards/admin/ReportsManager'
 import { TimetableManager }     from './pages/dashboards/admin/TimetableManager'
 import { PaymentsManager }      from './pages/dashboards/admin/PaymentsManager'
 import { AccountsManager }      from './pages/dashboards/admin/AccountsManager'
-import { PublicStaffManager }  from './pages/dashboards/admin/PublicStaffManager'
 import { SiteContentManager }    from './pages/dashboards/admin/SiteContentManager'
 import { ActivitiesManager }     from './pages/dashboards/admin/ActivitiesManager'
 import { CoCurrPageBuilder }       from './pages/dashboards/admin/CoCurrPageBuilder'
@@ -164,7 +163,6 @@ function App() {
                 <Route path="blog"          element={<BlogManager />} />
                 <Route path="events"        element={<EventsManager />} />
                 <Route path="gallery"       element={<GalleryManager />} />
-                <Route path="public-staff"  element={<PublicStaffManager />} />
 
                 {/* Legacy redirects — old routes forwarded to new unified pages */}
                 <Route path="pages"         element={<Navigate to="/dashboard/admin/site-content" replace />} />

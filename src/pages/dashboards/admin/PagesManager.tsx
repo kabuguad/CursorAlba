@@ -903,16 +903,6 @@ export function PagesManager() {
                       </>
                     )}
 
-                    {/* Staff Directory — redirect to dedicated manager */}
-                    {selectedPageId === 'pg-staff' && (
-                      <ManagerRedirectCard
-                        icon="👩‍🏫"
-                        title="Public Staff Profiles"
-                        description="Add, edit, and manage public staff profiles shown on the Staff Directory page from the dedicated manager."
-                        to="/dashboard/admin/public-staff"
-                      />
-                    )}
-
                     {/* Why Choose Us — inline manager */}
                     {selectedPageId === 'pg-why' && (
                       <>

@@ -504,7 +504,7 @@ export function PagesManager() {
 
   // Pages whose content is 100% managed in a dedicated sidebar manager —
   // no CMS blocks to add, so hide the "Add Block" controls entirely.
-  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama', 'pg-staff'])
+  const PURE_REDIRECT_PAGES = new Set(['pg-cocurr', 'pg-sports', 'pg-music', 'pg-drama'])
   const API_MANAGED_PAGES = new Set(['pg-about', 'pg-why', 'pg-academics'])
   const canAddBlocks = selectedPageId ? !PURE_REDIRECT_PAGES.has(selectedPageId) && !API_MANAGED_PAGES.has(selectedPageId) : false
 

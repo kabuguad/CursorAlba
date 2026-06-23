@@ -103,7 +103,7 @@ export const useReviewLeave = () => {
 // ── Academics ─────────────────────────────────────────────────────────────
 export const useAcademicYears = () => useQuery({ queryKey: ['academicYears'], queryFn: () => academicService.listYears().then(unwrap) })
 export const useCurrentYear = () => useQuery({ queryKey: ['academicYears', 'current'], queryFn: () => academicService.getCurrentYear().then(unwrap) })
-export const useCurrentTerm = () => useQuery({ queryKey: ['academicYears', 'currentTerm'], queryFn: () => academicService.getCurrentTerm().then(unwrap) })
+export const useCurrentTerm = () => useQuery({ queryKey: ['academicYears', 'currentTerm'], queryFn: () => academicService.getCurrentTerm().then(r => r.data) })
 export const useClasses = () => useQuery({ queryKey: ['classes'], queryFn: () => academicService.listClasses().then(unwrap) })
 export const useSubjects = () => useQuery({ queryKey: ['subjects'], queryFn: () => academicService.listSubjects().then(unwrap) })
 export const useAssessmentSchemes = () => useQuery({ queryKey: ['schemes'], queryFn: () => academicService.listSchemes().then(unwrap) })

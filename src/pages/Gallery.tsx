@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
 import { PageHero } from '../components/layout/PageHero'
@@ -86,10 +87,13 @@ const counts = ALL_CATEGORIES.reduce<Record<CategoryId, number>>((acc, cat) => {
 export function Gallery() {
   const [activeCategory, setActiveCategory] = useState<CategoryId>('all')
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
+  const scrollYRef = useRef(0)
 
   const filtered = activeCategory === 'all'
     ? GALLERY
     : GALLERY.filter(i => i.category === activeCategory)
+
+  const isOpen = lightboxIdx !== null
 
   const prev = useCallback(() => {
     setLightboxIdx(i => i === null ? null : (i - 1 + filtered.length) % filtered.length)
@@ -100,6 +104,26 @@ export function Gallery() {
   }, [filtered.length])
 
   const close = useCallback(() => setLightboxIdx(null), [])
+
+  // Scroll-lock body while lightbox is open
+  useEffect(() => {
+    if (isOpen) {
+      scrollYRef.current = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollYRef.current}px`
+      document.body.style.width = '100%'
+    } else {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, scrollYRef.current)
+    }
+    return () => {
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+    }
+  }, [isOpen])
 
   useEffect(() => {
     if (lightboxIdx === null) return
@@ -209,7 +233,8 @@ export function Gallery() {
         )}
       </div>
 
-      {/* ── Lightbox ──────────────────────────────────────────────────────── */}
+      {/* ── Lightbox — rendered via portal into document.body ── */}
+      {createPortal(
       <AnimatePresence>
         {lightboxItem && (
           <motion.div
@@ -261,13 +286,13 @@ export function Gallery() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="flex max-h-[90vh] max-w-5xl w-full flex-col items-center"
+                className="flex w-full max-w-5xl flex-col items-center"
                 onClick={e => e.stopPropagation()}
               >
                 <img
                   src={lightboxItem.url}
                   alt={lightboxItem.caption}
-                  className="max-h-[78vh] max-w-full rounded-2xl object-contain shadow-2xl"
+                  className="max-h-[80vh] max-w-full rounded-2xl object-contain shadow-2xl"
                 />
                 <div className="mt-4 text-center">
                   <p className="text-base font-semibold text-white">{lightboxItem.caption}</p>
@@ -279,7 +304,10 @@ export function Gallery() {
             </AnimatePresence>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+    )}
     </div>
   )
 }
+

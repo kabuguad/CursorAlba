@@ -2,7 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-const API_BASE = 'https://yoko-unresourceful-coretta.ngrok-free.dev'
+const API_BASE =
+  process.env.VITE_API_BASE ||
+  'https://yoko-unresourceful-coretta.ngrok-free.dev'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],

@@ -19,6 +19,8 @@ import { auditService } from '../services/auditService'
 import { systemService } from '../services/systemService'
 import { admissionsService } from '../services/admissionsService'
 import { adminApi } from '../services/adminApiService'
+import { staffApi } from '../services/staffApi'
+import type { TeacherCreateDto, DepartmentCreateDto } from '../services/staffApi'
 
 // ── Users ─────────────────────────────────────────────────────────────────
 export const useUsers = () => useQuery({ queryKey: ['users'], queryFn: () => userService.list().then(unwrap) })
@@ -98,6 +100,42 @@ export const useReviewLeave = () => {
       staffService.reviewLeave(id, status, notes, reviewer),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['leave'] }); qc.invalidateQueries({ queryKey: ['analytics'] }) },
   })
+}
+
+// ── Teachers & Departments (real API) ─────────────────────────────────────
+export const useApiTeachers = () => useQuery({ queryKey: ['api-teachers'], queryFn: staffApi.teachers.getAll })
+export const useApiDepartments = () => useQuery({ queryKey: ['api-departments'], queryFn: staffApi.departments.getAll })
+
+export const useCreateTeacher = () => {
+  const qc = useQueryClient()
+  return useMutation({ mutationFn: (dto: TeacherCreateDto) => staffApi.teachers.create(dto), onSuccess: () => qc.invalidateQueries({ queryKey: ['api-teachers'] }) })
+}
+export const useUpdateTeacher = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: number; dto: TeacherCreateDto }) => staffApi.teachers.update(id, dto),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['api-teachers'] }),
+  })
+}
+export const useDeleteTeacher = () => {
+  const qc = useQueryClient()
+  return useMutation({ mutationFn: (id: number) => staffApi.teachers.delete(id), onSuccess: () => qc.invalidateQueries({ queryKey: ['api-teachers'] }) })
+}
+
+export const useCreateDepartment = () => {
+  const qc = useQueryClient()
+  return useMutation({ mutationFn: (dto: DepartmentCreateDto) => staffApi.departments.create(dto), onSuccess: () => qc.invalidateQueries({ queryKey: ['api-departments'] }) })
+}
+export const useUpdateDepartment = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, dto }: { id: number; dto: DepartmentCreateDto }) => staffApi.departments.update(id, dto),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['api-departments'] }),
+  })
+}
+export const useDeleteDepartment = () => {
+  const qc = useQueryClient()
+  return useMutation({ mutationFn: (id: number) => staffApi.departments.delete(id), onSuccess: () => qc.invalidateQueries({ queryKey: ['api-departments'] }) })
 }
 
 // ── Academics ─────────────────────────────────────────────────────────────

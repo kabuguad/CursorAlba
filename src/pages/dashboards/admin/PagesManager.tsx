@@ -602,6 +602,7 @@ export function PagesManager() {
       {!selectedPage ? (
         /* ── Card Grid View ── */
         <div className="min-h-full overflow-y-auto bg-gray-50 dark:bg-gray-950 p-6 lg:p-8">
+          <div className="mx-auto max-w-6xl">
           {/* Header */}
           <div className="mb-8 flex items-start justify-between gap-4">
             <div>
@@ -636,6 +637,7 @@ export function PagesManager() {
               <p className="text-sm text-muted">No pages yet. Pages appear here once seeded.</p>
             </div>
           )}
+          </div>
         </div>
       ) : (
         /* ── Block Editor View ── */

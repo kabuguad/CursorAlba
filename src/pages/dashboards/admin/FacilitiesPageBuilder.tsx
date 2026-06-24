@@ -230,9 +230,9 @@ export function FacilitiesPageBuilder() {
         <div className="flex items-center gap-2 min-w-0">
           <Link
             to="/dashboard/admin/site-content"
-            className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition shrink-0"
+            className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition shrink-0"
           >
-            <ArrowLeft className="h-3.5 w-3.5" /> Page Builder
+            <ArrowLeft className="h-3.5 w-3.5" /> Site Content
           </Link>
           <span className="text-muted text-xs">/</span>
           <span className="text-xs font-semibold truncate">🏛 Facilities</span>

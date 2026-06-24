@@ -1,11 +1,9 @@
 import { useState, useMemo } from 'react'
 import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard, BookOpen, CalendarDays, ImageIcon,
-  Users, UserCheck, GraduationCap, Banknote, Megaphone,
-  Settings, LogOut, ExternalLink, ChevronLeft, ChevronRight, ChevronDown,
-  Menu, Bell, School, X, ClipboardList, BarChart2, CreditCard, Clock,
-  Moon, Sun, UserCog, Globe, Activity, Monitor, Users2,
+  ImageIcon, UserCheck, LogOut, ExternalLink, ChevronLeft, ChevronRight, ChevronDown,
+  Menu, Bell, School, X,
+  Moon, Sun, Globe, Monitor,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
@@ -20,15 +18,6 @@ type NavEntry = NavGroup | NavDivider
 
 // ── Navigation definition ────────────────────────────────────────────────────
 const NAV: NavEntry[] = [
-  {
-    kind: 'group',
-    group: 'Overview',
-    items: [
-      { label: 'Dashboard',           icon: LayoutDashboard, path: '/dashboard/admin'           },
-      { label: 'Reports',             icon: BarChart2,        path: '/dashboard/admin/reports'   },
-    ],
-  },
-
   // ── CMS boundary ────────────────────────────────────────────────────────────
   {
     kind: 'divider',
@@ -39,55 +28,15 @@ const NAV: NavEntry[] = [
     kind: 'group',
     group: 'Content & Media',
     items: [
-      { label: 'Site Content',        icon: Globe,            path: '/dashboard/admin/site-content'  },
-      { label: 'Blog & News',         icon: BookOpen,         path: '/dashboard/admin/blog'          },
-      { label: 'Events',              icon: CalendarDays,     path: '/dashboard/admin/events'        },
-      { label: 'Gallery',             icon: ImageIcon,        path: '/dashboard/admin/gallery'       },
-      { label: 'Activities & Sports', icon: Activity,         path: '/dashboard/admin/activities'    },
-    ],
-  },
-
-  // ── Portal API boundary ──────────────────────────────────────────────────────
-  {
-    kind: 'divider',
-    label: 'Portal',
-    sublabel: 'School Operations',
-  },
-  {
-    kind: 'group',
-    group: 'Parents & Students',
-    items: [
-      { label: 'Admissions',          icon: ClipboardList,    path: '/dashboard/admin/admissions'    },
-      { label: 'Parents & Guardians', icon: Users,            path: '/dashboard/admin/parents'       },
-      { label: 'Students',            icon: GraduationCap,    path: '/dashboard/admin/students'      },
-      { label: 'Payments',            icon: CreditCard,       path: '/dashboard/admin/payments'      },
-      { label: 'Fee Structure',       icon: Banknote,         path: '/dashboard/admin/fees'          },
+      { label: 'Site Content',     icon: Globe,      path: '/dashboard/admin/site-content' },
+      { label: 'Gallery',          icon: ImageIcon,  path: '/dashboard/admin/gallery'      },
     ],
   },
   {
     kind: 'group',
-    group: 'Teachers & Staff',
+    group: 'Staff',
     items: [
-      { label: 'Staff & Teachers',    icon: UserCheck,        path: '/dashboard/admin/staff'         },
-      { label: 'Curriculum & Grades', icon: Users2,           path: '/dashboard/admin/academics'     },
-      { label: 'Timetable',           icon: Clock,            path: '/dashboard/admin/timetable'     },
-    ],
-  },
-  {
-    kind: 'group',
-    group: 'Communications',
-    items: [
-      { label: 'Announcements',       icon: Megaphone,        path: '/dashboard/admin/announcements' },
-    ],
-  },
-
-  // ── System ──────────────────────────────────────────────────────────────────
-  {
-    kind: 'group',
-    group: 'System',
-    items: [
-      { label: 'Accounts',            icon: UserCog,          path: '/dashboard/admin/accounts'      },
-      { label: 'Site Settings',       icon: Settings,         path: '/dashboard/admin/settings'      },
+      { label: 'Staff & Teachers', icon: UserCheck,  path: '/dashboard/admin/staff'        },
     ],
   },
 ]
@@ -371,39 +320,17 @@ export function AdminLayout() {
 // Shows "CMS" or "Portal" pill so the admin always knows which domain they're in.
 const CMS_PATHS = [
   '/dashboard/admin/site-content',
-  '/dashboard/admin/blog',
-  '/dashboard/admin/events',
   '/dashboard/admin/gallery',
-  '/dashboard/admin/activities',
-]
-const PORTAL_PATHS = [
-  '/dashboard/admin/admissions',
-  '/dashboard/admin/students',
-  '/dashboard/admin/payments',
-  '/dashboard/admin/fees',
   '/dashboard/admin/staff',
-  '/dashboard/admin/academics',
-  '/dashboard/admin/timetable',
-  '/dashboard/admin/announcements',
 ]
 
 function SectionContextBadge({ pathname }: { pathname: string }) {
-  const isCms    = CMS_PATHS.some(p => pathname.startsWith(p))
-  const isPortal = PORTAL_PATHS.some(p => pathname.startsWith(p))
-
-  if (!isCms && !isPortal) return null
+  const isCms = CMS_PATHS.some(p => pathname.startsWith(p))
+  if (!isCms) return null
 
   return (
-    <span className={cn(
-      'hidden sm:inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest',
-      isCms
-        ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20'
-        : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20',
-    )}>
-      {isCms
-        ? <><Monitor className="h-3 w-3" /> CMS</>
-        : <><Users2 className="h-3 w-3" /> Portal</>
-      }
+    <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/20">
+      <Monitor className="h-3 w-3" /> CMS
     </span>
   )
 }

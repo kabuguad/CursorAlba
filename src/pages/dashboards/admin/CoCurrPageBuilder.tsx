@@ -185,7 +185,7 @@ export function CoCurrPageBuilder() {
     <div className="min-h-full bg-gray-50 dark:bg-gray-950">
       {/* Sticky header */}
       <div className="sticky top-0 z-10 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 py-3">
-        <div className="flex items-center gap-3">
+        <div className="mx-auto max-w-5xl w-full flex items-center gap-3">
           <button
             onClick={() => navigate('/dashboard/admin/site-content')}
             className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition"
@@ -208,7 +208,7 @@ export function CoCurrPageBuilder() {
         </div>
       </div>
 
-      <div className="p-6 lg:p-8 space-y-8 max-w-5xl">
+      <div className="mx-auto p-6 lg:p-8 space-y-8 max-w-5xl w-full">
 
         {/* ── Section 1: Page Content ───────────────────────────────────────── */}
         <section>

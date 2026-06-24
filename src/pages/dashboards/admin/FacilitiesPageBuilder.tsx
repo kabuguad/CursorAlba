@@ -225,7 +225,8 @@ export function FacilitiesPageBuilder() {
   return (
     <div className="flex flex-col min-h-full bg-gray-50 dark:bg-gray-950">
       {/* Sticky header */}
-      <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-3 flex items-center justify-between gap-4">
+      <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-6 py-3">
+        <div className="mx-auto max-w-4xl w-full flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 min-w-0">
           <Link
             to="/dashboard/admin/site-content"
@@ -244,6 +245,7 @@ export function FacilitiesPageBuilder() {
         >
           <ExternalLink className="h-3 w-3" /> Preview page
         </a>
+        </div>
       </div>
 
       <div className="flex-1 px-6 py-6 space-y-6 max-w-4xl mx-auto w-full">

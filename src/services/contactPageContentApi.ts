@@ -1,5 +1,26 @@
 import { apiClient } from './apiClient'
 
+// ── Raw shape from the API (entity-prefixed PK, plus createdAt) ───────────────
+interface RawContactPageContent {
+  contactPageContentId: number
+  heroHeadline: string
+  heroSubheadline: string
+  heroImageUrl: string
+  phonePrimary: string
+  phoneSecondary: string
+  emailPrimary: string
+  emailSecondary: string
+  whatsAppNumber: string
+  addressLine1: string
+  addressLine2: string
+  mapEmbedUrl: string
+  officeHours: string
+  officeHoursNote: string
+  createdAt: string
+  updatedAt: string
+}
+
+// ── Normalised shape used throughout the app ──────────────────────────────────
 export interface ContactPageContentDto {
   id: number
   heroHeadline: string
@@ -19,6 +40,11 @@ export interface ContactPageContentDto {
 }
 
 export type UpdateContactPageContentDto = Omit<ContactPageContentDto, 'id' | 'updatedAt'>
+
+function normalize(raw: RawContactPageContent): ContactPageContentDto {
+  const { contactPageContentId, createdAt: _c, ...rest } = raw
+  return { id: contactPageContentId, ...rest }
+}
 
 function unwrapSingle<T>(r: { data: { success?: boolean; data: T | T[]; error?: unknown } }): T {
   const payload = r.data
@@ -56,26 +82,26 @@ function extractErrorMessage(err: unknown): string {
 export const contactPageContentApi = {
   get: (): Promise<ContactPageContentDto> =>
     apiClient
-      .get<{ success: boolean; data: ContactPageContentDto[] | ContactPageContentDto; error: unknown }>(
+      .get<{ success: boolean; data: RawContactPageContent[] | RawContactPageContent; error: unknown }>(
         '/contact-page-content',
       )
-      .then(r => unwrapSingle<ContactPageContentDto>(r)),
+      .then(r => normalize(unwrapSingle<RawContactPageContent>(r))),
 
   getById: (id: number): Promise<ContactPageContentDto> =>
     apiClient
-      .get<{ success: boolean; data: ContactPageContentDto; error: unknown }>(
+      .get<{ success: boolean; data: RawContactPageContent; error: unknown }>(
         `/contact-page-content/${id}`,
       )
-      .then(r => unwrapSingle<ContactPageContentDto>(r)),
+      .then(r => normalize(unwrapSingle<RawContactPageContent>(r))),
 
   update: async (id: number, dto: UpdateContactPageContentDto): Promise<ContactPageContentDto> => {
     try {
       const r = await apiClient.put<{
         success: boolean
-        data: ContactPageContentDto | ContactPageContentDto[]
+        data: RawContactPageContent | RawContactPageContent[]
         error: unknown
       }>(`/contact-page-content/${id}`, dto)
-      return unwrapSingle<ContactPageContentDto>(r)
+      return normalize(unwrapSingle<RawContactPageContent>(r))
     } catch (err) {
       throw new Error(extractErrorMessage(err))
     }

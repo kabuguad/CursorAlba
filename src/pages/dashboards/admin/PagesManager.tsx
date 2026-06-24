@@ -525,6 +525,7 @@ export function PagesManager() {
 
   // Direct-navigate pages — clicking the card goes straight to their sub-route
   const DIRECT_NAV: Record<string, string> = {
+    'pg-home':        '/dashboard/admin/site-content/home',
     'pg-cocurr':      '/dashboard/admin/site-content/co-curricular',
     'pg-facilities':  '/dashboard/admin/site-content/facilities',
   }
@@ -816,6 +817,16 @@ export function PagesManager() {
                         <HistoryMilestonesManager />
                         <div className="pb-8" />
                       </>
+                    )}
+
+                    {/* Home — managed in dedicated home page content builder */}
+                    {selectedPageId === 'pg-home' && (
+                      <ManagerRedirectCard
+                        icon="🏠"
+                        title="Home Page Content"
+                        description="Edit hero images, slideshow text, stats bar figures, mission/motto/vision, and the final call-to-action — all from the dedicated Home Page manager."
+                        to="/dashboard/admin/site-content/home"
+                      />
                     )}
 
                     {/* Blog — show redirect to Blog Posts manager */}

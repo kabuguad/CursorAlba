@@ -1,13 +1,35 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
 import { GlassCard } from '../components/ui/GlassCard'
 import { useToast } from '../contexts/ToastContext'
 import { Phone, Mail, MapPin, MessageCircle, ArrowRight, Clock } from 'lucide-react'
-import { useCmsBlocks } from '../hooks/useCmsData'
+import { contactPageContentApi, type ContactPageContentDto } from '../services/contactPageContentApi'
 
-function useCms() {
-  const { data: blocks = [] } = useCmsBlocks('pg-contact')
-  return (key: string, fallback: string) => blocks.find(b => b.key === key)?.value || fallback
+const DEFAULTS: Omit<ContactPageContentDto, 'id' | 'updatedAt'> = {
+  heroHeadline:    'Contact Us',
+  heroSubheadline: "Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.",
+  heroImageUrl:    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80',
+  phonePrimary:    '+254 712 345 678',
+  phoneSecondary:  '+254 734 567 890',
+  emailPrimary:    'info@alberschool.ke',
+  emailSecondary:  'admissions@alberschool.ke',
+  whatsAppNumber:  '254712345678',
+  addressLine1:    "Adjacent to Governor's Offices",
+  addressLine2:    'Kutus Town, Kirinyaga County',
+  mapEmbedUrl:     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.5!2d37.285!3d-0.518!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1828bf2f9c72a4a1%3A0x4a6d4f5e1b3c2d8e!2sKutus%2C%20Kirinyaga!5e0!3m2!1sen!2ske!4v1',
+  officeHours:     'Monday \u2013 Friday 7:30 AM \u2013 5:00 PM \u00B7 Saturday 8:00 AM \u2013 1:00 PM',
+  officeHoursNote: 'For urgent matters outside office hours, please use WhatsApp.',
+}
+
+function useContactContent() {
+  const { data } = useQuery({
+    queryKey: ['public-contact-page-content'],
+    queryFn: () => contactPageContentApi.get(),
+    staleTime: 60_000,
+    retry: 1,
+  })
+  return { ...DEFAULTS, ...data }
 }
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -21,7 +43,7 @@ function FadeIn({ children, delay = 0, className = '' }: { children: React.React
 const FIELD = 'w-full rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 px-4 py-3 text-sm text-foreground placeholder-muted outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20'
 
 export function Contact() {
-  const get = useCms()
+  const content = useContactContent()
   const { showToast } = useToast()
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -44,20 +66,11 @@ export function Contact() {
     }
   }
 
-  const phonePrimary   = get('phone.primary',   '+254 712 345 678')
-  const phoneSecondary = get('phone.secondary',  '+254 734 567 890')
-  const emailPrimary   = get('email.primary',   'info@alberschool.ke')
-  const emailSecondary = get('email.secondary', 'admissions@alberschool.ke')
-  const whatsapp       = get('whatsapp',         '254712345678')
-  const addressLine1   = get('address.line1',   "Adjacent to Governor's Offices")
-  const addressLine2   = get('address.line2',   'Kutus Town, Kirinyaga County')
-  const hours          = get('hours',            'Monday – Friday 7:30 AM – 5:00 PM · Saturday 8:00 AM – 1:00 PM')
-
   const CONTACT_CARDS = [
-    { icon: Phone,         label: 'Phone',    value: phonePrimary,  sub: phoneSecondary,   href: `tel:${phonePrimary.replace(/\s/g, '')}`,  color: 'text-blue-500',   bg: 'bg-blue-500/10',   ring: 'ring-blue-400/20' },
-    { icon: Mail,          label: 'Email',    value: emailPrimary,  sub: emailSecondary,   href: `mailto:${emailPrimary}`,                   color: 'text-purple-500', bg: 'bg-purple-500/10', ring: 'ring-purple-400/20' },
-    { icon: MessageCircle, label: 'WhatsApp', value: phonePrimary,  sub: 'Mon–Sat 8AM–6PM',href: `https://wa.me/${whatsapp}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`, color: 'text-green-500', bg: 'bg-green-500/10', ring: 'ring-green-400/20' },
-    { icon: MapPin,        label: 'Address',  value: addressLine1,  sub: addressLine2,     href: 'https://maps.google.com/?q=Kutus,Kirinyaga,Kenya', color: 'text-gold', bg: 'bg-gold/10', ring: 'ring-gold/20' },
+    { icon: Phone,         label: 'Phone',    value: content.phonePrimary,  sub: content.phoneSecondary,   href: `tel:${content.phonePrimary.replace(/\s/g, '')}`,                                                                        color: 'text-blue-500',   bg: 'bg-blue-500/10',   ring: 'ring-blue-400/20'   },
+    { icon: Mail,          label: 'Email',    value: content.emailPrimary,  sub: content.emailSecondary,   href: `mailto:${content.emailPrimary}`,                                                                                          color: 'text-purple-500', bg: 'bg-purple-500/10', ring: 'ring-purple-400/20' },
+    { icon: MessageCircle, label: 'WhatsApp', value: content.phonePrimary,  sub: 'Mon\u2013Sat 8AM\u20136PM', href: `https://wa.me/${content.whatsAppNumber}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`,                  color: 'text-green-500',  bg: 'bg-green-500/10',  ring: 'ring-green-400/20'  },
+    { icon: MapPin,        label: 'Address',  value: content.addressLine1,  sub: content.addressLine2,     href: 'https://maps.google.com/?q=Kutus,Kirinyaga,Kenya',                                                                        color: 'text-gold',       bg: 'bg-gold/10',       ring: 'ring-gold/20'       },
   ]
 
   return (
@@ -69,7 +82,7 @@ export function Contact() {
         style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}
       >
         <img
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"
+          src={content.heroImageUrl}
           alt=""
           aria-hidden
           className="ken-burns absolute inset-0 h-full w-full object-cover"
@@ -81,8 +94,8 @@ export function Contact() {
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-black/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />Get In Touch
             </span>
-            <h1 className="mt-4 text-5xl font-extrabold leading-tight text-white md:text-7xl [text-shadow:_0_4px_32px_rgba(0,0,0,0.6)]">{get('hero.headline', 'Contact Us')}</h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">{get('hero.subheadline', "Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.")}</p>
+            <h1 className="mt-4 text-5xl font-extrabold leading-tight text-white md:text-7xl [text-shadow:_0_4px_32px_rgba(0,0,0,0.6)]">{content.heroHeadline}</h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">{content.heroSubheadline}</p>
           </motion.div>
         </div>
       </section>
@@ -116,7 +129,7 @@ export function Contact() {
             <GlassCard className="overflow-hidden p-0 h-[440px]">
               <iframe
                 title="Alber School Location — Kutus, Kirinyaga County"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.5!2d37.285!3d-0.518!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1828bf2f9c72a4a1%3A0x4a6d4f5e1b3c2d8e!2sKutus%2C%20Kirinyaga!5e0!3m2!1sen!2ske!4v1"
+                src={content.mapEmbedUrl}
                 className="h-full w-full border-0 grayscale contrast-125"
                 loading="lazy"
               />
@@ -167,16 +180,16 @@ export function Contact() {
             </div>
             <div>
               <p className="font-semibold text-foreground">Office Hours</p>
-              <p className="text-sm text-muted">{hours}</p>
+              <p className="text-sm text-muted">{content.officeHours}</p>
             </div>
-            <div className="sm:ml-auto text-sm text-muted">For urgent matters outside office hours, please use WhatsApp.</div>
+            <div className="sm:ml-auto text-sm text-muted">{content.officeHoursNote}</div>
           </div>
         </FadeIn>
       </div>
 
       {/* ── Floating WhatsApp ── */}
       <a
-        href={`https://wa.me/${whatsapp}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`}
+        href={`https://wa.me/${content.whatsAppNumber}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`}
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-xl transition hover:scale-110 hover:bg-green-600"

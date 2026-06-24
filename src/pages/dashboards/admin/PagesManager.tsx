@@ -526,6 +526,7 @@ export function PagesManager() {
   // Direct-navigate pages — clicking the card goes straight to their sub-route
   const DIRECT_NAV: Record<string, string> = {
     'pg-home':        '/dashboard/admin/site-content/home',
+    'pg-contact':     '/dashboard/admin/site-content/contact',
     'pg-cocurr':      '/dashboard/admin/site-content/co-curricular',
     'pg-facilities':  '/dashboard/admin/site-content/facilities',
   }
@@ -826,6 +827,16 @@ export function PagesManager() {
                         title="Home Page Content"
                         description="Edit hero images, slideshow text, stats bar figures, mission/motto/vision, and the final call-to-action — all from the dedicated Home Page manager."
                         to="/dashboard/admin/site-content/home"
+                      />
+                    )}
+
+                    {/* Contact — managed in dedicated contact page content builder */}
+                    {selectedPageId === 'pg-contact' && (
+                      <ManagerRedirectCard
+                        icon="📞"
+                        title="Contact Page Content"
+                        description="Edit the hero image & text, phone numbers, email addresses, WhatsApp number, address, office hours, and Google Maps embed — all from the dedicated Contact Page manager."
+                        to="/dashboard/admin/site-content/contact"
                       />
                     )}
 

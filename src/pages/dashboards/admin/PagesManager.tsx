@@ -524,6 +524,8 @@ export function PagesManager() {
     'pg-contact':     '/dashboard/admin/site-content/contact',
     'pg-cocurr':      '/dashboard/admin/site-content/co-curricular',
     'pg-facilities':  '/dashboard/admin/site-content/facilities',
+    'pg-about':       '/dashboard/admin/site-content/about',
+    'pg-why':         '/dashboard/admin/site-content/why-choose-us',
   }
 
   // ── Page Card (replaces the old sidebar tree item) ──────────────────────

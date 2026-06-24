@@ -63,6 +63,8 @@ import { CoCurrPageBuilder }         from './pages/dashboards/admin/CoCurrPageBu
 import { FacilitiesPageBuilder }     from './pages/dashboards/admin/FacilitiesPageBuilder'
 import { HomePageContentManager }    from './pages/dashboards/admin/HomePageContentManager'
 import { ContactPageContentManager } from './pages/dashboards/admin/ContactPageContentManager'
+import { AboutContentManager }       from './pages/dashboards/admin/AboutContentManager'
+import { WhyChooseUsManager }        from './pages/dashboards/admin/WhyChooseUsManager'
 
 function App() {
   return (
@@ -144,11 +146,13 @@ function App() {
                 <Route index element={<Navigate to="/dashboard/admin/site-content" replace />} />
 
                 {/* Content & Media */}
-                <Route path="site-content"               element={<SiteContentManager />} />
-                <Route path="site-content/home"          element={<HomePageContentManager />} />
-                <Route path="site-content/contact"       element={<ContactPageContentManager />} />
-                <Route path="site-content/co-curricular" element={<CoCurrPageBuilder />} />
-                <Route path="site-content/facilities"    element={<FacilitiesPageBuilder />} />
+                <Route path="site-content"                    element={<SiteContentManager />} />
+                <Route path="site-content/home"               element={<HomePageContentManager />} />
+                <Route path="site-content/contact"            element={<ContactPageContentManager />} />
+                <Route path="site-content/co-curricular"      element={<CoCurrPageBuilder />} />
+                <Route path="site-content/facilities"         element={<FacilitiesPageBuilder />} />
+                <Route path="site-content/about"              element={<AboutContentManager />} />
+                <Route path="site-content/why-choose-us"      element={<WhyChooseUsManager />} />
                 <Route path="gallery"                    element={<GalleryManager />} />
 
                 {/* Staff */}

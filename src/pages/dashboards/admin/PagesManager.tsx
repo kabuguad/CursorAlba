@@ -643,7 +643,8 @@ export function PagesManager() {
         /* ── Block Editor View ── */
         <div className="flex h-[calc(100vh-56px)] flex-col overflow-hidden">
           {/* Header with breadcrumb */}
-          <div className="flex items-center justify-between gap-4 border-b border-theme px-5 py-3 bg-white dark:bg-gray-900">
+          <div className="border-b border-theme px-5 py-3 bg-white dark:bg-gray-900">
+          <div className="mx-auto max-w-4xl flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 min-w-0">
               <button
                 onClick={() => setSelectedPageId(null)}
@@ -702,6 +703,7 @@ export function PagesManager() {
               )}
             </div>
           </div>
+          </div>
 
           {/* Block list */}
           <div className="flex-1 overflow-y-auto p-6">
@@ -712,7 +714,7 @@ export function PagesManager() {
                     ))}
                   </div>
                 ) : (
-                  <div className="space-y-4 max-w-3xl">
+                  <div className="space-y-4 max-w-4xl mx-auto">
                     {!API_MANAGED_PAGES.has(selectedPageId ?? '') && blocks.length === 0 && (
                       <GlassCard className="p-10 text-center">
                         <p className="text-muted">No content blocks yet.</p>

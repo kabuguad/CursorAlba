@@ -4,11 +4,6 @@ import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus
 import { Link, useNavigate } from 'react-router-dom'
 import { contentService } from '../../../services/contentService'
 import type { CmsPage, CmsBlock, CmsBlockType, PublicFeeRow } from '../../../services/contentService'
-import { AboutContentManager } from './AboutContentManager'
-import { CoreValuesManager } from './CoreValuesManager'
-import { HistoryMilestonesManager } from './HistoryMilestonesManager'
-import { WhyChooseUsManager } from './WhyChooseUsManager'
-import { AcademicsContentManager } from './AcademicsContentManager'
 import { unwrap } from '../../../services/mockApi'
 import { GlassCard } from '../../../components/ui/GlassCard'
 import { Button } from '../../../components/ui/Button'
@@ -811,17 +806,14 @@ export function PagesManager() {
                       </button>
                     )}
 
-                    {/* About — managed entirely via real API */}
+                    {/* About — API-backed, dedicated manager coming soon */}
                     {selectedPageId === 'pg-about' && (
-                      <>
-                        <hr className="my-2 border-theme" />
-                        <AboutContentManager />
-                        <hr className="my-2 border-theme" />
-                        <CoreValuesManager />
-                        <hr className="my-2 border-theme" />
-                        <HistoryMilestonesManager />
-                        <div className="pb-8" />
-                      </>
+                      <ManagerRedirectCard
+                        icon="🏫"
+                        title="About Page Content"
+                        description="Edit the school story, core values, and history milestones via the About page content API. A dedicated manager will be available here soon."
+                        to="/about"
+                      />
                     )}
 
                     {/* Home — managed in dedicated home page content builder */}
@@ -914,13 +906,14 @@ export function PagesManager() {
                       />
                     )}
 
-                    {/* Academics — inline manager */}
+                    {/* Academics — API-backed, dedicated manager coming soon */}
                     {selectedPageId === 'pg-academics' && (
-                      <>
-                        <hr className="my-2 border-theme" />
-                        <AcademicsContentManager />
-                        <div className="pb-8" />
-                      </>
+                      <ManagerRedirectCard
+                        icon="📚"
+                        title="Academics Page Content"
+                        description="Edit CBC competencies, teaching pillars, and academic programmes via the Academics API. A dedicated manager will be available here soon."
+                        to="/academics"
+                      />
                     )}
 
                     {/* Admissions — fee structure panel + redirect to applications */}
@@ -939,13 +932,14 @@ export function PagesManager() {
                       </>
                     )}
 
-                    {/* Why Choose Us — inline manager */}
+                    {/* Why Choose Us — API-backed, dedicated manager coming soon */}
                     {selectedPageId === 'pg-why' && (
-                      <>
-                        <hr className="my-2 border-theme" />
-                        <WhyChooseUsManager />
-                        <div className="pb-8" />
-                      </>
+                      <ManagerRedirectCard
+                        icon="⭐"
+                        title="Why Choose Us Content"
+                        description="Edit the reasons, stats, and highlights shown on the Why Choose Us page. A dedicated manager will be available here soon."
+                        to="/why-choose-us"
+                      />
                     )}
                   </div>
                 )}

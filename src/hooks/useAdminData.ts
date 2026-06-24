@@ -49,7 +49,7 @@ export const useDeleteUser = () => {
 }
 
 // ── Students ──────────────────────────────────────────────────────────────
-export const useStudents = () => useQuery({ queryKey: ['students'], queryFn: () => studentService.list().then(unwrap) })
+export const useStudents = () => useQuery({ queryKey: ['students'], queryFn: () => studentService.list() })
 export const useStudentStats = () => useQuery({ queryKey: ['students', 'stats'], queryFn: () => studentService.getStats().then(unwrap) })
 export const useCreateStudent = () => {
   const qc = useQueryClient()
@@ -75,7 +75,7 @@ export const useDeleteStudent = () => {
 }
 
 // ── Staff ─────────────────────────────────────────────────────────────────
-export const useStaff = () => useQuery({ queryKey: ['staff'], queryFn: () => staffService.list().then(unwrap) })
+export const useStaff = () => useQuery({ queryKey: ['staff'], queryFn: () => staffService.list() })
 export const useStaffStats = () => useQuery({ queryKey: ['staff', 'stats'], queryFn: () => staffService.getStats().then(unwrap) })
 export const useLeaveRequests = () => useQuery({ queryKey: ['leave'], queryFn: () => staffService.listLeaveRequests().then(unwrap) })
 export const useCreateStaff = () => {
@@ -342,9 +342,9 @@ export const useCreateVehicle = () => {
 }
 
 // ── Library ───────────────────────────────────────────────────────────────
-export const useBooks = () => useQuery({ queryKey: ['books'], queryFn: () => libraryService.listBooks().then(unwrap) })
-export const useBorrowings = () => useQuery({ queryKey: ['borrowings'], queryFn: () => libraryService.listBorrowings().then(unwrap) })
-export const useLibraryStats = () => useQuery({ queryKey: ['library', 'stats'], queryFn: () => libraryService.getStats().then(unwrap) })
+export const useBooks = () => useQuery({ queryKey: ['books'], queryFn: () => libraryService.listBooks() })
+export const useBorrowings = () => useQuery({ queryKey: ['borrowings'], queryFn: () => libraryService.listBorrowings() })
+export const useLibraryStats = () => useQuery({ queryKey: ['library', 'stats'], queryFn: () => libraryService.getStats() })
 export const useCreateBook = () => {
   const qc = useQueryClient()
   return useMutation({ mutationFn: libraryService.createBook, onSuccess: () => qc.invalidateQueries({ queryKey: ['books'] }) })
@@ -356,8 +356,7 @@ export const useDeleteBook = () => {
 export const useIssueBorrowing = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ bookId, borrowerId, borrowerName, borrowerType, days }: { bookId: string; borrowerId: string; borrowerName: string; borrowerType: 'student' | 'staff'; days?: number }) =>
-      libraryService.issueBorrowing(bookId, borrowerId, borrowerName, borrowerType, days),
+    mutationFn: libraryService.issueBorrowing,
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['borrowings'] }); qc.invalidateQueries({ queryKey: ['books'] }) },
   })
 }

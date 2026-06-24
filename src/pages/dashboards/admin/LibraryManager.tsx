@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom'
 import { BookOpen, Plus, Search, Loader2, X, CheckCircle, AlertCircle, Clock } from 'lucide-react'
 import { useBooks, useBorrowings, useLibraryStats, useCreateBook, useDeleteBook, useIssueBorrowing, useReturnBook, useStudents, useStaff } from '../../../hooks/useAdminData'
 import { useToast } from '../../../contexts/ToastContext'
-import { unwrap } from '../../../services/mockApi'
 import type { Book } from '../../../services/libraryService'
 
 const INP = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
@@ -64,7 +63,7 @@ export function LibraryManager() {
 
   const saveBook = async () => {
     try {
-      await createBook.mutateAsync(bookDraft).then(unwrap)
+      await createBook.mutateAsync(bookDraft)
       showToast('Book added to catalogue ✓'); setBookForm(false)
     } catch (e) { showToast((e as Error).message) }
   }
@@ -72,16 +71,16 @@ export function LibraryManager() {
   const handleIssue = async () => {
     if (!issueForm) return
     const borrowerName = issueDraft.borrowerType === 'student'
-      ? students.find(s => s.id === issueDraft.borrowerId)?.firstName + ' ' + students.find(s => s.id === issueDraft.borrowerId)?.lastName
-      : staff.find(s => s.id === issueDraft.borrowerId)?.firstName + ' ' + staff.find(s => s.id === issueDraft.borrowerId)?.lastName
+      ? (students.find(s => s.id === issueDraft.borrowerId)?.fullName ?? 'Unknown')
+      : (staff.find(s => s.id === issueDraft.borrowerId)?.firstName + ' ' + staff.find(s => s.id === issueDraft.borrowerId)?.lastName)
     try {
-      await issueBorrowing.mutateAsync({ bookId: issueForm.id, borrowerId: issueDraft.borrowerId, borrowerName: borrowerName ?? 'Unknown', borrowerType: issueDraft.borrowerType, days: issueDraft.days }).then(unwrap)
+      await issueBorrowing.mutateAsync({ bookId: issueForm.id, borrowerId: issueDraft.borrowerId, borrowerName: borrowerName ?? 'Unknown', borrowerType: issueDraft.borrowerType, days: issueDraft.days })
       showToast('Book issued ✓'); setIssueForm(null)
     } catch (e) { showToast((e as Error).message) }
   }
 
   const handleReturn = async (id: string) => {
-    await returnBook.mutateAsync(id).then(unwrap)
+    await returnBook.mutateAsync(id)
     showToast('Book returned ✓')
   }
 

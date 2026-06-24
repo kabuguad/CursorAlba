@@ -1,0 +1,23 @@
+src/pages/dashboards/admin/LibraryManager.tsx(76,20): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(76,76): error TS18046: 'staff' is of type 'unknown'.
+src/pages/dashboards/admin/LibraryManager.tsx(76,87): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(78,209): error TS2345: Argument of type '<T>(response: ApiResponse<T>) => T' is not assignable to parameter of type '(value: unknown) => unknown'.
+  Types of parameters 'response' and 'value' are incompatible.
+    Type 'unknown' is not assignable to type 'ApiResponse<unknown>'.
+src/pages/dashboards/admin/LibraryManager.tsx(84,34): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+src/pages/dashboards/admin/LibraryManager.tsx(104,7): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+src/pages/dashboards/admin/LibraryManager.tsx(108,50): error TS2339: Property 'totalBooks' does not exist on type '{}'.
+src/pages/dashboards/admin/LibraryManager.tsx(109,51): error TS2339: Property 'totalCopies' does not exist on type '{}'.
+src/pages/dashboards/admin/LibraryManager.tsx(110,56): error TS2339: Property 'activeBorrowings' does not exist on type '{}'.
+src/pages/dashboards/admin/LibraryManager.tsx(111,46): error TS2339: Property 'overdueBorrowings' does not exist on type '{}'.
+src/pages/dashboards/admin/LibraryManager.tsx(148,40): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(194,23): error TS18046: 'borrowings' is of type 'unknown'.
+src/pages/dashboards/admin/LibraryManager.tsx(194,41): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(207,43): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(208,33): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ active: { label: string; cls: string; icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>; }; overdue: { ...; }; returned: { ...; }; }'.
+src/pages/dashboards/admin/LibraryManager.tsx(283,19): error TS18046: 'students' is of type 'unknown'.
+src/pages/dashboards/admin/LibraryManager.tsx(283,35): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(283,67): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(284,19): error TS18046: 'staff' is of type 'unknown'.
+src/pages/dashboards/admin/LibraryManager.tsx(284,32): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/pages/dashboards/admin/LibraryManager.tsx(284,64): error TS7006: Parameter 's' implicitly has an 'any' type.

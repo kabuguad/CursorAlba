@@ -8,7 +8,7 @@ export interface Student {
 
 export const studentService = {
   list: () =>
-    apiClient.get('/admin/students').then(r => r.data),
+    apiClient.get<Student[]>('/admin/students').then(r => r.data),
 
   getById: (id: string) =>
     apiClient.get(`/admin/students/${id}`).then(r => r.data),

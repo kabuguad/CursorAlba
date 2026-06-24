@@ -13,7 +13,7 @@ export interface LeaveRequest {
 
 export const staffService = {
   list: () =>
-    apiClient.get('/admin/staff').then(r => r.data),
+    apiClient.get<StaffMember[]>('/admin/staff').then(r => r.data),
 
   getById: (id: string) =>
     apiClient.get(`/admin/staff/${id}`).then(r => r.data),

@@ -14,12 +14,21 @@ import { contentService } from '../services/contentService'
 import { useCmsVal } from '../hooks/useCmsData'
 import { apiClient } from '../services/apiClient'
 
-const HERO_IMAGES = [
-  'https://picsum.photos/seed/alber-campus/1400/900',
-  'https://picsum.photos/seed/alber-class/1400/900',
-  'https://picsum.photos/seed/alber-sports/1400/900',
-  'https://picsum.photos/seed/alber-arts/1400/900',
-]
+type HomePageContent = {
+  homePageContentId: number
+  heroImage1Url: string; heroImage2Url: string; heroImage3Url: string; heroImage4Url: string
+  heroTagline: string; heroTaglineGold: string; heroLocationBadge: string; heroSubtitle: string
+  heroPrimaryCtaLabel: string; heroPrimaryCtaUrl: string
+  heroSecondaryCtaLabel: string; heroSecondaryCtaUrl: string
+  statStudentsEnrolled: number; statEducators: number; statEstYear: number; statActivities: number
+  foundationSectionLabel: string; foundationHeading: string
+  missionLabel: string; missionTitle: string; missionBody: string
+  mottoLabel: string; mottoTitle: string; mottoTagline: string; mottoBody: string
+  visionLabel: string; visionTitle: string; visionBody: string
+  ctaBadgeText: string; ctaHeading: string; ctaSubtext: string
+  ctaPrimaryLabel: string; ctaPrimaryUrl: string
+  ctaSecondaryLabel: string; ctaSecondaryUrl: string
+}
 
 const TESTIMONIALS = [
   { name: 'Grace Njeri', role: 'Parent · Grade 5', initials: 'GN', quote: 'Alber School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
@@ -98,6 +107,22 @@ export function Home() {
   const [testimonial, setTestimonial] = useState(0)
   const get = useCmsVal('pg-home')
 
+  const { data: hp } = useQuery({
+    queryKey: ['public-homepage-content'],
+    queryFn: () => apiClient.get('/homepage-content').then(r => (r.data.data as HomePageContent[])[0]),
+  })
+
+  const hpImages = [
+    hp?.heroImage1Url, hp?.heroImage2Url, hp?.heroImage3Url, hp?.heroImage4Url,
+  ].filter(Boolean) as string[]
+
+  const slideImages = hpImages.length > 0 ? hpImages : [
+    'https://picsum.photos/seed/alber-campus/1400/900',
+    'https://picsum.photos/seed/alber-class/1400/900',
+    'https://picsum.photos/seed/alber-sports/1400/900',
+    'https://picsum.photos/seed/alber-arts/1400/900',
+  ]
+
   const { data: events = [], isLoading: eventsLoading } = useQuery({
     queryKey: ['public-events'],
     queryFn: () => contentService.listEvents().then(unwrap),
@@ -140,9 +165,9 @@ export function Home() {
   })
 
   useEffect(() => {
-    const t = setInterval(() => setSlide(s => (s + 1) % HERO_IMAGES.length), 5000)
+    const t = setInterval(() => setSlide(s => (s + 1) % slideImages.length), 5000)
     return () => clearInterval(t)
-  }, [])
+  }, [slideImages.length])
   useEffect(() => {
     const t = setInterval(() => setTestimonial(s => (s + 1) % TESTIMONIALS.length), 6000)
     return () => clearInterval(t)
@@ -158,9 +183,9 @@ export function Home() {
       ══════════════════════════════════════════ */}
       <section className="relative overflow-hidden" style={{ minHeight: '100svh' }}>
         {/* Background slideshow — Ken Burns zoom-in per slide */}
-        {HERO_IMAGES.map((img, i) => (
+        {slideImages.map((img, i) => (
           <motion.img
-            key={img}
+            key={`slide-${i}`}
             src={img}
             alt="Alber School Campus"
             className="absolute inset-0 h-full w-full object-cover"
@@ -186,9 +211,9 @@ export function Home() {
 
         {/* Slide dots — desktop right */}
         <div className="absolute bottom-32 right-8 z-10 hidden lg:flex flex-col gap-2">
-          {HERO_IMAGES.map((_, i) => (
+          {slideImages.map((img, i) => (
             <button
-              key={i}
+              key={`dot-desktop-${img}`}
               onClick={() => setSlide(i)}
               className={`rounded-full transition-all ${i === slide ? 'h-8 w-2 bg-gold' : 'h-2 w-2 bg-white/30'}`}
             />
@@ -207,13 +232,15 @@ export function Home() {
           >
             <div className="mb-6 flex items-center gap-3">
               <div className="h-px w-10 bg-gold" />
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">Kutus · Kirinyaga County · Est. 2005</span>
+              <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">
+                {hp?.heroLocationBadge ?? 'Kutus · Kirinyaga County · Est. 2005'}
+              </span>
             </div>
 
             <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}>
-              {get('hero.tagline', 'Where Excellence')}
+              {hp?.heroTagline ?? 'Where Excellence'}
               <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
-                {get('hero.taglineGold', 'Meets Tomorrow')}
+                {hp?.heroTaglineGold ?? 'Meets Tomorrow'}
               </span>
             </h1>
 
@@ -224,16 +251,16 @@ export function Home() {
             </div>
 
             <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
-              {get('hero.subtitle', "Kenya's premier learning institution — where every learner discovers their genius in world-class facilities guided by expert educators.")}
+              {hp?.heroSubtitle ?? "Kenya's premier learning institution — where every learner discovers their genius in world-class facilities guided by expert educators."}
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <Link to="/admissions">
-                <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
+              <Link to={hp?.heroPrimaryCtaUrl ?? '/admissions'}>
+                <Button variant="gold">{hp?.heroPrimaryCtaLabel ?? 'Apply Now'} <ArrowRight className="h-4 w-4" /></Button>
               </Link>
-              <Link to="/academics">
+              <Link to={hp?.heroSecondaryCtaUrl ?? '/academics'}>
                 <button className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
-                  Explore Programs <ArrowRight className="h-4 w-4" />
+                  {hp?.heroSecondaryCtaLabel ?? 'Explore Programs'} <ArrowRight className="h-4 w-4" />
                 </button>
               </Link>
             </div>
@@ -351,10 +378,10 @@ export function Home() {
         <div className="relative z-10 border-t border-white/10 bg-black/60 backdrop-blur-md">
           <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
             {[
-              { end: 2000, suffix: '+', label: 'Students Enrolled' },
-              { end: 120,  suffix: '+', label: 'Expert Educators' },
-              { end: 2005, suffix: '',  label: 'Est.' },
-              { end: 30,   suffix: '+', label: 'Co-Curricular Activities' },
+              { end: hp?.statStudentsEnrolled ?? 2000, suffix: '+', label: 'Students Enrolled' },
+              { end: hp?.statEducators        ?? 120,  suffix: '+', label: 'Expert Educators' },
+              { end: hp?.statEstYear          ?? 2005, suffix: '',  label: 'Est.' },
+              { end: hp?.statActivities       ?? 30,   suffix: '+', label: 'Co-Curricular Activities' },
             ].map(stat => (
               <div key={stat.label} className="flex flex-col items-center py-5 px-4 text-center">
                 <span className="text-2xl font-extrabold text-gold sm:text-3xl">
@@ -368,9 +395,9 @@ export function Home() {
 
         {/* Mobile slide dots */}
         <div className="absolute bottom-20 left-0 right-0 z-10 flex items-center justify-center gap-2 lg:hidden">
-          {HERO_IMAGES.map((_, i) => (
+          {slideImages.map((img, i) => (
             <button
-              key={i}
+              key={`dot-mobile-${img}`}
               onClick={() => setSlide(i)}
               className={`rounded-full transition-all ${i === slide ? 'w-6 h-2 bg-gold' : 'w-2 h-2 bg-white/40'}`}
             />
@@ -390,8 +417,8 @@ export function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <SectionLabel>Our Foundation</SectionLabel>
-            <h2 className="mt-2 text-3xl font-bold md:text-4xl">What We Stand For</h2>
+            <SectionLabel>{hp?.foundationSectionLabel ?? 'Our Foundation'}</SectionLabel>
+            <h2 className="mt-2 text-3xl font-bold md:text-4xl">{hp?.foundationHeading ?? 'What We Stand For'}</h2>
           </motion.div>
 
           <motion.div
@@ -409,10 +436,10 @@ export function Home() {
                     <Target className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-0.5">Our Mission</p>
-                    <h3 className="font-bold text-base text-foreground mb-1.5">To Nurture Genius</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-0.5">{hp?.missionLabel ?? 'Our Mission'}</p>
+                    <h3 className="font-bold text-base text-foreground mb-1.5">{hp?.missionTitle ?? 'To Nurture Genius'}</h3>
                     <p className="text-sm leading-relaxed text-muted">
-                      World-class, holistic education that unlocks the unique genius in every child — equipping learners with knowledge, skills, and values to thrive globally.
+                      {hp?.missionBody ?? 'World-class, holistic education that unlocks the unique genius in every child — equipping learners with knowledge, skills, and values to thrive globally.'}
                     </p>
                   </div>
                 </div>
@@ -426,13 +453,13 @@ export function Home() {
                     <Star className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-0.5">Our Motto</p>
-                    <h3 className="font-bold text-base text-foreground mb-1.5">Excellence in All</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gold mb-0.5">{hp?.mottoLabel ?? 'Our Motto'}</p>
+                    <h3 className="font-bold text-base text-foreground mb-1.5">{hp?.mottoTitle ?? 'Excellence in All'}</h3>
                     <p className="font-serif text-base italic font-semibold text-gold leading-snug">
-                      "Unlocking Every Child's Genius"
+                      "{hp?.mottoTagline ?? "Unlocking Every Child's Genius"}"
                     </p>
                     <p className="mt-1.5 text-sm leading-relaxed text-muted">
-                      Academic, character, creativity, sport, and service — every learner known, valued, and challenged.
+                      {hp?.mottoBody ?? 'Academic, character, creativity, sport, and service — every learner known, valued, and challenged.'}
                     </p>
                   </div>
                 </div>
@@ -443,10 +470,10 @@ export function Home() {
                     <Globe className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-green-500 dark:text-green-400 mb-0.5">Our Vision</p>
-                    <h3 className="font-bold text-base text-foreground mb-1.5">Leaders for Tomorrow</h3>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-green-500 dark:text-green-400 mb-0.5">{hp?.visionLabel ?? 'Our Vision'}</p>
+                    <h3 className="font-bold text-base text-foreground mb-1.5">{hp?.visionTitle ?? 'Leaders for Tomorrow'}</h3>
                     <p className="text-sm leading-relaxed text-muted">
-                      East Africa's leading centre of excellence — producing confident, compassionate, globally competitive graduates who lead with integrity.
+                      {hp?.visionBody ?? "East Africa's leading centre of excellence — producing confident, compassionate, globally competitive graduates who lead with integrity."}
                     </p>
                   </div>
                 </div>
@@ -507,7 +534,7 @@ export function Home() {
                 const { color, text } = CV_COLORS[i % CV_COLORS.length]
                 return (
                   <motion.div
-                    key={v.coreValueId}
+                    key={v.coreValueId || `cv-${i}`}
                     initial={{ opacity: 0, y: 32 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -561,7 +588,7 @@ export function Home() {
                 const cardColor = CARD_COLORS[i % CARD_COLORS.length]
                 return (
                   <motion.div
-                    key={item.id}
+                    key={item.id || `why-${i}`}
                     initial={{ opacity: 0, y: 28 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -713,7 +740,7 @@ export function Home() {
                 const imgSrc = prog.imageUrl || `https://picsum.photos/seed/${prog.slug}/800/600`
                 return (
                   <motion.div
-                    key={prog.id}
+                    key={prog.id || `prog-${i}`}
                     initial={{ opacity: 0, y: 28 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -835,7 +862,7 @@ export function Home() {
             ) : (
               galleryImages.map((img, i) => (
                 <motion.div
-                  key={img.id}
+                  key={img.id || `gal-${i}`}
                   className="aspect-square overflow-hidden rounded-2xl"
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -915,17 +942,17 @@ export function Home() {
             transition={{ duration: 0.6 }}
           >
             <p className="mb-3 inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
-              Applications Open · 2026–2027
+              {hp?.ctaBadgeText ?? 'Applications Open · 2026–2027'}
             </p>
-            <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">Ready to Join Alber School?</h2>
-            <p className="mb-8 text-white/70">Applications are open for the 2026/2027 academic year. Limited spaces — secure your child's place today.</p>
+            <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">{hp?.ctaHeading ?? 'Ready to Join Alber School?'}</h2>
+            <p className="mb-8 text-white/70">{hp?.ctaSubtext ?? 'Applications are open for the 2026/2027 academic year. Limited spaces — secure your child\'s place today.'}</p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/admissions">
-                <Button variant="gold">Apply Now <ArrowRight className="h-4 w-4" /></Button>
+              <Link to={hp?.ctaPrimaryUrl ?? '/admissions'}>
+                <Button variant="gold">{hp?.ctaPrimaryLabel ?? 'Apply Now'} <ArrowRight className="h-4 w-4" /></Button>
               </Link>
-              <Link to="/contact">
+              <Link to={hp?.ctaSecondaryUrl ?? '/contact'}>
                 <button className="flex items-center gap-2 rounded-xl border-2 border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-                  Contact Us
+                  {hp?.ctaSecondaryLabel ?? 'Contact Us'}
                 </button>
               </Link>
             </div>

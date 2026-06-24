@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen,
   Globe, Baby, FlaskConical, GraduationCap, Loader2,
-  Star, Heart, Lightbulb, Users, Target, Zap,
+  Star, Heart, Lightbulb, Users, Target, Zap, Briefcase,
 } from 'lucide-react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { Button } from '../components/ui/Button'
@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { unwrap } from '../services/mockApi'
 import { contentService } from '../services/contentService'
 import { useCmsVal } from '../hooks/useCmsData'
+import { apiClient } from '../services/apiClient'
 
 const HERO_IMAGES = [
   'https://picsum.photos/seed/alber-campus/1400/900',
@@ -27,26 +28,42 @@ const TESTIMONIALS = [
   { name: 'Amina Ochieng', role: 'Student · Music Academy', initials: 'AO', quote: 'I performed my first piano recital here in Grade 5. The music teachers are genuinely world-class professionals.' },
 ]
 
-const CORE_VALUES = [
-  { icon: Star,       label: 'Excellence',   desc: 'We pursue the highest standards in everything — academic, co-curricular, and personal growth.',  color: 'from-yellow-500/20 to-yellow-500/5',  ring: 'ring-yellow-400/40',  text: 'text-yellow-500 dark:text-yellow-400' },
-  { icon: Heart,      label: 'Integrity',    desc: 'Honesty, accountability, and respect form the moral backbone of every Alber learner and staff member.', color: 'from-rose-500/20 to-rose-500/5',     ring: 'ring-rose-400/40',    text: 'text-rose-500 dark:text-rose-400' },
-  { icon: Lightbulb,  label: 'Innovation',   desc: 'Curiosity, creativity, and a growth mindset are nurtured so every learner becomes a lifelong problem-solver.', color: 'from-blue-500/20 to-blue-500/5',    ring: 'ring-blue-400/40',    text: 'text-blue-500 dark:text-blue-400' },
-  { icon: Users,      label: 'Community',    desc: 'We are a family — parents, teachers, and learners united by a shared vision for Kirinyaga\'s future.', color: 'from-green-500/20 to-green-500/5',  ring: 'ring-green-400/40',   text: 'text-green-500 dark:text-green-400' },
-  { icon: Target,     label: 'Purpose',      desc: 'Every programme, policy, and pedagogy is designed with a single aim: unlocking each child\'s unique genius.', color: 'from-purple-500/20 to-purple-500/5',ring: 'ring-purple-400/40',  text: 'text-purple-500 dark:text-purple-400' },
-  { icon: Zap,        label: 'Resilience',   desc: 'We build children who rise — emotionally strong, adaptable, and ready for whatever tomorrow brings.',  color: 'from-orange-500/20 to-orange-500/5',ring: 'ring-orange-400/40',  text: 'text-orange-500 dark:text-orange-400' },
+const CV_COLORS = [
+  { color: 'from-yellow-500/20 to-yellow-500/5', text: 'text-yellow-400' },
+  { color: 'from-rose-500/20 to-rose-500/5',     text: 'text-rose-400'   },
+  { color: 'from-blue-500/20 to-blue-500/5',     text: 'text-blue-400'   },
+  { color: 'from-green-500/20 to-green-500/5',   text: 'text-green-400'  },
+  { color: 'from-purple-500/20 to-purple-500/5', text: 'text-purple-400' },
+  { color: 'from-orange-500/20 to-orange-500/5', text: 'text-orange-400' },
 ]
 
-const WHY_ALBER = [
-  { icon: Baby,         level: 'ECDE · PP1 & PP2',           title: 'Play-Based Early Years',            desc: 'ECD specialists guide children through structured play, sensory discovery, and social development — laying a confident foundation.',     color: 'bg-pink-500/10 text-pink-500' },
-  { icon: BookOpen,     level: 'Primary · Grades 1–6',        title: 'CBC Literacy & Numeracy',           desc: 'Learner-centred, project-based CBC teaching builds strong literacy, numeracy, and critical thinking.',                                   color: 'bg-blue-500/10 text-blue-500' },
-  { icon: FlaskConical, level: 'Junior Secondary · Gr. 7–9',  title: 'STEM, Careers & Community',         desc: 'Dedicated STEM labs, career pathway exploration, Community Service Learning, and Career & Technical Skills.',                            color: 'bg-emerald-500/10 text-emerald-500' },
-  { icon: GraduationCap,level: 'Senior School · Gr. 10–12',   title: 'KCSE & IGCSE University Pathways',  desc: 'Rigorous KCSE preparation plus Cambridge IGCSE & A-Level tracks with dedicated university counselling from Grade 10.',                     color: 'bg-purple-500/10 text-purple-500' },
-  { icon: Trophy,       level: 'All Levels',                  title: 'Holistic Co-Curricular Life',       desc: 'Every learner from PP1 to Grade 12 participates in sports, music, drama, or dance guided by professional coaches.',                     color: 'bg-gold/10 text-gold' },
-  { icon: ShieldCheck,  level: 'All Levels',                  title: 'Safe, Certified & Fully Staffed',   desc: 'TSC-registered teachers, CCTV-monitored classrooms, a fully fenced campus, and max 30 learners per class.',                             color: 'bg-primary/10 text-primary dark:text-gold' },
+const CARD_COLORS = [
+  'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400',
+  'bg-blue-500/10 text-blue-600 dark:text-blue-500',
+  'bg-green-500/10 text-green-600 dark:text-green-500',
+  'bg-rose-500/10 text-rose-600 dark:text-rose-500',
+  'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  'bg-teal-500/10 text-teal-600 dark:text-teal-400',
+  'bg-purple-500/10 text-purple-600 dark:text-purple-400',
+  'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
 ]
 
-const PROGRAM_ICONS: Record<string, string> = {
-  daycare: '🌱', primary: '📚', junior: '🔬', senior: '🎓',
+const ICON_MAP: Record<string, React.ElementType> = {
+  'academic-cap': GraduationCap,
+  'beaker': FlaskConical,
+  'users': Users,
+  'heart': Heart,
+  'trophy': Trophy,
+  'globe': Globe,
+  'shield': ShieldCheck,
+  'briefcase': Briefcase,
+  'book-open': BookOpen,
+  'star': Star,
+  'target': Target,
+  'zap': Zap,
+  'music': Music,
+  'baby': Baby,
+  'lightbulb': Lightbulb,
 }
 
 function AnimatedCounter({ end, suffix = '' }: { end: number; suffix?: string }) {
@@ -85,13 +102,41 @@ export function Home() {
     queryKey: ['public-events'],
     queryFn: () => contentService.listEvents().then(unwrap),
   })
+
+  const { data: coreValues = [], isLoading: coreValuesLoading } = useQuery({
+    queryKey: ['public-core-values'],
+    queryFn: () => apiClient.get('/core-values').then(r => r.data.data as {
+      coreValueId: number; icon: string; title: string; description: string; sortOrder: number
+    }[]),
+  })
+
+  const { data: whyAlber = [], isLoading: whyAlberLoading } = useQuery({
+    queryKey: ['public-alber-difference'],
+    queryFn: () => apiClient.get('/alber-difference').then(r => r.data.data as {
+      id: number; icon: string; badgeName: string; name: string; description: string; sortOrder: number
+    }[]),
+  })
+
   const { data: programLevels = [], isLoading: programsLoading } = useQuery({
     queryKey: ['public-programs'],
-    queryFn: () => contentService.listProgramLevels().then(unwrap),
+    queryFn: () => apiClient.get('/academics-page-content/school-levels').then(r =>
+      (r.data.data as {
+        schoolLevelId: number; slug: string; name: string; ages: string;
+        icon: string; description: string; sortOrder: number
+      }[]).map(l => ({ ...l, id: l.schoolLevelId, imageUrl: undefined }))
+    ),
   })
+
   const { data: galleryImages = [], isLoading: galleryLoading } = useQuery({
     queryKey: ['public-gallery'],
-    queryFn: () => contentService.listGalleryImages().then(unwrap).then(imgs => imgs.filter(img => img.isPublic).slice(0, 9)),
+    queryFn: () => apiClient.get('/gallery').then(r =>
+      (r.data.data as {
+        galleryImageId: number; url: string; caption: string; isPublic: boolean
+      }[])
+        .filter(img => img.isPublic)
+        .slice(0, 9)
+        .map(img => ({ ...img, id: img.galleryImageId }))
+    ),
   })
 
   useEffect(() => {
@@ -455,29 +500,35 @@ export function Home() {
           </motion.div>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {CORE_VALUES.map((v, i) => (
-              <motion.div
-                key={v.label}
-                initial={{ opacity: 0, y: 32 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.07 }}
-              >
-                <div className="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md p-6 transition-all duration-300 hover:scale-[1.03] hover:border-white/25 hover:bg-black/60 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
-                  {/* Coloured glow on hover */}
-                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl bg-gradient-to-br ${v.color}`} />
-                  <div className="relative z-10">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${v.text} bg-white/10 ring-1 ring-white/20 group-hover:ring-white/30 transition-all`}>
-                        <v.icon className="h-5 w-5" />
+            {coreValuesLoading ? (
+              [1,2,3,4,5,6].map(n => <div key={n} className="h-40 animate-pulse rounded-2xl bg-white/10" />)
+            ) : (
+              coreValues.map((v, i) => {
+                const { color, text } = CV_COLORS[i % CV_COLORS.length]
+                return (
+                  <motion.div
+                    key={v.coreValueId}
+                    initial={{ opacity: 0, y: 32 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.07 }}
+                  >
+                    <div className="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md p-6 transition-all duration-300 hover:scale-[1.03] hover:border-white/25 hover:bg-black/60 hover:shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
+                      <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl bg-gradient-to-br ${color}`} />
+                      <div className="relative z-10">
+                        <div className="mb-4 flex items-center gap-3">
+                          <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${text} bg-white/10 ring-1 ring-white/20 group-hover:ring-white/30 transition-all text-xl`}>
+                            {v.icon}
+                          </div>
+                          <h3 className={`text-lg font-bold ${text}`}>{v.title}</h3>
+                        </div>
+                        <p className="text-sm leading-relaxed text-white/65 group-hover:text-white/80 transition-colors">{v.description}</p>
                       </div>
-                      <h3 className={`text-lg font-bold ${v.text}`}>{v.label}</h3>
                     </div>
-                    <p className="text-sm leading-relaxed text-white/65 group-hover:text-white/80 transition-colors">{v.desc}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                  </motion.div>
+                )
+              })
+            )}
           </div>
           </div>
         </div>
@@ -502,30 +553,38 @@ export function Home() {
             </p>
           </motion.div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {WHY_ALBER.map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.07 }}
-              >
-                <GlassCard className="flex flex-col gap-4 p-6 h-full hover:ring-2 hover:ring-gold/30 transition-all">
-                  <div className="flex items-center gap-4">
-                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${item.color}`}>
-                      <item.icon className="h-6 w-6" />
-                    </div>
-                    <span className="rounded-full border border-current/20 bg-current/5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-muted">
-                      {item.level}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground">{item.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.desc}</p>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
+            {whyAlberLoading ? (
+              [1,2,3,4,5,6].map(n => <div key={n} className="h-44 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />)
+            ) : (
+              whyAlber.map((item, i) => {
+                const IconComp = ICON_MAP[item.icon] ?? Star
+                const cardColor = CARD_COLORS[i % CARD_COLORS.length]
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 28 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.07 }}
+                  >
+                    <GlassCard className="flex flex-col gap-4 p-6 h-full hover:ring-2 hover:ring-gold/30 transition-all">
+                      <div className="flex items-center gap-4">
+                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${cardColor}`}>
+                          <IconComp className="h-6 w-6" />
+                        </div>
+                        <span className="rounded-full border border-current/20 bg-current/5 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-muted">
+                          {item.badgeName}
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-foreground">{item.name}</h3>
+                        <p className="mt-1.5 text-sm leading-relaxed text-muted">{item.description}</p>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                )
+              })
+            )}
           </div>
           <div className="mt-10 text-center">
             <Link to="/why-choose-us">
@@ -650,7 +709,7 @@ export function Home() {
               <p className="col-span-full text-center text-muted py-8">No programs configured yet.</p>
             ) : (
               displayPrograms.map((prog, i) => {
-                const icon = PROGRAM_ICONS[prog.slug] ?? '📖'
+                const icon = prog.icon ?? '📖'
                 const imgSrc = prog.imageUrl || `https://picsum.photos/seed/${prog.slug}/800/600`
                 return (
                   <motion.div

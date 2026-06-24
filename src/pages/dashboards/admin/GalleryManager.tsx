@@ -388,83 +388,62 @@ export function GalleryManager() {
         </button>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col gap-5">
 
-        {/* ── Left: Category sidebar ──────────────────────────────────── */}
-        <div className="w-60 shrink-0">
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
-              <Tag className="h-4 w-4 text-gray-400" />
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Categories</span>
+        {/* ── Horizontal category tabs ── */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <button
+            onClick={() => setSelectedCatId(null)}
+            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold whitespace-nowrap transition shrink-0 ${
+              selectedCatId === null
+                ? 'bg-[#E8B84B] text-[#0d1b0d]'
+                : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-[#E8B84B]/60'
+            }`}
+          >
+            <Images className="h-3.5 w-3.5 shrink-0" />
+            All Images
+          </button>
+
+          {catsLoading && (
+            <div className="flex items-center gap-2 text-gray-400 text-sm px-2">
+              <Loader2 className="h-4 w-4 animate-spin" /> Loading…
             </div>
+          )}
 
-            {catsLoading ? (
-              <div className="flex items-center justify-center py-8 gap-2 text-gray-400">
-                <Loader2 className="h-4 w-4 animate-spin" /> Loading…
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-100 dark:divide-gray-700">
-                {/* All images option */}
+          {!catsLoading && sortedCategories.map((cat, ci) => (
+            <div key={`cat-${cat.id}-${ci}`} className="group relative shrink-0">
+              <button
+                onClick={() => setSelectedCatId(cat.id)}
+                className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold whitespace-nowrap transition ${
+                  selectedCatId === cat.id
+                    ? 'bg-[#E8B84B] text-[#0d1b0d]'
+                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-[#E8B84B]/60'
+                }`}
+              >
+                {cat.icon && <span>{cat.icon}</span>}
+                <span>{cat.title}</span>
+                {!cat.isActive && <span className="text-[10px] opacity-60 ml-0.5">(hidden)</span>}
+              </button>
+              <div className="absolute -top-1.5 -right-1.5 hidden group-hover:flex gap-0.5 z-10 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-0.5">
                 <button
-                  onClick={() => setSelectedCatId(null)}
-                  className={`w-full flex items-center gap-2 px-4 py-3 text-sm text-left transition ${
-                    selectedCatId === null
-                      ? 'bg-[#E8B84B]/10 text-[#0d1b0d] dark:text-[#E8B84B] font-semibold'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  <Images className="h-4 w-4 shrink-0 text-gray-400" />
-                  <span className="flex-1 truncate">All Images</span>
-                  {selectedCatId === null && <ChevronRight className="h-3.5 w-3.5 text-[#E8B84B]" />}
-                </button>
-
-                {sortedCategories.map((cat, ci) => (
-                  <div key={`cat-${cat.id}-${ci}`} className={`group flex items-center gap-2 px-4 py-3 transition cursor-pointer ${
-                    selectedCatId === cat.id
-                      ? 'bg-[#E8B84B]/10'
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                  }`}
-                    onClick={() => setSelectedCatId(cat.id)}
-                  >
-                    <span className="text-base shrink-0">{cat.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm truncate font-medium ${
-                        selectedCatId === cat.id
-                          ? 'text-[#0d1b0d] dark:text-[#E8B84B]'
-                          : 'text-gray-700 dark:text-gray-300'
-                      }`}>{cat.title}</p>
-                      {!cat.isActive && (
-                        <span className="text-[10px] text-gray-400">Hidden</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                      <button
-                        onClick={e => { e.stopPropagation(); setCatModal({ open: true, editing: cat }) }}
-                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-400 hover:text-gray-700 dark:hover:text-white"
-                      >
-                        <Pencil className="h-3 w-3" />
-                      </button>
-                      <button
-                        onClick={e => { e.stopPropagation(); setDelCat(cat) }}
-                        className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-600"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </div>
-                    {selectedCatId === cat.id && <ChevronRight className="h-3.5 w-3.5 text-[#E8B84B] shrink-0" />}
-                  </div>
-                ))}
-
-                {categories.length === 0 && (
-                  <p className="px-4 py-6 text-xs text-gray-400 text-center">No categories yet.<br />Create one to get started.</p>
-                )}
+                  onClick={e => { e.stopPropagation(); setCatModal({ open: true, editing: cat }) }}
+                  className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                ><Pencil className="h-3 w-3" /></button>
+                <button
+                  onClick={e => { e.stopPropagation(); setDelCat(cat) }}
+                  className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-600"
+                ><Trash2 className="h-3 w-3" /></button>
               </div>
-            )}
-          </div>
+            </div>
+          ))}
+
+          {!catsLoading && categories.length === 0 && (
+            <span className="text-xs text-gray-400 px-2">No categories yet. Create one to get started.</span>
+          )}
         </div>
 
-        {/* ── Right: Images panel ─────────────────────────────────────── */}
-        <div className="flex-1 min-w-0">
+        {/* ── Images panel ── */}
+        <div className="min-w-0">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <FolderOpen className="h-4 w-4 text-gray-400" />

@@ -168,67 +168,62 @@ export function StaffManager() {
         </button>
       </div>
 
-      <div className="flex flex-1 min-h-0 gap-0 overflow-hidden">
-        {/* ── Department sidebar ──────────────────────────────────────────── */}
-        <aside className="w-56 shrink-0 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Departments</span>
-            <button
-              onClick={openNewDept}
-              title="Add department"
-              className="rounded-lg p-1 text-gray-400 hover:bg-[#E8B84B]/20 hover:text-[#0d1b0d] dark:hover:text-[#E8B84B] transition"
-            >
-              <Plus className="h-3.5 w-3.5" />
-            </button>
-          </div>
+      <div className="flex flex-1 min-h-0 flex-col overflow-hidden">
+        {/* ── Horizontal department tabs ── */}
+        <div className="flex items-center gap-2 px-6 py-3 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
+          <button
+            onClick={() => { setSelectedDeptId(null); setPage(1) }}
+            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold whitespace-nowrap transition shrink-0 ${
+              selectedDeptId === null
+                ? 'bg-[#E8B84B] text-[#0d1b0d]'
+                : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-[#E8B84B]/60'
+            }`}
+          >
+            <Users className="h-3.5 w-3.5" />
+            All Teachers
+            <span className="text-xs tabular-nums opacity-70">{teachers.length}</span>
+          </button>
 
-          <div className="flex-1 overflow-y-auto py-1">
-            {loadingDepts ? (
-              <div className="flex items-center justify-center py-8"><Loader2 className="h-4 w-4 animate-spin text-gray-400" /></div>
-            ) : (
-              <>
+          {loadingDepts && (
+            <div className="flex items-center gap-2 text-gray-400 text-sm px-2">
+              <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+            </div>
+          )}
+
+          {!loadingDepts && departments.map((dept, di) => {
+            const count = teachers.filter(t => t.departmentId === dept.id).length
+            const active = selectedDeptId === dept.id
+            return (
+              <div key={`dept-${dept.id}-${di}`} className="group relative shrink-0">
                 <button
-                  onClick={() => { setSelectedDeptId(null); setPage(1) }}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition ${
-                    selectedDeptId === null
-                      ? 'bg-[#E8B84B]/15 text-[#0d1b0d] dark:text-[#E8B84B] font-semibold'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                  onClick={() => { setSelectedDeptId(dept.id); setPage(1) }}
+                  className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold whitespace-nowrap transition ${
+                    active
+                      ? 'bg-[#E8B84B] text-[#0d1b0d]'
+                      : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-[#E8B84B]/60'
                   }`}
                 >
-                  <span className="flex items-center gap-2"><Users className="h-3.5 w-3.5" /> All Teachers</span>
-                  <span className="text-xs tabular-nums">{teachers.length}</span>
+                  {dept.icon ? <span>{dept.icon}</span> : <Building2 className="h-3.5 w-3.5 shrink-0" />}
+                  <span>{dept.name}</span>
+                  <span className="text-xs tabular-nums opacity-70">{count}</span>
                 </button>
+                <div className="absolute -top-1.5 -right-1.5 hidden group-hover:flex gap-0.5 z-10 bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-0.5">
+                  <button onClick={() => openEditDept(dept)} className="rounded p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-400 hover:text-blue-600"><Pencil className="h-3 w-3" /></button>
+                  <button onClick={() => setDelDept(dept)} className="rounded p-1 hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500"><Trash2 className="h-3 w-3" /></button>
+                </div>
+              </div>
+            )
+          })}
 
-                {departments.map((dept, di) => {
-                  const count = teachers.filter(t => t.departmentId === dept.id).length
-                  const active = selectedDeptId === dept.id
-                  return (
-                    <div key={`dept-${dept.id}-${di}`} className="group relative">
-                      <button
-                        onClick={() => { setSelectedDeptId(dept.id); setPage(1) }}
-                        className={`w-full flex items-center justify-between px-4 py-2.5 text-sm transition pr-16 ${
-                          active
-                            ? 'bg-[#E8B84B]/15 text-[#0d1b0d] dark:text-[#E8B84B] font-semibold'
-                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                        }`}
-                      >
-                        <span className="flex items-center gap-2 min-w-0">
-                          {dept.icon ? <span>{dept.icon}</span> : <Building2 className="h-3.5 w-3.5 shrink-0" />}
-                          <span className="truncate">{dept.name}</span>
-                        </span>
-                        <span className="text-xs tabular-nums shrink-0">{count}</span>
-                      </button>
-                      <div className="absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:flex gap-0.5">
-                        <button onClick={() => openEditDept(dept)} className="rounded p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-gray-400 hover:text-blue-600"><Pencil className="h-3 w-3" /></button>
-                        <button onClick={() => setDelDept(dept)} className="rounded p-1 hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500"><Trash2 className="h-3 w-3" /></button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </>
-            )}
-          </div>
-        </aside>
+          <button
+            onClick={openNewDept}
+            title="Add department"
+            className="shrink-0 flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium text-gray-400 border border-dashed border-gray-300 dark:border-gray-600 hover:border-[#E8B84B]/60 hover:text-[#E8B84B] transition ml-1"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add dept
+          </button>
+        </div>
 
         {/* ── Teacher list ────────────────────────────────────────────────── */}
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">

@@ -269,7 +269,7 @@ export function Home() {
             <div className="lg:hidden mt-6">
               <div className="flex items-center gap-4 rounded-2xl border border-gold/25 bg-black/65 backdrop-blur-xl p-4">
                 <div className="relative shrink-0">
-                  <div className="h-16 w-16 overflow-hidden rounded-xl border-2 border-gold/60 shadow-[0_0_20px_4px_rgba(232,184,75,0.25)]">
+                  <div className="h-16 w-16 overflow-hidden rounded-full border-2 border-gold/60 shadow-[0_0_20px_4px_rgba(232,184,75,0.25)]">
                     <img
                       src="https://picsum.photos/seed/director-alber/400/400"
                       alt={get('director.name', 'Dr. Alice Mwangi')}
@@ -318,13 +318,7 @@ export function Home() {
 
                 {/* Photo frame */}
                 <div className="relative mx-auto w-fit">
-                  {/* Corner brackets */}
-                  <div className="absolute -top-2 -left-2 h-5 w-5 border-t-2 border-l-2 border-gold z-20" />
-                  <div className="absolute -top-2 -right-2 h-5 w-5 border-t-2 border-r-2 border-gold z-20" />
-                  <div className="absolute -bottom-2 -left-2 h-5 w-5 border-b-2 border-l-2 border-gold z-20" />
-                  <div className="absolute -bottom-2 -right-2 h-5 w-5 border-b-2 border-r-2 border-gold z-20" />
-
-                  <div className="relative h-44 w-44 overflow-hidden rounded-2xl border-2 border-gold/60 shadow-[0_0_40px_8px_rgba(232,184,75,0.3)]">
+                  <div className="relative h-44 w-44 overflow-hidden rounded-full border-2 border-gold/60 shadow-[0_0_40px_8px_rgba(232,184,75,0.3)]">
                     <img
                       src="https://picsum.photos/seed/director-alber/400/400"
                       alt={get('director.name', 'Dr. Alice Mwangi')}

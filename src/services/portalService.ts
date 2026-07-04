@@ -1,15 +1,5 @@
 import { apiClient } from './apiClient'
-import { mutateDB } from './db'
-import type { UserRole } from './db'
-import {
-  MOCK_CHILDREN, MOCK_CHILD_PROFILE, MOCK_GRADES_HISTORY,
-  MOCK_ATTENDANCE, MOCK_TIMETABLE, MOCK_FEES,
-  MOCK_HOMEWORK, MOCK_ANNOUNCEMENTS,
-  MOCK_TEACHER_PROFILE, MOCK_TEACHER_CLASSES,
-  MOCK_TEACHER_STUDENTS, MOCK_TEACHER_GRADES,
-  MOCK_TEACHER_ATTENDANCE, MOCK_TEACHER_TIMETABLE,
-  MOCK_TEACHER_ANNOUNCEMENTS,
-} from './mockPortalData'
+import { MOCK_ANNOUNCEMENTS } from './mockPortalData'
 
 export type ApiResponse<T> = { data: T; error: null } | { data: null; error: string }
 
@@ -22,23 +12,6 @@ function fail(err: unknown): ApiResponse<never> {
     ?? (err as Error)?.message
     ?? 'Unknown error'
   return { data: null, error: msg }
-}
-
-/** True when the backend is simply unreachable (dev / demo mode).
- *  Covers: raw network error (no proxy), Vite proxy 500, nginx 502/503/504. */
-function isOffline(e: unknown): boolean {
-  const msg = (e as Error)?.message ?? ''
-  const status = (e as { response?: { status?: number } })?.response?.status
-  return (
-    msg.includes('Network Error') ||
-    msg.includes('ECONNREFUSED') ||
-    msg.includes('ERR_CONNECTION_REFUSED') ||
-    msg.includes('proxy') ||
-    status === 500 ||
-    status === 502 ||
-    status === 503 ||
-    status === 504
-  )
 }
 
 interface GradeResponseDto {
@@ -72,12 +45,6 @@ interface InvoiceDto {
   studentFeeId: number; studentName: string; className: string
   feeName: string; amountDue: number; amountPaid: number; balance: number
   status: string; paidAt?: string; payments?: unknown[]
-}
-
-interface ChildDto {
-  id: number; userId: number; fullName: string
-  className: string; classId: number; gender?: string
-  dateOfBirth?: string; address?: string; parentId?: number
 }
 
 function groupGradesByYearTerm(grades: GradeResponseDto[]) {
@@ -187,22 +154,6 @@ export const portalService = {
     } catch (e) { return fail(e) }
   },
 
-  getStaffByUserId: async (_userId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<{ id: number; userId: number; fullName: string; email: string; qualification?: string; specialization?: string; hireDate?: string }>('/teacher/profile')
-      const t = res.data
-      return ok({
-        id: t.id.toString(), userId: t.userId.toString(),
-        firstName: t.fullName.split(' ')[0], lastName: t.fullName.split(' ').slice(1).join(' '),
-        email: t.email, qualification: t.qualification, specialization: t.specialization,
-        classIds: [], subjects: [],
-      })
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_TEACHER_PROFILE)
-      return fail(e)
-    }
-  },
-
   getStudentGradesHistory: async (_studentId: string): Promise<ApiResponse<unknown>> => {
     try {
       const res = await apiClient.get<GradeResponseDto[]>('/student/grades')
@@ -238,208 +189,7 @@ export const portalService = {
     } catch (e) { return fail(e) }
   },
 
-  getAnnouncements: async (role: UserRole): Promise<ApiResponse<unknown[]>> => {
-    return ok(role === 'teacher' ? MOCK_TEACHER_ANNOUNCEMENTS : MOCK_ANNOUNCEMENTS)
-  },
-
-  getTeacherClasses: async (_staffId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<{ id: number; name: string; section?: string; fullName: string; studentCount: number }[]>('/teacher/classes')
-      return ok(res.data.map(c => ({
-        id: c.id.toString(), name: c.fullName, grade: c.name, stream: c.section ?? '',
-        studentCount: c.studentCount,
-      })))
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_TEACHER_CLASSES)
-      return fail(e)
-    }
-  },
-
-  getClassStudents: async (classId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<{ id: number; userId: number; fullName: string; gender?: string }[]>(`/teacher/classes/${classId}/students`)
-      return ok(res.data.map(s => ({
-        id: s.id.toString(), userId: s.userId.toString(),
-        fullName: s.fullName, firstName: s.fullName.split(' ')[0],
-        lastName: s.fullName.split(' ').slice(1).join(' '),
-        gender: s.gender, classId,
-      })))
-    } catch (e) {
-      if (isOffline(e)) {
-        const students = MOCK_TEACHER_STUDENTS[classId] ?? MOCK_TEACHER_STUDENTS['cls-7j']
-        return ok(students)
-      }
-      return fail(e)
-    }
-  },
-
-  getClassGrades: async (classId: string, _termId?: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<GradeResponseDto[]>(`/teacher/grades/class/${classId}`)
-      return ok(res.data.map(g => ({
-        id: g.id.toString(), studentId: g.studentId.toString(),
-        studentName: g.studentName, subjectId: g.subjectName,
-        subjectName: g.subjectName, classId, termId: 'current',
-        total: g.percentage, ca: g.score, exam: null,
-        remarks: g.remarks ?? '', assessmentType: g.assessmentType,
-      })))
-    } catch (e) {
-      if (isOffline(e)) {
-        const grades = MOCK_TEACHER_GRADES[classId] ?? MOCK_TEACHER_GRADES['cls-7j']
-        return ok(grades)
-      }
-      return fail(e)
-    }
-  },
-
-  getClassAttendance: async (classId: string, _termId?: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<AttendanceRecordDto[]>(`/teacher/attendance/class/${classId}/today`)
-      return ok(res.data.map(r => ({
-        id: r.id.toString(), studentId: r.studentId.toString(),
-        date: r.date?.split('T')[0] ?? new Date().toISOString().split('T')[0],
-        status: r.status?.toLowerCase() ?? 'present',
-        termId: 'current', classId, remarks: r.remarks ?? '',
-      })))
-    } catch (e) {
-      if (isOffline(e)) {
-        const att = MOCK_TEACHER_ATTENDANCE[classId] ?? MOCK_TEACHER_ATTENDANCE['cls-7j']
-        return ok(att)
-      }
-      return fail(e)
-    }
-  },
-
-  saveGrades: async (grades: unknown[]): Promise<ApiResponse<unknown>> => {
-    try {
-      const payload = (grades as { studentId: string; subjectId: string; total?: number; ca?: number; termId?: string }[]).map(g => ({
-        studentId: parseInt(g.studentId),
-        subjectId: parseInt(g.subjectId),
-        score: g.ca ?? g.total ?? 0,
-        maxScore: 100,
-        assessmentType: g.termId ?? 'General',
-        assessmentDate: new Date().toISOString(),
-        remarks: '',
-      }))
-      const classId = (grades as { classId?: string }[])[0]?.classId
-      if (!classId) return fail('No classId provided')
-      const res = await apiClient.post(`/teacher/grades/class/${classId}/bulk`, payload)
-      return ok(res.data)
-    } catch (e) { return fail(e) }
-  },
-
-  saveAttendance: async (records: unknown[]): Promise<ApiResponse<unknown>> => {
-    try {
-      const payload = (records as { studentId: string; date: string; status: string; classId?: string }[]).map(r => ({
-        studentId: parseInt(r.studentId),
-        date: r.date,
-        status: ['Present', 'Absent', 'Late', 'Excused'].findIndex(s => s.toLowerCase() === r.status.toLowerCase()),
-        remarks: '',
-      }))
-      const classId = (records as { classId?: string }[])[0]?.classId
-      if (!classId) return fail('No classId provided')
-      const res = await apiClient.post(`/teacher/attendance/class/${classId}/bulk`, payload)
-      return ok(res.data)
-    } catch (e) { return fail(e) }
-  },
-
-  getTeacherTimetable: async (_staffId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<TimetableEntryDto[]>('/teacher/timetable')
-      return ok(groupTimetable(res.data))
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_TEACHER_TIMETABLE)
-      return fail(e)
-    }
-  },
-
-  getLeaveRequests: async (_staffId: string): Promise<ApiResponse<unknown[]>> => {
-    return ok([])
-  },
-
-  submitLeaveRequest: async (data: unknown): Promise<ApiResponse<unknown>> => {
-    return ok({ id: Date.now().toString(), ...data as object, status: 'pending' })
-  },
-
-  getParentChildren: async (): Promise<ApiResponse<ChildDto[]>> => {
-    try {
-      const res = await apiClient.get<ChildDto[]>('/parent/children')
-      return ok(res.data)
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_CHILDREN as unknown as ChildDto[])
-      return fail(e)
-    }
-  },
-
-  getParentChildProfile: async (childId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const childrenRes = await apiClient.get<ChildDto[]>('/parent/children')
-      const child = childrenRes.data.find(c => c.id.toString() === childId)
-      if (!child) return fail('Child not found')
-      return ok({
-        student: {
-          id: child.id.toString(), admNo: `ADM${String(child.id).padStart(4, '0')}`,
-          firstName: child.fullName.split(' ')[0], lastName: child.fullName.split(' ').slice(1).join(' '),
-          dob: child.dateOfBirth ?? '', gender: (child.gender ?? 'Male') as 'Male' | 'Female',
-          grade: child.className, classId: child.classId.toString(),
-          photo: null, status: 'active' as const,
-        },
-        classInfo: { id: child.classId.toString(), name: child.className, grade: child.className, stream: '' },
-        term: null, invoice: null,
-      })
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_CHILD_PROFILE)
-      return fail(e)
-    }
-  },
-
-  getParentChildGrades: async (childId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<GradeResponseDto[]>(`/parent/children/${childId}/grades`)
-      return ok(groupGradesByYearTerm(res.data))
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_GRADES_HISTORY)
-      return fail(e)
-    }
-  },
-
-  getParentChildAttendance: async (childId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<AttendanceRecordDto[]>(`/parent/children/${childId}/attendance`)
-      return ok(calcAttendanceStats(res.data))
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_ATTENDANCE)
-      return fail(e)
-    }
-  },
-
-  getParentChildTimetable: async (childId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<TimetableEntryDto[]>(`/parent/children/${childId}/timetable`)
-      return ok(groupTimetable(res.data))
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_TIMETABLE)
-      return fail(e)
-    }
-  },
-
-  getParentChildFees: async (childId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<InvoiceDto>(`/parent/children/${childId}/fees`)
-      return ok(res.data)
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_FEES)
-      return fail(e)
-    }
-  },
-
-  getParentChildAssignments: async (childId: string): Promise<ApiResponse<unknown>> => {
-    try {
-      const res = await apiClient.get<AssignmentDto[]>(`/parent/children/${childId}/assignments`)
-      return ok(mapAssignments(res.data))
-    } catch (e) {
-      if (isOffline(e)) return ok(MOCK_HOMEWORK)
-      return fail(e)
-    }
+  getAnnouncements: async (): Promise<ApiResponse<unknown[]>> => {
+    return ok(MOCK_ANNOUNCEMENTS)
   },
 }

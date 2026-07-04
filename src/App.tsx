@@ -22,6 +22,7 @@ import { Blog } from './pages/Blog'
 import { BlogPost } from './pages/BlogPost'
 import { WhyChooseUs } from './pages/WhyChooseUs'
 import { Gallery } from './pages/Gallery'
+import { NotFound } from './pages/NotFound'
 
 import { AdminLayout }                from './pages/dashboards/admin/AdminLayout'
 import { GalleryManager }            from './pages/dashboards/admin/GalleryManager'
@@ -97,6 +98,9 @@ function App() {
               </Route>
 
               <Route path="dashboard" element={<Navigate to="/login" replace />} />
+
+              {/* ── 404 ── */}
+              <Route path="*" element={<NotFound />} />
 
             </Routes>
           </BrowserRouter>

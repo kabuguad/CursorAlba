@@ -64,6 +64,6 @@ export function useStudentInvoice() {
 export function useStudentAnnouncements() {
   return useQuery({
     queryKey: ['portal:announcements', 'student'],
-    queryFn: () => portalService.getAnnouncements('student').then(unwrap),
+    queryFn: () => portalService.getAnnouncements().then(unwrap),
   })
 }

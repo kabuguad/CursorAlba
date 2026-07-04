@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { feeStructure } from '../data/programs'
 import { GlassCard } from '../components/ui/GlassCard'
 import { useToast } from '../contexts/ToastContext'
 import { formatKES } from '../lib/utils'
 import { cn } from '../lib/utils'
-import { ChevronDown, ArrowRight, CheckCircle2, User, Users, FileText, CreditCard } from 'lucide-react'
+import { ChevronDown, ArrowRight, CheckCircle2, User, Users, FileText, CreditCard, Loader2 } from 'lucide-react'
 import { useCmsBlocks } from '../hooks/useCmsData'
 import { motion, AnimatePresence } from 'framer-motion'
+import { admissionsService } from '../services/admissionsService'
+import type { AdmissionApplicationCreateDto } from '../services/admissionsService'
 
 function useCms() {
   const { data: blocks = [] } = useCmsBlocks('pg-admissions')
@@ -31,17 +33,133 @@ const WHY_APPLY = [
   'M-Pesa fee payments',
 ]
 
+const GRADE_OPTIONS = [
+  'Daycare',
+  'PP1',
+  'PP2',
+  'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6',
+  'Grade 7', 'Grade 8', 'Grade 9',
+  'Form 1 / Grade 10', 'Form 2 / Grade 11', 'Form 3 / Grade 12', 'Form 4 / Grade 13',
+]
+
+const DOC_TYPES = [
+  { key: 'birth_certificate', label: 'Birth Certificate (PDF or image)', required: true },
+  { key: 'school_report',     label: 'Previous School Report (most recent)', required: true },
+  { key: 'parent_id',         label: 'Parent ID / Passport (optional)', required: false },
+]
+
+interface ChildForm {
+  childFirstName: string
+  childLastName: string
+  dateOfBirth: string
+  applyingForGrade: string
+  previousSchool: string
+}
+
+interface ParentForm {
+  parentFirstName: string
+  parentLastName: string
+  parentEmail: string
+  parentPhone: string
+  parentIdNumber: string
+  parentRelationship: string
+}
+
 export function Admissions() {
   const get = useCms()
   const { showToast } = useToast()
   const [step, setStep] = useState(0)
   const [openFee, setOpenFee] = useState<number | null>(0)
+  const [submitting, setSubmitting] = useState(false)
+
+  // ── Form state ──────────────────────────────────────────────────────────────
+  const [child, setChild] = useState<ChildForm>({
+    childFirstName: '', childLastName: '', dateOfBirth: '',
+    applyingForGrade: '', previousSchool: '',
+  })
+  const [parent, setParent] = useState<ParentForm>({
+    parentFirstName: '', parentLastName: '', parentEmail: '',
+    parentPhone: '', parentIdNumber: '', parentRelationship: '',
+  })
+
+  // File refs for documents
+  const fileRefs = useRef<(HTMLInputElement | null)[]>([null, null, null])
+
+  const setC = (k: keyof ChildForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setChild(p => ({ ...p, [k]: e.target.value }))
+  const setP = (k: keyof ParentForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setParent(p => ({ ...p, [k]: e.target.value }))
+
+  // ── Validation ──────────────────────────────────────────────────────────────
+  const validateStep = (): string | null => {
+    if (step === 0) {
+      if (!child.childFirstName.trim()) return 'Child first name is required.'
+      if (!child.childLastName.trim())  return 'Child last name is required.'
+      if (!child.dateOfBirth)           return 'Date of birth is required.'
+      if (!child.applyingForGrade)      return 'Please select a grade level.'
+    }
+    if (step === 1) {
+      if (!parent.parentFirstName.trim()) return 'Parent first name is required.'
+      if (!parent.parentLastName.trim())  return 'Parent last name is required.'
+      if (!parent.parentEmail.trim())     return 'Email address is required.'
+      if (!parent.parentPhone.trim())     return 'Phone number is required.'
+    }
+    return null
+  }
+
+  // ── Submission ──────────────────────────────────────────────────────────────
+  const handleSubmit = async () => {
+    setSubmitting(true)
+    try {
+      const dto: AdmissionApplicationCreateDto = {
+        childFirstName:    child.childFirstName.trim(),
+        childLastName:     child.childLastName.trim(),
+        dateOfBirth:       child.dateOfBirth,
+        applyingForGrade:  child.applyingForGrade,
+        previousSchool:    child.previousSchool.trim() || null,
+        parentFirstName:   parent.parentFirstName.trim(),
+        parentLastName:    parent.parentLastName.trim(),
+        parentEmail:       parent.parentEmail.trim(),
+        parentPhone:       parent.parentPhone.trim(),
+        parentIdNumber:    parent.parentIdNumber.trim() || null,
+        parentRelationship: parent.parentRelationship.trim() || null,
+      }
+
+      const application = await admissionsService.create(dto)
+
+      // Upload each selected file
+      const uploads: Promise<unknown>[] = []
+      DOC_TYPES.forEach((doc, i) => {
+        const file = fileRefs.current[i]?.files?.[0]
+        if (file) {
+          uploads.push(admissionsService.uploadDocument(application.id, doc.key, file))
+        }
+      })
+      await Promise.allSettled(uploads)
+
+      const ref = application.referenceNumber ?? `ALB-${application.id}`
+      showToast(`Application submitted! Reference: ${ref}`)
+
+      // Reset
+      setChild({ childFirstName: '', childLastName: '', dateOfBirth: '', applyingForGrade: '', previousSchool: '' })
+      setParent({ parentFirstName: '', parentLastName: '', parentEmail: '', parentPhone: '', parentIdNumber: '', parentRelationship: '' })
+      fileRefs.current.forEach(r => { if (r) r.value = '' })
+      setStep(0)
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      showToast(msg || 'Submission failed. Please check your details and try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const next = () => {
-    if (step < STEPS.length - 1) setStep(step + 1)
-    else {
-      showToast('Application submitted! Reference: ALB-2026-' + Math.floor(Math.random() * 9000 + 1000))
-      setStep(0)
+    const err = validateStep()
+    if (err) { showToast(err); return }
+    if (step < STEPS.length - 1) {
+      setStep(step + 1)
+    } else {
+      handleSubmit()
     }
   }
 
@@ -66,25 +184,22 @@ export function Admissions() {
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-black/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-gold backdrop-blur-sm">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-gold" />2026 · 2027 Intake Open
             </span>
-            <h1 className="mt-4 text-5xl font-extrabold leading-tight text-white md:text-7xl [text-shadow:_0_4px_32px_rgba(0,0,0,0.6)]">{get('hero.headline', 'Admissions')}</h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">{get('hero.subheadline', 'Join Alber School — applications open for 2026/2027 intake. Limited spaces available.')}</p>
+            <h1 className="mt-4 text-5xl font-extrabold leading-tight text-white md:text-7xl [text-shadow:_0_4px_32px_rgba(0,0,0,0.6)]">
+              {get('hero.headline', 'Admissions')}
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
+              {get('hero.subheadline', 'Join Alber School — applications open for 2026/2027 intake. Limited spaces available.')}
+            </p>
           </motion.div>
         </div>
       </section>
 
       <div className="mx-auto max-w-5xl px-4 py-20">
-
         <div className="grid gap-12 lg:grid-cols-[1fr_340px]">
 
           {/* ── Application Form ── */}
           <div>
-            <motion.div
-              className="mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
+            <motion.div className="mb-8" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
               <h2 className="mb-6 text-2xl font-bold">Apply Online</h2>
 
               {/* Step indicators */}
@@ -135,52 +250,131 @@ export function Admissions() {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3 }}
                 >
+                  {/* ── Step 0: Child Info ── */}
                   {step === 0 && (
                     <div className="space-y-4">
                       <h3 className="mb-4 font-bold text-foreground">Child Information</h3>
-                      <input required placeholder="Child Full Name" className={FIELD} />
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <input required type="date" placeholder="Date of Birth" className={FIELD} />
-                        <select className={FIELD}>
-                          <option value="">Select Level</option>
-                          <option>Daycare / PP1-PP2</option>
-                          <option>Primary (Gr. 1–6)</option>
-                          <option>Junior Secondary (Gr. 7–9)</option>
-                          <option>Senior School / IGCSE</option>
-                        </select>
+                        <input
+                          required
+                          placeholder="First Name"
+                          className={FIELD}
+                          value={child.childFirstName}
+                          onChange={setC('childFirstName')}
+                        />
+                        <input
+                          required
+                          placeholder="Last Name"
+                          className={FIELD}
+                          value={child.childLastName}
+                          onChange={setC('childLastName')}
+                        />
                       </div>
-                      <input placeholder="Previous School (if any)" className={FIELD} />
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-1 block text-xs font-semibold text-muted uppercase tracking-wider">Date of Birth</label>
+                          <input
+                            required
+                            type="date"
+                            className={FIELD}
+                            value={child.dateOfBirth}
+                            onChange={setC('dateOfBirth')}
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs font-semibold text-muted uppercase tracking-wider">Applying For Grade</label>
+                          <select className={FIELD} value={child.applyingForGrade} onChange={setC('applyingForGrade')}>
+                            <option value="">Select Level / Grade</option>
+                            {GRADE_OPTIONS.map(g => <option key={g}>{g}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                      <input
+                        placeholder="Previous School (if any)"
+                        className={FIELD}
+                        value={child.previousSchool}
+                        onChange={setC('previousSchool')}
+                      />
                     </div>
                   )}
+
+                  {/* ── Step 1: Parent Info ── */}
                   {step === 1 && (
                     <div className="space-y-4">
                       <h3 className="mb-4 font-bold text-foreground">Parent / Guardian Information</h3>
-                      <input required placeholder="Parent/Guardian Full Name" className={FIELD} />
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <input required type="email" placeholder="Email Address" className={FIELD} />
-                        <input required placeholder="Phone / WhatsApp (+254)" className={FIELD} />
+                        <input
+                          required
+                          placeholder="First Name"
+                          className={FIELD}
+                          value={parent.parentFirstName}
+                          onChange={setP('parentFirstName')}
+                        />
+                        <input
+                          required
+                          placeholder="Last Name"
+                          className={FIELD}
+                          value={parent.parentLastName}
+                          onChange={setP('parentLastName')}
+                        />
                       </div>
-                      <input placeholder="ID / Passport Number" className={FIELD} />
-                      <input placeholder="Relationship to Child" className={FIELD} />
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <input
+                          required
+                          type="email"
+                          placeholder="Email Address"
+                          className={FIELD}
+                          value={parent.parentEmail}
+                          onChange={setP('parentEmail')}
+                        />
+                        <input
+                          required
+                          placeholder="Phone / WhatsApp (+254)"
+                          className={FIELD}
+                          value={parent.parentPhone}
+                          onChange={setP('parentPhone')}
+                        />
+                      </div>
+                      <input
+                        placeholder="ID / Passport Number (optional)"
+                        className={FIELD}
+                        value={parent.parentIdNumber}
+                        onChange={setP('parentIdNumber')}
+                      />
+                      <input
+                        placeholder="Relationship to Child (e.g. Father, Mother, Guardian)"
+                        className={FIELD}
+                        value={parent.parentRelationship}
+                        onChange={setP('parentRelationship')}
+                      />
                     </div>
                   )}
+
+                  {/* ── Step 2: Documents ── */}
                   {step === 2 && (
                     <div className="space-y-5">
                       <h3 className="mb-4 font-bold text-foreground">Supporting Documents</h3>
-                      <div>
-                        <label className="mb-2 block text-sm font-semibold text-foreground">Birth Certificate (PDF or image)</label>
-                        <input type="file" accept=".pdf,.jpg,.jpeg,.png" className={`${FIELD} file:mr-3 file:rounded-lg file:border-0 file:bg-gold/10 file:px-3 file:py-1 file:text-xs file:font-bold file:text-gold cursor-pointer`} />
-                      </div>
-                      <div>
-                        <label className="mb-2 block text-sm font-semibold text-foreground">Previous School Report (most recent)</label>
-                        <input type="file" accept=".pdf,.jpg,.jpeg,.png" className={`${FIELD} file:mr-3 file:rounded-lg file:border-0 file:bg-gold/10 file:px-3 file:py-1 file:text-xs file:font-bold file:text-gold cursor-pointer`} />
-                      </div>
-                      <div>
-                        <label className="mb-2 block text-sm font-semibold text-foreground">Parent ID / Passport (optional)</label>
-                        <input type="file" accept=".pdf,.jpg,.jpeg,.png" className={`${FIELD} file:mr-3 file:rounded-lg file:border-0 file:bg-gold/10 file:px-3 file:py-1 file:text-xs file:font-bold file:text-gold cursor-pointer`} />
-                      </div>
+                      <p className="text-sm text-muted -mt-2">
+                        Accepted formats: PDF, JPG, PNG. Max 10 MB per file. You can also upload documents later from the admissions office.
+                      </p>
+                      {DOC_TYPES.map((doc, i) => (
+                        <div key={doc.key}>
+                          <label className="mb-2 block text-sm font-semibold text-foreground">
+                            {doc.label}
+                            {doc.required && <span className="ml-1 text-red-500">*</span>}
+                          </label>
+                          <input
+                            ref={el => { fileRefs.current[i] = el }}
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className={`${FIELD} file:mr-3 file:rounded-lg file:border-0 file:bg-gold/10 file:px-3 file:py-1 file:text-xs file:font-bold file:text-gold cursor-pointer`}
+                          />
+                        </div>
+                      ))}
                     </div>
                   )}
+
+                  {/* ── Step 3: Payment ── */}
                   {step === 3 && (
                     <div className="text-center">
                       <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gold/10 text-gold">
@@ -189,12 +383,24 @@ export function Admissions() {
                       <h3 className="mb-2 text-xl font-bold">Registration Fee Payment</h3>
                       <p className="mb-6 text-muted">Pay via M-Pesa to complete your application</p>
                       <div className="rounded-2xl border border-gold/30 bg-gold/5 p-6 space-y-3 text-left">
-                        <div className="flex justify-between text-sm"><span className="text-muted">Paybill Number</span><span className="font-bold text-gold">{get('payment.paybill', '522522')}</span></div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted">Paybill Number</span>
+                          <span className="font-bold text-gold">{get('payment.paybill', '522522')}</span>
+                        </div>
                         <div className="h-px bg-gold/20" />
-                        <div className="flex justify-between text-sm"><span className="text-muted">Account Number</span><span className="font-bold text-gold">{get('payment.account', 'ALBER2026')}</span></div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted">Account Number</span>
+                          <span className="font-bold text-gold">{get('payment.account', 'ALBER2026')}</span>
+                        </div>
                         <div className="h-px bg-gold/20" />
-                        <div className="flex justify-between text-sm"><span className="text-muted">Amount</span><span className="font-bold">{get('payment.note', 'As advised by admissions office')}</span></div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted">Amount</span>
+                          <span className="font-bold">{get('payment.note', 'As advised by admissions office')}</span>
+                        </div>
                       </div>
+                      <p className="mt-4 text-xs text-muted">
+                        After sending payment, click <strong>Submit Application</strong>. Our team will contact you within 48 hours to confirm.
+                      </p>
                     </div>
                   )}
                 </motion.div>
@@ -202,13 +408,25 @@ export function Admissions() {
 
               <div className="mt-8 flex gap-4">
                 {step > 0 && (
-                  <button onClick={() => setStep(step - 1)} className="rounded-xl border-2 border-gray-200 dark:border-white/20 px-6 py-3 font-semibold text-foreground transition hover:border-gold/50">
+                  <button
+                    onClick={() => setStep(step - 1)}
+                    disabled={submitting}
+                    className="rounded-xl border-2 border-gray-200 dark:border-white/20 px-6 py-3 font-semibold text-foreground transition hover:border-gold/50 disabled:opacity-50"
+                  >
                     Back
                   </button>
                 )}
-                <button onClick={next} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white transition hover:bg-primary/90 hover:scale-[1.01] dark:bg-gold dark:text-black dark:hover:bg-yellow-400">
-                  {step === STEPS.length - 1 ? 'Submit Application' : 'Continue'}
-                  <ArrowRight className="h-4 w-4" />
+                <button
+                  onClick={next}
+                  disabled={submitting}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-white transition hover:bg-primary/90 hover:scale-[1.01] dark:bg-gold dark:text-black dark:hover:bg-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100"
+                >
+                  {submitting
+                    ? <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>
+                    : step === STEPS.length - 1
+                      ? <><CheckCircle2 className="h-4 w-4" /> Submit Application</>
+                      : <>Continue <ArrowRight className="h-4 w-4" /></>
+                  }
                 </button>
               </div>
             </GlassCard>
@@ -216,13 +434,7 @@ export function Admissions() {
 
           {/* ── Sidebar: Why Apply + Fees ── */}
           <div className="space-y-6">
-            {/* Why Apply */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
               <div className="rounded-2xl border border-gold/20 bg-gradient-to-br from-primary/5 to-gold/5 p-6 dark:from-primary/10 dark:to-gold/10">
                 <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gold">Why Alber?</p>
                 <ul className="space-y-2.5">
@@ -236,13 +448,7 @@ export function Admissions() {
               </div>
             </motion.div>
 
-            {/* Fee Structure */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
+            <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }}>
               <h3 className="mb-3 text-lg font-bold">Fee Structure (KES)</h3>
               <div className="space-y-2">
                 {feeStructure.map((f, i) => (

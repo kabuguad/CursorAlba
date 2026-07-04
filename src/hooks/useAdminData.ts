@@ -456,17 +456,48 @@ export const useDeletePublicFeeRow = () => {
 }
 
 // ── Admissions ────────────────────────────────────────────────────────────
-export const useAdmissions = () => useQuery({ queryKey: ['admissions'], queryFn: () => admissionsService.list() })
-export const useAdmissionsStats = () => useQuery({ queryKey: ['admissions', 'stats'], queryFn: () => admissionsService.getStats() })
+export const useAdmissions = () => useQuery({
+  queryKey: ['admissions'],
+  queryFn: () => admissionsService.list(),
+})
+
 export const useUpdateAdmissionStatus = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, status, notes }: { id: string; status: Parameters<typeof admissionsService.updateStatus>[1]; notes: string; assignedTo?: string }) =>
-      admissionsService.updateStatus(id, status, notes),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admissions'] }); qc.invalidateQueries({ queryKey: ['analytics'] }) },
+    mutationFn: ({ id, status, notes, reviewedBy }: Parameters<typeof admissionsService.updateStatus>[1] & { id: number }) =>
+      admissionsService.updateStatus(id, { status, notes, reviewedBy }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admissions'] }) },
   })
 }
+
 export const useDeleteAdmission = () => {
   const qc = useQueryClient()
-  return useMutation({ mutationFn: admissionsService.delete, onSuccess: () => qc.invalidateQueries({ queryKey: ['admissions'] }) })
+  return useMutation({
+    mutationFn: (id: number) => admissionsService.delete(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admissions'] }),
+  })
+}
+
+export const useAdmissionDocuments = (applicationId: number) => useQuery({
+  queryKey: ['admissions', 'docs', applicationId],
+  queryFn: () => admissionsService.getDocuments(applicationId),
+  enabled: applicationId > 0,
+})
+
+export const useUploadAdmissionDocument = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ applicationId, documentType, file }: { applicationId: number; documentType: string; file: File }) =>
+      admissionsService.uploadDocument(applicationId, documentType, file),
+    onSuccess: (_data, vars) => qc.invalidateQueries({ queryKey: ['admissions', 'docs', vars.applicationId] }),
+  })
+}
+
+export const useDeleteAdmissionDocument = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ applicationId, documentId }: { applicationId: number; documentId: number }) =>
+      admissionsService.deleteDocument(applicationId, documentId),
+    onSuccess: (_data, vars) => qc.invalidateQueries({ queryKey: ['admissions', 'docs', vars.applicationId] }),
+  })
 }

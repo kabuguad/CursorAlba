@@ -65,6 +65,7 @@ import { HomePageContentManager }    from './pages/dashboards/admin/HomePageCont
 import { ContactPageContentManager } from './pages/dashboards/admin/ContactPageContentManager'
 import { AboutContentManager }       from './pages/dashboards/admin/AboutContentManager'
 import { WhyChooseUsManager }        from './pages/dashboards/admin/WhyChooseUsManager'
+import { AdminAdmissions }           from './pages/dashboards/admin/AdminAdmissions'
 
 function App() {
   return (
@@ -157,6 +158,9 @@ function App() {
 
                 {/* Staff */}
                 <Route path="staff"                      element={<StaffManager />} />
+
+                {/* Admissions */}
+                <Route path="admissions"                 element={<AdminAdmissions />} />
 
                 {/* Legacy redirects */}
                 <Route path="pages"         element={<Navigate to="/dashboard/admin/site-content" replace />} />

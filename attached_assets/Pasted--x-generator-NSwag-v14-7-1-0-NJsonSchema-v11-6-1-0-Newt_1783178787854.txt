@@ -1,0 +1,4879 @@
+{
+  "x-generator": "NSwag v14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SDA HYMNAL API ",
+    "version": "Version 1.0"
+  },
+  "servers": [
+    {
+      "url": "https://yoko-unresourceful-coretta.ngrok-free.dev"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "Authentication_Register",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistrationDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "Authentication_Login",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "Authentication_GetCurrentUser",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/about-page-content": {
+      "get": {
+        "tags": [
+          "AboutPageContent"
+        ],
+        "operationId": "AboutPageContent_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AboutPageContent"
+        ],
+        "operationId": "AboutPageContent_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AboutPageContentCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/about-page-content/{id}": {
+      "get": {
+        "tags": [
+          "AboutPageContent"
+        ],
+        "operationId": "AboutPageContent_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AboutPageContent"
+        ],
+        "operationId": "AboutPageContent_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AboutPageContentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AboutPageContent"
+        ],
+        "operationId": "AboutPageContent_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/academics-page-content": {
+      "get": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcademicsPageContentCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/academics-page-content/{id}": {
+      "get": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcademicsPageContentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/academics-page-content/school-levels": {
+      "get": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_GetAllSchoolLevels",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/academics-page-content/{academicsPageContentId}/school-levels": {
+      "get": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_GetSchoolLevels",
+        "parameters": [
+          {
+            "name": "academicsPageContentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_CreateSchoolLevel",
+        "parameters": [
+          {
+            "name": "academicsPageContentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchoolLevelCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/academics-page-content/{academicsPageContentId}/school-levels/{id}": {
+      "get": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_GetSchoolLevel",
+        "parameters": [
+          {
+            "name": "academicsPageContentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_UpdateSchoolLevel",
+        "parameters": [
+          {
+            "name": "academicsPageContentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchoolLevelUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 3
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AcademicsPageContent"
+        ],
+        "operationId": "AcademicsPageContent_DeleteSchoolLevel",
+        "parameters": [
+          {
+            "name": "academicsPageContentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admissions/applications": {
+      "get": {
+        "tags": [
+          "AdmissionApplications"
+        ],
+        "operationId": "AdmissionApplications_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdmissionApplications"
+        ],
+        "operationId": "AdmissionApplications_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdmissionApplicationCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admissions/applications/{id}": {
+      "get": {
+        "tags": [
+          "AdmissionApplications"
+        ],
+        "operationId": "AdmissionApplications_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdmissionApplications"
+        ],
+        "operationId": "AdmissionApplications_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdmissionApplicationUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdmissionApplications"
+        ],
+        "operationId": "AdmissionApplications_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admissions/applications/reference/{referenceNumber}": {
+      "get": {
+        "tags": [
+          "AdmissionApplications"
+        ],
+        "operationId": "AdmissionApplications_GetByReference",
+        "parameters": [
+          {
+            "name": "referenceNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admissions/applications/{id}/status": {
+      "patch": {
+        "tags": [
+          "AdmissionApplications"
+        ],
+        "operationId": "AdmissionApplications_UpdateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdmissionStatusUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admissions/applications/{applicationId}/documents": {
+      "get": {
+        "tags": [
+          "AdmissionDocuments"
+        ],
+        "operationId": "AdmissionDocuments_GetByApplication",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AdmissionDocuments"
+        ],
+        "operationId": "AdmissionDocuments_Upload",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "DocumentType": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/admissions/applications/{applicationId}/documents/{documentId}": {
+      "delete": {
+        "tags": [
+          "AdmissionDocuments"
+        ],
+        "operationId": "AdmissionDocuments_Delete",
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/alber-difference": {
+      "get": {
+        "tags": [
+          "AlberDifference"
+        ],
+        "operationId": "AlberDifference_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/alber-difference/{id}": {
+      "get": {
+        "tags": [
+          "AlberDifference"
+        ],
+        "operationId": "AlberDifference_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/cbc-competencies": {
+      "get": {
+        "tags": [
+          "CbcCompetencies"
+        ],
+        "operationId": "CbcCompetencies_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CbcCompetencies"
+        ],
+        "operationId": "CbcCompetencies_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CbcCompetencyCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/cbc-competencies/{id}": {
+      "get": {
+        "tags": [
+          "CbcCompetencies"
+        ],
+        "operationId": "CbcCompetencies_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CbcCompetencies"
+        ],
+        "operationId": "CbcCompetencies_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CbcCompetencyUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CbcCompetencies"
+        ],
+        "operationId": "CbcCompetencies_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/co-curricular-activities": {
+      "get": {
+        "tags": [
+          "CoCurrActivities"
+        ],
+        "operationId": "CoCurrActivities_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CoCurrActivities"
+        ],
+        "operationId": "CoCurrActivities_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoCurrActivityCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/co-curricular-activities/{id}": {
+      "get": {
+        "tags": [
+          "CoCurrActivities"
+        ],
+        "operationId": "CoCurrActivities_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CoCurrActivities"
+        ],
+        "operationId": "CoCurrActivities_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoCurrActivityUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CoCurrActivities"
+        ],
+        "operationId": "CoCurrActivities_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/co-curricular-categories": {
+      "get": {
+        "tags": [
+          "CoCurrCategories"
+        ],
+        "operationId": "CoCurrCategories_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CoCurrCategories"
+        ],
+        "operationId": "CoCurrCategories_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoCurrCategoryCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/co-curricular-categories/{id}": {
+      "get": {
+        "tags": [
+          "CoCurrCategories"
+        ],
+        "operationId": "CoCurrCategories_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CoCurrCategories"
+        ],
+        "operationId": "CoCurrCategories_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoCurrCategoryUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CoCurrCategories"
+        ],
+        "operationId": "CoCurrCategories_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/co-curricular-page-content": {
+      "get": {
+        "tags": [
+          "CoCurrPageContent"
+        ],
+        "operationId": "CoCurrPageContent_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CoCurrPageContent"
+        ],
+        "operationId": "CoCurrPageContent_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoCurrPageContentCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/co-curricular-page-content/{id}": {
+      "get": {
+        "tags": [
+          "CoCurrPageContent"
+        ],
+        "operationId": "CoCurrPageContent_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CoCurrPageContent"
+        ],
+        "operationId": "CoCurrPageContent_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoCurrPageContentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CoCurrPageContent"
+        ],
+        "operationId": "CoCurrPageContent_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/contact-page-content": {
+      "get": {
+        "tags": [
+          "ContactPageContent"
+        ],
+        "operationId": "ContactPageContent_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ContactPageContent"
+        ],
+        "operationId": "ContactPageContent_Create",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "HeroImageUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImageFile": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroHeadline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSubheadline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "PhonePrimary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "PhoneSecondary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "EmailPrimary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "EmailSecondary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "WhatsAppNumber": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "AddressLine1": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "AddressLine2": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MapEmbedUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "OfficeHours": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "OfficeHoursNote": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/contact-page-content/{id}": {
+      "get": {
+        "tags": [
+          "ContactPageContent"
+        ],
+        "operationId": "ContactPageContent_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ContactPageContent"
+        ],
+        "operationId": "ContactPageContent_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "HeroImageUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImageFile": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroHeadline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSubheadline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "PhonePrimary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "PhoneSecondary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "EmailPrimary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "EmailSecondary": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "WhatsAppNumber": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "AddressLine1": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "AddressLine2": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MapEmbedUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "OfficeHours": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "OfficeHoursNote": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ContactPageContent"
+        ],
+        "operationId": "ContactPageContent_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/core-values": {
+      "get": {
+        "tags": [
+          "CoreValues"
+        ],
+        "operationId": "CoreValues_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "CoreValues"
+        ],
+        "operationId": "CoreValues_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoreValueCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/core-values/{id}": {
+      "get": {
+        "tags": [
+          "CoreValues"
+        ],
+        "operationId": "CoreValues_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "CoreValues"
+        ],
+        "operationId": "CoreValues_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoreValueUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "CoreValues"
+        ],
+        "operationId": "CoreValues_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/departments": {
+      "get": {
+        "tags": [
+          "Departments"
+        ],
+        "operationId": "Departments_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Departments"
+        ],
+        "operationId": "Departments_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartmentCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/departments/{id}": {
+      "get": {
+        "tags": [
+          "Departments"
+        ],
+        "operationId": "Departments_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Departments"
+        ],
+        "operationId": "Departments_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartmentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Admin"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Departments"
+        ],
+        "operationId": "Departments_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/facilities": {
+      "get": {
+        "tags": [
+          "Facilities"
+        ],
+        "operationId": "Facilities_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Facilities"
+        ],
+        "operationId": "Facilities_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacilityCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/facilities/{id}": {
+      "get": {
+        "tags": [
+          "Facilities"
+        ],
+        "operationId": "Facilities_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Facilities"
+        ],
+        "operationId": "Facilities_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacilityUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Facilities"
+        ],
+        "operationId": "Facilities_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/facilities-page-content": {
+      "get": {
+        "tags": [
+          "FacilitiesPageContent"
+        ],
+        "operationId": "FacilitiesPageContent_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "FacilitiesPageContent"
+        ],
+        "operationId": "FacilitiesPageContent_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacilitiesPageContentCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/facilities-page-content/{id}": {
+      "get": {
+        "tags": [
+          "FacilitiesPageContent"
+        ],
+        "operationId": "FacilitiesPageContent_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "FacilitiesPageContent"
+        ],
+        "operationId": "FacilitiesPageContent_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FacilitiesPageContentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "FacilitiesPageContent"
+        ],
+        "operationId": "FacilitiesPageContent_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/gallery/categories": {
+      "get": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_GetCategories",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_CreateCategory",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GalleryCategoryCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/gallery/categories/{id}": {
+      "get": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_GetCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_UpdateCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GalleryCategoryUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_DeleteCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/gallery": {
+      "get": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_GetPublic",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GalleryImageCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/gallery/category/{categoryId}": {
+      "get": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_GetByCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/gallery/bulk": {
+      "post": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_BulkUpload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "galleryCategoryId": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "files": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  },
+                  "isPublic": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/gallery/{id}": {
+      "put": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GalleryImageUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Gallery"
+        ],
+        "operationId": "Gallery_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/history-milestones": {
+      "get": {
+        "tags": [
+          "HistoryMilestones"
+        ],
+        "operationId": "HistoryMilestones_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "HistoryMilestones"
+        ],
+        "operationId": "HistoryMilestones_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryMilestoneCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/history-milestones/{id}": {
+      "get": {
+        "tags": [
+          "HistoryMilestones"
+        ],
+        "operationId": "HistoryMilestones_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "HistoryMilestones"
+        ],
+        "operationId": "HistoryMilestones_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryMilestoneUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "HistoryMilestones"
+        ],
+        "operationId": "HistoryMilestones_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/homepage-content": {
+      "get": {
+        "tags": [
+          "HomePageContent"
+        ],
+        "operationId": "HomePageContent_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "HomePageContent"
+        ],
+        "operationId": "HomePageContent_Create",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "HeroImage1Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage1File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroImage2Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage2File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroImage3Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage3File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroImage4Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage4File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroTagline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroTaglineGold": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroLocationBadge": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSubtitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroPrimaryCtaLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroPrimaryCtaUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSecondaryCtaLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSecondaryCtaUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "StatStudentsEnrolled": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "StatEducators": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "StatEstYear": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "StatActivities": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "FoundationSectionLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "FoundationHeading": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MissionLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MissionTitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MissionBody": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoTitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoTagline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoBody": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "VisionLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "VisionTitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "VisionBody": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaBadgeText": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaHeading": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaSubtext": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaPrimaryLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaPrimaryUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaSecondaryLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaSecondaryUrl": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/homepage-content/{id}": {
+      "get": {
+        "tags": [
+          "HomePageContent"
+        ],
+        "operationId": "HomePageContent_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "HomePageContent"
+        ],
+        "operationId": "HomePageContent_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "HeroImage1Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage1File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroImage2Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage2File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroImage3Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage3File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroImage4Url": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroImage4File": {
+                    "type": "string",
+                    "format": "binary",
+                    "nullable": true
+                  },
+                  "HeroTagline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroTaglineGold": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroLocationBadge": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSubtitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroPrimaryCtaLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroPrimaryCtaUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSecondaryCtaLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "HeroSecondaryCtaUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "StatStudentsEnrolled": {
+                    "type": "integer",
+                    "format": "int32",
+                    "nullable": true
+                  },
+                  "StatEducators": {
+                    "type": "integer",
+                    "format": "int32",
+                    "nullable": true
+                  },
+                  "StatEstYear": {
+                    "type": "integer",
+                    "format": "int32",
+                    "nullable": true
+                  },
+                  "StatActivities": {
+                    "type": "integer",
+                    "format": "int32",
+                    "nullable": true
+                  },
+                  "FoundationSectionLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "FoundationHeading": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MissionLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MissionTitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MissionBody": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoTitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoTagline": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "MottoBody": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "VisionLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "VisionTitle": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "VisionBody": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaBadgeText": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaHeading": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaSubtext": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaPrimaryLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaPrimaryUrl": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaSecondaryLabel": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "CtaSecondaryUrl": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "HomePageContent"
+        ],
+        "operationId": "HomePageContent_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/public/program-levels": {
+      "get": {
+        "tags": [
+          "PublicContent"
+        ],
+        "operationId": "PublicContent_GetProgramLevels",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/public/site-settings": {
+      "get": {
+        "tags": [
+          "PublicContent"
+        ],
+        "operationId": "PublicContent_GetSiteSettings",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/teachers": {
+      "get": {
+        "tags": [
+          "Teachers"
+        ],
+        "operationId": "Teachers_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Teachers"
+        ],
+        "operationId": "Teachers_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/teachers/{id}": {
+      "get": {
+        "tags": [
+          "Teachers"
+        ],
+        "operationId": "Teachers_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Teachers"
+        ],
+        "operationId": "Teachers_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Teacher",
+              "Admin"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Teachers"
+        ],
+        "operationId": "Teachers_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": [
+              "Admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/teaching-pillars": {
+      "get": {
+        "tags": [
+          "TeachingPillars"
+        ],
+        "operationId": "TeachingPillars_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TeachingPillars"
+        ],
+        "operationId": "TeachingPillars_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeachingPillarCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/teaching-pillars/{id}": {
+      "get": {
+        "tags": [
+          "TeachingPillars"
+        ],
+        "operationId": "TeachingPillars_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TeachingPillars"
+        ],
+        "operationId": "TeachingPillars_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeachingPillarUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TeachingPillars"
+        ],
+        "operationId": "TeachingPillars_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/why-choose-us-items": {
+      "get": {
+        "tags": [
+          "WhyChooseUsItems"
+        ],
+        "operationId": "WhyChooseUsItems_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "WhyChooseUsItems"
+        ],
+        "operationId": "WhyChooseUsItems_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhyChooseUsItemCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/why-choose-us-items/{id}": {
+      "get": {
+        "tags": [
+          "WhyChooseUsItems"
+        ],
+        "operationId": "WhyChooseUsItems_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "WhyChooseUsItems"
+        ],
+        "operationId": "WhyChooseUsItems_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhyChooseUsItemUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "WhyChooseUsItems"
+        ],
+        "operationId": "WhyChooseUsItems_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/why-choose-us-page-content": {
+      "get": {
+        "tags": [
+          "WhyChooseUsPageContent"
+        ],
+        "operationId": "WhyChooseUsPageContent_GetAll",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "WhyChooseUsPageContent"
+        ],
+        "operationId": "WhyChooseUsPageContent_Create",
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhyChooseUsPageContentCreateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/why-choose-us-page-content/{id}": {
+      "get": {
+        "tags": [
+          "WhyChooseUsPageContent"
+        ],
+        "operationId": "WhyChooseUsPageContent_GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "WhyChooseUsPageContent"
+        ],
+        "operationId": "WhyChooseUsPageContent_Update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "dto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhyChooseUsPageContentUpdateDto"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "WhyChooseUsPageContent"
+        ],
+        "operationId": "WhyChooseUsPageContent_Delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserRegistrationDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 10
+          },
+          "phoneNumber": {
+            "type": "string",
+            "format": "phone",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "pattern": "^(Admin|Teacher|Parent|Student)$"
+          }
+        }
+      },
+      "UserLoginDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "AboutPageContentCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "mission": {
+            "type": "string"
+          },
+          "vision": {
+            "type": "string"
+          },
+          "historyIntro": {
+            "type": "string"
+          }
+        }
+      },
+      "AboutPageContentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "mission": {
+            "type": "string"
+          },
+          "vision": {
+            "type": "string"
+          },
+          "historyIntro": {
+            "type": "string"
+          }
+        }
+      },
+      "AcademicsPageContentCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      },
+      "AcademicsPageContentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      },
+      "SchoolLevelCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ages": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "colorKey": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SchoolLevelUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ages": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "colorKey": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AdmissionApplicationCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "childFirstName",
+          "childLastName",
+          "dateOfBirth",
+          "applyingForGrade",
+          "parentFirstName",
+          "parentLastName",
+          "parentEmail",
+          "parentPhone"
+        ],
+        "properties": {
+          "childFirstName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "childLastName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date"
+          },
+          "applyingForGrade": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "previousSchool": {
+            "type": "string",
+            "maxLength": 200,
+            "nullable": true
+          },
+          "parentFirstName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "parentLastName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "parentEmail": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 150,
+            "minLength": 1
+          },
+          "parentPhone": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 1
+          },
+          "parentIdNumber": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "parentRelationship": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          }
+        }
+      },
+      "AdmissionApplicationUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "parentFirstName",
+          "parentLastName",
+          "parentEmail",
+          "parentPhone"
+        ],
+        "properties": {
+          "parentFirstName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "parentLastName": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1
+          },
+          "parentEmail": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 150,
+            "minLength": 1
+          },
+          "parentPhone": {
+            "type": "string",
+            "maxLength": 30,
+            "minLength": 1
+          },
+          "parentIdNumber": {
+            "type": "string",
+            "maxLength": 50,
+            "nullable": true
+          },
+          "parentRelationship": {
+            "type": "string",
+            "maxLength": 60,
+            "nullable": true
+          }
+        }
+      },
+      "AdmissionStatusUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ApplicationStatus"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewedBy": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ApplicationStatus": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Pending",
+          "Reviewing",
+          "Approved",
+          "Rejected"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "CbcCompetencyCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isFeatured": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CbcCompetencyUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isFeatured": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CoCurrActivityCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cocurrCategoryId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CoCurrActivityUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cocurrCategoryId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CoCurrCategoryCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "heading": {
+            "type": "string"
+          },
+          "intro": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cocurrPageContentId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CoCurrCategoryUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "heading": {
+            "type": "string"
+          },
+          "intro": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cocurrPageContentId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CoCurrPageContentCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      },
+      "CoCurrPageContentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      },
+      "CoreValueCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CoreValueUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DepartmentCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DepartmentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "FacilityCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "desc": {
+            "type": "string"
+          },
+          "img": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "facilitiesPageContentId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "FacilityUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "desc": {
+            "type": "string"
+          },
+          "img": {
+            "type": "string"
+          },
+          "highlights": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "facilitiesPageContentId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "FacilitiesPageContentCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      },
+      "FacilitiesPageContentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      },
+      "GalleryCategoryCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GalleryCategoryUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GalleryImageCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "galleryCategoryId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GalleryImageUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "galleryCategoryId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "HistoryMilestoneCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "year": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "HistoryMilestoneUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "year": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TeacherCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "credentials": {
+            "type": "string",
+            "nullable": true
+          },
+          "qualifications": {
+            "type": "string",
+            "nullable": true
+          },
+          "profilePhoto": {
+            "type": "string",
+            "nullable": true
+          },
+          "academicPortfolio": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "TeacherUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "credentials": {
+            "type": "string",
+            "nullable": true
+          },
+          "qualifications": {
+            "type": "string",
+            "nullable": true
+          },
+          "profilePhoto": {
+            "type": "string",
+            "nullable": true
+          },
+          "academicPortfolio": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hireDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "TeachingPillarCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "gradient": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TeachingPillarUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "gradient": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "WhyChooseUsItemCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "stat": {
+            "type": "string"
+          },
+          "statLabel": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "whyChooseUsPageContentId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "WhyChooseUsItemUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "icon": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "stat": {
+            "type": "string"
+          },
+          "statLabel": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "whyChooseUsPageContentId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "WhyChooseUsPageContentCreateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tagline": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "statStudents": {
+            "type": "string"
+          },
+          "statEducators": {
+            "type": "string"
+          },
+          "statPassRate": {
+            "type": "string"
+          },
+          "statActivities": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      },
+      "WhyChooseUsPageContentUpdateDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tagline": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "subheadline": {
+            "type": "string"
+          },
+          "statStudents": {
+            "type": "string"
+          },
+          "statEducators": {
+            "type": "string"
+          },
+          "statPassRate": {
+            "type": "string"
+          },
+          "statActivities": {
+            "type": "string"
+          },
+          "ctaHeadline": {
+            "type": "string"
+          },
+          "ctaSubtext": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWT": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  }
+}

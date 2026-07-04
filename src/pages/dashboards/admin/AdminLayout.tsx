@@ -3,7 +3,7 @@ import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router-do
 import {
   ImageIcon, UserCheck, LogOut, ExternalLink, ChevronLeft, ChevronRight, ChevronDown,
   Menu, Bell, School, X,
-  Moon, Sun, Globe, Monitor,
+  Moon, Sun, Globe, Monitor, ClipboardList,
 } from 'lucide-react'
 import { useAuth } from '../../../contexts/AuthContext'
 import { useToast } from '../../../contexts/ToastContext'
@@ -37,6 +37,19 @@ const NAV: NavEntry[] = [
     group: 'Staff',
     items: [
       { label: 'Staff & Teachers', icon: UserCheck,  path: '/dashboard/admin/staff'        },
+    ],
+  },
+  // ── Portal boundary ──────────────────────────────────────────────────────────
+  {
+    kind: 'divider',
+    label: 'PORTAL',
+    sublabel: 'School Operations',
+  },
+  {
+    kind: 'group',
+    group: 'Admissions',
+    items: [
+      { label: 'Applications', icon: ClipboardList, path: '/dashboard/admin/admissions' },
     ],
   },
 ]

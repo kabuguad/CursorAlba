@@ -202,9 +202,9 @@ export function Home() {
           />
         ))}
 
-        {/* Layered overlays */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+        {/* Layered overlays — kept light so carousel images stay fully visible */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
         {/* Gold left accent */}
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />

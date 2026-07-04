@@ -40,7 +40,7 @@ export function About() {
   const { data: milestones = [] }   = useQuery({ queryKey: ['history-milestones'],  queryFn: () => aboutApi.getHistoryMilestones(), staleTime: 60_000 })
 
   const page        = pageContents[0]
-  const headline    = page?.headline    ?? 'About Alber School'
+  const headline    = page?.headline    ?? 'About Demo School'
   const subheadline = page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005."
   const mission     = page?.mission     ?? "To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence."
   const vision      = page?.vision      ?? "To be East Africa's most sought-after private institution — where every learner discovers their genius in world-class facilities."
@@ -196,8 +196,8 @@ export function About() {
       <section className="relative overflow-hidden bg-primary py-16 dark:bg-[#0d1b0d]">
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(232,184,75,0.5) 30px, rgba(232,184,75,0.5) 31px)' }} />
         <FadeIn className="relative z-10 mx-auto max-w-2xl px-4 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">Come See Alber For Yourself</h2>
-          <p className="mb-8 text-white/70">Book a campus tour and experience what makes Alber School Kirinyaga's premier institution.</p>
+          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">Come See Demo School For Yourself</h2>
+          <p className="mb-8 text-white/70">Book a campus tour and experience what makes Demo School Kirinyaga's premier institution.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/contact" className="flex items-center gap-2 rounded-2xl bg-gold px-8 py-3.5 font-bold text-black transition hover:scale-105 hover:bg-yellow-400">
               Book a Tour <ArrowRight className="h-4 w-4" />

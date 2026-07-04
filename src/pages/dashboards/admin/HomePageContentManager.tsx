@@ -455,7 +455,7 @@ export function HomePageContentManager() {
                 <input className={FIELD} value={form.ctaBadgeText} onChange={e => set('ctaBadgeText', e.target.value)} placeholder="Applications Open · 2026–2027" readOnly={isDemo} />
               </Field>
               <Field label="Heading">
-                <input className={FIELD} value={form.ctaHeading} onChange={e => set('ctaHeading', e.target.value)} placeholder="Ready to Join Alber School?" readOnly={isDemo} />
+                <input className={FIELD} value={form.ctaHeading} onChange={e => set('ctaHeading', e.target.value)} placeholder="Ready to Join Demo School?" readOnly={isDemo} />
               </Field>
               <Field label="Subtext">
                 <textarea rows={3} className={`${FIELD} resize-none`} value={form.ctaSubtext} onChange={e => set('ctaSubtext', e.target.value)} placeholder="Applications are open for the 2026/2027 academic year…" readOnly={isDemo} />

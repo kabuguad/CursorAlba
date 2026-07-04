@@ -969,7 +969,7 @@ function createSeed(): DB {
     { id: 'ann-001', title: 'Term 2 Reopening — 27 April 2026', body: 'Dear parents and guardians, Term 2 begins on Monday 27 April 2026. All students should report by 7:30 AM in full uniform. School buses will resume normal operations.', targetRoles: ['parent', 'student', 'teacher'], targetGrades: [], priority: 'high', publishAt: '2026-04-20T08:00:00Z', expiresAt: '2026-04-28T00:00:00Z', status: 'published', createdBy: 'Dr. Wanjiku Mwangi', createdAt: '2026-04-18T10:00:00Z', readCount: 189 },
     { id: 'ann-002', title: 'Mid-Term Examinations Schedule — Week 6', body: 'Mid-term examinations will be held from 2–6 June 2026. Timetables are available from class teachers. Students should revise thoroughly.', targetRoles: ['parent', 'student', 'teacher'], targetGrades: [], priority: 'high', publishAt: '2026-05-20T08:00:00Z', expiresAt: '2026-06-08T00:00:00Z', status: 'published', createdBy: 'Dr. Wanjiku Mwangi', createdAt: '2026-05-19T14:00:00Z', readCount: 234 },
     { id: 'ann-003', title: 'Staff Meeting — 30 May 2026', body: 'All teaching staff are required to attend the term review meeting on Friday 30 May 2026 at 3:00 PM in the staffroom. Attendance is mandatory.', targetRoles: ['teacher'], targetGrades: [], priority: 'normal', publishAt: '2026-05-25T08:00:00Z', expiresAt: '2026-05-31T00:00:00Z', status: 'published', createdBy: 'Dr. Wanjiku Mwangi', createdAt: '2026-05-24T09:00:00Z', readCount: 12 },
-    { id: 'ann-004', title: 'Science Fair — Registration Open', body: 'The Annual Alber School Science Fair is on 15 July 2026. Students from Grade 7–12 can register their projects before 15 June. Forms available from HODs.', targetRoles: ['student', 'teacher', 'parent'], targetGrades: ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'], priority: 'normal', publishAt: '2026-05-28T08:00:00Z', expiresAt: '2026-06-16T00:00:00Z', status: 'published', createdBy: 'Dr. Wanjiku Mwangi', createdAt: '2026-05-27T11:00:00Z', readCount: 67 },
+    { id: 'ann-004', title: 'Science Fair — Registration Open', body: 'The Annual Demo School Science Fair is on 15 July 2026. Students from Grade 7–12 can register their projects before 15 June. Forms available from HODs.', targetRoles: ['student', 'teacher', 'parent'], targetGrades: ['Grade 7','Grade 8','Grade 9','Grade 10','Grade 11','Grade 12'], priority: 'normal', publishAt: '2026-05-28T08:00:00Z', expiresAt: '2026-06-16T00:00:00Z', status: 'published', createdBy: 'Dr. Wanjiku Mwangi', createdAt: '2026-05-27T11:00:00Z', readCount: 67 },
     { id: 'ann-005', title: 'Fee Deadline Reminder', body: 'This is a reminder that Term 2 fees are due by 15 May 2026. Parents with outstanding balances should clear them or contact the bursar to make payment arrangements.', targetRoles: ['parent'], targetGrades: [], priority: 'urgent', publishAt: '2026-05-12T08:00:00Z', expiresAt: '2026-05-31T00:00:00Z', status: 'published', createdBy: 'Dr. Wanjiku Mwangi', createdAt: '2026-05-11T16:00:00Z', readCount: 98 },
   ]
 
@@ -1056,7 +1056,7 @@ function createSeed(): DB {
   ]
 
   const settings: SystemSettings = {
-    schoolName: 'Alber School',
+    schoolName: 'Demo School',
     schoolMotto: 'Excellence Meets Tomorrow',
     address: 'Kutus Town, Kirinyaga County, Kenya',
     phone: '+254 712 345 678',
@@ -1262,10 +1262,10 @@ function createSeed(): DB {
   ]
 
   const publicBlogPosts: PublicBlogPost[] = [
-    { id:'pub-blog-1', title:'Alber School Opens State-of-the-Art Music Academy', slug:'alber-school-opens-music-academy', excerpt:'Our new piano studio and recording suite redefine arts education in Kirinyaga.', content:'Alber School proudly unveils its Music Academy adjacent to the Governor\'s Offices in Kutus. The facility features Steinway-ready piano rooms, acoustic-treated recording booths, and ensemble rehearsal spaces designed for CBC and IGCSE pathways alike.\n\nStudents will access world-class instruction from our 120+ faculty, including dedicated music specialists. Trial lessons are now open for prospective families.', coverImageUrl:'/images/unsplash-1511379938549-c1f69419868d.jpg', author:'Communications Team', category:'Arts', isPublished:true, publishedAt:'2026-01-15T08:00:00Z', viewCount:1240, createdAt:'2026-01-15T08:00:00Z' },
-    { id:'pub-blog-2', title:'CBC vs IGCSE: Choosing the Right Pathway', slug:'cbc-vs-igcse-choosing-the-right-pathway', excerpt:'A guide for parents navigating Kenya\'s dual curriculum excellence.', content:'At Alber School, we offer both Competency-Based Curriculum (CBC) and Cambridge IGCSE frameworks. Our academic leadership team helps families align pathway choice with student strengths, university goals, and learning style.\n\nSchedule a consultation through our admissions portal to explore personalized recommendations.', coverImageUrl:'/images/unsplash-1523240795612-9a054b0db644.jpg', author:'Dr. Wanjiku Mwangi', category:'Academics', isPublished:true, publishedAt:'2026-02-02T08:00:00Z', viewCount:890, createdAt:'2026-02-02T08:00:00Z' },
-    { id:'pub-blog-3', title:'Champions on the Field: Term 1 Sports Recap', slug:'champions-on-the-field-term-1-sports-recap', excerpt:'Our athletes dominate regional fixtures across football, rugby, and swimming.', content:'From the premium sports complex to inter-school championships, Alber athletes continue to set records. Player of the Month honors go to Form 3 striker Brian Mutua for exceptional leadership.\n\nUpcoming fixtures are live on our Sports page with real-time status badges.', coverImageUrl:'/images/unsplash-1461896836934-ffe607ba8211.jpg', author:'Sports Department', category:'Sports', isPublished:true, publishedAt:'2026-02-28T08:00:00Z', viewCount:650, createdAt:'2026-02-28T08:00:00Z' },
-    { id:'pub-blog-4', title:'Sustainable Campus Initiative Launches', slug:'sustainable-campus-initiative-launches', excerpt:'Solar panels and green roofs power our commitment to environmental stewardship.', content:'Alber School invests in renewable energy and student-led sustainability clubs. Environmental Day features tree planting across our 15-acre campus with views toward Kirinyaga\'s rolling hills.', coverImageUrl:'/images/unsplash-1541339907198-e08756dedfbf.jpg', author:'Administration', category:'Campus', isPublished:true, publishedAt:'2026-03-10T08:00:00Z', viewCount:430, createdAt:'2026-03-10T08:00:00Z' },
+    { id:'pub-blog-1', title:'Demo School Opens State-of-the-Art Music Academy', slug:'alber-school-opens-music-academy', excerpt:'Our new piano studio and recording suite redefine arts education in Kirinyaga.', content:'Demo School proudly unveils its Music Academy adjacent to the Governor\'s Offices in Kutus. The facility features Steinway-ready piano rooms, acoustic-treated recording booths, and ensemble rehearsal spaces designed for CBC and IGCSE pathways alike.\n\nStudents will access world-class instruction from our 120+ faculty, including dedicated music specialists. Trial lessons are now open for prospective families.', coverImageUrl:'/images/unsplash-1511379938549-c1f69419868d.jpg', author:'Communications Team', category:'Arts', isPublished:true, publishedAt:'2026-01-15T08:00:00Z', viewCount:1240, createdAt:'2026-01-15T08:00:00Z' },
+    { id:'pub-blog-2', title:'CBC vs IGCSE: Choosing the Right Pathway', slug:'cbc-vs-igcse-choosing-the-right-pathway', excerpt:'A guide for parents navigating Kenya\'s dual curriculum excellence.', content:'At Demo School, we offer both Competency-Based Curriculum (CBC) and Cambridge IGCSE frameworks. Our academic leadership team helps families align pathway choice with student strengths, university goals, and learning style.\n\nSchedule a consultation through our admissions portal to explore personalized recommendations.', coverImageUrl:'/images/unsplash-1523240795612-9a054b0db644.jpg', author:'Dr. Wanjiku Mwangi', category:'Academics', isPublished:true, publishedAt:'2026-02-02T08:00:00Z', viewCount:890, createdAt:'2026-02-02T08:00:00Z' },
+    { id:'pub-blog-3', title:'Champions on the Field: Term 1 Sports Recap', slug:'champions-on-the-field-term-1-sports-recap', excerpt:'Our athletes dominate regional fixtures across football, rugby, and swimming.', content:'From the premium sports complex to inter-school championships, Demo School athletes continue to set records. Player of the Month honors go to Form 3 striker Brian Mutua for exceptional leadership.\n\nUpcoming fixtures are live on our Sports page with real-time status badges.', coverImageUrl:'/images/unsplash-1461896836934-ffe607ba8211.jpg', author:'Sports Department', category:'Sports', isPublished:true, publishedAt:'2026-02-28T08:00:00Z', viewCount:650, createdAt:'2026-02-28T08:00:00Z' },
+    { id:'pub-blog-4', title:'Sustainable Campus Initiative Launches', slug:'sustainable-campus-initiative-launches', excerpt:'Solar panels and green roofs power our commitment to environmental stewardship.', content:'Demo School invests in renewable energy and student-led sustainability clubs. Environmental Day features tree planting across our 15-acre campus with views toward Kirinyaga\'s rolling hills.', coverImageUrl:'/images/unsplash-1541339907198-e08756dedfbf.jpg', author:'Administration', category:'Campus', isPublished:true, publishedAt:'2026-03-10T08:00:00Z', viewCount:430, createdAt:'2026-03-10T08:00:00Z' },
     { id:'pub-blog-5', title:'Parent Portal: Fee Payments Now Live', slug:'parent-portal-fee-payments-now-live', excerpt:'Pay school fees securely via Paybill 522522 — Account: ALBER + Student ID.', content:'Our parent dashboard integrates M-Pesa Paybill flows for seamless fee payments. Track invoices, attendance heatmaps, and grade progress in one premium interface.', coverImageUrl:'/images/unsplash-1556740758-90de374c12ad.jpg', author:'Finance Office', category:'Technology', isPublished:true, publishedAt:'2026-03-20T08:00:00Z', viewCount:780, createdAt:'2026-03-20T08:00:00Z' },
   ]
 
@@ -1288,7 +1288,7 @@ function createSeed(): DB {
     return {
       id: `pub-gal-${i + 1}`,
       url: `https://picsum.photos/seed/${seed}${i}/800/600`,
-      caption: `Alber School ${cat} ${i + 1}`,
+      caption: `Demo School ${cat} ${i + 1}`,
       category: cat,
       sortOrder: i + 1,
       isPublic: true,
@@ -1324,9 +1324,9 @@ function createSeed(): DB {
       title: titles[i % titles.length],
       department: depts[i % depts.length],
       image: `/images/avatar-${(i % 70) + 1}.jpg`,
-      bio: `${name} brings exceptional dedication to ${depts[i % depts.length]} at Alber School. Known for innovative pedagogy and student-centered learning, they have shaped countless young minds in Kutus and beyond.`,
+      bio: `${name} brings exceptional dedication to ${depts[i % depts.length]} at Demo School. Known for innovative pedagogy and student-centered learning, they have shaped countless young minds in Kutus and beyond.`,
       credentials: [creds[i % creds.length], creds[(i + 2) % creds.length]],
-      qualifications: [quals[i % quals.length],quals[(i + 3) % quals.length],`${(i * 3) + 5}+ years at Alber School`],
+      qualifications: [quals[i % quals.length],quals[(i + 3) % quals.length],`${(i * 3) + 5}+ years at Demo School`],
     }
   })
 
@@ -1370,7 +1370,7 @@ function createSeed(): DB {
     blk('cb-h-06','pg-home','stats.established', 'Stats — Years Established',     'text',    '2005',                       'Year the school was established', 6),
     blk('cb-h-07','pg-home','director.name',     'Director Name',                 'text',    'Dr. Alice Mwangi',           'Name shown in the Director\'s Message section', 7),
     blk('cb-h-08','pg-home','director.title',    'Director Title',                'text',    'School Director',            'Title shown below the director\'s name', 8),
-    blk('cb-h-09','pg-home','director.quote',    'Director Quote',                'textarea','At Alber School, we believe every child is born with unique genius waiting to be unlocked. Our duty — as educators, parents and community — is to create the conditions for that genius to flourish. We do this through world-class curriculum, exceptional faculty, and a culture that celebrates every learner.','The director\'s message paragraph shown on the homepage', 9),
+    blk('cb-h-09','pg-home','director.quote',    'Director Quote',                'textarea','At Demo School, we believe every child is born with unique genius waiting to be unlocked. Our duty — as educators, parents and community — is to create the conditions for that genius to flourish. We do this through world-class curriculum, exceptional faculty, and a culture that celebrates every learner.','The director\'s message paragraph shown on the homepage', 9),
 
     // ── Academics ─────────────────────────────────────────────────────────
     blk('cb-ac-01','pg-academics','hero.headline',   'Page Headline',             'text',    'Programs & Academics',        'Main heading at the top of the Academics page', 1),
@@ -1380,16 +1380,16 @@ function createSeed(): DB {
 
     // ── Admissions ────────────────────────────────────────────────────────
     blk('cb-ad-01','pg-admissions','hero.headline',   'Page Headline',            'text',    'Admissions',                  'Main heading at the top of the Admissions page', 1),
-    blk('cb-ad-02','pg-admissions','hero.subheadline','Page Subheadline',         'textarea','Join Alber School — applications open for 2026 intake.','Shown below the main heading', 2),
+    blk('cb-ad-02','pg-admissions','hero.subheadline','Page Subheadline',         'textarea','Join Demo School — applications open for 2026 intake.','Shown below the main heading', 2),
     blk('cb-ad-03','pg-admissions','payment.paybill', 'M-Pesa Paybill Number',    'text',    '522522',                      'The M-Pesa Paybill number shown on the payment step', 3),
     blk('cb-ad-04','pg-admissions','payment.account', 'M-Pesa Account Number',    'text',    'ALBER2026',                   'The account number shown on the payment step', 4),
     blk('cb-ad-05','pg-admissions','payment.note',    'Payment Note',             'text',    'Amount will be confirmed upon review','Small note shown below the account number', 5),
 
     // ── Co-Curricular ─────────────────────────────────────────────────────
     blk('cb-cc-01','pg-cocurr','hero.headline',   'Page Headline',                'text',    'Co-Curricular',               'Main heading at the top of the Co-Curricular page', 1),
-    blk('cb-cc-02','pg-cocurr','hero.subheadline','Page Subheadline',             'textarea','Beyond the classroom — four pillars of holistic development aligned to Kenya\'s CBC framework and Alber School\'s vision of whole-learner excellence.','Shown below the main heading', 2),
+    blk('cb-cc-02','pg-cocurr','hero.subheadline','Page Subheadline',             'textarea','Beyond the classroom — four pillars of holistic development aligned to Kenya\'s CBC framework and Demo School\'s vision of whole-learner excellence.','Shown below the main heading', 2),
     blk('cb-cc-03','pg-cocurr','cta.headline',    'CTA Box Headline',             'text',    'Enrich Your Child\'s Journey','Heading in the call-to-action box at the bottom of the page', 3),
-    blk('cb-cc-04','pg-cocurr','cta.subtext',     'CTA Box Subtext',              'textarea','Every learner at Alber participates in co-curricular activities as part of their holistic CBC assessment. Talk to us about pathways that match your child\'s passions.','Body text in the call-to-action box', 4),
+    blk('cb-cc-04','pg-cocurr','cta.subtext',     'CTA Box Subtext',              'textarea','Every learner at Demo School participates in co-curricular activities as part of their holistic CBC assessment. Talk to us about pathways that match your child\'s passions.','Body text in the call-to-action box', 4),
 
     // ── Music ─────────────────────────────────────────────────────────────
     blk('cb-mu-01','pg-music','hero.headline',   'Page Headline',                 'text',    'Music Academy',               'Main heading at the top of the Music Academy page', 1),
@@ -1410,7 +1410,7 @@ function createSeed(): DB {
 
     // ── Blog ──────────────────────────────────────────────────────────────
     blk('cb-bl-01','pg-blog','hero.headline',   'Page Headline',                  'text',    'Blog',                        'Main heading at the top of the Blog page', 1),
-    blk('cb-bl-02','pg-blog','hero.subheadline','Page Subheadline',               'textarea','News, stories, and insights from the Alber School community.','Shown below the main heading', 2),
+    blk('cb-bl-02','pg-blog','hero.subheadline','Page Subheadline',               'textarea','News, stories, and insights from the Demo School community.','Shown below the main heading', 2),
 
     // ── Contact ───────────────────────────────────────────────────────────
     blk('cb-co-01','pg-contact','hero.headline',    'Page Headline',              'text',    'Contact Us',                  'Main heading at the top of the Contact page', 1),
@@ -1431,15 +1431,15 @@ function createSeed(): DB {
     blk('cb-fa-04','pg-facilities','cta.subtext',     'CTA Box Subtext',          'textarea','Book a campus tour and see our facilities first-hand. Adjacent to the Governor\'s Offices, Kutus.','Body text in the call-to-action box', 4),
 
     // ── Why Choose Us ─────────────────────────────────────────────────────
-    blk('cb-wh-01','pg-why','hero.tagline',      'Section Label',                 'text',    'The Alber Difference',        'Small pill label shown above the main headline', 1),
+    blk('cb-wh-01','pg-why','hero.tagline',      'Section Label',                 'text',    'The Demo School Difference',        'Small pill label shown above the main headline', 1),
     blk('cb-wh-02','pg-why','hero.headline',     'Page Headline',                 'text',    'Why Choose Us?',              'Main heading at the top of the Why Choose Us page', 2),
-    blk('cb-wh-03','pg-why','hero.subheadline',  'Page Subheadline',              'textarea','Adjacent to the Governor\'s Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here\'s what makes us different.','Paragraph shown below the main heading', 3),
+    blk('cb-wh-03','pg-why','hero.subheadline',  'Page Subheadline',              'textarea','Adjacent to the Governor\'s Offices in Kutus, Kirinyaga County — Demo School has been redefining private education in Kenya since 2005. Here\'s what makes us different.','Paragraph shown below the main heading', 3),
     blk('cb-wh-04','pg-why','stats.students',    'Stats — Students Enrolled',     'text',    '2,000+',                      'Shown on the stats bar', 4),
     blk('cb-wh-05','pg-why','stats.educators',   'Stats — Qualified Educators',   'text',    '120+',                        'Shown on the stats bar', 5),
     blk('cb-wh-06','pg-why','stats.passRate',    'Stats — KCSE Pass Rate',        'text',    '97%',                         'Shown on the stats bar', 6),
     blk('cb-wh-07','pg-why','stats.activities',  'Stats — Co-Curricular Activities','text',  '30+',                         'Shown on the stats bar', 7),
     blk('cb-wh-08','pg-why','cta.headline',      'CTA Box Headline',              'text',    'Ready to Experience It?',     'Heading in the call-to-action box at the bottom of the page', 8),
-    blk('cb-wh-09','pg-why','cta.subtext',       'CTA Box Subtext',               'textarea','Book a campus tour and see the Alber difference first-hand. Adjacent to the Governor\'s Offices, Kutus, Kirinyaga County.','Body text in the call-to-action box', 9),
+    blk('cb-wh-09','pg-why','cta.subtext',       'CTA Box Subtext',               'textarea','Book a campus tour and see the Demo School difference first-hand. Adjacent to the Governor\'s Offices, Kutus, Kirinyaga County.','Body text in the call-to-action box', 9),
   ]
 
   const academicsCompetencies: AcademicsCompetency[] = [
@@ -1447,7 +1447,7 @@ function createSeed(): DB {
     { id: 'ac-2', icon: '🧠', title: 'Critical Thinking & Problem Solving', desc: 'Structured inquiry, analysis, and creative problem-solving are woven into every subject so learners tackle real challenges with confidence.',                                                         isFeatured: false, sortOrder: 2 },
     { id: 'ac-3', icon: '💡', title: 'Creativity & Imagination',           desc: 'From arts to STEM, learners are challenged to generate original ideas, experiment boldly, and appreciate diverse forms of expression.',                                                                  isFeatured: false, sortOrder: 3 },
     { id: 'ac-4', icon: '🌍', title: 'Citizenship',                        desc: 'Understanding rights, duties, and active community participation builds responsible, patriotic, and globally aware young Kenyans.',                                                                      isFeatured: false, sortOrder: 4 },
-    { id: 'ac-5', icon: '💻', title: 'Digital Literacy',                   desc: 'ICT is a cross-cutting element at Alber — from responsible internet use and data privacy to coding and digital content creation.',                                                                     isFeatured: false, sortOrder: 5 },
+    { id: 'ac-5', icon: '💻', title: 'Digital Literacy',                   desc: 'ICT is a cross-cutting element at Demo School — from responsible internet use and data privacy to coding and digital content creation.',                                                                     isFeatured: false, sortOrder: 5 },
     { id: 'ac-6', icon: '📖', title: 'Learning to Learn',                  desc: 'Learners develop metacognitive skills — reflection, self-regulation, and adaptability — so they grow continuously throughout life.',                                                                    isFeatured: false, sortOrder: 6 },
     { id: 'ac-7', icon: '💪', title: 'Self-Efficacy',                      desc: 'Building self-confidence, resilience, and a growth mindset ensures every learner believes in their ability to overcome obstacles.',                                                                     isFeatured: true,  sortOrder: 7 },
   ]
@@ -1471,7 +1471,7 @@ function createSeed(): DB {
   ]
 
   const aboutHistoryItems: AboutHistoryItem[] = [
-    { id: 'hi-1', year: '2005', title: 'Foundation',       desc: "Alber School established in Kutus, Kirinyaga County, with a bold vision to deliver premium education adjacent to the Governor's Offices.", sortOrder: 1 },
+    { id: 'hi-1', year: '2005', title: 'Foundation',       desc: "Demo School established in Kutus, Kirinyaga County, with a bold vision to deliver premium education adjacent to the Governor's Offices.", sortOrder: 1 },
     { id: 'hi-2', year: '2010', title: 'Primary Expansion', desc: 'Full primary school opened with 400 students. CBC-aligned curriculum launched alongside dedicated science laboratories.', sortOrder: 2 },
     { id: 'hi-3', year: '2014', title: 'Arts Academy',      desc: 'Music studios, drama theatre, and dance halls launched — the first dedicated performing arts complex in Kirinyaga County.', sortOrder: 3 },
     { id: 'hi-4', year: '2018', title: 'IGCSE Pathway',     desc: 'Cambridge international curriculum introduced, giving students a globally recognised academic pathway from Grade 10.', sortOrder: 4 },
@@ -1622,7 +1622,7 @@ function createSeed(): DB {
       icon: '🏆',
       title: 'Academic Excellence',
       subtitle: 'Top Results, Year After Year',
-      desc: 'Alber School consistently ranks among the top-performing schools in Kirinyaga County. Our dual CBC and Cambridge IGCSE pathways are delivered by subject specialists who hold degrees from Kenya\'s leading universities and internationally accredited institutions.',
+      desc: 'Demo School consistently ranks among the top-performing schools in Kirinyaga County. Our dual CBC and Cambridge IGCSE pathways are delivered by subject specialists who hold degrees from Kenya\'s leading universities and internationally accredited institutions.',
       stat: '97%',
       statLabel: 'KCSE Pass Rate',
       color: 'gold',
@@ -1694,7 +1694,7 @@ function createSeed(): DB {
       icon: '💰',
       title: 'Affordable Excellence',
       subtitle: 'Value That Goes Beyond Fees',
-      desc: 'We believe premium education should be accessible. Competitive fee structures, merit scholarships, sibling discounts, and flexible payment plans via M-Pesa make an Alber School education a genuine investment — not a barrier — for families across Kirinyaga County.',
+      desc: 'We believe premium education should be accessible. Competitive fee structures, merit scholarships, sibling discounts, and flexible payment plans via M-Pesa make an Demo School education a genuine investment — not a barrier — for families across Kirinyaga County.',
       stat: '15+',
       statLabel: 'Scholarship Awards Annually',
       color: 'amber',
@@ -1706,7 +1706,7 @@ function createSeed(): DB {
       icon: '🤝',
       title: 'Strong Community & Values',
       subtitle: 'Rooted in Kirinyaga, Ready for the World',
-      desc: 'Founded in Kutus in 2005, Alber School is deeply woven into the Kirinyaga community. Our annual cultural festivals, CSL projects, and parent-school partnership programmes build a family where every member — student, parent, and teacher — belongs.',
+      desc: 'Founded in Kutus in 2005, Demo School is deeply woven into the Kirinyaga community. Our annual cultural festivals, CSL projects, and parent-school partnership programmes build a family where every member — student, parent, and teacher — belongs.',
       stat: '20+',
       statLabel: 'Years Serving Kirinyaga',
       color: 'green',

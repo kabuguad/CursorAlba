@@ -7,7 +7,7 @@ import type { PanoScene } from './PanoViewer'
 
 /**
  * Equirectangular panorama images — sourced from Poly Haven (CC0 licence).
- * To use real Alber School panoramas, swap each `image` URL with an
+ * To use real Demo School panoramas, swap each `image` URL with an
  * equirectangular JPG/PNG exported from a Ricoh Theta, Insta360, or Panotour Pro.
  *
  * Poly Haven thumbs are 3000×1500 px, CC0, CORS-enabled (~1–6 MB each).
@@ -153,7 +153,7 @@ export function VirtualTourModal({ open, onClose }: VirtualTourModalProps) {
                   </span>
                 </h2>
                 <p className="mt-0.5 text-xs text-white/50">
-                  Alber School · Kutus, Kirinyaga — drag to explore, click hotspots to teleport
+                  Demo School · Kutus, Kirinyaga — drag to explore, click hotspots to teleport
                 </p>
               </div>
               <button

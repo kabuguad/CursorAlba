@@ -6,7 +6,7 @@ export function Staff() {
     <div className="overflow-hidden">
       <PageHero
         title="Our Faculty"
-        subtitle="120+ world-class educators across every department — dedicated to developing every learner at Alber School."
+        subtitle="120+ world-class educators across every department — dedicated to developing every learner at Demo School."
         badge="Faculty & Staff"
         image="/images/unsplash-1522202176988-66273c2fd55f.jpg"
         variant="cinematic"

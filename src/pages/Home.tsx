@@ -33,9 +33,9 @@ type HomePageContent = {
 }
 
 const TESTIMONIALS = [
-  { name: 'Grace Njeri', role: 'Parent · Grade 5', initials: 'GN', quote: 'Alber School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
-  { name: 'Brian Mutua', role: 'Student · Grade 9', initials: 'BM', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Alber.' },
-  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', initials: 'SK', quote: 'Both my children attend Alber. From Playgroup all the way to Senior School — the continuity and quality are simply unmatched.' },
+  { name: 'Grace Njeri', role: 'Parent · Grade 5', initials: 'GN', quote: 'Demo School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
+  { name: 'Brian Mutua', role: 'Student · Grade 9', initials: 'BM', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Demo School.' },
+  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', initials: 'SK', quote: 'Both my children attend Demo School. From Playgroup all the way to Senior School — the continuity and quality are simply unmatched.' },
   { name: 'Amina Ochieng', role: 'Student · Music Academy', initials: 'AO', quote: 'I performed my first piano recital here in Grade 5. The music teachers are genuinely world-class professionals.' },
 ]
 
@@ -206,7 +206,7 @@ export function Home() {
           <motion.img
             key={`slide-${i}`}
             src={img}
-            alt="Alber School Campus"
+            alt="Demo School Campus"
             className="absolute inset-0 h-full w-full object-cover"
             style={{ transformOrigin: 'center center' }}
             initial={{ opacity: i === 0 ? 1 : 0, scale: 1.0 }}
@@ -276,7 +276,7 @@ export function Home() {
 
             <div className="mb-8 flex items-center gap-4">
               <div className="h-px w-20 bg-gold/60" />
-              <span className="text-xs uppercase tracking-widest text-white/50">Alber School</span>
+              <span className="text-xs uppercase tracking-widest text-white/50">Demo School</span>
               <div className="h-px w-20 bg-gold/60" />
             </div>
 
@@ -544,9 +544,9 @@ export function Home() {
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
               Core Values
             </span>
-            <h2 className="mt-2 text-4xl font-bold text-white md:text-5xl">The Alber Character</h2>
+            <h2 className="mt-2 text-4xl font-bold text-white md:text-5xl">The Demo School Character</h2>
             <p className="mx-auto mt-4 max-w-2xl text-white/60">
-              Six pillars that shape the Alber graduate — a whole person ready to lead, serve, and flourish.
+              Six pillars that shape the Demo School graduate — a whole person ready to lead, serve, and flourish.
             </p>
           </motion.div>
 
@@ -598,7 +598,7 @@ export function Home() {
             transition={{ duration: 0.6 }}
           >
             <SectionLabel>Why Choose Us</SectionLabel>
-            <h2 className="mt-2 text-4xl font-bold md:text-5xl">The Alber Difference</h2>
+            <h2 className="mt-2 text-4xl font-bold md:text-5xl">The Demo School Difference</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted">
               Outstanding education at every stage — from first steps to university.
             </p>
@@ -715,12 +715,12 @@ export function Home() {
               <div className="relative flex flex-1 flex-col justify-center p-10 lg:p-14">
                 <Quote className="mb-6 h-12 w-12 text-gold opacity-40" />
                 <p className="text-lg leading-relaxed text-muted whitespace-pre-line">
-                  {get('director.quote', "When I founded Alber School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.\n\nToday, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Alber School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.\n\nWe warmly welcome you to come and see it for yourself.")}
+                  {get('director.quote', "When I founded Demo School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.\n\nToday, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Demo School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.\n\nWe warmly welcome you to come and see it for yourself.")}
                 </p>
                 <div className="mt-8 border-t border-gray-100 dark:border-white/10 pt-6 flex items-center justify-between flex-wrap gap-4">
                   <div>
                     <p className="font-serif text-xl italic text-gold">{get('director.name', 'Alice Mwangi')}</p>
-                    <p className="text-sm text-muted">{get('director.title', 'School Director')}, Alber School</p>
+                    <p className="text-sm text-muted">{get('director.title', 'School Director')}, Demo School</p>
                   </div>
                   <Link to="/admissions">
                     <Button variant="outline">Apply for 2026 <ArrowRight className="h-4 w-4" /></Button>
@@ -872,7 +872,7 @@ export function Home() {
           >
             <div>
               <SectionLabel>Campus Life</SectionLabel>
-              <h2 className="mt-2 text-4xl font-bold">Life at Alber</h2>
+              <h2 className="mt-2 text-4xl font-bold">Life at Demo School</h2>
             </div>
             <Link to="/gallery" className="text-sm font-semibold text-primary dark:text-gold hover:underline flex items-center gap-1">
               See all photos <ArrowRight className="h-4 w-4" />
@@ -968,7 +968,7 @@ export function Home() {
             <p className="mb-3 inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-gold">
               {hp?.ctaBadgeText ?? 'Applications Open · 2026–2027'}
             </p>
-            <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">{hp?.ctaHeading ?? 'Ready to Join Alber School?'}</h2>
+            <h2 className="mb-4 text-4xl font-bold text-white md:text-5xl">{hp?.ctaHeading ?? 'Ready to Join Demo School?'}</h2>
             <p className="mb-8 text-white/70">{hp?.ctaSubtext ?? 'Applications are open for the 2026/2027 academic year. Limited spaces — secure your child\'s place today.'}</p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to={hp?.ctaPrimaryUrl ?? '/admissions'}>

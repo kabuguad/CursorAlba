@@ -125,7 +125,7 @@ export function Gallery() {
     <div className="overflow-hidden">
       <PageHero
         title="School Gallery"
-        subtitle="A window into life at Alber School — sports, arts, music, adventures and everything in between."
+        subtitle="A window into life at Demo School — sports, arts, music, adventures and everything in between."
         badge="Photo Gallery"
         image="/images/unsplash-1564981797816-1043664bf78d.jpg"
         variant="cinematic"

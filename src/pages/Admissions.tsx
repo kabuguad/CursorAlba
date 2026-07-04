@@ -188,7 +188,7 @@ export function Admissions() {
               {get('hero.headline', 'Admissions')}
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
-              {get('hero.subheadline', 'Join Alber School — applications open for 2026/2027 intake. Limited spaces available.')}
+              {get('hero.subheadline', 'Join Demo School — applications open for 2026/2027 intake. Limited spaces available.')}
             </p>
           </motion.div>
         </div>
@@ -436,7 +436,7 @@ export function Admissions() {
           <div className="space-y-6">
             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
               <div className="rounded-2xl border border-gold/20 bg-gradient-to-br from-primary/5 to-gold/5 p-6 dark:from-primary/10 dark:to-gold/10">
-                <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gold">Why Alber?</p>
+                <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-gold">Why Demo School?</p>
                 <ul className="space-y-2.5">
                   {WHY_APPLY.map(item => (
                     <li key={item} className="flex items-center gap-2.5 text-sm font-medium text-foreground">

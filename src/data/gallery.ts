@@ -12,5 +12,5 @@ export const galleryImages: GalleryImage[] = Array.from({ length: 40 }, (_, i) =
   id: `g-${i + 1}`,
   url: `https://picsum.photos/seed/${SEEDS[i % SEEDS.length]}-${i}/800/600`,
   category: CATEGORIES[i % CATEGORIES.length],
-  title: `Alber School ${CATEGORIES[i % CATEGORIES.length]} ${i + 1}`,
+  title: `Demo School ${CATEGORIES[i % CATEGORIES.length]} ${i + 1}`,
 }))

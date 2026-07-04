@@ -9,7 +9,7 @@ export function Footer() {
           <div className="mb-4 flex items-center gap-2">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-gold font-bold text-xl">A</div>
             <div>
-              <h3 className="text-xl font-bold text-primary dark:text-gold">Alber School</h3>
+              <h3 className="text-xl font-bold text-primary dark:text-gold">Demo School</h3>
               <p className="text-sm text-muted">Luxury Private Education</p>
             </div>
           </div>
@@ -49,7 +49,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-theme py-6 text-center text-xs text-muted">
-        © {new Date().getFullYear()} Alber School. All rights reserved.
+        © {new Date().getFullYear()} Demo School. All rights reserved.
       </div>
     </footer>
   )

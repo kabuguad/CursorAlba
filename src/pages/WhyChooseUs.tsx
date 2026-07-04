@@ -55,8 +55,8 @@ export function WhyChooseUs() {
     <div className="overflow-hidden">
       <PageHero
         title={page?.headline ?? 'Why Choose Us?'}
-        subtitle={page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here's what makes us different."}
-        badge={page?.tagline ?? 'The Alber Difference'}
+        subtitle={page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Demo School has been redefining private education in Kenya since 2005. Here's what makes us different."}
+        badge={page?.tagline ?? 'The Demo School Difference'}
         image="/images/unsplash-1580582932707-520aed937b7b.jpg"
         variant="cinematic"
         overlay="green"
@@ -141,7 +141,7 @@ export function WhyChooseUs() {
           <div className="bg-gradient-to-r from-primary/90 to-primary/70 p-10 text-white dark:from-[#0d1b0d] dark:to-[#0d1b0d]/80">
             <p className="mb-2 text-xs font-bold uppercase tracking-widest text-gold">What Our Families Say</p>
             <blockquote className="mb-6 text-xl font-medium leading-relaxed md:text-2xl">
-              "Alber School gave my daughter more than an education — it gave her confidence, discipline,
+              "Demo School gave my daughter more than an education — it gave her confidence, discipline,
               and a love for learning that I know will carry her for the rest of her life."
             </blockquote>
             <div className="flex items-center gap-4">
@@ -174,7 +174,7 @@ export function WhyChooseUs() {
       <ScrollReveal delay={0.1}>
         <div className="rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-10 text-center text-white dark:from-[#0d1b0d] dark:to-[#0d1b0d]/60">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            {page?.ctaHeadline ?? 'Ready to Give Your Child the Alber Advantage?'}
+            {page?.ctaHeadline ?? 'Ready to Give Your Child the Demo School Advantage?'}
           </h2>
           <p className="mx-auto mb-8 max-w-xl text-white/80">
             {page?.ctaSubtext ?? "Applications for the 2027 academic year are now open. Spaces fill fast — secure your child's place at Kirinyaga's premier school today."}

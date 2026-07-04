@@ -36,7 +36,7 @@ export function Login() {
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-2xl bg-gold flex items-center justify-center font-bold text-xl text-dark shadow-lg">A</div>
             <div>
-              <div className="text-white font-bold text-xl leading-none">Alber School</div>
+              <div className="text-white font-bold text-xl leading-none">Demo School</div>
               <div className="text-white/60 text-xs mt-0.5 tracking-widest uppercase">Kutus · Kirinyaga</div>
             </div>
           </div>
@@ -47,7 +47,7 @@ export function Login() {
             <span className="text-gold">one portal.</span>
           </h2>
           <p className="text-white/70 text-lg leading-relaxed max-w-sm">
-            Manage every part of Alber School from a single, powerful admin dashboard.
+            Manage every part of Demo School from a single, powerful admin dashboard.
           </p>
           <div className="mt-10 grid grid-cols-3 gap-4">
             {[
@@ -63,7 +63,7 @@ export function Login() {
           </div>
         </div>
         <div className="relative z-10 text-white/40 text-sm">
-          © {new Date().getFullYear()} Alber School. Est. 2005.
+          © {new Date().getFullYear()} Demo School. Est. 2005.
         </div>
       </div>
 
@@ -73,7 +73,7 @@ export function Login() {
         {/* Mobile logo */}
         <div className="lg:hidden mb-8 text-center">
           <div className="mx-auto mb-3 w-14 h-14 rounded-2xl bg-primary flex items-center justify-center font-bold text-2xl text-gold shadow-lg">A</div>
-          <h1 className="text-2xl font-bold text-primary dark:text-gold">Alber School Portal</h1>
+          <h1 className="text-2xl font-bold text-primary dark:text-gold">Demo School Portal</h1>
           <p className="text-xs text-muted mt-1 tracking-widest uppercase">Kutus · Kirinyaga County</p>
         </div>
 

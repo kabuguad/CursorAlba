@@ -1,6 +1,6 @@
-# Alber School — School Management System
+# Demo School — School Management System
 
-A comprehensive school management platform for Alber School, Kutus, Kirinyaga County, Kenya. Provides separate portals for Admins, Teachers, Parents, and Students.
+A comprehensive school management platform for Demo School, Kutus, Kirinyaga County, Kenya. Provides separate portals for Admins, Teachers, Parents, and Students.
 
 ## Architecture
 

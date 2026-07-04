@@ -69,7 +69,7 @@ export function Contact() {
   const CONTACT_CARDS = [
     { icon: Phone,         label: 'Phone',    value: content.phonePrimary,  sub: content.phoneSecondary,   href: `tel:${content.phonePrimary.replace(/\s/g, '')}`,                                                                        color: 'text-blue-500',   bg: 'bg-blue-500/10',   ring: 'ring-blue-400/20'   },
     { icon: Mail,          label: 'Email',    value: content.emailPrimary,  sub: content.emailSecondary,   href: `mailto:${content.emailPrimary}`,                                                                                          color: 'text-purple-500', bg: 'bg-purple-500/10', ring: 'ring-purple-400/20' },
-    { icon: MessageCircle, label: 'WhatsApp', value: content.phonePrimary,  sub: 'Mon\u2013Sat 8AM\u20136PM', href: `https://wa.me/${content.whatsAppNumber}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`,                  color: 'text-green-500',  bg: 'bg-green-500/10',  ring: 'ring-green-400/20'  },
+    { icon: MessageCircle, label: 'WhatsApp', value: content.phonePrimary,  sub: 'Mon\u2013Sat 8AM\u20136PM', href: `https://wa.me/${content.whatsAppNumber}?text=Hello%2C%20I%27m%20interested%20in%20Demo%20School`,                  color: 'text-green-500',  bg: 'bg-green-500/10',  ring: 'ring-green-400/20'  },
     { icon: MapPin,        label: 'Address',  value: content.addressLine1,  sub: content.addressLine2,     href: 'https://maps.google.com/?q=Kutus,Kirinyaga,Kenya',                                                                        color: 'text-gold',       bg: 'bg-gold/10',       ring: 'ring-gold/20'       },
   ]
 
@@ -128,7 +128,7 @@ export function Contact() {
           <FadeIn>
             <GlassCard className="overflow-hidden p-0 h-[440px]">
               <iframe
-                title="Alber School Location — Kutus, Kirinyaga County"
+                title="Demo School Location — Kutus, Kirinyaga County"
                 src={content.mapEmbedUrl}
                 className="h-full w-full border-0 grayscale contrast-125"
                 loading="lazy"
@@ -189,7 +189,7 @@ export function Contact() {
 
       {/* ── Floating WhatsApp ── */}
       <a
-        href={`https://wa.me/${content.whatsAppNumber}?text=Hello%2C%20I%27m%20interested%20in%20Alber%20School`}
+        href={`https://wa.me/${content.whatsAppNumber}?text=Hello%2C%20I%27m%20interested%20in%20Demo%20School`}
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 text-white shadow-xl transition hover:scale-110 hover:bg-green-600"

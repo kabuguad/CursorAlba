@@ -31,7 +31,7 @@ export const DEFAULT_PILLARS: Pillar[] = [
     id: 'p2',
     icon: '🎯',
     title: 'Learner-Centred Teaching',
-    desc: 'Teachers at Alber act as facilitators and mentors — guiding learners through project-based and inquiry-based experiences rather than passive content delivery.',
+    desc: 'Teachers at Demo School act as facilitators and mentors — guiding learners through project-based and inquiry-based experiences rather than passive content delivery.',
     gradient: 'blue',
   },
   {

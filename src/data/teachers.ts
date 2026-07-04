@@ -43,7 +43,7 @@ export const teachers: Teacher[] = Array.from({ length: 125 }, (_, i) => {
     title: TITLES[i % TITLES.length],
     department: dept,
     image: `/images/avatar-${(i % 70) + 1}.jpg`,
-    bio: `${name} brings exceptional dedication to ${dept} at Alber School. Known for innovative pedagogy and student-centered learning, they have shaped countless young minds in Kutus and beyond.`,
+    bio: `${name} brings exceptional dedication to ${dept} at Demo School. Known for innovative pedagogy and student-centered learning, they have shaped countless young minds in Kutus and beyond.`,
     credentials: [
       CREDENTIALS[i % CREDENTIALS.length],
       CREDENTIALS[(i + 2) % CREDENTIALS.length],
@@ -51,7 +51,7 @@ export const teachers: Teacher[] = Array.from({ length: 125 }, (_, i) => {
     qualifications: [
       QUALS[i % QUALS.length],
       QUALS[(i + 3) % QUALS.length],
-      `${Math.floor(seededRandom(i) * 15) + 5}+ years at Alber School`,
+      `${Math.floor(seededRandom(i) * 15) + 5}+ years at Demo School`,
     ],
   }
 })

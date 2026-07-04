@@ -83,7 +83,7 @@ function PageContentSection({ item }: { item: WcuPageContent }) {
         <p className="text-[10px] font-bold uppercase tracking-widest text-[#E8B84B]">Hero Text</p>
         <div>
           <label className={LABEL}>Tagline</label>
-          <input className={FIELD} value={form.tagline} onChange={e => set('tagline', e.target.value)} placeholder="Why Alber School?" />
+          <input className={FIELD} value={form.tagline} onChange={e => set('tagline', e.target.value)} placeholder="Why Demo School?" />
         </div>
         <div>
           <label className={LABEL}>Headline</label>

@@ -54,7 +54,7 @@ export function PortalLayout({ nav, portalLabel, rootPath }: PortalLayoutProps) 
         </div>
         {!collapsed && (
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-gray-900 dark:text-white">Alber School</p>
+            <p className="truncate text-sm font-bold text-gray-900 dark:text-white">Demo School</p>
             <p className="text-[10px] tracking-widest text-[#E8B84B]">{portalLabel}</p>
           </div>
         )}

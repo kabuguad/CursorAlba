@@ -13,7 +13,7 @@ export const events: SchoolEvent[] = [
   { id: 'e10', title: 'Career Day', date: '2026-07-03', location: 'Conference Centre', description: 'Industry leaders mentor senior students.', isPast: false },
   { id: 'e11', title: 'Cultural Heritage Week', date: '2026-07-15', location: 'Campus Wide', description: 'Celebrating Kenyan heritage and diversity.', isPast: false },
   { id: 'e12', title: 'Science Olympiad', date: '2026-08-01', location: 'Laboratories', description: 'Regional science competition qualifiers.', isPast: false },
-  { id: 'e13', title: 'Founders Day', date: '2026-08-20', location: 'Governor\'s Adjacent Plaza', description: 'Commemorating Alber School legacy.', isPast: false },
+  { id: 'e13', title: 'Founders Day', date: '2026-08-20', location: 'Governor\'s Adjacent Plaza', description: 'Commemorating Demo School legacy.', isPast: false },
   { id: 'e14', title: 'Graduation Ceremony', date: '2026-11-28', location: 'Grand Lawn', description: 'Class of 2026 commencement.', isPast: false },
   { id: 'e15', title: 'Christmas Concert', date: '2026-12-12', location: 'Main Auditorium', description: 'Festive performances and charity drive.', isPast: false },
 ]

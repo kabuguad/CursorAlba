@@ -59,7 +59,7 @@ export function NotFound() {
         </div>
 
         <p className="mt-10 text-xs text-muted tracking-wide">
-          Alber School · Kutus, Kirinyaga County
+          Demo School · Kutus, Kirinyaga County
         </p>
       </div>
     </div>

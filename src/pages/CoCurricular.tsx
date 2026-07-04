@@ -42,9 +42,9 @@ export function CoCurricular() {
   const pageContent = pageContentList[0]
 
   const headline    = pageContent?.headline    ?? 'Co-Curricular'
-  const subheadline = pageContent?.subheadline ?? "Beyond the classroom — four pillars of holistic development aligned to Kenya's CBC framework and Alber School's vision of whole-learner excellence."
+  const subheadline = pageContent?.subheadline ?? "Beyond the classroom — four pillars of holistic development aligned to Kenya's CBC framework and Demo School's vision of whole-learner excellence."
   const ctaHeadline = pageContent?.ctaHeadline ?? "Enrich Your Child's Journey"
-  const ctaSubtext  = pageContent?.ctaSubtext  ?? "Every learner at Alber participates in co-curricular activities as part of their holistic CBC assessment. Talk to us about pathways that match your child's passions."
+  const ctaSubtext  = pageContent?.ctaSubtext  ?? "Every learner at Demo School participates in co-curricular activities as part of their holistic CBC assessment. Talk to us about pathways that match your child's passions."
 
   const [activeId, setActiveId] = useState<number | null>(null)
 

@@ -86,7 +86,7 @@ const HOMEPAGE_CONTENT = {
   visionTitle: 'A Future Without Limits',
   visionBody: 'To be the leading school in East Africa — known for producing confident, compassionate, and capable leaders who transform communities.',
   ctaBadgeText: 'Admissions Open',
-  ctaHeading: 'Begin Your Journey at Alber School',
+  ctaHeading: 'Begin Your Journey at Demo School School',
   ctaSubtext: 'Join a community of scholars, athletes, artists, and leaders. Applications for the next academic year are now open.',
   ctaPrimaryLabel: 'Apply Now',
   ctaPrimaryUrl: '/admissions',
@@ -177,16 +177,16 @@ const TEACHERS = Array.from({ length: 15 }, (_, i) => {
 const ABOUT_PAGE_CONTENT = [{
   aboutPageContentId: 1,
   id: 1,
-  headline: 'About Alber School',
+  headline: 'About Demo School School',
   subheadline: 'A legacy of excellence in Kirinyaga County since 2005.',
   mission: 'To provide a world-class, holistic education that nurtures academic excellence, character development, and lifelong curiosity in every student.',
   vision: 'To be the leading school in East Africa — known for producing confident, compassionate, and capable leaders who transform communities.',
-  historyIntro: 'Founded in 2005 by a team of passionate educators, Alber School has grown from a small primary school into a full continuum institution serving over 1,200 learners from Playgroup through Senior Secondary.',
+  historyIntro: 'Founded in 2005 by a team of passionate educators, Demo School School has grown from a small primary school into a full continuum institution serving over 1,200 learners from Playgroup through Senior Secondary.',
   updatedAt: '2024-01-15T08:00:00Z',
 }]
 
 const HISTORY_MILESTONES = [
-  { historyMilestoneId: 1, id: 1, year: '2005', title: 'Founded', description: 'Alber School opens its doors with 3 classrooms and 45 students.', sortOrder: 1 },
+  { historyMilestoneId: 1, id: 1, year: '2005', title: 'Founded', description: 'Demo School School opens its doors with 3 classrooms and 45 students.', sortOrder: 1 },
   { historyMilestoneId: 2, id: 2, year: '2008', title: 'Primary School Expansion', description: 'Grades 1–8 fully operational. First KCPE class achieves a mean score of 380.', sortOrder: 2 },
   { historyMilestoneId: 3, id: 3, year: '2012', title: 'Sports Complex Opened', description: 'Multi-sport facility inaugurated, home to our national-award-winning athletics teams.', sortOrder: 3 },
   { historyMilestoneId: 4, id: 4, year: '2016', title: 'Science & Technology Block', description: 'Three fully equipped labs and the first computer lab in the district.', sortOrder: 4 },
@@ -328,7 +328,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
     return json(res, ok({ deleted: true })), true
   }
 
-  // Alber difference
+  // Demo School difference
   if (method === 'GET' && path === '/alber-difference') {
     return json(res, ok(alberDifference)), true
   }
@@ -608,7 +608,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
   if (method === 'GET' && path === '/admin/transport/stats') return json(res, ok({ routes: 8, vehicles: 6, studentsTransported: 312 })), true
 
   if (method === 'GET' && path === '/admin/system/health') return json(res, ok({ status: 'healthy', uptime: '14d 3h', version: '1.0.0 (mock)', database: 'ok' })), true
-  if (method === 'GET' && path === '/admin/system/settings') return json(res, ok({ schoolName: 'Alber School', timezone: 'Africa/Nairobi', currency: 'KES', academicYear: '2025' })), true
+  if (method === 'GET' && path === '/admin/system/settings') return json(res, ok({ schoolName: 'Demo School School', timezone: 'Africa/Nairobi', currency: 'KES', academicYear: '2025' })), true
   if (method === 'PUT' && path === '/admin/system/settings') { await readBody(req); return json(res, ok({})), true }
   if (method === 'POST' && path === '/admin/system/backup') return json(res, created({ backupId: 'backup-mock-001', status: 'queued' }), 201), true
   if (method === 'POST' && path === '/admin/system/maintenance') { await readBody(req); return json(res, ok({})), true }

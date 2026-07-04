@@ -14,7 +14,21 @@ Both workflows start automatically:
 - **Start application** — Vite dev server on port 5000 (the web preview)
 - **Start API** — .NET API via `bash start-api.sh` on port 8080 (no waitForPort — .NET takes ~7s to start)
 
-The Vite server proxies all `/api/*` requests to the backend on port 8080.
+The Vite server can run in two modes (configured via `.env.local`):
+
+| Mode | `.env.local` setting | What happens |
+|------|----------------------|--------------|
+| **Offline / mock** (default on Replit) | `VITE_USE_MOCK=true` | All `/api/*` requests served locally by `mock-api-plugin.ts` — no backend needed |
+| **Real API** | `VITE_USE_MOCK=false` + `VITE_API_BASE=<url>` | Vite proxies `/api/*` to your backend (local .NET, ngrok tunnel, or production URL) |
+
+To connect to the real backend locally:
+```
+# .env.local
+VITE_USE_MOCK=false
+VITE_API_BASE=https://localhost:7258        # local .NET dev server
+# or
+VITE_API_BASE=https://your-tunnel.ngrok-free.dev  # ngrok tunnel for Replit dev
+```
 
 ## Demo Credentials
 
@@ -31,7 +45,9 @@ The Vite server proxies all `/api/*` requests to the backend on port 8080.
 - `AlberSchoolApi/AlbaApi/` — .NET API entry point (Program.cs, appsettings.json)
 - `AlberSchoolApi/AlbaApi/alber_school.db` — SQLite database (auto-created + seeded on first run)
 - `start-api.sh` — API startup script (cd into project dir, then dotnet run --no-build)
-- `vite.config.ts` — proxies `/api` to localhost:8080
+- `vite.config.ts` — proxies `/api` to the backend, or runs the mock plugin in offline mode
+- `mock-api-plugin.ts` — Vite dev-server middleware that handles all `/api/*` routes locally (no backend needed)
+- `.env.local` — set `VITE_USE_MOCK=true` for offline dev, or `VITE_API_BASE=<url>` to point at a real backend
 
 ## Important Notes
 

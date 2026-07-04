@@ -13,7 +13,7 @@ import {
   APPLICATION_STATUS_LABELS,
 } from '../../../services/admissionsService'
 import type {
-  AdmissionSummary,
+  AdmissionApplication,
   AdmissionDocument,
   ApplicationStatusLabel,
 } from '../../../services/admissionsService'
@@ -87,9 +87,9 @@ function DocRow({ doc, onDelete }: { doc: AdmissionDocument; onDelete: () => voi
           {doc.documentType} · {fmtBytes(doc.fileSizeBytes)} · {fmtDate(doc.uploadedAt)}
         </p>
       </div>
-      {doc.downloadUrl && (
+      {doc.filePath && (
         <a
-          href={doc.downloadUrl}
+          href={doc.filePath}
           target="_blank"
           rel="noopener noreferrer"
           className="rounded p-1 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition"
@@ -369,12 +369,11 @@ export function AdminAdmissions() {
   const { showToast } = useToast()
   const qc = useQueryClient()
 
-  // List query returns AdmissionSummary[] — slim DTO, no documents
   const { data: rawData, isLoading } = useQuery({
     queryKey: ['admissions'],
     queryFn: admissionsService.list,
   })
-  const applications: AdmissionSummary[] = Array.isArray(rawData) ? rawData : []
+  const applications: AdmissionApplication[] = Array.isArray(rawData) ? rawData : []
 
   const deleteApp = useMutation({
     mutationFn: admissionsService.delete,

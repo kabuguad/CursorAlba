@@ -1,0 +1,246 @@
+{
+  "success": true,
+  "data": [
+    {
+      "admissionApplicationId": 5,
+      "referenceNumber": "ALB-2026-0005",
+      "childFirstName": "Kevin",
+      "childLastName": "Mutua",
+      "dateOfBirth": "2020-09-30",
+      "applyingForGrade": "Daycare / PP1-PP2",
+      "previousSchool": null,
+      "parentFirstName": "Peter",
+      "parentLastName": "Mutua",
+      "parentEmail": "peter.mutua@example.com",
+      "parentPhone": "+254756789015",
+      "parentIdNumber": null,
+      "parentRelationship": "Father",
+      "status": 0,
+      "adminNotes": null,
+      "submittedAt": "2026-01-15T00:00:00",
+      "reviewedAt": null,
+      "reviewedBy": null,
+      "documents": [
+        {
+          "admissionDocumentId": 12,
+          "admissionApplicationId": 5,
+          "documentType": "BirthCertificate",
+          "filePath": "/uploads/admissions/5/birth-alb-2026-0005.pdf",
+          "originalFileName": "birth-alb-2026-0005.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 245760,
+          "uploadedAt": "2026-01-02T00:00:00"
+        },
+        {
+          "admissionDocumentId": 13,
+          "admissionApplicationId": 5,
+          "documentType": "SchoolReport",
+          "filePath": "/uploads/admissions/5/report-alb-2026-0005.pdf",
+          "originalFileName": "report-alb-2026-0005.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 189440,
+          "uploadedAt": "2026-01-03T00:00:00"
+        }
+      ]
+    },
+    {
+      "admissionApplicationId": 4,
+      "referenceNumber": "ALB-2026-0004",
+      "childFirstName": "Zara",
+      "childLastName": "Hassan",
+      "dateOfBirth": "2009-01-18",
+      "applyingForGrade": "Senior School / IGCSE",
+      "previousSchool": "Haven Academy",
+      "parentFirstName": "Amina",
+      "parentLastName": "Hassan",
+      "parentEmail": "amina.hassan@example.com",
+      "parentPhone": "+254745678904",
+      "parentIdNumber": "19283746",
+      "parentRelationship": "Mother",
+      "status": 3,
+      "adminNotes": "Grade level does not match age.",
+      "submittedAt": "2026-01-13T00:00:00",
+      "reviewedAt": "2026-01-19T00:00:00",
+      "reviewedBy": "jane.admin@alberschool.ke",
+      "documents": [
+        {
+          "admissionDocumentId": 9,
+          "admissionApplicationId": 4,
+          "documentType": "BirthCertificate",
+          "filePath": "/uploads/admissions/4/birth-alb-2026-0004.pdf",
+          "originalFileName": "birth-alb-2026-0004.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 245760,
+          "uploadedAt": "2026-01-02T00:00:00"
+        },
+        {
+          "admissionDocumentId": 10,
+          "admissionApplicationId": 4,
+          "documentType": "SchoolReport",
+          "filePath": "/uploads/admissions/4/report-alb-2026-0004.pdf",
+          "originalFileName": "report-alb-2026-0004.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 189440,
+          "uploadedAt": "2026-01-03T00:00:00"
+        },
+        {
+          "admissionDocumentId": 11,
+          "admissionApplicationId": 4,
+          "documentType": "ParentId",
+          "filePath": "/uploads/admissions/4/parent-id-alb-2026-0004.jpg",
+          "originalFileName": "parent-id-alb-2026-0004.jpg",
+          "contentType": "image/jpeg",
+          "fileSizeBytes": 512000,
+          "uploadedAt": "2026-01-04T00:00:00"
+        }
+      ]
+    },
+    {
+      "admissionApplicationId": 3,
+      "referenceNumber": "ALB-2026-0003",
+      "childFirstName": "Elijah",
+      "childLastName": "Omondi",
+      "dateOfBirth": "2012-11-04",
+      "applyingForGrade": "Junior Secondary (Gr. 7–9)",
+      "previousSchool": "Riverside Primary",
+      "parentFirstName": "Samuel",
+      "parentLastName": "Omondi",
+      "parentEmail": "samuel.omondi@example.com",
+      "parentPhone": "+254734567803",
+      "parentIdNumber": "87654321",
+      "parentRelationship": "Father",
+      "status": 2,
+      "adminNotes": "All documents verified.",
+      "submittedAt": "2026-01-09T00:00:00",
+      "reviewedAt": "2026-01-16T00:00:00",
+      "reviewedBy": "jane.admin@alberschool.ke",
+      "documents": [
+        {
+          "admissionDocumentId": 6,
+          "admissionApplicationId": 3,
+          "documentType": "BirthCertificate",
+          "filePath": "/uploads/admissions/3/birth-alb-2026-0003.pdf",
+          "originalFileName": "birth-alb-2026-0003.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 245760,
+          "uploadedAt": "2026-01-02T00:00:00"
+        },
+        {
+          "admissionDocumentId": 7,
+          "admissionApplicationId": 3,
+          "documentType": "SchoolReport",
+          "filePath": "/uploads/admissions/3/report-alb-2026-0003.pdf",
+          "originalFileName": "report-alb-2026-0003.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 189440,
+          "uploadedAt": "2026-01-03T00:00:00"
+        },
+        {
+          "admissionDocumentId": 8,
+          "admissionApplicationId": 3,
+          "documentType": "MedicalExamination",
+          "filePath": "/uploads/admissions/3/medical-alb-2026-0003.pdf",
+          "originalFileName": "medical-alb-2026-0003.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 327680,
+          "uploadedAt": "2026-01-05T00:00:00"
+        }
+      ]
+    },
+    {
+      "admissionApplicationId": 2,
+      "referenceNumber": "ALB-2026-0002",
+      "childFirstName": "Amara",
+      "childLastName": "Muthoni",
+      "dateOfBirth": "2017-07-22",
+      "applyingForGrade": "Primary (Gr. 1–6)",
+      "previousSchool": "Sunshine Junior Academy",
+      "parentFirstName": "Grace",
+      "parentLastName": "Muthoni",
+      "parentEmail": "grace.muthoni@example.com",
+      "parentPhone": "+254723456702",
+      "parentIdNumber": "12345678",
+      "parentRelationship": "Mother",
+      "status": 1,
+      "adminNotes": "Awaiting transfer certificate.",
+      "submittedAt": "2026-01-06T00:00:00",
+      "reviewedAt": "2026-01-11T00:00:00",
+      "reviewedBy": "jane.admin@alberschool.ke",
+      "documents": [
+        {
+          "admissionDocumentId": 3,
+          "admissionApplicationId": 2,
+          "documentType": "BirthCertificate",
+          "filePath": "/uploads/admissions/2/birth-alb-2026-0002.pdf",
+          "originalFileName": "birth-alb-2026-0002.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 245760,
+          "uploadedAt": "2026-01-02T00:00:00"
+        },
+        {
+          "admissionDocumentId": 4,
+          "admissionApplicationId": 2,
+          "documentType": "SchoolReport",
+          "filePath": "/uploads/admissions/2/report-alb-2026-0002.pdf",
+          "originalFileName": "report-alb-2026-0002.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 189440,
+          "uploadedAt": "2026-01-03T00:00:00"
+        },
+        {
+          "admissionDocumentId": 5,
+          "admissionApplicationId": 2,
+          "documentType": "ParentId",
+          "filePath": "/uploads/admissions/2/parent-id-alb-2026-0002.jpg",
+          "originalFileName": "parent-id-alb-2026-0002.jpg",
+          "contentType": "image/jpeg",
+          "fileSizeBytes": 512000,
+          "uploadedAt": "2026-01-04T00:00:00"
+        }
+      ]
+    },
+    {
+      "admissionApplicationId": 1,
+      "referenceNumber": "ALB-2026-0001",
+      "childFirstName": "Brian",
+      "childLastName": "Kipchoge",
+      "dateOfBirth": "2019-03-10",
+      "applyingForGrade": "Daycare / PP1-PP2",
+      "previousSchool": null,
+      "parentFirstName": "James",
+      "parentLastName": "Kipchoge",
+      "parentEmail": "james.kipchoge@example.com",
+      "parentPhone": "+254712345601",
+      "parentIdNumber": null,
+      "parentRelationship": "Father",
+      "status": 0,
+      "adminNotes": null,
+      "submittedAt": "2026-01-03T00:00:00",
+      "reviewedAt": null,
+      "reviewedBy": null,
+      "documents": [
+        {
+          "admissionDocumentId": 1,
+          "admissionApplicationId": 1,
+          "documentType": "BirthCertificate",
+          "filePath": "/uploads/admissions/1/birth-alb-2026-0001.pdf",
+          "originalFileName": "birth-alb-2026-0001.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 245760,
+          "uploadedAt": "2026-01-02T00:00:00"
+        },
+        {
+          "admissionDocumentId": 2,
+          "admissionApplicationId": 1,
+          "documentType": "SchoolReport",
+          "filePath": "/uploads/admissions/1/report-alb-2026-0001.pdf",
+          "originalFileName": "report-alb-2026-0001.pdf",
+          "contentType": "application/pdf",
+          "fileSizeBytes": 189440,
+          "uploadedAt": "2026-01-03T00:00:00"
+        }
+      ]
+    }
+  ],
+  "error": null
+}

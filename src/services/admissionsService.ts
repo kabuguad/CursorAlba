@@ -1,7 +1,7 @@
 import apiClient from '../lib/axios'
 
 // ── Status ────────────────────────────────────────────────────────────────────
-// API returns  status as a string label ("Pending" | "Reviewing" | …)
+// API returns  status as an integer (0–3)
 // API receives status as an integer in PATCH body (0 | 1 | 2 | 3)
 
 export type ApplicationStatusLabel = 'Pending' | 'Reviewing' | 'Approved' | 'Rejected'
@@ -11,6 +11,10 @@ export const APPLICATION_STATUS_LABELS: ApplicationStatusLabel[] = [
   'Pending', 'Reviewing', 'Approved', 'Rejected',
 ]
 
+export const STATUS_INT_TO_LABEL: Record<number, ApplicationStatusLabel> = {
+  0: 'Pending', 1: 'Reviewing', 2: 'Approved', 3: 'Rejected',
+}
+
 export const STATUS_LABEL_TO_INT: Record<ApplicationStatusLabel, ApplicationStatusInt> = {
   Pending: 0, Reviewing: 1, Approved: 2, Rejected: 3,
 }
@@ -18,24 +22,8 @@ export const STATUS_LABEL_TO_INT: Record<ApplicationStatusLabel, ApplicationStat
 // ── Entity interfaces ────────────────────────────────────────────────────────
 
 /**
- * Matches ApplicationSummaryDto — returned by GET /admissions/applications.
- * Intentionally omits document payloads; use documentCount for the count.
- */
-export interface AdmissionSummary {
-  id: number
-  referenceNumber: string
-  /** Server combines childFirstName + " " + childLastName */
-  childFullName: string
-  applyingForGrade: string
-  parentEmail: string
-  parentPhone: string
-  status: ApplicationStatusLabel
-  documentCount: number
-  submittedAt: string
-}
-
-/**
- * Matches DocumentResponseDto — nested inside AdmissionDetail.
+ * Matches AdmissionDocument as returned by the API.
+ * `id` is normalised from `admissionDocumentId`.
  */
 export interface AdmissionDocument {
   id: number
@@ -43,16 +31,17 @@ export interface AdmissionDocument {
   originalFileName: string
   contentType: string
   fileSizeBytes: number
-  /** Relative URL: /api/admissions/applications/{appId}/documents/{docId} */
-  downloadUrl: string
+  /** Relative server path: /uploads/admissions/{appId}/{filename} */
+  filePath: string
   uploadedAt: string
 }
 
 /**
- * Matches ApplicationResponseDto — returned by GET /admissions/applications/{id}.
- * Includes the full Documents collection (eager-loaded by EF Core).
+ * Matches the application DTO returned by both list and detail endpoints.
+ * `id` is normalised from `admissionApplicationId`.
+ * `status` is normalised from integer to string label.
  */
-export interface AdmissionDetail {
+export interface AdmissionApplication {
   id: number
   referenceNumber: string
   childFirstName: string
@@ -67,7 +56,6 @@ export interface AdmissionDetail {
   parentIdNumber?: string | null
   parentRelationship?: string | null
   status: ApplicationStatusLabel
-  /** Maps to AdminNotes on the server DTO */
   adminNotes?: string | null
   submittedAt: string
   reviewedAt?: string | null
@@ -107,10 +95,54 @@ export interface AdmissionStatusUpdateDto {
   reviewedBy?: string | null
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Normalisation helpers ─────────────────────────────────────────────────────
+// The API wraps every response in { success, data, error }.
 
-function normaliseDetail(data: AdmissionDetail): AdmissionDetail {
-  return { ...data, documents: Array.isArray(data.documents) ? data.documents : [] }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function unwrapEnvelope<T>(raw: any): T {
+  if (raw && typeof raw === 'object' && 'success' in raw && 'data' in raw) {
+    return raw.data as T
+  }
+  return raw as T
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normaliseDoc(raw: any): AdmissionDocument {
+  return {
+    id:               raw.admissionDocumentId ?? raw.id,
+    documentType:     raw.documentType,
+    originalFileName: raw.originalFileName,
+    contentType:      raw.contentType,
+    fileSizeBytes:    raw.fileSizeBytes,
+    filePath:         raw.filePath,
+    uploadedAt:       raw.uploadedAt,
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function normalise(raw: any): AdmissionApplication {
+  return {
+    id:                raw.admissionApplicationId ?? raw.id,
+    referenceNumber:   raw.referenceNumber,
+    childFirstName:    raw.childFirstName,
+    childLastName:     raw.childLastName,
+    dateOfBirth:       raw.dateOfBirth,
+    applyingForGrade:  raw.applyingForGrade,
+    previousSchool:    raw.previousSchool,
+    parentFirstName:   raw.parentFirstName,
+    parentLastName:    raw.parentLastName,
+    parentEmail:       raw.parentEmail,
+    parentPhone:       raw.parentPhone,
+    parentIdNumber:    raw.parentIdNumber,
+    parentRelationship: raw.parentRelationship,
+    // API sends integer; we normalise to label for the UI
+    status:            STATUS_INT_TO_LABEL[raw.status as number] ?? 'Pending',
+    adminNotes:        raw.adminNotes,
+    submittedAt:       raw.submittedAt,
+    reviewedAt:        raw.reviewedAt,
+    reviewedBy:        raw.reviewedBy,
+    documents:         Array.isArray(raw.documents) ? raw.documents.map(normaliseDoc) : [],
+  }
 }
 
 // ── Service ───────────────────────────────────────────────────────────────────
@@ -119,46 +151,42 @@ function normaliseDetail(data: AdmissionDetail): AdmissionDetail {
 export const admissionsService = {
   // ── Applications ───────────────────────────────────────────────────────────
 
-  list: async (): Promise<AdmissionSummary[]> => {
-    const { data } = await apiClient.get<
-      AdmissionSummary[] | { items?: AdmissionSummary[]; data?: AdmissionSummary[] } | null
-    >('/admissions/applications')
-    if (Array.isArray(data)) return data
-    if (data && Array.isArray((data as { items?: AdmissionSummary[] }).items))
-      return (data as { items: AdmissionSummary[] }).items
-    if (data && Array.isArray((data as { data?: AdmissionSummary[] }).data))
-      return (data as { data: AdmissionSummary[] }).data
-    return []
+  list: async (): Promise<AdmissionApplication[]> => {
+    const { data } = await apiClient.get('/admissions/applications')
+    const arr = unwrapEnvelope<unknown>(data)
+    if (!Array.isArray(arr)) return []
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return arr.map((r: any) => normalise(r))
   },
 
-  getById: async (id: number): Promise<AdmissionDetail> => {
-    const { data } = await apiClient.get<AdmissionDetail>(`/admissions/applications/${id}`)
-    return normaliseDetail(data)
+  getById: async (id: number): Promise<AdmissionApplication> => {
+    const { data } = await apiClient.get(`/admissions/applications/${id}`)
+    return normalise(unwrapEnvelope<unknown>(data))
   },
 
-  getByReference: async (referenceNumber: string): Promise<AdmissionDetail> => {
-    const { data } = await apiClient.get<AdmissionDetail>(
+  getByReference: async (referenceNumber: string): Promise<AdmissionApplication> => {
+    const { data } = await apiClient.get(
       `/admissions/applications/reference/${encodeURIComponent(referenceNumber)}`,
     )
-    return normaliseDetail(data)
+    return normalise(unwrapEnvelope<unknown>(data))
   },
 
-  create: async (dto: AdmissionApplicationCreateDto): Promise<AdmissionDetail> => {
-    const { data } = await apiClient.post<AdmissionDetail>('/admissions/applications', dto)
-    return normaliseDetail(data)
+  create: async (dto: AdmissionApplicationCreateDto): Promise<AdmissionApplication> => {
+    const { data } = await apiClient.post('/admissions/applications', dto)
+    return normalise(unwrapEnvelope<unknown>(data))
   },
 
-  update: async (id: number, dto: AdmissionApplicationUpdateDto): Promise<AdmissionDetail> => {
-    const { data } = await apiClient.put<AdmissionDetail>(`/admissions/applications/${id}`, dto)
-    return normaliseDetail(data)
+  update: async (id: number, dto: AdmissionApplicationUpdateDto): Promise<AdmissionApplication> => {
+    const { data } = await apiClient.put(`/admissions/applications/${id}`, dto)
+    return normalise(unwrapEnvelope<unknown>(data))
   },
 
-  updateStatus: async (id: number, dto: AdmissionStatusUpdateDto): Promise<AdmissionDetail> => {
-    const { data } = await apiClient.patch<AdmissionDetail>(
+  updateStatus: async (id: number, dto: AdmissionStatusUpdateDto): Promise<AdmissionApplication> => {
+    const { data } = await apiClient.patch(
       `/admissions/applications/${id}/status`,
       dto,
     )
-    return normaliseDetail(data)
+    return normalise(unwrapEnvelope<unknown>(data))
   },
 
   delete: async (id: number): Promise<void> => {
@@ -175,12 +203,12 @@ export const admissionsService = {
     const form = new FormData()
     form.append('DocumentType', documentType)
     form.append('File', file)
-    const { data } = await apiClient.post<AdmissionDocument>(
+    const { data } = await apiClient.post(
       `/admissions/applications/${applicationId}/documents`,
       form,
       { headers: { 'Content-Type': 'multipart/form-data' } },
     )
-    return data
+    return normaliseDoc(unwrapEnvelope<unknown>(data))
   },
 
   deleteDocument: async (applicationId: number, documentId: number): Promise<void> => {

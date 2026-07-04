@@ -35,6 +35,7 @@ import { ContactPageContentManager } from './pages/dashboards/admin/ContactPageC
 import { AboutContentManager }       from './pages/dashboards/admin/AboutContentManager'
 import { WhyChooseUsManager }        from './pages/dashboards/admin/WhyChooseUsManager'
 import { AdminAdmissions }           from './pages/dashboards/admin/AdminAdmissions'
+import { AcademicsContentManager }   from './pages/dashboards/admin/AcademicsContentManager'
 
 function App() {
   return (
@@ -81,6 +82,7 @@ function App() {
                 <Route path="site-content/facilities"         element={<FacilitiesPageBuilder />} />
                 <Route path="site-content/about"              element={<AboutContentManager />} />
                 <Route path="site-content/why-choose-us"      element={<WhyChooseUsManager />} />
+                <Route path="site-content/academics"          element={<AcademicsContentManager />} />
                 <Route path="gallery"                    element={<GalleryManager />} />
 
                 {/* Staff */}

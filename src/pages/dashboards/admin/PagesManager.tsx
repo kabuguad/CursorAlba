@@ -526,6 +526,7 @@ export function PagesManager() {
     'pg-facilities':  '/dashboard/admin/site-content/facilities',
     'pg-about':       '/dashboard/admin/site-content/about',
     'pg-why':         '/dashboard/admin/site-content/why-choose-us',
+    'pg-academics':   '/dashboard/admin/site-content/academics',
   }
 
   // ── Page Card (replaces the old sidebar tree item) ──────────────────────
@@ -908,13 +909,13 @@ export function PagesManager() {
                       />
                     )}
 
-                    {/* Academics — API-backed, dedicated manager coming soon */}
+                    {/* Academics — dedicated manager */}
                     {selectedPageId === 'pg-academics' && (
                       <ManagerRedirectCard
                         icon="📚"
                         title="Academics Page Content"
-                        description="Edit CBC competencies, teaching pillars, and academic programmes via the Academics API. A dedicated manager will be available here soon."
-                        to="/academics"
+                        description="Edit the hero text, school levels, CBC competencies, and teaching pillars shown on the Academics page."
+                        to="/dashboard/admin/site-content/academics"
                       />
                     )}
 

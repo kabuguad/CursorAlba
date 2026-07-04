@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 import { apiClient } from '../services/apiClient'
 
-export type UserRole = 'admin' | 'teacher' | 'parent' | null
+export type UserRole = 'admin' | null
 
 export interface AuthUser {
   id: string
@@ -23,16 +23,12 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 const DEMO_USERS: Record<Exclude<UserRole, null>, AuthUser> = {
-  admin:   { id: 'a1', name: 'Dr. Wanjiku Mwangi',  email: 'admin@alberschool.ke',   role: 'admin'   },
-  teacher: { id: 't1', name: 'James Ochieng',        email: 'teacher@alberschool.ke', role: 'teacher' },
-  parent:  { id: 'p1', name: 'Grace Njeri',          email: 'parent@alberschool.ke',  role: 'parent'  },
+  admin: { id: 'a1', name: 'Dr. Wanjiku Mwangi', email: 'admin@alberschool.ke', role: 'admin' },
 }
 
 function normaliseRole(raw: string): UserRole {
   const lower = raw.toLowerCase()
   if (lower === 'admin') return 'admin'
-  if (lower === 'teacher') return 'teacher'
-  if (lower === 'parent') return 'parent'
   return null
 }
 

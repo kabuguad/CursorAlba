@@ -478,18 +478,16 @@ export const useDeleteAdmission = () => {
   })
 }
 
-export const useAdmissionDocuments = (applicationId: number) => useQuery({
-  queryKey: ['admissions', 'docs', applicationId],
-  queryFn: () => admissionsService.getDocuments(applicationId),
-  enabled: applicationId > 0,
-})
-
 export const useUploadAdmissionDocument = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ applicationId, documentType, file }: { applicationId: number; documentType: string; file: File }) =>
       admissionsService.uploadDocument(applicationId, documentType, file),
-    onSuccess: (_data, vars) => qc.invalidateQueries({ queryKey: ['admissions', 'docs', vars.applicationId] }),
+    onSuccess: (_data, vars) => {
+      // Refresh list (documentCount) and the open detail panel
+      qc.invalidateQueries({ queryKey: ['admissions'] })
+      qc.invalidateQueries({ queryKey: ['admissions', 'detail', vars.applicationId] })
+    },
   })
 }
 
@@ -498,6 +496,9 @@ export const useDeleteAdmissionDocument = () => {
   return useMutation({
     mutationFn: ({ applicationId, documentId }: { applicationId: number; documentId: number }) =>
       admissionsService.deleteDocument(applicationId, documentId),
-    onSuccess: (_data, vars) => qc.invalidateQueries({ queryKey: ['admissions', 'docs', vars.applicationId] }),
+    onSuccess: (_data, vars) => {
+      qc.invalidateQueries({ queryKey: ['admissions'] })
+      qc.invalidateQueries({ queryKey: ['admissions', 'detail', vars.applicationId] })
+    },
   })
 }

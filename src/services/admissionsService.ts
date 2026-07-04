@@ -1,23 +1,58 @@
 import apiClient from '../lib/axios'
 
-// ── Status enum ──────────────────────────────────────────────────────────────
-// API stores status as integer: 0=Pending, 1=Reviewing, 2=Approved, 3=Rejected
-export const APPLICATION_STATUS_MAP = {
-  0: 'Pending',
-  1: 'Reviewing',
-  2: 'Approved',
-  3: 'Rejected',
-} as const
+// ── Status ────────────────────────────────────────────────────────────────────
+// API returns  status as a string label ("Pending" | "Reviewing" | …)
+// API receives status as an integer in PATCH body (0 | 1 | 2 | 3)
 
-export type ApplicationStatusInt = 0 | 1 | 2 | 3
 export type ApplicationStatusLabel = 'Pending' | 'Reviewing' | 'Approved' | 'Rejected'
+export type ApplicationStatusInt   = 0 | 1 | 2 | 3
+
+export const APPLICATION_STATUS_LABELS: ApplicationStatusLabel[] = [
+  'Pending', 'Reviewing', 'Approved', 'Rejected',
+]
 
 export const STATUS_LABEL_TO_INT: Record<ApplicationStatusLabel, ApplicationStatusInt> = {
   Pending: 0, Reviewing: 1, Approved: 2, Rejected: 3,
 }
 
 // ── Entity interfaces ────────────────────────────────────────────────────────
-export interface AdmissionApplication {
+
+/**
+ * Matches ApplicationSummaryDto — returned by GET /admissions/applications.
+ * Intentionally omits document payloads; use documentCount for the count.
+ */
+export interface AdmissionSummary {
+  id: number
+  referenceNumber: string
+  /** Server combines childFirstName + " " + childLastName */
+  childFullName: string
+  applyingForGrade: string
+  parentEmail: string
+  parentPhone: string
+  status: ApplicationStatusLabel
+  documentCount: number
+  submittedAt: string
+}
+
+/**
+ * Matches DocumentResponseDto — nested inside AdmissionDetail.
+ */
+export interface AdmissionDocument {
+  id: number
+  documentType: string
+  originalFileName: string
+  contentType: string
+  fileSizeBytes: number
+  /** Relative URL: /api/admissions/applications/{appId}/documents/{docId} */
+  downloadUrl: string
+  uploadedAt: string
+}
+
+/**
+ * Matches ApplicationResponseDto — returned by GET /admissions/applications/{id}.
+ * Includes the full Documents collection (eager-loaded by EF Core).
+ */
+export interface AdmissionDetail {
   id: number
   referenceNumber: string
   childFirstName: string
@@ -31,27 +66,21 @@ export interface AdmissionApplication {
   parentPhone: string
   parentIdNumber?: string | null
   parentRelationship?: string | null
-  status: ApplicationStatusInt
-  notes?: string | null
-  reviewedBy?: string | null
+  status: ApplicationStatusLabel
+  /** Maps to AdminNotes on the server DTO */
+  adminNotes?: string | null
   submittedAt: string
   reviewedAt?: string | null
+  reviewedBy?: string | null
+  documents: AdmissionDocument[]
 }
 
-export interface AdmissionDocument {
-  id: number
-  applicationId: number
-  documentType: string
-  fileName: string
-  fileUrl: string
-  uploadedAt: string
-}
+// ── Request DTOs ─────────────────────────────────────────────────────────────
 
-// ── DTOs ─────────────────────────────────────────────────────────────────────
 export interface AdmissionApplicationCreateDto {
   childFirstName: string
   childLastName: string
-  dateOfBirth: string          // ISO date string e.g. "2018-05-12"
+  dateOfBirth: string
   applyingForGrade: string
   previousSchool?: string | null
   parentFirstName: string
@@ -72,52 +101,64 @@ export interface AdmissionApplicationUpdateDto {
 }
 
 export interface AdmissionStatusUpdateDto {
+  /** Integer enum: 0=Pending 1=Reviewing 2=Approved 3=Rejected */
   status: ApplicationStatusInt
   notes?: string | null
   reviewedBy?: string | null
 }
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function normaliseDetail(data: AdmissionDetail): AdmissionDetail {
+  return { ...data, documents: Array.isArray(data.documents) ? data.documents : [] }
+}
+
 // ── Service ───────────────────────────────────────────────────────────────────
-// Base path prefix: `/api` is already set in apiClient.baseURL,
-// so paths here start with /admissions/...
+// axios baseURL is already /api — paths start with /admissions/…
+
 export const admissionsService = {
   // ── Applications ───────────────────────────────────────────────────────────
-  list: async (): Promise<AdmissionApplication[]> => {
-    const { data } = await apiClient.get<AdmissionApplication[] | { items?: AdmissionApplication[]; data?: AdmissionApplication[] } | null>('/admissions/applications')
+
+  list: async (): Promise<AdmissionSummary[]> => {
+    const { data } = await apiClient.get<
+      AdmissionSummary[] | { items?: AdmissionSummary[]; data?: AdmissionSummary[] } | null
+    >('/admissions/applications')
     if (Array.isArray(data)) return data
-    if (data && Array.isArray((data as { items?: AdmissionApplication[] }).items)) return (data as { items: AdmissionApplication[] }).items
-    if (data && Array.isArray((data as { data?: AdmissionApplication[] }).data)) return (data as { data: AdmissionApplication[] }).data
+    if (data && Array.isArray((data as { items?: AdmissionSummary[] }).items))
+      return (data as { items: AdmissionSummary[] }).items
+    if (data && Array.isArray((data as { data?: AdmissionSummary[] }).data))
+      return (data as { data: AdmissionSummary[] }).data
     return []
   },
 
-  getById: async (id: number): Promise<AdmissionApplication> => {
-    const { data } = await apiClient.get<AdmissionApplication>(`/admissions/applications/${id}`)
-    return data
+  getById: async (id: number): Promise<AdmissionDetail> => {
+    const { data } = await apiClient.get<AdmissionDetail>(`/admissions/applications/${id}`)
+    return normaliseDetail(data)
   },
 
-  getByReference: async (referenceNumber: string): Promise<AdmissionApplication> => {
-    const { data } = await apiClient.get<AdmissionApplication>(
+  getByReference: async (referenceNumber: string): Promise<AdmissionDetail> => {
+    const { data } = await apiClient.get<AdmissionDetail>(
       `/admissions/applications/reference/${encodeURIComponent(referenceNumber)}`,
     )
-    return data
+    return normaliseDetail(data)
   },
 
-  create: async (dto: AdmissionApplicationCreateDto): Promise<AdmissionApplication> => {
-    const { data } = await apiClient.post<AdmissionApplication>('/admissions/applications', dto)
-    return data
+  create: async (dto: AdmissionApplicationCreateDto): Promise<AdmissionDetail> => {
+    const { data } = await apiClient.post<AdmissionDetail>('/admissions/applications', dto)
+    return normaliseDetail(data)
   },
 
-  update: async (id: number, dto: AdmissionApplicationUpdateDto): Promise<AdmissionApplication> => {
-    const { data } = await apiClient.put<AdmissionApplication>(`/admissions/applications/${id}`, dto)
-    return data
+  update: async (id: number, dto: AdmissionApplicationUpdateDto): Promise<AdmissionDetail> => {
+    const { data } = await apiClient.put<AdmissionDetail>(`/admissions/applications/${id}`, dto)
+    return normaliseDetail(data)
   },
 
-  updateStatus: async (id: number, dto: AdmissionStatusUpdateDto): Promise<AdmissionApplication> => {
-    const { data } = await apiClient.patch<AdmissionApplication>(
+  updateStatus: async (id: number, dto: AdmissionStatusUpdateDto): Promise<AdmissionDetail> => {
+    const { data } = await apiClient.patch<AdmissionDetail>(
       `/admissions/applications/${id}/status`,
       dto,
     )
-    return data
+    return normaliseDetail(data)
   },
 
   delete: async (id: number): Promise<void> => {
@@ -125,12 +166,6 @@ export const admissionsService = {
   },
 
   // ── Documents ─────────────────────────────────────────────────────────────
-  getDocuments: async (applicationId: number): Promise<AdmissionDocument[]> => {
-    const { data } = await apiClient.get<AdmissionDocument[]>(
-      `/admissions/applications/${applicationId}/documents`,
-    )
-    return data
-  },
 
   uploadDocument: async (
     applicationId: number,

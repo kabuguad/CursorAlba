@@ -35,7 +35,12 @@ function normaliseRole(raw: string): UserRole {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
     const stored = sessionStorage.getItem('alber-user')
-    return stored ? JSON.parse(stored) : null
+    if (!stored || stored === 'undefined') return null
+    try {
+      return JSON.parse(stored)
+    } catch {
+      return null
+    }
   })
   const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [loginError, setLoginError] = useState<string | null>(null)

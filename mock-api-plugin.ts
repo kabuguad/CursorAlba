@@ -113,12 +113,12 @@ const ALBER_DIFFERENCE = [
 ]
 
 const SCHOOL_LEVELS = [
-  { id: 1, name: 'Playgroup', ageRange: '2–3 years', description: 'A nurturing introduction to structured learning through play.', enrollmentCount: 48, icon: '🧸' },
-  { id: 2, name: 'PP1', ageRange: '4 years', description: 'Building foundational literacy and numeracy skills.', enrollmentCount: 72, icon: '🌈' },
-  { id: 3, name: 'PP2', ageRange: '5 years', description: 'Preparing learners for primary school with confidence and curiosity.', enrollmentCount: 80, icon: '🎒' },
-  { id: 4, name: 'Primary School', ageRange: 'Grades 1–6', description: 'A comprehensive CBC curriculum delivering academic and character excellence.', enrollmentCount: 420, icon: '📚' },
-  { id: 5, name: 'Junior Secondary', ageRange: 'Grades 7–9', description: 'Deepening knowledge across sciences, arts, and humanities.', enrollmentCount: 310, icon: '🔬' },
-  { id: 6, name: 'Senior Secondary', ageRange: 'Grades 10–12', description: 'Rigorous preparation for university and global careers.', enrollmentCount: 250, icon: '🎓' },
+  { id: 1, slug: 'playgroup', name: 'Playgroup', ageRange: '2–3 years', ages: '2–3 years', description: 'A nurturing introduction to structured learning through play.', enrollmentCount: 48, icon: '🧸', colorKey: 'pink', sortOrder: 1, highlights: 'Sensory play\nSocial-emotional development\nFine and gross motor skills\nStorytelling and songs' },
+  { id: 2, slug: 'pp1', name: 'PP1', ageRange: '4 years', ages: '4 years', description: 'Building foundational literacy and numeracy skills.', enrollmentCount: 72, icon: '🌈', colorKey: 'green', sortOrder: 2, highlights: 'Pre-literacy and phonics\nNumber recognition\nCreative arts\nEnvironmental awareness' },
+  { id: 3, slug: 'pp2', name: 'PP2', ageRange: '5 years', ages: '5 years', description: 'Preparing learners for primary school with confidence and curiosity.', enrollmentCount: 80, icon: '🎒', colorKey: 'blue', sortOrder: 3, highlights: 'Early reading and writing\nBasic addition and subtraction\nDigital literacy basics\nSchool readiness skills' },
+  { id: 4, slug: 'primary-school', name: 'Primary School', ageRange: 'Grades 1–6', ages: 'Grades 1–6', description: 'A comprehensive CBC curriculum delivering academic and character excellence.', enrollmentCount: 420, icon: '📚', colorKey: 'violet', sortOrder: 4, highlights: 'Literacy and languages\nMathematics and science\nCreative arts and PE\nLife skills and values' },
+  { id: 5, slug: 'junior-secondary', name: 'Junior Secondary', ageRange: 'Grades 7–9', ages: 'Grades 7–9', description: 'Deepening knowledge across sciences, arts, and humanities.', enrollmentCount: 310, icon: '🔬', colorKey: 'amber', sortOrder: 5, highlights: 'Integrated sciences\nPre-technical studies\nSocial studies and humanities\nCareer pathway guidance' },
+  { id: 6, slug: 'senior-secondary', name: 'Senior Secondary', ageRange: 'Grades 10–12', ages: 'Grades 10–12', description: 'Rigorous preparation for university and global careers.', enrollmentCount: 250, icon: '🎓', colorKey: 'teal', sortOrder: 6, highlights: 'Specialised subject pathways\nUniversity/KCSE preparation\nLeadership and mentorship\nCareer and college counselling' },
 ]
 
 const GALLERY_CATEGORIES = [

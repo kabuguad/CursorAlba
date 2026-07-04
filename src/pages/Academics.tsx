@@ -128,7 +128,7 @@ export function Academics() {
 
           {current && (() => {
             const colors = LEVEL_COLOR_MAP[current.colorKey] ?? LEVEL_COLOR_MAP['blue']
-            const highlights = current.highlights.split('\n').map((h) => h.trim()).filter(Boolean)
+            const highlights = (current.highlights ?? '').split('\n').map((h) => h.trim()).filter(Boolean)
             return (
               <ScrollReveal key={current.slug} delay={0.05} className="mb-16">
                 <div className={cn('rounded-3xl border bg-gradient-to-br p-8', colors.color, colors.border)}>

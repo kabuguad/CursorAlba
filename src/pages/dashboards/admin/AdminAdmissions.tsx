@@ -319,10 +319,12 @@ export function AdminAdmissions() {
   const { showToast } = useToast()
   const qc = useQueryClient()
 
-  const { data: applications = [], isLoading } = useQuery({
+  const { data: _rawApplications, isLoading } = useQuery({
     queryKey: ['admissions'],
     queryFn: admissionsService.list,
   })
+  // Defensive: API may return a non-array (envelope object, null, etc.) — always normalise.
+  const applications: AdmissionApplication[] = Array.isArray(_rawApplications) ? _rawApplications : []
 
   const deleteApp = useMutation({
     mutationFn: admissionsService.delete,

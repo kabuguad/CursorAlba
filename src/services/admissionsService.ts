@@ -83,8 +83,11 @@ export interface AdmissionStatusUpdateDto {
 export const admissionsService = {
   // ── Applications ───────────────────────────────────────────────────────────
   list: async (): Promise<AdmissionApplication[]> => {
-    const { data } = await apiClient.get<AdmissionApplication[]>('/admissions/applications')
-    return data
+    const { data } = await apiClient.get<AdmissionApplication[] | { items?: AdmissionApplication[]; data?: AdmissionApplication[] } | null>('/admissions/applications')
+    if (Array.isArray(data)) return data
+    if (data && Array.isArray((data as { items?: AdmissionApplication[] }).items)) return (data as { items: AdmissionApplication[] }).items
+    if (data && Array.isArray((data as { data?: AdmissionApplication[] }).data)) return (data as { data: AdmissionApplication[] }).data
+    return []
   },
 
   getById: async (id: number): Promise<AdmissionApplication> => {

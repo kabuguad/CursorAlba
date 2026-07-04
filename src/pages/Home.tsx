@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import { createPortal } from 'react-dom'
 import {
   ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen,
   Globe, Baby, FlaskConical, GraduationCap, Loader2,
   Star, Heart, Lightbulb, Users, Target, Zap, Briefcase,
+  X, ChevronLeft, ChevronRight, ZoomIn,
 } from 'lucide-react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { Button } from '../components/ui/Button'
@@ -105,6 +107,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export function Home() {
   const [slide, setSlide] = useState(0)
   const [testimonial, setTestimonial] = useState(0)
+  const [heroLightboxOpen, setHeroLightboxOpen] = useState(false)
   const get = useCmsVal('pg-home')
 
   const { data: hp } = useQuery({
@@ -165,13 +168,29 @@ export function Home() {
   })
 
   useEffect(() => {
+    if (heroLightboxOpen) return
     const t = setInterval(() => setSlide(s => (s + 1) % slideImages.length), 5000)
     return () => clearInterval(t)
-  }, [slideImages.length])
+  }, [slideImages.length, heroLightboxOpen])
   useEffect(() => {
     const t = setInterval(() => setTestimonial(s => (s + 1) % TESTIMONIALS.length), 6000)
     return () => clearInterval(t)
   }, [])
+
+  const heroPrev = useCallback(() => setSlide(s => (s - 1 + slideImages.length) % slideImages.length), [slideImages.length])
+  const heroNext = useCallback(() => setSlide(s => (s + 1) % slideImages.length), [slideImages.length])
+  const closeHeroLightbox = useCallback(() => setHeroLightboxOpen(false), [])
+
+  useEffect(() => {
+    if (!heroLightboxOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeHeroLightbox()
+      if (e.key === 'ArrowLeft') heroPrev()
+      if (e.key === 'ArrowRight') heroNext()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [heroLightboxOpen, heroPrev, heroNext, closeHeroLightbox])
 
   const upcomingEvents = events.filter(e => !e.isPast).slice(0, 4)
   const displayPrograms = programLevels.length > 0 ? programLevels : []
@@ -208,6 +227,17 @@ export function Home() {
 
         {/* Gold left accent */}
         <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+
+        {/* Expand to fullscreen */}
+        <button
+          type="button"
+          aria-label="View fullscreen"
+          onClick={() => setHeroLightboxOpen(true)}
+          className="group absolute right-6 top-24 z-10 flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 text-xs font-semibold text-white backdrop-blur-sm transition hover:bg-black/60 lg:right-8"
+        >
+          <ZoomIn className="h-4 w-4 text-gold transition-transform group-hover:scale-110" />
+          View fullscreen
+        </button>
 
         {/* Slide dots — desktop right */}
         <div className="absolute bottom-32 right-8 z-10 hidden lg:flex flex-col gap-2">

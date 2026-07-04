@@ -38,13 +38,13 @@ const CHOREOGRAPHERS = [
   {
     name: 'Ms. Grace Achieng',
     role: 'Lead Choreographer · Ballet & Contemporary',
-    img: 'https://i.pravatar.cc/400?img=36',
+    img: '/images/avatar-36.jpg',
     bio: 'Trained in Nairobi and London. 15 years choreographing award-winning productions.',
   },
   {
     name: 'Mr. Oscar Njoroge',
     role: 'Drama Director · Playwright',
-    img: 'https://i.pravatar.cc/400?img=52',
+    img: '/images/avatar-52.jpg',
     bio: 'Graduate of Kenya National Theatre. Specialist in African contemporary drama.',
   },
 ]
@@ -79,7 +79,7 @@ export function DramaDance() {
           loop
           playsInline
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-          poster="https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=1600"
+          poster="/images/unsplash-1508700929628-666bc8bd84ea.jpg"
         >
           <source src="https://assets.mixkit.co/videos/preview/mixkit-dancer-doing-pirouettes-in-a-dance-studio-429-large.mp4" type="video/mp4" />
         </video>

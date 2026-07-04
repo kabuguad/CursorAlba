@@ -4,28 +4,28 @@ export const programLevels = [
     name: 'Daycare & Early Years',
     ages: '2–5 years',
     description: 'Nurturing foundation with play-based learning and sensory exploration.',
-    image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&h=600&fit=crop',
+    image: '/images/unsplash-1503454537195-1dcabb73ffb9.jpg',
   },
   {
     id: 'primary',
     name: 'Primary School',
     ages: '6–12 years',
     description: 'CBC-aligned excellence with literacy, numeracy, and creative foundations.',
-    image: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&h=600&fit=crop',
+    image: '/images/unsplash-1588072432836-e10032774350.jpg',
   },
   {
     id: 'junior',
     name: 'Junior Secondary',
     ages: '13–15 years',
     description: 'Pre-IGCSE pathways with STEM labs and leadership development.',
-    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop',
+    image: '/images/unsplash-1581091226825-a6a2a5aee158.jpg',
   },
   {
     id: 'senior',
     name: 'Senior School',
     ages: '16–18 years',
     description: 'Cambridge IGCSE & A-Level preparation with university counseling.',
-    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop',
+    image: '/images/unsplash-1523240795612-9a054b0db644.jpg',
   },
 ]
 

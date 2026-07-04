@@ -120,7 +120,7 @@ export function Facilities() {
         style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}
       >
         <img
-          src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1920&q=80"
+          src="/images/unsplash-1580582932707-520aed937b7b.jpg"
           alt=""
           aria-hidden
           className="ken-burns absolute inset-0 h-full w-full object-cover"
@@ -196,7 +196,7 @@ export function Facilities() {
       {/* ── CTA ── */}
       <section className="relative py-20 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&q=80"
+          src="/images/unsplash-1523050854058-8df90110c9f1.jpg"
           alt=""
           aria-hidden
           className="ken-burns absolute inset-0 h-full w-full object-cover"

@@ -80,7 +80,7 @@ export function CoCurricular() {
         title={headline}
         subtitle={subheadline}
         badge="Beyond the Classroom"
-        image="https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=1920&q=80"
+        image="/images/unsplash-1516627145497-ae6968895b74.jpg"
         variant="cinematic"
         overlay="teal"
       />

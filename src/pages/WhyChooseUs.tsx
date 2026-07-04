@@ -57,7 +57,7 @@ export function WhyChooseUs() {
         title={page?.headline ?? 'Why Choose Us?'}
         subtitle={page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — Alber School has been redefining private education in Kenya since 2005. Here's what makes us different."}
         badge={page?.tagline ?? 'The Alber Difference'}
-        image="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1920&q=80"
+        image="/images/unsplash-1580582932707-520aed937b7b.jpg"
         variant="cinematic"
         overlay="green"
       />

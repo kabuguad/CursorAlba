@@ -13,6 +13,6 @@ export const playerOfMonth = {
   name: 'Brian Mutua',
   sport: 'Football',
   class: 'Form 3 Ruby',
-  image: 'https://i.pravatar.cc/600?img=12',
+  image: '/images/avatar-12.jpg',
   stats: '14 goals · 8 assists · Captain',
 }

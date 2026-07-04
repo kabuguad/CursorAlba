@@ -1038,11 +1038,11 @@ function createSeed(): DB {
   ]
 
   const mediaAssets: MediaAsset[] = [
-    { id: 'mda-001', name: 'school-hero-bg.jpg', url: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200', type: 'image', size: '2.1 MB', uploadedAt: '2026-01-15T10:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Hero', usedIn: ['Home Page'] },
-    { id: 'mda-002', name: 'science-lab.jpg', url: 'https://images.unsplash.com/photo-1567168544813-cc03465b4fa8?w=800', type: 'image', size: '1.4 MB', uploadedAt: '2026-02-10T11:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Facilities', usedIn: ['Facilities Page', 'Gallery'] },
-    { id: 'mda-003', name: 'sports-day-2025.jpg', url: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800', type: 'image', size: '3.2 MB', uploadedAt: '2026-03-05T14:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Sports', usedIn: ['Gallery'] },
+    { id: 'mda-001', name: 'school-hero-bg.jpg', url: '/images/unsplash-1580582932707-520aed937b7b.jpg', type: 'image', size: '2.1 MB', uploadedAt: '2026-01-15T10:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Hero', usedIn: ['Home Page'] },
+    { id: 'mda-002', name: 'science-lab.jpg', url: '/images/unsplash-1567168544813-cc03465b4fa8.jpg', type: 'image', size: '1.4 MB', uploadedAt: '2026-02-10T11:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Facilities', usedIn: ['Facilities Page', 'Gallery'] },
+    { id: 'mda-003', name: 'sports-day-2025.jpg', url: '/images/unsplash-1552674605-db6ffd4facb5.jpg', type: 'image', size: '3.2 MB', uploadedAt: '2026-03-05T14:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Sports', usedIn: ['Gallery'] },
     { id: 'mda-004', name: 'school-prospectus-2026.pdf', url: '#', type: 'document', size: '4.8 MB', uploadedAt: '2026-01-01T08:00:00Z', uploadedBy: 'Albert Njeru', category: 'Documents', usedIn: ['Admissions Page'] },
-    { id: 'mda-005', name: 'music-performance.jpg', url: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800', type: 'image', size: '1.8 MB', uploadedAt: '2026-04-20T16:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Arts', usedIn: ['Gallery', 'Co-Curricular'] },
+    { id: 'mda-005', name: 'music-performance.jpg', url: '/images/unsplash-1514320291840-2e0a9bf2a9ae.jpg', type: 'image', size: '1.8 MB', uploadedAt: '2026-04-20T16:00:00Z', uploadedBy: 'Dr. Wanjiku Mwangi', category: 'Arts', usedIn: ['Gallery', 'Co-Curricular'] },
   ]
 
   const auditLog: AuditEntry[] = [
@@ -1262,17 +1262,17 @@ function createSeed(): DB {
   ]
 
   const publicBlogPosts: PublicBlogPost[] = [
-    { id:'pub-blog-1', title:'Alber School Opens State-of-the-Art Music Academy', slug:'alber-school-opens-music-academy', excerpt:'Our new piano studio and recording suite redefine arts education in Kirinyaga.', content:'Alber School proudly unveils its Music Academy adjacent to the Governor\'s Offices in Kutus. The facility features Steinway-ready piano rooms, acoustic-treated recording booths, and ensemble rehearsal spaces designed for CBC and IGCSE pathways alike.\n\nStudents will access world-class instruction from our 120+ faculty, including dedicated music specialists. Trial lessons are now open for prospective families.', coverImageUrl:'https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=800&h=500&fit=crop', author:'Communications Team', category:'Arts', isPublished:true, publishedAt:'2026-01-15T08:00:00Z', viewCount:1240, createdAt:'2026-01-15T08:00:00Z' },
-    { id:'pub-blog-2', title:'CBC vs IGCSE: Choosing the Right Pathway', slug:'cbc-vs-igcse-choosing-the-right-pathway', excerpt:'A guide for parents navigating Kenya\'s dual curriculum excellence.', content:'At Alber School, we offer both Competency-Based Curriculum (CBC) and Cambridge IGCSE frameworks. Our academic leadership team helps families align pathway choice with student strengths, university goals, and learning style.\n\nSchedule a consultation through our admissions portal to explore personalized recommendations.', coverImageUrl:'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop', author:'Dr. Wanjiku Mwangi', category:'Academics', isPublished:true, publishedAt:'2026-02-02T08:00:00Z', viewCount:890, createdAt:'2026-02-02T08:00:00Z' },
-    { id:'pub-blog-3', title:'Champions on the Field: Term 1 Sports Recap', slug:'champions-on-the-field-term-1-sports-recap', excerpt:'Our athletes dominate regional fixtures across football, rugby, and swimming.', content:'From the premium sports complex to inter-school championships, Alber athletes continue to set records. Player of the Month honors go to Form 3 striker Brian Mutua for exceptional leadership.\n\nUpcoming fixtures are live on our Sports page with real-time status badges.', coverImageUrl:'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=500&fit=crop', author:'Sports Department', category:'Sports', isPublished:true, publishedAt:'2026-02-28T08:00:00Z', viewCount:650, createdAt:'2026-02-28T08:00:00Z' },
-    { id:'pub-blog-4', title:'Sustainable Campus Initiative Launches', slug:'sustainable-campus-initiative-launches', excerpt:'Solar panels and green roofs power our commitment to environmental stewardship.', content:'Alber School invests in renewable energy and student-led sustainability clubs. Environmental Day features tree planting across our 15-acre campus with views toward Kirinyaga\'s rolling hills.', coverImageUrl:'https://images.unsplash.com/photo-1541339907198-e08756dedfbf?w=800&h=500&fit=crop', author:'Administration', category:'Campus', isPublished:true, publishedAt:'2026-03-10T08:00:00Z', viewCount:430, createdAt:'2026-03-10T08:00:00Z' },
-    { id:'pub-blog-5', title:'Parent Portal: Fee Payments Now Live', slug:'parent-portal-fee-payments-now-live', excerpt:'Pay school fees securely via Paybill 522522 — Account: ALBER + Student ID.', content:'Our parent dashboard integrates M-Pesa Paybill flows for seamless fee payments. Track invoices, attendance heatmaps, and grade progress in one premium interface.', coverImageUrl:'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=500&fit=crop', author:'Finance Office', category:'Technology', isPublished:true, publishedAt:'2026-03-20T08:00:00Z', viewCount:780, createdAt:'2026-03-20T08:00:00Z' },
+    { id:'pub-blog-1', title:'Alber School Opens State-of-the-Art Music Academy', slug:'alber-school-opens-music-academy', excerpt:'Our new piano studio and recording suite redefine arts education in Kirinyaga.', content:'Alber School proudly unveils its Music Academy adjacent to the Governor\'s Offices in Kutus. The facility features Steinway-ready piano rooms, acoustic-treated recording booths, and ensemble rehearsal spaces designed for CBC and IGCSE pathways alike.\n\nStudents will access world-class instruction from our 120+ faculty, including dedicated music specialists. Trial lessons are now open for prospective families.', coverImageUrl:'/images/unsplash-1511379938549-c1f69419868d.jpg', author:'Communications Team', category:'Arts', isPublished:true, publishedAt:'2026-01-15T08:00:00Z', viewCount:1240, createdAt:'2026-01-15T08:00:00Z' },
+    { id:'pub-blog-2', title:'CBC vs IGCSE: Choosing the Right Pathway', slug:'cbc-vs-igcse-choosing-the-right-pathway', excerpt:'A guide for parents navigating Kenya\'s dual curriculum excellence.', content:'At Alber School, we offer both Competency-Based Curriculum (CBC) and Cambridge IGCSE frameworks. Our academic leadership team helps families align pathway choice with student strengths, university goals, and learning style.\n\nSchedule a consultation through our admissions portal to explore personalized recommendations.', coverImageUrl:'/images/unsplash-1523240795612-9a054b0db644.jpg', author:'Dr. Wanjiku Mwangi', category:'Academics', isPublished:true, publishedAt:'2026-02-02T08:00:00Z', viewCount:890, createdAt:'2026-02-02T08:00:00Z' },
+    { id:'pub-blog-3', title:'Champions on the Field: Term 1 Sports Recap', slug:'champions-on-the-field-term-1-sports-recap', excerpt:'Our athletes dominate regional fixtures across football, rugby, and swimming.', content:'From the premium sports complex to inter-school championships, Alber athletes continue to set records. Player of the Month honors go to Form 3 striker Brian Mutua for exceptional leadership.\n\nUpcoming fixtures are live on our Sports page with real-time status badges.', coverImageUrl:'/images/unsplash-1461896836934-ffe607ba8211.jpg', author:'Sports Department', category:'Sports', isPublished:true, publishedAt:'2026-02-28T08:00:00Z', viewCount:650, createdAt:'2026-02-28T08:00:00Z' },
+    { id:'pub-blog-4', title:'Sustainable Campus Initiative Launches', slug:'sustainable-campus-initiative-launches', excerpt:'Solar panels and green roofs power our commitment to environmental stewardship.', content:'Alber School invests in renewable energy and student-led sustainability clubs. Environmental Day features tree planting across our 15-acre campus with views toward Kirinyaga\'s rolling hills.', coverImageUrl:'/images/unsplash-1541339907198-e08756dedfbf.jpg', author:'Administration', category:'Campus', isPublished:true, publishedAt:'2026-03-10T08:00:00Z', viewCount:430, createdAt:'2026-03-10T08:00:00Z' },
+    { id:'pub-blog-5', title:'Parent Portal: Fee Payments Now Live', slug:'parent-portal-fee-payments-now-live', excerpt:'Pay school fees securely via Paybill 522522 — Account: ALBER + Student ID.', content:'Our parent dashboard integrates M-Pesa Paybill flows for seamless fee payments. Track invoices, attendance heatmaps, and grade progress in one premium interface.', coverImageUrl:'/images/unsplash-1556740758-90de374c12ad.jpg', author:'Finance Office', category:'Technology', isPublished:true, publishedAt:'2026-03-20T08:00:00Z', viewCount:780, createdAt:'2026-03-20T08:00:00Z' },
   ]
 
   const publicEvents: PublicEvent[] = [
-    { id:'pub-evt-1', title:'Opening Ceremony 2026', description:'Welcome back celebration with performances.', startDate:'2026-01-12', endDate:'2026-01-12', location:'Main Auditorium', imageUrl:'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800', isPublished:true, isPast:true, eventType:'ceremony' },
+    { id:'pub-evt-1', title:'Opening Ceremony 2026', description:'Welcome back celebration with performances.', startDate:'2026-01-12', endDate:'2026-01-12', location:'Main Auditorium', imageUrl:'/images/unsplash-1540575467063-178a50c2df87.jpg', isPublished:true, isPast:true, eventType:'ceremony' },
     { id:'pub-evt-2', title:'CBC Innovation Fair', description:'Student projects and STEM showcases.', startDate:'2026-02-20', endDate:'2026-02-20', location:'Science Block', imageUrl:null, isPublished:true, isPast:true, eventType:'academic' },
-    { id:'pub-evt-3', title:'Inter-House Athletics', description:'Annual track and field championships.', startDate:'2026-03-15', endDate:'2026-03-15', location:'Sports Complex', imageUrl:'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800', isPublished:true, isPast:false, eventType:'sports' },
+    { id:'pub-evt-3', title:'Inter-House Athletics', description:'Annual track and field championships.', startDate:'2026-03-15', endDate:'2026-03-15', location:'Sports Complex', imageUrl:'/images/unsplash-1461896836934-ffe607ba8211.jpg', isPublished:true, isPast:false, eventType:'sports' },
     { id:'pub-evt-4', title:'Music Gala Night', description:'Orchestra, choir, and solo performances.', startDate:'2026-04-08', endDate:'2026-04-08', location:'Arts Academy', imageUrl:null, isPublished:true, isPast:false, eventType:'arts' },
     { id:'pub-evt-5', title:'Parent-Teacher Conference', description:'Term 1 progress reviews.', startDate:'2026-04-22', endDate:'2026-04-22', location:'Various Classrooms', imageUrl:null, isPublished:true, isPast:false, eventType:'academic' },
     { id:'pub-evt-6', title:'Drama & Dance Showcase', description:'End-of-term performing arts premiere.', startDate:'2026-05-10', endDate:'2026-05-10', location:'Theatre Studio', imageUrl:null, isPublished:true, isPast:false, eventType:'arts' },
@@ -1297,10 +1297,10 @@ function createSeed(): DB {
   })
 
   const publicProgramLevels: PublicProgramLevel[] = [
-    { id:'pub-prog-1', slug:'daycare', name:'Daycare & Early Years', ages:'2–5 years', description:'Nurturing foundation with play-based learning and sensory exploration.', imageUrl:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&h=600&fit=crop', sortOrder:1, createdAt:'2026-01-01T08:00:00Z' },
-    { id:'pub-prog-2', slug:'primary', name:'Primary School', ages:'6–12 years', description:'CBC-aligned excellence with literacy, numeracy, and creative foundations.', imageUrl:'https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&h=600&fit=crop', sortOrder:2, createdAt:'2026-01-01T08:00:00Z' },
-    { id:'pub-prog-3', slug:'junior', name:'Junior Secondary', ages:'13–15 years', description:'Pre-IGCSE pathways with STEM labs and leadership development.', imageUrl:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop', sortOrder:3, createdAt:'2026-01-01T08:00:00Z' },
-    { id:'pub-prog-4', slug:'senior', name:'Senior School', ages:'16–18 years', description:'Cambridge IGCSE & A-Level preparation with university counseling.', imageUrl:'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=600&fit=crop', sortOrder:4, createdAt:'2026-01-01T08:00:00Z' },
+    { id:'pub-prog-1', slug:'daycare', name:'Daycare & Early Years', ages:'2–5 years', description:'Nurturing foundation with play-based learning and sensory exploration.', imageUrl:'/images/unsplash-1503454537195-1dcabb73ffb9.jpg', sortOrder:1, createdAt:'2026-01-01T08:00:00Z' },
+    { id:'pub-prog-2', slug:'primary', name:'Primary School', ages:'6–12 years', description:'CBC-aligned excellence with literacy, numeracy, and creative foundations.', imageUrl:'/images/unsplash-1588072432836-e10032774350.jpg', sortOrder:2, createdAt:'2026-01-01T08:00:00Z' },
+    { id:'pub-prog-3', slug:'junior', name:'Junior Secondary', ages:'13–15 years', description:'Pre-IGCSE pathways with STEM labs and leadership development.', imageUrl:'/images/unsplash-1581091226825-a6a2a5aee158.jpg', sortOrder:3, createdAt:'2026-01-01T08:00:00Z' },
+    { id:'pub-prog-4', slug:'senior', name:'Senior School', ages:'16–18 years', description:'Cambridge IGCSE & A-Level preparation with university counseling.', imageUrl:'/images/unsplash-1523240795612-9a054b0db644.jpg', sortOrder:4, createdAt:'2026-01-01T08:00:00Z' },
   ]
 
   const publicFeeRows: PublicFeeRow[] = [
@@ -1323,7 +1323,7 @@ function createSeed(): DB {
       name,
       title: titles[i % titles.length],
       department: depts[i % depts.length],
-      image: `https://i.pravatar.cc/400?img=${(i % 70) + 1}`,
+      image: `/images/avatar-${(i % 70) + 1}.jpg`,
       bio: `${name} brings exceptional dedication to ${depts[i % depts.length]} at Alber School. Known for innovative pedagogy and student-centered learning, they have shaped countless young minds in Kutus and beyond.`,
       credentials: [creds[i % creds.length], creds[(i + 2) % creds.length]],
       qualifications: [quals[i % quals.length],quals[(i + 3) % quals.length],`${(i * 3) + 5}+ years at Alber School`],
@@ -1405,7 +1405,7 @@ function createSeed(): DB {
     blk('cb-sp-03','pg-sports','potm.name',       'Player of Month — Name',       'text',    'Brian Mutua',                     'Name shown on the Player of the Month card', 3),
     blk('cb-sp-04','pg-sports','potm.sport',      'Player of Month — Sport',      'text',    'Football',                        'Sport they play', 4),
     blk('cb-sp-05','pg-sports','potm.class',      'Player of Month — Class',      'text',    'Form 3 Ruby',                     'Class or year group', 5),
-    blk('cb-sp-06','pg-sports','potm.image',      'Player of Month — Photo URL',  'text',    'https://i.pravatar.cc/600?img=12', 'URL of the player photo', 6),
+    blk('cb-sp-06','pg-sports','potm.image',      'Player of Month — Photo URL',  'text',    '/images/avatar-12.jpg', 'URL of the player photo', 6),
     blk('cb-sp-07','pg-sports','potm.stats',      'Player of Month — Stats Line', 'text',    '14 goals · 8 assists · Captain',  'Stats line shown below the name', 7),
 
     // ── Blog ──────────────────────────────────────────────────────────────
@@ -1577,9 +1577,9 @@ function createSeed(): DB {
   ]
 
   const musicTeachers: MusicTeacher[] = [
-    { id: 'mt-1', name: 'Ms. Ruth Kamau',    subject: 'Piano & Theory',     img: 'https://i.pravatar.cc/400?img=44', credentials: 'B.Mus (University of Nairobi) · ABRSM Grade 8', sortOrder: 1 },
-    { id: 'mt-2', name: 'Mr. Victor Omondi', subject: 'Strings & Ensemble', img: 'https://i.pravatar.cc/400?img=57', credentials: 'Conservatoire-trained · 12 years teaching',     sortOrder: 2 },
-    { id: 'mt-3', name: 'Ms. Nancy Wanjiru', subject: 'Vocals & Choir',     img: 'https://i.pravatar.cc/400?img=32', credentials: 'Dip. Music Ed. · Former KBC choir director',    sortOrder: 3 },
+    { id: 'mt-1', name: 'Ms. Ruth Kamau',    subject: 'Piano & Theory',     img: '/images/avatar-44.jpg', credentials: 'B.Mus (University of Nairobi) · ABRSM Grade 8', sortOrder: 1 },
+    { id: 'mt-2', name: 'Mr. Victor Omondi', subject: 'Strings & Ensemble', img: '/images/avatar-57.jpg', credentials: 'Conservatoire-trained · 12 years teaching',     sortOrder: 2 },
+    { id: 'mt-3', name: 'Ms. Nancy Wanjiru', subject: 'Vocals & Choir',     img: '/images/avatar-32.jpg', credentials: 'Dip. Music Ed. · Former KBC choir director',    sortOrder: 3 },
   ]
 
   const musicScheduleSlots: MusicScheduleSlot[] = [
@@ -1604,8 +1604,8 @@ function createSeed(): DB {
   ]
 
   const dramaFaculty: DramaFaculty[] = [
-    { id: 'df-1', name: 'Ms. Grace Achieng', role: 'Lead Choreographer · Ballet & Contemporary', img: 'https://i.pravatar.cc/400?img=36', bio: 'Trained in Nairobi and London. 15 years choreographing award-winning productions.',      sortOrder: 1 },
-    { id: 'df-2', name: 'Mr. Oscar Njoroge', role: 'Drama Director · Playwright',                img: 'https://i.pravatar.cc/400?img=52', bio: 'Graduate of Kenya National Theatre. Specialist in African contemporary drama.',           sortOrder: 2 },
+    { id: 'df-1', name: 'Ms. Grace Achieng', role: 'Lead Choreographer · Ballet & Contemporary', img: '/images/avatar-36.jpg', bio: 'Trained in Nairobi and London. 15 years choreographing award-winning productions.',      sortOrder: 1 },
+    { id: 'df-2', name: 'Mr. Oscar Njoroge', role: 'Drama Director · Playwright',                img: '/images/avatar-52.jpg', bio: 'Graduate of Kenya National Theatre. Specialist in African contemporary drama.',           sortOrder: 2 },
   ]
 
   const dramaScheduleSlots: DramaScheduleSlot[] = [

@@ -54,7 +54,7 @@ function hasJwt(): boolean {
 const BLANK: UpdateContactPageContentDto = {
   heroHeadline:    'Contact Us',
   heroSubheadline: "Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.",
-  heroImageUrl:    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80',
+  heroImageUrl:    '/images/unsplash-1497366216548-37526070297c.jpg',
   phonePrimary:    '+254 712 345 678',
   phoneSecondary:  '+254 734 567 890',
   emailPrimary:    'info@alberschool.ke',

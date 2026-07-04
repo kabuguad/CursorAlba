@@ -17,7 +17,7 @@ const PLAYER_OF_MONTH = {
   name: 'Brian Mutua',
   sport: 'Football',
   class: 'Form 3 Ruby',
-  image: 'https://i.pravatar.cc/600?img=12',
+  image: '/images/avatar-12.jpg',
   stats: '14 goals · 8 assists · Captain',
 }
 
@@ -43,7 +43,7 @@ export function Sports() {
         title={heroHeadline}
         subtitle={heroSubheadline}
         badge="Sports & Athletics"
-        image="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1920&q=80"
+        image="/images/unsplash-1571019614242-c5c5dee9f50b.jpg"
         variant="cinematic"
         overlay="amber"
       />

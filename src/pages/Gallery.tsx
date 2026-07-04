@@ -8,16 +8,16 @@ import { ScrollReveal } from '../components/ui/ScrollReveal'
 import { galleryApi, type GalleryCategory, type GalleryImage } from '../services/galleryApi'
 
 const FALLBACK_IMAGES: GalleryImage[] = [
-  { id: 1,  url: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80',  caption: 'Inter-School Football Championship',   sortOrder: 0, isPublic: true, galleryCategoryId: -1 },
-  { id: 2,  url: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=700&q=80',    caption: 'Basketball Tournament Finals',          sortOrder: 1, isPublic: true, galleryCategoryId: -1 },
-  { id: 3,  url: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=700&q=80',  caption: 'Athletics Day 2024',                   sortOrder: 2, isPublic: true, galleryCategoryId: -1 },
-  { id: 4,  url: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=900&q=80',  caption: 'Coding Class in Session',              sortOrder: 3, isPublic: true, galleryCategoryId: -2 },
-  { id: 5,  url: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=700&q=80',  caption: 'Robotics Club — Build Day',            sortOrder: 4, isPublic: true, galleryCategoryId: -2 },
-  { id: 6,  url: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=700&q=80',  caption: 'Annual Art Exhibition 2024',           sortOrder: 5, isPublic: true, galleryCategoryId: -3 },
-  { id: 7,  url: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=900&q=80',  caption: 'End-of-Year Music Concert',            sortOrder: 6, isPublic: true, galleryCategoryId: -4 },
-  { id: 8,  url: 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=900&q=80',    caption: 'Karate Grading Ceremony',              sortOrder: 7, isPublic: true, galleryCategoryId: -5 },
-  { id: 9,  url: 'https://images.unsplash.com/photo-1610913245788-f23d18d99ec5?w=900&q=80',  caption: 'Rollerskating Fun Day',               sortOrder: 8, isPublic: true, galleryCategoryId: -6 },
-  { id: 10, url: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=900&q=80',  caption: 'Science Museum Educational Tour',     sortOrder: 9, isPublic: true, galleryCategoryId: -7 },
+  { id: 1,  url: '/images/unsplash-1571019614242-c5c5dee9f50b.jpg',  caption: 'Inter-School Football Championship',   sortOrder: 0, isPublic: true, galleryCategoryId: -1 },
+  { id: 2,  url: '/images/unsplash-1546519638-68e109498ffc.jpg',    caption: 'Basketball Tournament Finals',          sortOrder: 1, isPublic: true, galleryCategoryId: -1 },
+  { id: 3,  url: '/images/unsplash-1461896836934-ffe607ba8211.jpg',  caption: 'Athletics Day 2024',                   sortOrder: 2, isPublic: true, galleryCategoryId: -1 },
+  { id: 4,  url: '/images/unsplash-1461749280684-dccba630e2f6.jpg',  caption: 'Coding Class in Session',              sortOrder: 3, isPublic: true, galleryCategoryId: -2 },
+  { id: 5,  url: '/images/unsplash-1485827404703-89b55fcc595e.jpg',  caption: 'Robotics Club — Build Day',            sortOrder: 4, isPublic: true, galleryCategoryId: -2 },
+  { id: 6,  url: '/images/unsplash-1513364776144-60967b0f800f.jpg',  caption: 'Annual Art Exhibition 2024',           sortOrder: 5, isPublic: true, galleryCategoryId: -3 },
+  { id: 7,  url: '/images/unsplash-1514320291840-2e0a9bf2a9ae.jpg',  caption: 'End-of-Year Music Concert',            sortOrder: 6, isPublic: true, galleryCategoryId: -4 },
+  { id: 8,  url: '/images/unsplash-1555597673-b21d5c935865.jpg',    caption: 'Karate Grading Ceremony',              sortOrder: 7, isPublic: true, galleryCategoryId: -5 },
+  { id: 9,  url: '/images/unsplash-1610913245788-f23d18d99ec5.jpg',  caption: 'Rollerskating Fun Day',               sortOrder: 8, isPublic: true, galleryCategoryId: -6 },
+  { id: 10, url: '/images/unsplash-1464037866556-6812c9d1c72e.jpg',  caption: 'Science Museum Educational Tour',     sortOrder: 9, isPublic: true, galleryCategoryId: -7 },
 ]
 
 const FALLBACK_CATEGORIES: GalleryCategory[] = [
@@ -127,7 +127,7 @@ export function Gallery() {
         title="School Gallery"
         subtitle="A window into life at Alber School — sports, arts, music, adventures and everything in between."
         badge="Photo Gallery"
-        image="https://images.unsplash.com/photo-1564981797816-1043664bf78d?w=1920&q=80"
+        image="/images/unsplash-1564981797816-1043664bf78d.jpg"
         variant="cinematic"
         overlay="dark"
         height="md"

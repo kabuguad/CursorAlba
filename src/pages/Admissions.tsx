@@ -172,7 +172,7 @@ export function Admissions() {
         style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}
       >
         <img
-          src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1920&q=80"
+          src="/images/unsplash-1541339907198-e08756dedf3f.jpg"
           alt=""
           aria-hidden
           className="ken-burns absolute inset-0 h-full w-full object-cover"

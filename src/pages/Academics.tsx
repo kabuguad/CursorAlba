@@ -93,7 +93,7 @@ export function Academics() {
         title={heroHeadline}
         subtitle={heroSubheadline}
         badge="CBC · Cambridge IGCSE"
-        image="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1920&q=80"
+        image="/images/unsplash-1503676260728-1c00da094a0b.jpg"
         variant="cinematic"
         overlay="dark"
       />

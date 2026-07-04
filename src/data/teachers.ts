@@ -42,7 +42,7 @@ export const teachers: Teacher[] = Array.from({ length: 125 }, (_, i) => {
     name,
     title: TITLES[i % TITLES.length],
     department: dept,
-    image: `https://images.unsplash.com/photo-${1500000000000 + imgSeed * 7919}?w=400&h=500&fit=crop&auto=format`,
+    image: `/images/avatar-${(i % 70) + 1}.jpg`,
     bio: `${name} brings exceptional dedication to ${dept} at Alber School. Known for innovative pedagogy and student-centered learning, they have shaped countless young minds in Kutus and beyond.`,
     credentials: [
       CREDENTIALS[i % CREDENTIALS.length],
@@ -57,7 +57,7 @@ export const teachers: Teacher[] = Array.from({ length: 125 }, (_, i) => {
 })
 
 teachers.forEach((t, i) => {
-  t.image = `https://i.pravatar.cc/400?img=${(i % 70) + 1}`
+  t.image = `/images/avatar-${(i % 70) + 1}.jpg`
 })
 
 export const departments: Department[] = DEPTS

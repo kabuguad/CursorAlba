@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Award, Users, Globe, BookOpen } from 'lucide-react'
 
 const LEADERSHIP = [
-  { name: 'Dr. Wanjiku Mwangi',  title: 'Head Teacher',           img: 'https://i.pravatar.cc/400?img=47', bio: 'PhD in Educational Leadership, University of Nairobi. 25 years in education. Champion of CBC implementation.' },
-  { name: 'Mr. Peter Kamau',     title: 'Deputy Head Teacher',    img: 'https://i.pravatar.cc/400?img=11', bio: 'M.Ed Kenyatta University. Specialises in curriculum development and teacher professional growth.' },
-  { name: 'Ms. Eunice Achieng',  title: 'Director of Academics',  img: 'https://i.pravatar.cc/400?img=48', bio: 'Cambridge-certified IGCSE coordinator. Oversees all academic pathways from PP1 through Grade 12.' },
-  { name: 'Mr. Francis Omondi',  title: 'Director of Co-Curricular', img: 'https://i.pravatar.cc/400?img=15', bio: 'Former national athlete. Leads sports, music, drama, and all co-curricular programmes.' },
+  { name: 'Dr. Wanjiku Mwangi',  title: 'Head Teacher',           img: '/images/avatar-47.jpg', bio: 'PhD in Educational Leadership, University of Nairobi. 25 years in education. Champion of CBC implementation.' },
+  { name: 'Mr. Peter Kamau',     title: 'Deputy Head Teacher',    img: '/images/avatar-11.jpg', bio: 'M.Ed Kenyatta University. Specialises in curriculum development and teacher professional growth.' },
+  { name: 'Ms. Eunice Achieng',  title: 'Director of Academics',  img: '/images/avatar-48.jpg', bio: 'Cambridge-certified IGCSE coordinator. Oversees all academic pathways from PP1 through Grade 12.' },
+  { name: 'Mr. Francis Omondi',  title: 'Director of Co-Curricular', img: '/images/avatar-15.jpg', bio: 'Former national athlete. Leads sports, music, drama, and all co-curricular programmes.' },
 ]
 
 const MILESTONES_STATS = [
@@ -58,7 +58,7 @@ export function About() {
         style={{ clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}
       >
         <img
-          src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1920&q=80"
+          src="/images/unsplash-1577896851231-70ef18881754.jpg"
           alt=""
           aria-hidden
           className="ken-burns absolute inset-0 h-full w-full object-cover"

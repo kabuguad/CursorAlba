@@ -19,19 +19,19 @@ const TEACHERS = [
   {
     name: 'Ms. Ruth Kamau',
     subject: 'Piano & Theory',
-    img: 'https://i.pravatar.cc/400?img=44',
+    img: '/images/avatar-44.jpg',
     credentials: 'B.Mus (University of Nairobi) · ABRSM Grade 8',
   },
   {
     name: 'Mr. Victor Omondi',
     subject: 'Strings & Ensemble',
-    img: 'https://i.pravatar.cc/400?img=57',
+    img: '/images/avatar-57.jpg',
     credentials: 'Conservatoire-trained · 12 years teaching',
   },
   {
     name: 'Ms. Nancy Wanjiru',
     subject: 'Vocals & Choir',
-    img: 'https://i.pravatar.cc/400?img=32',
+    img: '/images/avatar-32.jpg',
     credentials: 'Dip. Music Ed. · Former KBC choir director',
   },
 ]
@@ -60,7 +60,7 @@ export function Music() {
         title={heroHeadline}
         subtitle={heroSubheadline}
         badge="Music Academy"
-        image="https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=1920&q=80"
+        image="/images/unsplash-1507838153414-b4b713384a76.jpg"
         variant="cinematic"
         overlay="purple"
       />
@@ -198,12 +198,12 @@ export function Music() {
             </div>
             <div className="flex flex-col gap-4">
               <img
-                src="https://images.unsplash.com/photo-1511379938549-c1f69419868d?w=800&h=500&fit=crop"
+                src="/images/unsplash-1511379938549-c1f69419868d.jpg"
                 alt="Music Academy"
                 className="h-64 w-full rounded-3xl object-cover"
               />
               <img
-                src="https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=800&h=400&fit=crop"
+                src="/images/unsplash-1507838153414-b4b713384a76.jpg"
                 alt="Orchestra rehearsal"
                 className="h-40 w-full rounded-3xl object-cover"
               />

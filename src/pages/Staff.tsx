@@ -8,7 +8,7 @@ export function Staff() {
         title="Our Faculty"
         subtitle="120+ world-class educators across every department — dedicated to developing every learner at Alber School."
         badge="Faculty & Staff"
-        image="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&q=80"
+        image="/images/unsplash-1522202176988-66273c2fd55f.jpg"
         variant="cinematic"
         overlay="green"
       />

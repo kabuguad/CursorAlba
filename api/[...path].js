@@ -6,7 +6,7 @@
  * In production set VITE_API_BASE in Vercel's Environment Variables panel.
  */
 
-export const config = { runtime: 'nodejs20.x' }
+export const config = { runtime: 'nodejs' }
 
 export default async function handler(req, res) {
   const backendBase = (process.env.VITE_API_BASE || '').replace(/\/$/, '')

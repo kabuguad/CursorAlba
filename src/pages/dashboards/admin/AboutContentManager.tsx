@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Save, Plus, Pencil, Trash2, Loader2, WifiOff, X, ChevronUp, ChevronDown } from 'lucide-react'
+import { ArrowLeft, Save, Plus, Pencil, Trash2, Loader2, WifiOff, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import {
   aboutApi,

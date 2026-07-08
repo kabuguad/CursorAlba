@@ -256,7 +256,7 @@ export const useUpdateFeeStructure = () => {
 export const useAdminInbox = () => useQuery({ queryKey: ['inbox', 'admin'], queryFn: () => commsService.listAdminInbox().then(unwrap), refetchInterval: 30000 })
 export const useAnnouncements = () => useQuery({ queryKey: ['announcements'], queryFn: () => commsService.listAnnouncements().then(unwrap) })
 export const useMeetingSlots = () => useQuery({ queryKey: ['meetingSlots'], queryFn: () => commsService.listMeetingSlots().then(unwrap) })
-export const useAdminUnreadCount = () => useQuery({ queryKey: ['inbox', 'unread'], queryFn: () => commsService.getAdminUnreadCount().then(unwrap), refetchInterval: 30000 })
+export const useAdminUnreadCount = () => useQuery({ queryKey: ['inbox', 'unread'], queryFn: () => commsService.getAdminUnreadCount().then((r: any) => unwrap(r)), refetchInterval: 30000 })
 export const useSendMessage = () => {
   const qc = useQueryClient()
   return useMutation({
@@ -278,7 +278,7 @@ export const useCreateAnnouncement = () => {
 export const useUpdateAnnouncement = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof commsService.updateAnnouncement>[1] }) => commsService.updateAnnouncement(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof commsService.updateAnnouncement>[1] }) => commsService.updateAnnouncement(Number(id), data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['announcements'] }),
   })
 }
@@ -296,7 +296,7 @@ export const useDeleteMeetingSlot = () => {
 }
 
 // ── Analytics ─────────────────────────────────────────────────────────────
-export const useOverviewKPIs = () => useQuery({ queryKey: ['analytics', 'kpis'], queryFn: () => analyticsService.getOverviewKPIs().then(unwrap), refetchInterval: 60000 })
+export const useOverviewKPIs = () => useQuery({ queryKey: ['analytics', 'kpis'], queryFn: () => analyticsService.getOverviewKpis().then(unwrap), refetchInterval: 60000 })
 export const useEnrollmentTrend = () => useQuery({ queryKey: ['analytics', 'enrollment'], queryFn: () => analyticsService.getEnrollmentTrend().then(unwrap) })
 export const useAttendanceTrend = () => useQuery({ queryKey: ['analytics', 'attendance'], queryFn: () => analyticsService.getAttendanceTrend().then(unwrap) })
 export const useFeeCollectionByLevel = () => useQuery({ queryKey: ['analytics', 'feeLevel'], queryFn: () => analyticsService.getFeeCollectionByLevel().then(unwrap) })
@@ -328,7 +328,7 @@ export const useCreateRoute = () => {
 export const useUpdateRoute = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof transportService.updateRoute>[1] }) => transportService.updateRoute(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof transportService.updateRoute>[1] }) => transportService.updateRoute(Number(id), data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['transport'] }),
   })
 }
@@ -372,7 +372,7 @@ export const useAuditStats = () => useQuery({ queryKey: ['audit', 'stats'], quer
 
 // ── System ────────────────────────────────────────────────────────────────
 export const useSystemSettings = () => useQuery({ queryKey: ['settings'], queryFn: () => systemService.getSettings().then(unwrap) })
-export const useSystemHealth = () => useQuery({ queryKey: ['system', 'health'], queryFn: () => systemService.getSystemHealth().then(unwrap), refetchInterval: 60000 })
+export const useSystemHealth = () => useQuery({ queryKey: ['system', 'health'], queryFn: () => systemService.getHealth().then(unwrap), refetchInterval: 60000 })
 export const useUpdateSettings = () => {
   const qc = useQueryClient()
   return useMutation({ mutationFn: systemService.updateSettings, onSuccess: () => qc.invalidateQueries({ queryKey: ['settings'] }) })

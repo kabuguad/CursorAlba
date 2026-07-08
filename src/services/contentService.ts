@@ -87,8 +87,8 @@ export const contentService = {
   // ── Public Events ────────────────────────────────────────────────────────
   listEvents: () => mockGet(() => [...getDB().publicEvents].sort((a, b) => a.startDate.localeCompare(b.startDate))),
 
-  createEvent: (dto: Omit<PublicEvent, 'id' | 'createdAt'>) => mockPost(() => {
-    const evt: PublicEvent = { id: newId('EVT'), ...dto, createdAt: new Date().toISOString() }
+  createEvent: (dto: Omit<PublicEvent, 'id'>) => mockPost(() => {
+    const evt: PublicEvent = { id: newId('EVT'), ...dto }
     mutateDB(db => { db.publicEvents.push(evt) })
     addAudit({ action: 'CREATE', resource: 'Event', resourceId: evt.id, details: `Created: ${evt.title}` })
     return evt
@@ -117,7 +117,10 @@ export const contentService = {
   addGalleryImage: (dto: { url: string; caption?: string; category?: string; isPublic?: boolean }) => mockPost(() => {
     const img: PublicGalleryImage = {
       id: newId('GAL'),
-      ...dto,
+      url: dto.url,
+      caption: dto.caption ?? null,
+      category: dto.category ?? null,
+      isPublic: dto.isPublic ?? true,
       sortOrder: getDB().publicGalleryImages.length + 1,
       createdAt: new Date().toISOString(),
     }

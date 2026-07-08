@@ -212,7 +212,7 @@ export function Academics() {
                 <div className={cn('h-full rounded-3xl border bg-gradient-to-br p-7', g.color, g.border)}>
                   <span className="mb-4 block text-4xl">{p.icon}</span>
                   <h3 className="mb-2 text-xl font-bold">{p.title}</h3>
-                  <p className="leading-relaxed text-muted">{p.description ?? (p as any).desc}</p>
+                  <p className="leading-relaxed text-muted">{(p as any).description ?? (p as any).desc}</p>
                 </div>
               </ScrollReveal>
             )

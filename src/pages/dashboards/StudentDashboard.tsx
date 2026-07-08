@@ -160,7 +160,7 @@ export function StudentDashboard() {
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                   <XAxis dataKey="subject" tick={{ fontSize: 10 }} interval={0} angle={-20} textAnchor="end" height={40} />
                   <YAxis domain={[0, 100]} />
-                  <Tooltip formatter={(v: number) => [`${v}%`, 'Score']} />
+                  <Tooltip formatter={((v: number) => [`${v}%`, 'Score']) as any} />
                   <Bar dataKey="score" fill="#15803d" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -253,7 +253,7 @@ export function StudentDashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
                 <XAxis dataKey="subject" tick={{ fontSize: 11 }} angle={-20} textAnchor="end" height={50} />
                 <YAxis domain={[0, 100]} />
-                <Tooltip formatter={(v: number) => [`${v}%`, 'Score']} />
+                <Tooltip formatter={((v: number) => [`${v}%`, 'Score']) as any} />
                 <Bar dataKey="score" fill="#15803d" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

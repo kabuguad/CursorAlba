@@ -46,7 +46,8 @@ function PageContentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <GlassCard className="w-full max-w-lg p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+      <div onClick={e => e.stopPropagation()}>
+      <GlassCard className="w-full max-w-lg p-6 shadow-2xl">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-bold">Edit Page Content</h2>
           <button onClick={onClose} className="rounded-xl p-1.5 hover:bg-tint/60 dark:hover:bg-dark-card transition">
@@ -78,6 +79,7 @@ function PageContentModal({
           </div>
         </form>
       </GlassCard>
+      </div>
     </div>
   )
 }
@@ -118,7 +120,8 @@ function FacilityModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <GlassCard className="w-full max-w-lg p-6 shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div onClick={e => e.stopPropagation()}>
+      <GlassCard className="w-full max-w-lg p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-bold">{isEdit ? 'Edit Facility' : 'Add Facility'}</h2>
           <button onClick={onClose} className="rounded-xl p-1.5 hover:bg-tint/60 dark:hover:bg-dark-card transition">
@@ -171,6 +174,7 @@ function FacilityModal({
           </div>
         </form>
       </GlassCard>
+      </div>
     </div>
   )
 }

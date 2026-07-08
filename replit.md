@@ -55,6 +55,22 @@ VITE_API_BASE=https://your-tunnel.ngrok-free.dev  # ngrok tunnel for Replit dev
 - AutoMapper v16 uses `cfg.AddProfile<T>()` syntax (breaking change from v12)
 - The API workflow does NOT use `waitForPort` because .NET startup takes ~7s which exceeds the workflow timeout
 
+## Vercel Deployment
+
+The project is ready for Vercel. Everything needed is already committed:
+
+| File | Purpose |
+|------|---------|
+| `vercel.json` | Build config, SPA rewrites (all routes → `index.html`), security headers, asset caching |
+| `api/[...path].js` | Vercel serverless function — proxies all `/api/*` requests to the real backend |
+
+**Steps to deploy:**
+1. Import this repo in [vercel.com](https://vercel.com) — Vercel auto-detects Vite
+2. Add environment variable `VITE_API_BASE` (your .NET API URL) in Vercel's project settings
+3. Deploy — the frontend is served as a static site; `/api/*` calls go through the serverless proxy
+
+If `VITE_API_BASE` is not set, the `/api/*` serverless function returns a 503. The frontend still loads (it falls back to mock data in dev, or shows empty states in production).
+
 ## User Preferences
 
 - Keep the existing clean architecture structure (Entities, Repository, Service, Presentation projects)

@@ -146,13 +146,13 @@ export async function mockDelete(
 ): Promise<ApiResponse<{ deleted: boolean }>> {
   await sleep(randomLatency(profile))
   if (Math.random() < errorRate) {
-    return fail('Simulated network error — please retry', 503) as ApiResponse<{ deleted: boolean }>
+    return fail('Simulated network error — please retry', 503) as unknown as ApiResponse<{ deleted: boolean }>
   }
   try {
     handler()
     return ok({ deleted: true })
   } catch (e) {
-    return fail(e instanceof Error ? e.message : 'Internal server error', 500) as ApiResponse<{ deleted: boolean }>
+    return fail(e instanceof Error ? e.message : 'Internal server error', 500) as unknown as ApiResponse<{ deleted: boolean }>
   }
 }
 

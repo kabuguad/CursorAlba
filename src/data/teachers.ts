@@ -35,8 +35,6 @@ export const teachers: Teacher[] = Array.from({ length: 125 }, (_, i) => {
   const suffix = i > 24 ? ` ${String.fromCharCode(65 + (i % 26))}` : ''
   const dept = DEPTS[i % DEPTS.length]
   const name = `${first} ${last}${suffix}`
-  const imgSeed = 100 + i
-
   return {
     id: `t-${i + 1}`,
     name,

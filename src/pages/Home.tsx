@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { createPortal } from 'react-dom'
 import {
   ArrowRight, Quote, ShieldCheck, Trophy, Music, BookOpen,
-  Globe, Baby, FlaskConical, GraduationCap, Loader2,
+  Globe, Baby, FlaskConical, GraduationCap,
   Star, Heart, Lightbulb, Users, Target, Zap, Briefcase,
-  X, ChevronLeft, ChevronRight, ZoomIn,
+  ZoomIn,
 } from 'lucide-react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { Button } from '../components/ui/Button'

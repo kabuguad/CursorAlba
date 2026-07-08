@@ -7,6 +7,7 @@
  */
 
 import { newId } from './mockApi'
+import type { Department } from '../data/types'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -772,9 +773,6 @@ export interface WhyChooseUsItem {
 // ── Seed Data ──────────────────────────────────────────────────────────────
 
 function createSeed(): DB {
-  const now = new Date().toISOString()
-  const today = new Date().toISOString().slice(0, 10)
-
   const TERM_ID = 'TERM-2026-T2'
   const YEAR_ID = 'YEAR-2026'
 

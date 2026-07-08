@@ -20,8 +20,6 @@ const COLOR_MAP: Record<string, { bg: string; text: string; stat: string; border
 export function WhyChooseUs() {
   const {
     data: page,
-    isLoading: pageLoading,
-    isError: pageError,
   } = useQuery({
     queryKey: ['wcu-page-content'],
     queryFn: () => whyChooseUsApi.getPageContent(),

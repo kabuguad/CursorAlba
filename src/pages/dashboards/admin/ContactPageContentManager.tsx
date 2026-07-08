@@ -51,21 +51,6 @@ function hasJwt(): boolean {
   return Boolean(sessionStorage.getItem('alber-token'))
 }
 
-const BLANK: UpdateContactPageContentDto = {
-  heroHeadline:    'Contact Us',
-  heroSubheadline: "Adjacent to the Governor's Offices, Kutus — Kirinyaga County. We're here to help.",
-  heroImageUrl:    '/images/unsplash-1497366216548-37526070297c.jpg',
-  phonePrimary:    '+254 712 345 678',
-  phoneSecondary:  '+254 734 567 890',
-  emailPrimary:    'info@alberschool.ke',
-  emailSecondary:  'admissions@alberschool.ke',
-  whatsAppNumber:  '254712345678',
-  addressLine1:    "Adjacent to Governor's Offices",
-  addressLine2:    'Kutus Town, Kirinyaga County',
-  mapEmbedUrl:     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.5!2d37.285!3d-0.518!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1828bf2f9c72a4a1%3A0x4a6d4f5e1b3c2d8e!2sKutus%2C%20Kirinyaga!5e0!3m2!1sen!2ske!4v1',
-  officeHours:     'Monday \u2013 Friday 7:30 AM \u2013 5:00 PM \u00B7 Saturday 8:00 AM \u2013 1:00 PM',
-  officeHoursNote: 'For urgent matters outside office hours, please use WhatsApp.',
-}
 
 export function ContactPageContentManager() {
   const navigate = useNavigate()

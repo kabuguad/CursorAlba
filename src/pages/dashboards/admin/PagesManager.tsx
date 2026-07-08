@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2, Edit2, Check, ChevronUp, ChevronDown, Layers } from 'lucide-react'
+import { ExternalLink, ChevronRight, Save, Globe, Eye, EyeOff, CheckCircle, Plus, X, Trash2, Edit2, Check } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { contentService } from '../../../services/contentService'
 import type { CmsPage, CmsBlock, CmsBlockType, PublicFeeRow } from '../../../services/contentService'
@@ -11,7 +11,6 @@ import { useToast } from '../../../contexts/ToastContext'
 import { cn } from '../../../lib/utils'
 import { useCreateCmsBlock, useDeleteCmsBlock } from '../../../hooks/useCmsData'
 import { LEVEL_COLOR_MAP } from '../../../lib/academicsColors'
-import type { Facility } from '../../../services/contentService'
 
 const BLOCK_TYPES: { value: CmsBlockType; label: string; hint: string }[] = [
   { value: 'text',     label: 'Text',     hint: 'Single-line text (headline, name, phone…)' },
@@ -152,7 +151,7 @@ function AddBlockModal({
       label: form.label,
       type: form.type as CmsBlockType,
       value: form.value,
-      helpText: form.helpText || undefined,
+      helpText: form.helpText || '',
       sortOrder: existingSortMax + 10,
     })
     showToast(`Block "${form.label}" added to ${pageTitle}`)
@@ -161,9 +160,9 @@ function AddBlockModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()}>
       <GlassCard
         className="w-full max-w-lg p-6 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
           <div>
@@ -284,11 +283,12 @@ function AddBlockModal({
           </div>
         </form>
       </GlassCard>
+      </div>
     </div>
   )
 }
 
-const COLOR_OPTIONS = Object.keys(LEVEL_COLOR_MAP)
+void Object.keys(LEVEL_COLOR_MAP) // retained for future use
 
 // ── Shared styles ─────────────────────────────────────────────────────────
 const FIELD = 'w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/40'
@@ -440,7 +440,7 @@ export function PagesManager() {
   const navigate = useNavigate()
 
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null)
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set(['pg-cocurr']))
+  const [_expandedIds, _setExpandedIds] = useState<Set<string>>(new Set(['pg-cocurr']))
   const [drafts, setDrafts] = useState<Record<string, string>>({})
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
   const [showAddModal, setShowAddModal] = useState(false)
@@ -490,7 +490,6 @@ export function PagesManager() {
   const topLevel = pages.filter((p) => p.parentId === null).sort((a, b) => a.sortOrder - b.sortOrder)
   const children = (parentId: string) =>
     pages.filter((p) => p.parentId === parentId).sort((a, b) => a.sortOrder - b.sortOrder)
-  const hasChildren = (id: string) => pages.some((p) => p.parentId === id)
 
   const selectedPage = pages.find((p) => p.id === selectedPageId) ?? null
   const getDraft = (block: CmsBlock) => (block.id in drafts ? drafts[block.id] : block.value)

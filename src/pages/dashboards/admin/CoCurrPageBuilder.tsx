@@ -81,7 +81,7 @@ export function CoCurrPageBuilder() {
     staleTime: 30_000,
   })
 
-  const isLoading = pcLoading || catsLoading || actsLoading
+  void (pcLoading || catsLoading || actsLoading)
   const sortedCats = [...categories].sort((a, b) => a.sortOrder - b.sortOrder)
 
   // ── Expanded categories ──────────────────────────────────────────────────────
@@ -142,7 +142,7 @@ export function CoCurrPageBuilder() {
 
   // ── Activity CRUD ────────────────────────────────────────────────────────────
   const [actModal, setActModal] = useState(false)
-  const [actCatId, setActCatId] = useState<number>(0)
+  const [_actCatId, setActCatId] = useState<number>(0)
   const [editingAct, setEditingAct] = useState<CoCurrActivity | null>(null)
   const [actDraft, setActDraft] = useState<CoCurrActivityDto>({ icon: '⭐', name: '', description: '', sortOrder: 1, cocurrCategoryId: 0 })
   const [delAct, setDelAct] = useState<number | null>(null)

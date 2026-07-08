@@ -121,7 +121,9 @@ export interface ApiFeeStructure {
   status: string
 }
 
-function toApiBlogPost(p: typeof contentService.listBlogPosts extends () => Promise<infer R> ? R : never): ApiBlogPost {
+import type { PublicBlogPost, PublicEvent, PublicGalleryImage } from './db'
+
+function toApiBlogPost(p: PublicBlogPost): ApiBlogPost {
   return {
     id: Number(String(p.id).replace(/\D/g, '').slice(-6) || '0'),
     title: p.title,
@@ -137,7 +139,7 @@ function toApiBlogPost(p: typeof contentService.listBlogPosts extends () => Prom
   }
 }
 
-function toApiEvent(e: typeof contentService.listEvents extends () => Promise<infer R> ? R : never): ApiEvent {
+function toApiEvent(e: PublicEvent): ApiEvent {
   return {
     id: Number(String(e.id).replace(/\D/g, '').slice(-6) || '0'),
     title: e.title,
@@ -152,7 +154,7 @@ function toApiEvent(e: typeof contentService.listEvents extends () => Promise<in
   }
 }
 
-function toApiGalleryImage(g: typeof contentService.listGalleryImages extends () => Promise<infer R> ? R : never): ApiGalleryImage {
+function toApiGalleryImage(g: PublicGalleryImage): ApiGalleryImage {
   return {
     id: Number(String(g.id).replace(/\D/g, '').slice(-6) || '0'),
     url: g.url,
@@ -170,6 +172,7 @@ const blog = {
   create: (dto: { title: string; content: string; summary?: string; coverImageUrl?: string; author?: string; isPublished: boolean; category?: string }) =>
     contentService.createBlogPost({
       title: dto.title,
+      slug: dto.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
       content: dto.content,
       excerpt: dto.summary ?? '',
       coverImageUrl: dto.coverImageUrl ?? null,
@@ -311,7 +314,7 @@ export interface ApiPublicFeeRow {
 
 const content = {
   getSettings: () =>
-    contentService.getSettings().then(r => [
+    contentService.getSettings().then(_r => [
       { key: 'home.hero.tagline', value: 'Kutus · Kirinyaga County · Est. 2005' },
       { key: 'home.hero.taglineGold', value: 'Where Excellence Meets Tomorrow' },
       { key: 'home.hero.subtitle', value: 'Premium private education in the heart of Kirinyaga.' },
@@ -358,7 +361,6 @@ const content = {
       description: dto.description,
       imageUrl: dto.imageUrl ?? null,
       sortOrder: dto.sortOrder,
-      createdAt: new Date().toISOString(),
     }).then(r => unwrap(r)).then(p => ({
       id: Number(String(p.id).replace(/\D/g, '').slice(-6) || '0'),
       slug: p.slug,
@@ -378,7 +380,6 @@ const content = {
       description: dto.description,
       imageUrl: dto.imageUrl ?? null,
       sortOrder: dto.sortOrder,
-      createdAt: new Date().toISOString(),
     }).then(r => unwrap(r)).then(p => ({
       id: Number(String(p.id).replace(/\D/g, '').slice(-6) || '0'),
       slug: p.slug,
@@ -431,8 +432,5 @@ const content = {
     contentService.deletePublicFeeRow(String(id)),
 }
 
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()
-}
 
 export const adminApi = { blog, events, gallery, upload, admissions, staff, students, classes, subjects, fees, content }

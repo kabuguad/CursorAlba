@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import {
   Plus, Trash2, X, Loader2, Upload, Link as LinkIcon,
-  FolderOpen, Pencil, ChevronRight, Images, Tag,
+  FolderOpen, Pencil, Images,
 } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '../../../contexts/ToastContext'
@@ -289,7 +289,7 @@ export function GalleryManager() {
       showToast('Category created ✓')
       setCatModal({ open: false, editing: null })
     },
-    onError: () => showToast('Failed to create category', 'error'),
+    onError: () => showToast('Failed to create category'),
   })
 
   const updateCatMut = useMutation({
@@ -300,7 +300,7 @@ export function GalleryManager() {
       showToast('Category updated ✓')
       setCatModal({ open: false, editing: null })
     },
-    onError: () => showToast('Failed to update category', 'error'),
+    onError: () => showToast('Failed to update category'),
   })
 
   const deleteCatMut = useMutation({
@@ -312,7 +312,7 @@ export function GalleryManager() {
       showToast('Category deleted')
       setDelCat(null)
     },
-    onError: () => showToast('Failed to delete category', 'error'),
+    onError: () => showToast('Failed to delete category'),
   })
 
   // ── Image mutations ──
@@ -323,7 +323,7 @@ export function GalleryManager() {
       showToast('Image added ✓')
       setImgModal({ open: false, editing: null })
     },
-    onError: () => showToast('Failed to add image', 'error'),
+    onError: () => showToast('Failed to add image'),
   })
 
   const updateImgMut = useMutation({
@@ -334,7 +334,7 @@ export function GalleryManager() {
       showToast('Image updated ✓')
       setImgModal({ open: false, editing: null })
     },
-    onError: () => showToast('Failed to update image', 'error'),
+    onError: () => showToast('Failed to update image'),
   })
 
   const deleteImgMut = useMutation({
@@ -344,7 +344,7 @@ export function GalleryManager() {
       showToast('Image removed')
       setDelImg(null)
     },
-    onError: () => showToast('Failed to delete image', 'error'),
+    onError: () => showToast('Failed to delete image'),
   })
 
   // ── Bulk upload ──
@@ -358,7 +358,7 @@ export function GalleryManager() {
       setBulkFiles([])
       setBulkOpen(false)
     } catch {
-      showToast('Bulk upload failed', 'error')
+      showToast('Bulk upload failed')
     } finally {
       setBulkUploading(false)
     }

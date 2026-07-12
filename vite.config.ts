@@ -17,8 +17,9 @@ export default defineConfig(({ mode }) => {
 
   const USE_MOCK = env.VITE_USE_MOCK === 'true'
   const API_BASE =
+    env.VITE_API_BASE_URL ||
     env.VITE_API_BASE ||
-    'https://yoko-unresourceful-coretta.ngrok-free.dev'
+    'https://adventistapp.runasp.net'
 
   return {
     plugins: [

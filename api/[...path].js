@@ -1,20 +1,24 @@
 /**
  * Vercel serverless proxy — forwards every /api/* request from the
- * frontend to the real backend, injecting the ngrok header so the
- * browser-warning interstitial is bypassed.
+ * frontend to the real backend.
  *
- * In production set VITE_API_BASE in Vercel's Environment Variables panel.
+ * In Vercel's Environment Variables panel, set one of:
+ *   API_BASE_URL         (preferred)
+ *   VITE_API_BASE_URL
+ *   VITE_API_BASE
+ *
+ * Fallback default: https://adventistapp.runasp.net
  */
 
 export const config = { runtime: 'nodejs' }
 
 export default async function handler(req, res) {
-  const backendBase = (process.env.VITE_API_BASE || '').replace(/\/$/, '')
-
-  if (!backendBase) {
-    res.status(503).json({ error: 'VITE_API_BASE environment variable is not set.' })
-    return
-  }
+  const backendBase = (
+    process.env.API_BASE_URL ||
+    process.env.VITE_API_BASE_URL ||
+    process.env.VITE_API_BASE ||
+    'https://adventistapp.runasp.net'
+  ).replace(/\/$/, '')
 
   // req.url is the full path, e.g. /api/about/page-content?foo=bar
   // Forward it as-is to the backend.

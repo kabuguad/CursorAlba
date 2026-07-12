@@ -7,17 +7,17 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Award, Users, Globe, BookOpen } from 'lucide-react'
 
 const LEADERSHIP = [
-  { name: 'Dr. Wanjiku Mwangi',  title: 'Head Teacher',           img: '/images/avatar-47.jpg', bio: 'PhD in Educational Leadership, University of Nairobi. 25 years in education. Champion of CBC implementation.' },
-  { name: 'Mr. Peter Kamau',     title: 'Deputy Head Teacher',    img: '/images/avatar-11.jpg', bio: 'M.Ed Kenyatta University. Specialises in curriculum development and teacher professional growth.' },
-  { name: 'Ms. Eunice Achieng',  title: 'Director of Academics',  img: '/images/avatar-48.jpg', bio: 'Cambridge-certified IGCSE coordinator. Oversees all academic pathways from PP1 through Grade 12.' },
-  { name: 'Mr. Francis Omondi',  title: 'Director of Co-Curricular', img: '/images/avatar-15.jpg', bio: 'Former national athlete. Leads sports, music, drama, and all co-curricular programmes.' },
+  { name: 'Mrs. Wanjiku Muthoni', title: 'Head Teacher',              img: '/images/avatar-47.jpg', bio: 'M.Ed Kenyatta University. Over 20 years in SDA education. Passionate about holistic, faith-centred learning from primary through secondary.' },
+  { name: 'Mr. Peter Kamau',      title: 'Deputy Head Teacher',       img: '/images/avatar-11.jpg', bio: 'B.Ed University of Nairobi. Specialises in CBC curriculum implementation and spiritual formation for primary school learners.' },
+  { name: 'Ms. Grace Njeri',      title: 'Head of Secondary',         img: '/images/avatar-48.jpg', bio: 'M.Sc. Education, Daystar University. Oversees Form 1–4 KCSE programmes and boarding academic support for secondary students.' },
+  { name: 'Mr. David Omondi',     title: 'Chaplain & Student Life',   img: '/images/avatar-15.jpg', bio: 'SDA-ordained pastor and educator. Leads chapel, devotions, Sabbath programmes, and the spiritual wellbeing of every learner and staff member.' },
 ]
 
 const MILESTONES_STATS = [
-  { icon: Award,    value: '97%',    label: 'KCSE Pass Rate' },
-  { icon: Users,    value: '2,000+', label: 'Students Enrolled' },
-  { icon: Globe,    value: '2',      label: 'Curriculum Pathways' },
-  { icon: BookOpen, value: '120+',   label: 'Expert Educators' },
+  { icon: Award,    value: '96%',  label: 'KCSE Pass Rate' },
+  { icon: Users,    value: '800+', label: 'Students Enrolled' },
+  { icon: Globe,    value: '2',    label: 'Levels: Primary & Secondary' },
+  { icon: BookOpen, value: '60+',  label: 'Dedicated Educators' },
 ]
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
@@ -40,11 +40,11 @@ export function About() {
   const { data: milestones = [] }   = useQuery({ queryKey: ['history-milestones'],  queryFn: () => aboutApi.getHistoryMilestones(), staleTime: 60_000 })
 
   const page        = pageContents[0]
-  const headline    = page?.headline    ?? 'About Demo School'
-  const subheadline = page?.subheadline ?? "Adjacent to the Governor's Offices in Kutus, Kirinyaga County — redefining private education in Kenya since 2005."
-  const mission     = page?.mission     ?? "To cultivate visionary leaders through innovative, competency-based education that honours Kenyan heritage while embracing global excellence."
-  const vision      = page?.vision      ?? "To be East Africa's most sought-after private institution — where every learner discovers their genius in world-class facilities."
-  const historyIntro = page?.historyIntro ?? "Two decades of excellence — from a single campus in Kutus to Kirinyaga's premier educational institution."
+  const headline    = page?.headline    ?? 'About Gatumbi SDA School'
+  const subheadline = page?.subheadline ?? "Nestled at the foot of Mount Kenya in Gatumbi, Kirinyaga County — a Seventh-day Adventist institution nurturing faith, knowledge, and character since our founding."
+  const mission     = page?.mission     ?? "To provide holistic, Christ-centred education that develops the whole child — intellectually, spiritually, physically, and socially — for service to God, family, and nation."
+  const vision      = page?.vision      ?? "To be Kirinyaga County's leading faith-based institution — where learners from primary through secondary grow in wisdom, godly character, and academic excellence."
+  const historyIntro = page?.historyIntro ?? "From humble beginnings rooted in SDA values to a thriving primary and secondary school — our journey is one of faith, perseverance, and God's faithfulness."
 
   const sortedValues = [...coreValues].sort((a, b) => a.sortOrder - b.sortOrder)
   const historySteps = [...milestones].sort((a, b) => a.sortOrder - b.sortOrder).map(m => ({ year: m.year, title: m.title, desc: m.description }))
@@ -196,8 +196,8 @@ export function About() {
       <section className="relative overflow-hidden bg-primary py-16 dark:bg-[#0d1b0d]">
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(232,184,75,0.5) 30px, rgba(232,184,75,0.5) 31px)' }} />
         <FadeIn className="relative z-10 mx-auto max-w-2xl px-4 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">Come See Demo School For Yourself</h2>
-          <p className="mb-8 text-white/70">Book a campus tour and experience what makes Demo School Kirinyaga's premier institution.</p>
+          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">Come See Gatumbi SDA School For Yourself</h2>
+          <p className="mb-8 text-white/70">Visit our campus beneath Mount Kenya and experience the faith, nature, and excellence that make Gatumbi SDA School truly special.</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/contact" className="flex items-center gap-2 rounded-2xl bg-gold px-8 py-3.5 font-bold text-black transition hover:scale-105 hover:bg-yellow-400">
               Book a Tour <ArrowRight className="h-4 w-4" />

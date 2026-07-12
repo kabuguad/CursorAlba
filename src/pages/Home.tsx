@@ -32,10 +32,10 @@ type HomePageContent = {
 }
 
 const TESTIMONIALS = [
-  { name: 'Grace Njeri', role: 'Parent · Grade 5', initials: 'GN', quote: 'Demo School has transformed my daughter completely. The teaching quality is unmatched anywhere in Kirinyaga County.' },
-  { name: 'Brian Mutua', role: 'Student · Grade 9', initials: 'BM', quote: 'The sports facilities here are world-class. I have grown as both an athlete and a leader since joining Demo School.' },
-  { name: 'Dr. Samuel Kariuki', role: 'Parent · PP2 & Grade 7', initials: 'SK', quote: 'Both my children attend Demo School. From Playgroup all the way to Senior School — the continuity and quality are simply unmatched.' },
-  { name: 'Amina Ochieng', role: 'Student · Music Academy', initials: 'AO', quote: 'I performed my first piano recital here in Grade 5. The music teachers are genuinely world-class professionals.' },
+  { name: 'Grace Waweru', role: 'Parent · Grade 5', initials: 'GW', quote: 'Gatumbi SDA School has transformed my daughter completely. The faith-based environment and teaching quality are unmatched anywhere in Kirinyaga County.' },
+  { name: 'Brian Mutua', role: 'Boarding Student · Form 2', initials: 'BM', quote: 'Being a boarding student here is a blessing. The serene environment near Mount Kenya helps me focus, and the spiritual grounding keeps me motivated every single day.' },
+  { name: 'Dr. Samuel Kariuki', role: 'Parent · Grade 4 & Form 1', initials: 'SK', quote: 'Both my children attend Gatumbi SDA School. The school nurtures them academically and spiritually — I could not ask for a better foundation for their lives.' },
+  { name: 'Esther Achieng', role: 'Student · Grade 8', initials: 'EA', quote: 'I love how we learn surrounded by nature. The fresh mountain air and the peaceful campus make studying feel joyful, not stressful. God\'s creation is our classroom.' },
 ]
 
 const CV_COLORS = [
@@ -119,10 +119,10 @@ export function Home() {
   ].filter(Boolean) as string[]
 
   const slideImages = hpImages.length > 0 ? hpImages : [
-    'https://picsum.photos/seed/alber-campus/1400/900',
-    'https://picsum.photos/seed/alber-class/1400/900',
-    'https://picsum.photos/seed/alber-sports/1400/900',
-    'https://picsum.photos/seed/alber-arts/1400/900',
+    'https://picsum.photos/seed/mount-kenya-nature/1400/900',
+    'https://picsum.photos/seed/gatumbi-school-campus/1400/900',
+    'https://picsum.photos/seed/kenya-highland-green/1400/900',
+    'https://picsum.photos/seed/sda-school-children/1400/900',
   ]
 
   const { data: events = [], isLoading: eventsLoading } = useQuery({
@@ -262,25 +262,25 @@ export function Home() {
             <div className="mb-6 flex items-center gap-3">
               <div className="h-px w-10 bg-gold" />
               <span className="text-xs font-bold uppercase tracking-[0.3em] text-gold">
-                {hp?.heroLocationBadge ?? 'Kutus · Kirinyaga County · Est. 2005'}
+                {hp?.heroLocationBadge ?? 'Gatumbi · Kirinyaga County · Near Mount Kenya'}
               </span>
             </div>
 
             <h1 className="mb-6 font-extrabold leading-[1.05] text-white" style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)' }}>
-              {hp?.heroTagline ?? 'Where Excellence'}
+              {hp?.heroTagline ?? 'Faith, Nature'}
               <span className="block" style={{ WebkitTextStroke: '2px #E8B84B', color: 'transparent' }}>
-                {hp?.heroTaglineGold ?? 'Meets Tomorrow'}
+                {hp?.heroTaglineGold ?? '& Excellence'}
               </span>
             </h1>
 
             <div className="mb-8 flex items-center gap-4">
               <div className="h-px w-20 bg-gold/60" />
-              <span className="text-xs uppercase tracking-widest text-white/50">Demo School</span>
+              <span className="text-xs uppercase tracking-widest text-white/50">Gatumbi SDA School</span>
               <div className="h-px w-20 bg-gold/60" />
             </div>
 
             <p className="mb-10 max-w-lg text-lg leading-relaxed text-white/80">
-              {hp?.heroSubtitle ?? "Kenya's premier learning institution — where every learner discovers their genius in world-class facilities guided by expert educators."}
+              {hp?.heroSubtitle ?? "A Seventh-day Adventist school nestled at the foot of Mount Kenya — nurturing the whole child: mind, body, and spirit, for God and country."}
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -508,6 +508,69 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════════
+          FAITH & SCRIPTURE — SDA identity strip
+      ══════════════════════════════════════════ */}
+      <section
+        className="relative overflow-hidden py-24"
+        style={{
+          backgroundImage: `url('https://picsum.photos/seed/mount-kenya-forest-mist/1600/700')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/75 to-black/88" />
+        <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 50% 40%, rgba(232,184,75,0.10) 0%, transparent 65%)' }} />
+        <div className="absolute left-0 inset-y-0 w-1.5 bg-gradient-to-b from-gold via-gold/50 to-transparent" />
+
+        <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="mb-6 flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-gold/30 bg-gold/10 text-3xl backdrop-blur-sm">
+                ✝
+              </div>
+            </div>
+
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.35em] text-gold/80">Our Scripture</p>
+            <blockquote className="mb-3 font-serif text-2xl font-bold italic leading-relaxed text-white md:text-4xl">
+              "Train up a child in the way he should go,
+            </blockquote>
+            <blockquote className="mb-4 font-serif text-2xl font-bold italic leading-relaxed text-gold md:text-4xl">
+              and when he is old he will not depart from it."
+            </blockquote>
+            <p className="mb-14 text-sm font-semibold uppercase tracking-widest text-white/45">— Proverbs 22:6</p>
+
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {[
+                { icon: '📖', label: 'Biblical Truth', desc: 'Every subject taught in the light of God\'s Word' },
+                { icon: '🌿', label: 'Wholeness', desc: 'Mind, body, and spirit growing in harmony' },
+                { icon: '👨‍👩‍👧', label: 'Family & Faith', desc: 'A warm community built on God\'s love' },
+                { icon: '🌄', label: 'God\'s Creation', desc: 'Learning in the beauty of Mount Kenya\'s nature' },
+              ].map((p, i) => (
+                <motion.div
+                  key={p.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  className="rounded-2xl border border-gold/20 bg-black/45 backdrop-blur-sm p-5 text-center hover:border-gold/50 hover:bg-black/60 transition-all"
+                >
+                  <span className="mb-3 block text-3xl">{p.icon}</span>
+                  <p className="font-bold text-gold text-sm mb-1">{p.label}</p>
+                  <p className="text-xs leading-relaxed text-white/60">{p.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           CORE VALUES — fixed parallax background
       ══════════════════════════════════════════ */}
       <section className="relative" style={{ clipPath: 'inset(0)' }}>
@@ -520,7 +583,7 @@ export function Home() {
           style={{
             marginBottom: '-100vh',
             zIndex: 0,
-            backgroundImage: `url('https://picsum.photos/seed/alber-campus-wide/1600/900')`,
+            backgroundImage: `url('https://picsum.photos/seed/mount-kenya-highland/1600/900')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
@@ -543,9 +606,9 @@ export function Home() {
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
               Core Values
             </span>
-            <h2 className="mt-2 text-4xl font-bold text-white md:text-5xl">The Demo School Character</h2>
+            <h2 className="mt-2 text-4xl font-bold text-white md:text-5xl">The Gatumbi SDA Character</h2>
             <p className="mx-auto mt-4 max-w-2xl text-white/60">
-              Six pillars that shape the Demo School graduate — a whole person ready to lead, serve, and flourish.
+              Six pillars that shape the Gatumbi SDA graduate — a whole person ready to serve God, lead, and flourish.
             </p>
           </motion.div>
 
@@ -597,9 +660,9 @@ export function Home() {
             transition={{ duration: 0.6 }}
           >
             <SectionLabel>Why Choose Us</SectionLabel>
-            <h2 className="mt-2 text-4xl font-bold md:text-5xl">The Demo School Difference</h2>
+            <h2 className="mt-2 text-4xl font-bold md:text-5xl">The Gatumbi SDA Difference</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted">
-              Outstanding education at every stage — from first steps to university.
+              Faith-based excellence from primary through secondary — day and boarding, rooted in God's Word.
             </p>
           </motion.div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -714,12 +777,12 @@ export function Home() {
               <div className="relative flex flex-1 flex-col justify-center p-10 lg:p-14">
                 <Quote className="mb-6 h-12 w-12 text-gold opacity-40" />
                 <p className="text-lg leading-relaxed text-muted whitespace-pre-line">
-                  {get('director.quote', "When I founded Demo School, I had one conviction: that every child in Kirinyaga County deserves access to the kind of education that changes the trajectory of a family for generations. Not just academic excellence — but character, confidence, and the courage to dream beyond borders.\n\nToday, as I walk through our corridors and see 2,000 young minds at work — in our labs, on our pitches, on our stages — I know that conviction was right. Demo School is not just a school. It is a promise we keep, every single day, to every single family that trusts us with their most precious gift.\n\nWe warmly welcome you to come and see it for yourself.")}
+                  {get('director.quote', "When we established Gatumbi SDA School, our founding conviction was simple: every child in Kirinyaga deserves an education rooted in faith, excellence, and the beauty of God's creation. Nestled at the foot of Mount Kenya, our school is a sanctuary — a place where learners breathe fresh mountain air and grow in wisdom, knowledge, and the fear of the Lord.\n\nWe are a Seventh-day Adventist institution, and that shapes everything we do — from how we teach, to how we live together as a boarding community, to the values we instil in every learner. Academic excellence and spiritual growth are not separate here; they are one.\n\nWe warmly invite you to come and experience Gatumbi SDA School for yourself. The mountain is waiting.")}
                 </p>
                 <div className="mt-8 border-t border-gray-100 dark:border-white/10 pt-6 flex items-center justify-between flex-wrap gap-4">
                   <div>
                     <p className="font-serif text-xl italic text-gold">{get('director.name', 'Alice Mwangi')}</p>
-                    <p className="text-sm text-muted">{get('director.title', 'School Director')}, Demo School</p>
+                    <p className="text-sm text-muted">{get('director.title', 'Head Teacher')}, Gatumbi SDA School</p>
                   </div>
                   <Link to="/admissions">
                     <Button variant="outline">Apply for 2026 <ArrowRight className="h-4 w-4" /></Button>
@@ -800,6 +863,88 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════════
+          NATURE CAMPUS — Mount Kenya environment
+      ══════════════════════════════════════════ */}
+      <section className="py-24 overflow-hidden bg-gradient-to-b from-green-50/50 to-transparent dark:from-green-950/20 dark:to-transparent">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+
+            {/* Left — Text */}
+            <motion.div
+              initial={{ opacity: 0, x: -32 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <SectionLabel>Our Environment</SectionLabel>
+              <h2 className="mt-2 text-4xl font-bold md:text-5xl">
+                Nestled Beneath<br />
+                <span className="text-primary dark:text-gold">Mount Kenya's Majesty</span>
+              </h2>
+              <p className="mt-6 text-lg leading-relaxed text-muted">
+                Gatumbi SDA School sits at the foot of Africa's second-highest peak — surrounded by lush highland greenery, cool mountain air, and the peaceful beauty of God's creation. Our natural setting is more than scenery; it is a living classroom.
+              </p>
+              <ul className="mt-8 space-y-4">
+                {[
+                  { icon: '🌿', text: 'Fresh highland air and a cool climate ideal for focused, alert learning' },
+                  { icon: '🏔️', text: 'Inspiring views of Mount Kenya — Africa\'s most majestic peak' },
+                  { icon: '🌳', text: 'Expansive green grounds for outdoor education, sports, and recreation' },
+                  { icon: '🦋', text: 'Rich biodiversity — a living science laboratory at every learner\'s doorstep' },
+                  { icon: '🌅', text: 'Serene boarding environment designed for study, rest, and spiritual growth' },
+                ].map(item => (
+                  <motion.li
+                    key={item.text}
+                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <span className="shrink-0 text-xl mt-0.5">{item.icon}</span>
+                    <span className="text-muted leading-relaxed">{item.text}</span>
+                  </motion.li>
+                ))}
+              </ul>
+              <div className="mt-10">
+                <Link to="/about">
+                  <Button variant="outline">Discover Our Campus <ArrowRight className="h-4 w-4" /></Button>
+                </Link>
+              </div>
+            </motion.div>
+
+            {/* Right — Image mosaic */}
+            <motion.div
+              initial={{ opacity: 0, x: 32 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="grid grid-cols-2 gap-3"
+            >
+              {[
+                { seed: 'mount-kenya-peak-view', tall: true },
+                { seed: 'kenya-forest-school-yard', tall: false },
+                { seed: 'africa-highland-green-campus', tall: false },
+                { seed: 'kirinyaga-nature-school', tall: false },
+              ].map((img, i) => (
+                <div
+                  key={img.seed}
+                  className={`overflow-hidden rounded-2xl shadow-lg ${i === 0 ? 'row-span-2' : ''}`}
+                >
+                  <img
+                    src={`https://picsum.photos/seed/${img.seed}/600/800`}
+                    alt="Gatumbi SDA School campus environment"
+                    className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                    style={{ minHeight: i === 0 ? '320px' : '150px' }}
+                  />
+                </div>
+              ))}
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           TESTIMONIALS
       ══════════════════════════════════════════ */}
       <section className="py-20 bg-tint/30 dark:bg-dark-card/30">
@@ -871,7 +1016,7 @@ export function Home() {
           >
             <div>
               <SectionLabel>Campus Life</SectionLabel>
-              <h2 className="mt-2 text-4xl font-bold">Life at Demo School</h2>
+              <h2 className="mt-2 text-4xl font-bold">Life at Gatumbi SDA School</h2>
             </div>
             <Link to="/gallery" className="text-sm font-semibold text-primary dark:text-gold hover:underline flex items-center gap-1">
               See all photos <ArrowRight className="h-4 w-4" />

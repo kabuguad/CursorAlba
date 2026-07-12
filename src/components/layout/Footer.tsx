@@ -9,13 +9,13 @@ export function Footer() {
           <div className="mb-4 flex items-center gap-2">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-gold font-bold text-xl">A</div>
             <div>
-              <h3 className="text-xl font-bold text-primary dark:text-gold">Demo School</h3>
-              <p className="text-sm text-muted">Luxury Private Education</p>
+              <h3 className="text-xl font-bold text-primary dark:text-gold">Gatumbi SDA School</h3>
+              <p className="text-sm text-muted">Faith · Nature · Excellence</p>
             </div>
           </div>
           <p className="max-w-md text-sm text-muted leading-relaxed">
-            Adjacent to the Governor&apos;s Offices, Kutus, Kirinyaga County, Kenya.
-            Where excellence meets innovation.
+            Nestled at the foot of Mount Kenya, Gatumbi, Kirinyaga County, Kenya.
+            A Seventh-day Adventist institution nurturing the whole child — mind, body, and spirit.
           </p>
         </div>
         <div>
@@ -35,7 +35,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-muted">
             <li className="flex items-start gap-2">
               <MapPin className="h-4 w-4 shrink-0 text-gold mt-0.5" />
-              Kutus, Kirinyaga County
+              Gatumbi, Kirinyaga County, Kenya
             </li>
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-gold" />
@@ -43,13 +43,13 @@ export function Footer() {
             </li>
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-gold" />
-              info@alberschool.ke
+              info@gatumbisda.ke
             </li>
           </ul>
         </div>
       </div>
       <div className="border-t border-theme py-6 text-center text-xs text-muted">
-        © {new Date().getFullYear()} Demo School. All rights reserved.
+        © {new Date().getFullYear()} Gatumbi SDA School. All rights reserved.
       </div>
     </footer>
   )

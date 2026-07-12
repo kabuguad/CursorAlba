@@ -61,8 +61,8 @@ export function Navbar() {
               A
             </div>
             <div className="hidden sm:block">
-              <span className="block text-lg font-bold text-primary dark:text-gold leading-tight">Demo School</span>
-              <span className="block text-[10px] uppercase tracking-widest text-muted">Kutus · Kirinyaga</span>
+              <span className="block text-lg font-bold text-primary dark:text-gold leading-tight">Gatumbi SDA School</span>
+              <span className="block text-[10px] uppercase tracking-widest text-muted">Gatumbi · Kirinyaga</span>
             </div>
           </Link>
 

@@ -177,21 +177,21 @@ const TEACHERS = Array.from({ length: 15 }, (_, i) => {
 const ABOUT_PAGE_CONTENT = [{
   aboutPageContentId: 1,
   id: 1,
-  headline: 'About Demo School School',
-  subheadline: 'A legacy of excellence in Kirinyaga County since 2005.',
-  mission: 'To provide a world-class, holistic education that nurtures academic excellence, character development, and lifelong curiosity in every student.',
-  vision: 'To be the leading school in East Africa — known for producing confident, compassionate, and capable leaders who transform communities.',
-  historyIntro: 'Founded in 2005 by a team of passionate educators, Demo School School has grown from a small primary school into a full continuum institution serving over 1,200 learners from Playgroup through Senior Secondary.',
+  headline: 'About Gatumbi SDA School',
+  subheadline: 'Nestled at the foot of Mount Kenya in Gatumbi, Kirinyaga County — a Seventh-day Adventist institution nurturing faith, knowledge, and character.',
+  mission: 'To provide holistic, Christ-centred education that develops the whole child — intellectually, spiritually, physically, and socially — for service to God, family, and nation.',
+  vision: 'To be Kirinyaga County\'s leading faith-based institution — where learners from primary through secondary grow in wisdom, godly character, and academic excellence.',
+  historyIntro: 'From humble SDA mission roots to a thriving primary and secondary school — our journey is one of faith, perseverance, and God\'s faithfulness over the decades.',
   updatedAt: '2024-01-15T08:00:00Z',
 }]
 
 const HISTORY_MILESTONES = [
-  { historyMilestoneId: 1, id: 1, year: '2005', title: 'Founded', description: 'Demo School School opens its doors with 3 classrooms and 45 students.', sortOrder: 1 },
-  { historyMilestoneId: 2, id: 2, year: '2008', title: 'Primary School Expansion', description: 'Grades 1–8 fully operational. First KCPE class achieves a mean score of 380.', sortOrder: 2 },
-  { historyMilestoneId: 3, id: 3, year: '2012', title: 'Sports Complex Opened', description: 'Multi-sport facility inaugurated, home to our national-award-winning athletics teams.', sortOrder: 3 },
-  { historyMilestoneId: 4, id: 4, year: '2016', title: 'Science & Technology Block', description: 'Three fully equipped labs and the first computer lab in the district.', sortOrder: 4 },
-  { historyMilestoneId: 5, id: 5, year: '2020', title: 'CBC Transition', description: 'Successfully adopted the Competency-Based Curriculum ahead of the national rollout.', sortOrder: 5 },
-  { historyMilestoneId: 6, id: 6, year: '2023', title: 'Senior Secondary Launch', description: 'Grades 10–12 inaugurated, completing the full Playgroup–Grade 12 continuum.', sortOrder: 6 },
+  { historyMilestoneId: 1, id: 1, year: '1962', title: 'SDA Mission Founded', description: 'Seventh-day Adventist missionaries establish a small mission school in Gatumbi to serve the local Kirinyaga community.', sortOrder: 1 },
+  { historyMilestoneId: 2, id: 2, year: '1975', title: 'Primary School Registered', description: 'The school receives formal government registration as Gatumbi SDA Primary School. Enrolment reaches 200 pupils.', sortOrder: 2 },
+  { historyMilestoneId: 3, id: 3, year: '1990', title: 'New Classrooms & Chapel Built', description: 'A new chapel block and six modern classrooms are constructed, funded by the SDA East Africa Union and local contributions.', sortOrder: 3 },
+  { historyMilestoneId: 4, id: 4, year: '2005', title: 'Secondary School Launched', description: 'Form 1–4 secondary wing opens, making Gatumbi SDA a combined primary and secondary institution for the first time.', sortOrder: 4 },
+  { historyMilestoneId: 5, id: 5, year: '2015', title: 'Boarding Facilities Opened', description: 'A new dormitory block accommodates 120 boarding students, bringing learners from across Kirinyaga County closer to Mount Kenya\'s serenity.', sortOrder: 5 },
+  { historyMilestoneId: 6, id: 6, year: '2023', title: 'CBC & Digital Learning', description: 'Full CBC implementation across primary levels, plus a new computer lab with 40 stations, keeping Gatumbi SDA at the frontier of Kenyan education.', sortOrder: 6 },
 ]
 
 // Admin mock data
@@ -608,7 +608,7 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse): Promise
   if (method === 'GET' && path === '/admin/transport/stats') return json(res, ok({ routes: 8, vehicles: 6, studentsTransported: 312 })), true
 
   if (method === 'GET' && path === '/admin/system/health') return json(res, ok({ status: 'healthy', uptime: '14d 3h', version: '1.0.0 (mock)', database: 'ok' })), true
-  if (method === 'GET' && path === '/admin/system/settings') return json(res, ok({ schoolName: 'Demo School School', timezone: 'Africa/Nairobi', currency: 'KES', academicYear: '2025' })), true
+  if (method === 'GET' && path === '/admin/system/settings') return json(res, ok({ schoolName: 'Gatumbi SDA School', timezone: 'Africa/Nairobi', currency: 'KES', academicYear: '2025' })), true
   if (method === 'PUT' && path === '/admin/system/settings') { await readBody(req); return json(res, ok({})), true }
   if (method === 'POST' && path === '/admin/system/backup') return json(res, created({ backupId: 'backup-mock-001', status: 'queued' }), 201), true
   if (method === 'POST' && path === '/admin/system/maintenance') { await readBody(req); return json(res, ok({})), true }

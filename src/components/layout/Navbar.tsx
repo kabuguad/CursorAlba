@@ -7,6 +7,11 @@ import { MobileDrawer } from './MobileDrawer'
 import { VirtualTourModal } from '../virtual-tour/VirtualTourModal'
 import { cn } from '../../lib/utils'
 
+const ABOUT_LINKS = [
+  { to: '/about',                     label: '🏫 Our School',       sub: 'History, mission, vision & leadership' },
+  { to: '/about#our-environment',     label: '🌿 Our Environment',  sub: 'Mount Kenya scenery, nature & campus' },
+]
+
 const CO_CURRICULAR_LINKS = [
   { to: '/co-curricular', label: '📋 Overview', sub: 'All 4 pillars at a glance' },
   { to: '/sports', label: '🏆 Sports & Athletics', sub: 'Fixtures, results, trophy cabinet' },
@@ -18,7 +23,6 @@ const CO_CURRICULAR_LINKS = [
 
 const NAV_LEFT = [
   { to: '/', label: 'Home' },
-  { to: '/about', label: 'About' },
   { to: '/academics', label: 'Academics' },
   { to: '/facilities', label: 'Facilities' },
   { to: '/why-choose-us', label: 'Why Us' },
@@ -32,24 +36,28 @@ const NAV_RIGHT = [
 ]
 
 const ALL_NAV = [
-  ...NAV_LEFT,
+  { to: '/', label: 'Home' },
+  { to: '/about', label: 'About' },
+  { to: '/academics', label: 'Academics' },
+  { to: '/facilities', label: 'Facilities' },
+  { to: '/why-choose-us', label: 'Why Us' },
   { to: '/co-curricular', label: 'Activities' },
   ...NAV_RIGHT,
 ]
 
 export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [tourOpen, setTourOpen] = useState(false)
-  const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const menuTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const openDropdown = () => {
-    if (dropdownTimer.current) clearTimeout(dropdownTimer.current)
-    setDropdownOpen(true)
+  const openDd = (name: string) => {
+    if (menuTimer.current) clearTimeout(menuTimer.current)
+    setOpenMenu(name)
   }
 
-  const closeDropdown = () => {
-    dropdownTimer.current = setTimeout(() => setDropdownOpen(false), 150)
+  const closeDd = () => {
+    menuTimer.current = setTimeout(() => setOpenMenu(null), 150)
   }
 
   return (
@@ -67,7 +75,58 @@ export function Navbar() {
           </Link>
 
           <div className="hidden items-center gap-1 xl:flex">
-            {NAV_LEFT.map((item) => (
+            {/* Home */}
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                cn(
+                  'whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
+                  isActive ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold' : 'text-muted hover:text-primary dark:hover:text-gold',
+                )
+              }
+            >
+              Home
+            </NavLink>
+
+            {/* About dropdown */}
+            <div className="relative" onMouseEnter={() => openDd('about')} onMouseLeave={closeDd}>
+              <button
+                className={cn(
+                  'whitespace-nowrap flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
+                  openMenu === 'about'
+                    ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold'
+                    : 'text-muted hover:text-primary dark:hover:text-gold',
+                )}
+              >
+                About
+                <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', openMenu === 'about' && 'rotate-180')} />
+              </button>
+              {openMenu === 'about' && (
+                <div
+                  className="absolute left-1/2 top-full z-[100] mt-2 w-64 -translate-x-1/2 overflow-hidden rounded-2xl bg-surface-elevated border shadow-2xl"
+                  onMouseEnter={() => openDd('about')}
+                  onMouseLeave={closeDd}
+                >
+                  {ABOUT_LINKS.map((link) => (
+                    <NavLink
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => setOpenMenu(null)}
+                      className={({ isActive }) =>
+                        cn('flex flex-col px-4 py-3 transition hover:bg-primary/10 dark:hover:bg-gold/10', isActive && 'bg-primary/5 dark:bg-gold/5')
+                      }
+                    >
+                      <span className="text-sm font-semibold text-foreground">{link.label}</span>
+                      <span className="text-xs text-muted">{link.sub}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Remaining NAV_LEFT items */}
+            {NAV_LEFT.filter(i => i.to !== '/').map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -84,39 +143,32 @@ export function Navbar() {
               </NavLink>
             ))}
 
-            <div
-              className="relative"
-              onMouseEnter={openDropdown}
-              onMouseLeave={closeDropdown}
-            >
+            {/* Activities dropdown */}
+            <div className="relative" onMouseEnter={() => openDd('activities')} onMouseLeave={closeDd}>
               <button
                 className={cn(
                   'whitespace-nowrap flex items-center gap-1 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-300 hover:scale-105',
-                  dropdownOpen
+                  openMenu === 'activities'
                     ? 'bg-primary/10 text-primary dark:bg-gold/10 dark:text-gold'
                     : 'text-muted hover:text-primary dark:hover:text-gold',
                 )}
               >
                 Activities
-                <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', dropdownOpen && 'rotate-180')} />
+                <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', openMenu === 'activities' && 'rotate-180')} />
               </button>
-
-              {dropdownOpen && (
+              {openMenu === 'activities' && (
                 <div
                   className="absolute left-1/2 top-full z-[100] mt-2 w-72 -translate-x-1/2 overflow-hidden rounded-2xl bg-surface-elevated border shadow-2xl"
-                  onMouseEnter={openDropdown}
-                  onMouseLeave={closeDropdown}
+                  onMouseEnter={() => openDd('activities')}
+                  onMouseLeave={closeDd}
                 >
                   {CO_CURRICULAR_LINKS.map((link) => (
                     <NavLink
                       key={link.to}
                       to={link.to}
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => setOpenMenu(null)}
                       className={({ isActive }) =>
-                        cn(
-                          'flex flex-col px-4 py-3 transition hover:bg-primary/10 dark:hover:bg-gold/10',
-                          isActive && 'bg-primary/5 dark:bg-gold/5',
-                        )
+                        cn('flex flex-col px-4 py-3 transition hover:bg-primary/10 dark:hover:bg-gold/10', isActive && 'bg-primary/5 dark:bg-gold/5')
                       }
                     >
                       <span className="text-sm font-semibold text-foreground">{link.label}</span>
@@ -175,6 +227,7 @@ export function Navbar() {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         links={ALL_NAV}
+        aboutLinks={ABOUT_LINKS}
         coLinks={CO_CURRICULAR_LINKS}
         onTour={() => { setDrawerOpen(false); setTourOpen(true) }}
       />

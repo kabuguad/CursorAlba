@@ -192,6 +192,72 @@ export function About() {
         )}
       </div>
 
+      {/* ── Our Environment ── */}
+      <section id="our-environment" className="py-24 overflow-hidden bg-gradient-to-b from-green-50/50 to-transparent dark:from-green-950/20 dark:to-transparent">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+
+            {/* Left — Text */}
+            <FadeIn>
+              <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-xs font-bold uppercase tracking-widest text-primary dark:text-gold">
+                <span className="h-1.5 w-1.5 rounded-full bg-gold" />Our Environment
+              </span>
+              <h2 className="mt-2 text-4xl font-bold">
+                Nestled Beneath<br />
+                <span className="text-primary dark:text-gold">Mount Kenya's Majesty</span>
+              </h2>
+              <p className="mt-6 text-lg leading-relaxed text-muted">
+                Gatumbi SDA School sits at the foot of Africa's second-highest peak — surrounded by lush highland greenery, cool mountain air, and the peaceful beauty of God's creation. Our natural setting is more than scenery; it is a living classroom.
+              </p>
+              <ul className="mt-8 space-y-4">
+                {[
+                  { icon: '🌿', text: 'Fresh highland air and a cool climate ideal for focused, alert learning' },
+                  { icon: '🏔️', text: "Inspiring views of Mount Kenya — Africa's most majestic peak" },
+                  { icon: '🌳', text: 'Expansive green grounds for outdoor education, sports, and recreation' },
+                  { icon: '🦋', text: "Rich biodiversity — a living science laboratory at every learner's doorstep" },
+                  { icon: '🌅', text: 'Serene boarding environment designed for study, rest, and spiritual growth' },
+                ].map(item => (
+                  <li key={item.text} className="flex items-start gap-3">
+                    <span className="shrink-0 text-xl mt-0.5">{item.icon}</span>
+                    <span className="text-muted leading-relaxed">{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-10">
+                <Link to="/contact" className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 font-semibold text-white transition hover:scale-105 hover:bg-primary/90">
+                  Book a Campus Visit <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </FadeIn>
+
+            {/* Right — Image mosaic */}
+            <FadeIn delay={0.1}>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { seed: 'mount-kenya-peak-view' },
+                  { seed: 'kenya-forest-school-yard' },
+                  { seed: 'africa-highland-green-campus' },
+                  { seed: 'kirinyaga-nature-school' },
+                ].map((img, i) => (
+                  <div
+                    key={img.seed}
+                    className={`overflow-hidden rounded-2xl shadow-lg ${i === 0 ? 'row-span-2' : ''}`}
+                  >
+                    <img
+                      src={`https://picsum.photos/seed/${img.seed}/600/800`}
+                      alt="Gatumbi SDA School campus environment"
+                      className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                      style={{ minHeight: i === 0 ? '320px' : '150px' }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="relative overflow-hidden bg-primary py-16 dark:bg-[#0d1b0d]">
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(232,184,75,0.5) 30px, rgba(232,184,75,0.5) 31px)' }} />

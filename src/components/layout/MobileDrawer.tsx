@@ -20,16 +20,21 @@ interface MobileDrawerProps {
   onClose: () => void
   links: NavLink[]
   coLinks: CoLink[]
+  aboutLinks: CoLink[]
   onTour: () => void
 }
 
 const CO_CURRICULAR_PATHS = ['/co-curricular', '/sports', '/music', '/drama-dance']
+const ABOUT_PATHS = ['/about']
 
-export function MobileDrawer({ open, onClose, links, coLinks, onTour }: MobileDrawerProps) {
+export function MobileDrawer({ open, onClose, links, coLinks, aboutLinks, onTour }: MobileDrawerProps) {
   const [coOpen, setCoOpen] = useState(false)
+  const [aboutOpen, setAboutOpen] = useState(false)
 
   const mainLinks = links.filter(
-    (l) => !CO_CURRICULAR_PATHS.some((p) => l.to === p || (l.to !== '/' && p.startsWith(l.to))),
+    (l) =>
+      !CO_CURRICULAR_PATHS.some((p) => l.to === p || (l.to !== '/' && p.startsWith(l.to))) &&
+      !ABOUT_PATHS.includes(l.to),
   )
 
   return (
@@ -74,6 +79,48 @@ export function MobileDrawer({ open, onClose, links, coLinks, onTour }: MobileDr
                 </NavLink>
               ))}
 
+              {/* About accordion */}
+              <div className="mt-1">
+                <button
+                  onClick={() => setAboutOpen((o) => !o)}
+                  className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-base font-medium transition hover:bg-tint dark:hover:bg-dark-card"
+                >
+                  <span>About</span>
+                  <ChevronDown className={cn('h-5 w-5 transition-transform', aboutOpen && 'rotate-180')} />
+                </button>
+                <AnimatePresence>
+                  {aboutOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="ml-4 mt-1 flex flex-col gap-1 border-l-2 border-gold/30 pl-4">
+                        {aboutLinks.map((link) => (
+                          <NavLink
+                            key={link.to}
+                            to={link.to}
+                            onClick={onClose}
+                            className={({ isActive }) =>
+                              cn(
+                                'flex flex-col rounded-xl px-3 py-2.5 transition hover:bg-tint dark:hover:bg-dark-card',
+                                isActive && 'bg-primary/10',
+                              )
+                            }
+                          >
+                            <span className="text-sm font-semibold">{link.label}</span>
+                            <span className="text-xs text-muted">{link.sub}</span>
+                          </NavLink>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Co-Curricular accordion */}
               <div className="mt-1">
                 <button
                   onClick={() => setCoOpen((o) => !o)}
@@ -82,7 +129,6 @@ export function MobileDrawer({ open, onClose, links, coLinks, onTour }: MobileDr
                   <span>Co-Curricular</span>
                   <ChevronDown className={cn('h-5 w-5 transition-transform', coOpen && 'rotate-180')} />
                 </button>
-
                 <AnimatePresence>
                   {coOpen && (
                     <motion.div

@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
   const API_BASE =
     env.VITE_API_BASE_URL ||
     env.VITE_API_BASE ||
-    'https://adventistapp.runasp.net'
+    'https://yoko-unresourceful-coretta.ngrok-free.dev'
 
   return {
     plugins: [

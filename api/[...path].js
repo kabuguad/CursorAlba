@@ -7,7 +7,7 @@
  *   VITE_API_BASE_URL
  *   VITE_API_BASE
  *
- * Fallback default: https://adventistapp.runasp.net
+ * Fallback default: https://yoko-unresourceful-coretta.ngrok-free.dev
  */
 
 export const config = { runtime: 'nodejs' }
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     process.env.API_BASE_URL ||
     process.env.VITE_API_BASE_URL ||
     process.env.VITE_API_BASE ||
-    'https://adventistapp.runasp.net'
+    'https://yoko-unresourceful-coretta.ngrok-free.dev'
   ).replace(/\/$/, '')
 
   // req.url is the full path, e.g. /api/about/page-content?foo=bar

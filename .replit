@@ -46,8 +46,8 @@ timeoutMs = 60000
 [userenv]
 
 [userenv.shared]
-VITE_API_BASE = "https://adventistapp.runasp.net"
-VITE_API_BASE_URL = "https://adventistapp.runasp.net"
-API_BASE_URL = "https://adventistapp.runasp.net"
+VITE_API_BASE = "https://yoko-unresourceful-coretta.ngrok-free.dev"
+VITE_API_BASE_URL = "https://yoko-unresourceful-coretta.ngrok-free.dev"
+API_BASE_URL = "https://yoko-unresourceful-coretta.ngrok-free.dev"
 
 [userenv.development]
